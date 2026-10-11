@@ -1,0 +1,1 @@
+# Alfred plugins package

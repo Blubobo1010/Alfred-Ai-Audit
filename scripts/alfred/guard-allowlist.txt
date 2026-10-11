@@ -1,0 +1,35 @@
+# Regexes whose matches are allowed to survive the G1 grep guard on user-visible surfaces.
+# One Python regex per line; a line is exempt when ALL of its brand matches sit inside an allowed match.
+Hey,? Hermes
+hey,? hermes
+hey_hermes
+hermes-agent(?![\w.])
+hermes-agent\.nousresearch\.com
+hermes-assets\.nousresearch\.com
+portal\.nousresearch\.com
+discord\.gg/NousResearch
+Nous Portal
+Hermes[A-Za-z_]
+HERMES_[A-Z0-9_]*
+hermes_[a-z0-9_]*
+~/\.hermes
+\.hermes/
+X-Hermes-
+@hermes/
+hermes(?:-dev)?://
+Based on Hermes Agent
+Copyright \(c\) 20\d\d Nous Research
+portal's Hermes Agent page
+Hermes-\d[\w.-]*
+Hermes [1-9](?![.\d])
+NousResearch/Hermes
+HermesDashboard/
+# Whole-line exemptions (prefix `line:`): Nous Portal billing consent and the Nous LLM warning are about
+# Nous services/models and must keep the real name; comment lines are not user-visible.
+line:^\s*(//|#)
+line:^\s*author: Nous Research
+line:hermes_models_not_agentic:
+line:(consent_charge|auto_reload_consent):
+line:billing\.(autoReload|confirm)\.authorization:
+line:^\s*authorization: '
+line:authorize Nous Research to charge

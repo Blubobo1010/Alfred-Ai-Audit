@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Alfred placeholder mark (top hat), white positive space. Same contract as the upstream file it
+     replaces: one path, absolute M/L commands only, 5487x5487 viewBox (scripts/generate_icons.py). -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 5487 5487" width="5487" height="5487">
+  <path fill="#FFFFFF" fill-rule="evenodd" d="M 1643 1100 L 3843 1100 L 3843 3220 L 4803 3220 L 4803 3740 L 683 3740 L 683 3220 L 1643 3220 Z M 1803 2500 L 3683 2500 L 3683 2760 L 1803 2760 Z"/>
+</svg>

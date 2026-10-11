@@ -1,0 +1,133 @@
+# Alfred CI (overlay from alfred-build). Runs on every generated commit: no secrets needed.
+name: alfred-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      full-suite:
+        description: Run the complete pytest suite instead of the brand-sensitive subset
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: alfred-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  python:
+    name: Python (guards, lint, tests)
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+
+      - name: Brand guard (no Hermes/Nous on user-visible surfaces)
+        run: uv run --frozen --no-dev python scripts/alfred/guard.py
+
+      - name: Lint
+        run: uvx ruff check .
+
+      - name: Test environment
+        run: uv sync --frozen --group dev --group test
+
+      - name: Brand-sensitive test subset
+        if: ${{ !inputs.full-suite }}
+        env:
+          HERMES_PYTHON: ${{ github.workspace }}/.venv/bin/python
+          HERMES_TEST_WORKERS: 4
+          HERMES_TEST_FILE_TIMEOUT: 600
+          OPENROUTER_API_KEY: ""
+          OPENAI_API_KEY: ""
+          NOUS_API_KEY: ""
+        run: |
+          shopt -s nullglob
+          files=(
+            tests/hermes_cli/test_banner*.py
+            tests/hermes_cli/test_update_channel*.py
+            tests/hermes_cli/test_source_release_channels.py
+            tests/hermes_cli/test_source_release_probe.py
+            tests/hermes_cli/test_source_check.py
+            tests/hermes_cli/test_update_fork_sync_identity.py
+            tests/hermes_cli/test_update_upstream_prompt_noninteractive.py
+            tests/hermes_cli/test_update_inventory.py
+            tests/hermes_cli/test_update_stale_dashboard.py
+            tests/hermes_cli/test_verify_console_scripts.py
+            tests/hermes_cli/test_source_launcher_publication.py
+            tests/hermes_cli/test_ensure_windows_bin_launchers.py
+            tests/hermes_cli/test_launcher.py
+            tests/hermes_cli/test_model_catalog.py
+            tests/hermes_cli/test_version_info.py
+            tests/hermes_cli/test_config.py
+            tests/hermes_cli/test_home_init_soul_symlink.py
+            tests/hermes_cli/test_plugin_validate_locales.py
+            tests/hermes_cli/test_skin*.py
+            tests/hermes_cli/test_cli_*_i18n.py
+            tests/agent/test_prompt_builder.py
+            tests/agent/test_anthropic_adapter.py
+            tests/agent/test_i18n*.py
+            tests/agent/test_soul*.py
+            tests/gateway/test_platform_adapter_i18n.py
+            tests/gateway/test_exec_approval_template.py
+            tests/gateway/test_whatsapp_reply_prefix.py
+            tests/gateway/test_relay*.py
+            tests/scripts/install/*.py
+            tests/compat/*.py
+          )
+          scripts/run_tests.sh "${files[@]}" -q
+
+      - name: Full test suite
+        if: ${{ inputs.full-suite }}
+        env:
+          HERMES_PYTHON: ${{ github.workspace }}/.venv/bin/python
+          HERMES_TEST_WORKERS: 4
+          HERMES_TEST_FILE_TIMEOUT: 600
+          OPENROUTER_API_KEY: ""
+          OPENAI_API_KEY: ""
+          NOUS_API_KEY: ""
+        run: scripts/run_tests.sh -q
+
+  desktop:
+    name: Desktop + TUI typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install workspaces
+        run: npm ci
+      - name: Desktop identity sanity
+        env:
+          HERMES_DESKTOP_VARIANT: bundled
+          HERMES_PAYLOAD_TAG: v0.0.1
+        run: |
+          node -e '
+            const id = require("./apps/desktop/product-identity.cjs")
+            const cfg = require("./apps/desktop/electron-builder.config.cjs")
+            if (!id.appId.endsWith(".alfred")) throw new Error("appId " + id.appId)
+            if (id.cliName !== "alfred") throw new Error("cliName " + id.cliName)
+            if (!cfg.mac.publish || cfg.mac.publish[0].provider !== "github") throw new Error("mac.publish " + JSON.stringify(cfg.mac.publish))
+            console.log("ok", id.appId, id.displayName, cfg.mac.publish[0])
+          '
+      - name: TUI build
+        run: npm run build --workspace ui-tui
+      - name: Desktop typecheck
+        working-directory: apps/desktop
+        run: npx tsc --build
+      - name: Desktop i18n + updater tests
+        working-directory: apps/desktop
+        run: npx vitest run src/i18n/catalog-completeness.test.ts electron/updater/mac-client.test.ts
