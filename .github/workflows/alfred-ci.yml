@@ -40,12 +40,15 @@ jobs:
         run: uvx ruff check .
 
       - name: Test environment
-        run: uv sync --frozen --group dev --group test
+        # Outside the checkout: the updater treats a venv inside the tree as an "owning install".
+        env:
+          UV_PROJECT_ENVIRONMENT: ${{ runner.temp }}/alfred-venv
+        run: uv sync --frozen --all-extras --group dev --group test
 
       - name: Brand-sensitive test subset
         if: ${{ !inputs.full-suite }}
         env:
-          HERMES_PYTHON: ${{ github.workspace }}/.venv/bin/python
+          HERMES_PYTHON: ${{ runner.temp }}/alfred-venv/bin/python
           HERMES_TEST_WORKERS: 4
           HERMES_TEST_FILE_TIMEOUT: 600
           OPENROUTER_API_KEY: ""
@@ -90,7 +93,7 @@ jobs:
       - name: Full test suite
         if: ${{ inputs.full-suite }}
         env:
-          HERMES_PYTHON: ${{ github.workspace }}/.venv/bin/python
+          HERMES_PYTHON: ${{ runner.temp }}/alfred-venv/bin/python
           HERMES_TEST_WORKERS: 4
           HERMES_TEST_FILE_TIMEOUT: 600
           OPENROUTER_API_KEY: ""
@@ -118,7 +121,7 @@ jobs:
           node -e '
             const id = require("./apps/desktop/product-identity.cjs")
             const cfg = require("./apps/desktop/electron-builder.config.cjs")
-            if (!id.appId.endsWith(".alfred")) throw new Error("appId " + id.appId)
+            if (!id.appId.endsWith(".alfred-bundled")) throw new Error("appId " + id.appId)
             if (id.cliName !== "alfred") throw new Error("cliName " + id.cliName)
             if (!cfg.mac.publish || cfg.mac.publish[0].provider !== "github") throw new Error("mac.publish " + JSON.stringify(cfg.mac.publish))
             console.log("ok", id.appId, id.displayName, cfg.mac.publish[0])
