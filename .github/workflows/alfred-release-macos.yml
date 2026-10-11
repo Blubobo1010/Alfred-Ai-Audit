@@ -156,6 +156,19 @@ jobs:
           cache: ${{ github.workspace }}/.cache/desktop-inputs
           producer: desktop
 
+      - name: Create the release claim tag
+        # Upstream's stable preparation requires an annotated attempt ref `rc.<N>-vX.Y.Z` on the release
+        # commit (its tagger timestamp becomes the build's release epoch). Local only; never pushed.
+        shell: bash
+        run: |
+          set -euo pipefail
+          claim="rc.${GITHUB_RUN_NUMBER}-${HERMES_PAYLOAD_TAG}"
+          git config user.name "alfred-release"
+          git config user.email "alfred-release@users.noreply.github.com"
+          git tag -a "$claim" -m "Alfred release attempt ${GITHUB_RUN_NUMBER} for ${HERMES_PAYLOAD_TAG}" "${HERMES_PAYLOAD_TAG}^{commit}"
+          echo "RELEASE_CLAIM_TAG=$claim" >> "$GITHUB_ENV"
+          echo "RELEASE_CLAIM_OBJECT=$(git rev-parse "refs/tags/$claim")" >> "$GITHUB_ENV"
+
       - name: Prepare the complete desktop build
         id: prepare
         shell: bash
