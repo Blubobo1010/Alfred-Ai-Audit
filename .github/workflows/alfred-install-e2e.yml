@@ -1,0 +1,158 @@
+# Alfred install & update e2e (overlay from alfred-build).
+#
+# Proves the two things a generated fork must never break: the one-liner installer works from
+# this commit, and `alfred update` fast-forwards an older Alfred install to it. Reuses upstream's
+# driver (tests/install/installer-script-e2e.sh): it bare-clones this checkout, redirects every git
+# process at the Alfred repo URLs to that clone, isolates HOME, installs the OLD ref with its own
+# scripts/install.sh, creates user state against a mock provider, then runs the updater and
+# checks checkout, shims, user state and plugins.
+#
+# Legs (ubuntu + macos):
+#   fresh    install HEAD, update to NEXT (a synthetic child the driver mints) -> HEAD's own updater
+#   upgrade  install the newest Alfred stable tag merged into HEAD^, update to HEAD -> the real user path
+# The upgrade leg is skipped when no earlier Alfred tag exists (first generation). Upstream tags
+# cannot be the OLD side: their installer clones NousResearch/hermes-agent, which is not redirected.
+name: alfred-install-e2e
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      install-ref:
+        description: Old ref to install first (default - newest Alfred stable tag merged into HEAD^)
+        required: false
+        default: ''
+      update-ref:
+        description: Target of the update (HEAD, NEXT or a tag)
+        required: false
+        default: HEAD
+
+permissions:
+  contents: read
+
+concurrency:
+  group: alfred-install-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pick-old:
+    name: Pick the old version
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      old: ${{ steps.pick.outputs.old }}
+      legs: ${{ steps.pick.outputs.legs }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - id: pick
+        shell: bash
+        run: |
+          set -euo pipefail
+          old="${{ inputs.install-ref }}"
+          if [ -z "$old" ]; then
+            # --merged HEAD^ excludes the tag of the commit under test (the driver refuses OLD == target).
+            old="$(git tag --list 'v[0-9]*' --merged HEAD^ --sort=-v:refname \
+                   | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | head -n 1 || true)"
+          fi
+          if [ -n "$old" ]; then
+            echo "upgrade leg: $old -> ${{ inputs.update-ref || 'HEAD' }}"
+            legs='["fresh", "upgrade"]'
+          else
+            echo "::notice::no earlier Alfred stable tag: the upgrade leg is skipped"
+            legs='["fresh"]'
+          fi
+          echo "old=$old" >> "$GITHUB_OUTPUT"
+          echo "legs=$legs" >> "$GITHUB_OUTPUT"
+
+  e2e:
+    name: ${{ matrix.leg }} on ${{ matrix.os }}
+    needs: pick-old
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        # ["fresh"] or ["fresh", "upgrade"]: the upgrade leg needs an earlier Alfred tag.
+        leg: ${{ fromJSON(needs.pick-old.outputs.legs) }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 75
+    steps:
+      # Full history + tags: the driver serves OLD and the target out of a bare clone of this checkout.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          fetch-tags: true
+
+      # The checkout owns the chat driver and the mock provider, not OLD's installed runtime.
+      - name: Driver toolchain (locked Python/uv/Node + ffmpeg)
+        uses: ./.github/actions/setup-pm
+        with:
+          toolchain: all
+          packages: ffmpeg
+          cache: false
+          cache-python: false
+          cache-node: false
+
+      - name: Driver dependencies (tests-js mock provider)
+        shell: bash
+        run: npm ci --workspace tests-js --include-workspace-root --omit=dev --ignore-scripts --no-audit --no-fund
+
+      # Gives headless linux a display (Xvfb) and records the run on every OS.
+      - name: Start screen recording
+        uses: ./.github/actions/e2e-screen-record
+        with:
+          mode: start
+          output: ${{ runner.temp }}/e2e-logs/recording.mkv
+
+      - name: Install OLD, update to the target
+        shell: bash
+        env:
+          # Outside the checkout: logs inside the repo would trip the driver's dirty-tree guard.
+          HERMES_E2E_LOG_DIR: ${{ runner.temp }}/e2e-logs
+          LEG: ${{ matrix.leg }}
+          OLD: ${{ needs.pick-old.outputs.old }}
+          TARGET: ${{ inputs.update-ref || 'HEAD' }}
+        run: |
+          set -euo pipefail
+          if [ "$LEG" = "fresh" ]; then
+            install_ref=HEAD; update_ref=NEXT
+          else
+            install_ref="$OLD"; update_ref="$TARGET"
+          fi
+          echo "install $install_ref, then update to $update_ref"
+          tests/install/installer-script-e2e.sh \
+            --install-method installer-script \
+            --update-method hermes-update \
+            --install-ref "$install_ref" \
+            --update-ref "$update_ref"
+
+      - name: Stop screen recording
+        if: always()
+        uses: ./.github/actions/e2e-screen-record
+        with:
+          mode: stop
+          output: ${{ runner.temp }}/e2e-logs/recording.mkv
+
+      - name: Remux recording for browser playback
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -f "${{ runner.temp }}/e2e-logs/recording.mkv" ]; then
+            ffmpeg -y -hide_banner -loglevel error -i "${{ runner.temp }}/e2e-logs/recording.mkv" \
+              -c copy "${{ runner.temp }}/e2e-logs/recording.mp4"
+          fi
+
+      # The installer's and updater's own transcripts say far more than the assertion that tripped.
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: alfred-install-e2e-${{ matrix.leg }}-${{ matrix.os }}-${{ github.sha }}
+          path: ${{ runner.temp }}/e2e-logs
+          retention-days: 14
+          if-no-files-found: ignore
