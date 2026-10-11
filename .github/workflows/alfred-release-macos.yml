@@ -44,7 +44,7 @@ jobs:
       sha: ${{ steps.verify.outputs.sha }}
       version: ${{ steps.verify.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -63,7 +63,7 @@ jobs:
     needs: [verify-tag]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.verify-tag.outputs.sha }}
       - name: Create the draft release (idempotent)
@@ -92,7 +92,7 @@ jobs:
       - name: Disable Spotlight indexing for DMG staging
         run: sudo mdutil -a -i off || true
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.verify-tag.outputs.sha }}
           fetch-depth: 0
@@ -217,7 +217,7 @@ jobs:
     if: ${{ always() && needs.verify-tag.result == 'success' && needs.draft-release.result == 'success' && (needs.build-macos-arm64.result == 'success' || inputs.publish_without_desktop) }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.verify-tag.outputs.sha }}
       - name: Publish the release as latest
