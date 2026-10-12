@@ -141,7 +141,7 @@ class LeftCoreFeature:
     enable_env: tuple[str, ...] = ()
     channel_env_prefixes: tuple[str, ...] = ()
     # Top-level command the plugin registers in place of core's ``alfred auth <cli>`` login
-    # (``hermes <cli> login|status|logout``); :func:`moved_command_hint` points the old spelling at it.
+    # (``alfred <cli> login|status|logout``); :func:`moved_command_hint` points the old spelling at it.
     cli: str = ""
 
 
@@ -156,7 +156,7 @@ LEFT_CORE: tuple[LeftCoreFeature, ...] = (
     LeftCoreFeature(
         plugin="spotify", label="Spotify", in_use=spotify_in_use,
         unchanged="your Spotify login, the spotify toolset and the spotify_* tools are unchanged; "
-                  "`alfred auth spotify` is now `hermes spotify login`",
+                  "`alfred auth spotify` is now `alfred spotify login`",
         cli="spotify",
     ),
 )
@@ -174,18 +174,18 @@ def platform_install_hint(platform: str) -> str:
 
 def moved_command_hint(prog: str, value: str, action: str = "") -> str:
     """For a command a left-core plugin took over: ``alfred auth [<action>] <cli>`` (core's old login
-    spelling) or ``hermes <cli>`` while the plugin is not loaded, the line saying where it went and
+    spelling) or ``alfred <cli>`` while the plugin is not loaded, the line saying where it went and
     how to get it for the active home, else ``""``."""
     from hermes_constants import get_hermes_home
     feature = next((f for f in LEFT_CORE if f.cli and f.cli == value), None)
-    if feature is None or prog not in {"hermes", "alfred auth"}:
+    if feature is None or prog not in {"alfred", "alfred auth"}:
         return ""
     home = Path(get_hermes_home())
     install = _install_command(feature.plugin, home)
     if not plugin_present(feature.plugin, home):
         get = f" Install it with: `{install}`."
     else:
-        get = f" Enable it with: `{install.replace(' install ', ' enable ')}`." if prog == "hermes" else ""
+        get = f" Enable it with: `{install.replace(' install ', ' enable ')}`." if prog == "alfred" else ""
     if prog == "alfred auth":
         old = " ".join(p for p in ("alfred auth", action, value) if p)
         return (f"{feature.label} moved out of core into the '{feature.plugin}' plugin: `{old}` is now "

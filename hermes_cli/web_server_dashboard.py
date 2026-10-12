@@ -640,7 +640,7 @@ def _schedule_check_fn_probe(fn) -> Optional[threading.Thread]:
 
 
 def _plugin_login_command(name: str) -> str:
-    """A plugin that left core with its own login command (``hermes spotify login``), else ``alfred auth <name>``."""
+    """A plugin that left core with its own login command (``alfred spotify login``), else ``alfred auth <name>``."""
     from hermes_cli.left_core_migration import LEFT_CORE
     return next((f"alfred {f.cli} login" for f in LEFT_CORE if f.plugin == name and f.cli), f"alfred auth {name}")
 

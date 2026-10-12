@@ -89,7 +89,7 @@ def _inherited_flag(parser, *args, **kwargs):
 
 _EPILOGUE = """
 Examples:
-    hermes                        Start interactive chat
+    alfred                        Start interactive chat
     alfred chat -q "Hello"        Single query mode
     alfred --tui                  Launch the modern TUI (or set display.interface: tui)
     alfred --cli                  Force the classic REPL (overrides display.interface: tui)
@@ -137,7 +137,7 @@ Examples:
     alfred dashboard --status     List running dashboard processes
 
 For more help on a command:
-    hermes <command> --help
+    alfred <command> --help
 """
 
 
@@ -321,8 +321,8 @@ def _build_chat_parser(subparsers) -> argparse.ArgumentParser:
 
 def _plugin_command_install_hint(prog: str, value: str):
     """Install command when *value* names a catalog memory plugin that resolves nowhere: its
-    ``hermes <name>`` command exists only once the plugin is installed. Top level only; never raises."""
-    if prog != "hermes" or not re.fullmatch(r"[a-z0-9_-]{1,64}", value):
+    ``alfred <name>`` command exists only once the plugin is installed. Top level only; never raises."""
+    if prog != "alfred" or not re.fullmatch(r"[a-z0-9_-]{1,64}", value):
         return None
     try:
         from plugins.memory import find_provider_dir
@@ -335,7 +335,7 @@ def _plugin_command_install_hint(prog: str, value: str):
 
 
 def _moved_command_hint(prog: str, value: str) -> str:
-    """``alfred auth spotify`` / ``hermes spotify`` after Spotify left core: where the command went."""
+    """``alfred auth spotify`` / ``alfred spotify`` after Spotify left core: where the command went."""
     from hermes_cli.left_core_migration import moved_command_hint
     return moved_command_hint(prog, value)
 
@@ -358,7 +358,7 @@ class HermesArgumentParser(argparse.ArgumentParser):
             install = _plugin_command_install_hint(self.prog, str(value))
             moved = "" if install else _moved_command_hint(self.prog, str(value))
             if install:
-                # A provider that left core (``hermes honcho``) registers its command only once installed.
+                # A provider that left core (``alfred honcho``) registers its command only once installed.
                 lines.append(f"The '{value}' memory plugin is not installed. Install it with: {install}")
             elif moved:
                 lines.append(moved)
@@ -377,7 +377,7 @@ def build_top_level_parser():
     ``subparsers.add_parser(...)``.
     """
     parser = HermesArgumentParser(
-        prog="hermes", description="Alfred - AI assistant with tool-calling capabilities",
+        prog="alfred", description="Alfred - AI assistant with tool-calling capabilities",
         formatter_class=argparse.RawDescriptionHelpFormatter, epilog=_EPILOGUE)
     _add_top_level_flags(parser)
     # metavar keeps the usage line to ``hermes [...] <command>`` instead of the brace list of

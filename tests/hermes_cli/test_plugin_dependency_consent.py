@@ -154,7 +154,7 @@ def test_install_parser_offers_yes_deps_exclusive_with_no_deps():
 
     from hermes_cli.subcommands.plugins import build_plugins_parser
 
-    parser = argparse.ArgumentParser(prog='hermes')
+    parser = argparse.ArgumentParser(prog='alfred')
     build_plugins_parser(parser.add_subparsers(), cmd_plugins=lambda args: None)
     ns = parser.parse_args(['plugins', 'install', 'x', '--yes-deps'])
     assert ns.yes_deps is True

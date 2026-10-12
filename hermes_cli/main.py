@@ -5,7 +5,7 @@ Usage:
     hermes                     # Interactive chat (default)
     alfred chat / gateway / setup / status / cron / doctor / update / ...
     alfred --version           # Show version and update status
-    hermes <cmd> --help        # Per-command help
+    alfred <cmd> --help        # Per-command help
 """
 
 # hermes_bootstrap must be the very first import — it sets up UTF-8 stdio on
@@ -1856,7 +1856,7 @@ def cmd_proxy(args):
 
 
 def _forward_command(name: str, module: str, attr: str, *, forward_return: bool = False, doc: str = ""):
-    """A ``hermes <cmd>`` handler that hands ``args`` to ``<module>.<attr>``.
+    """A ``alfred <cmd>`` handler that hands ``args`` to ``<module>.<attr>``.
 
     Imports at CALL time so fast paths never pay for it and
     ``patch("<module>.<attr>")`` keeps intercepting. ``forward_return``

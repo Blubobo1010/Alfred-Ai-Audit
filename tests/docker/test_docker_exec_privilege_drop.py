@@ -11,7 +11,7 @@ These tests verify:
 
 1. ``docker exec <c> hermes …`` (defaulting to root) gets dropped to the
    hermes user before the real binary runs.
-2. ``docker exec --user hermes <c> hermes …`` (already non-root) short-
+2. ``docker exec --user alfred <c> hermes …`` (already non-root) short-
    circuits and doesn't try to drop again.
 3. Files written under $HERMES_HOME from a ``docker exec`` session land
    as hermes:hermes — the actual user-visible invariant.

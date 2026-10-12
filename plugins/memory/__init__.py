@@ -148,7 +148,7 @@ def find_provider_dir(name: str) -> Optional[Path]:
     """Provider name -> directory: bundled, user, project, then a pip entry point's
     package dir. The entry-point case matters because ``config_schema.py`` and
     ``cli.py`` are read from disk, not imported; without a directory a pip-installed
-    provider silently loses its dashboard panel and ``hermes <provider>`` commands."""
+    provider silently loses its dashboard panel and ``alfred <provider>`` commands."""
     bundled = _MEMORY_PLUGINS_DIR / name
     if bundled.is_dir() and (bundled / "__init__.py").exists():
         return bundled

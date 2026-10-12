@@ -1,6 +1,6 @@
 # Alfred CLI Reference
 
-Live sources when anything looks stale: `alfred --help`, `hermes <command> --help`,
+Live sources when anything looks stale: `alfred --help`, `alfred <command> --help`,
 https://hermes-agent.nousresearch.com/docs/reference/cli-commands
 
 ### Global Flags

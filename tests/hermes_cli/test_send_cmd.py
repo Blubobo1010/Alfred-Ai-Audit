@@ -21,7 +21,7 @@ def _parse(argv):
     """Build the top-level parser and return the parsed args for ``argv``."""
     import argparse
 
-    parser = argparse.ArgumentParser(prog="hermes")
+    parser = argparse.ArgumentParser(prog="alfred")
     subparsers = parser.add_subparsers(dest="command")
     send_cmd.register_send_subparser(subparsers)
     return parser.parse_args(["send", *argv])
@@ -441,7 +441,7 @@ def test_help_and_empty_list_hint_name_the_resolved_home(tmp_path, monkeypatch, 
     home.mkdir(parents=True)
     monkeypatch.setenv("HERMES_HOME", str(home))
 
-    parser = argparse.ArgumentParser(prog="hermes")
+    parser = argparse.ArgumentParser(prog="alfred")
     send_parser = send_cmd.register_send_subparser(parser.add_subparsers(dest="command"))
     help_text = send_parser.format_help()
     assert str(home / ".env") in help_text and str(home / "config.yaml") in help_text

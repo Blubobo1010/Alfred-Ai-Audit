@@ -276,6 +276,6 @@ def _cmd_transcript(last: Optional[int]) -> int:
 
 
 if __name__ == "__main__":  # pragma: no cover
-    parser = argparse.ArgumentParser(prog="hermes meet")
+    parser = argparse.ArgumentParser(prog="alfred meet")
     register_cli(parser)
     sys.exit(meet_command(parser.parse_args()))

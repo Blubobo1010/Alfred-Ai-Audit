@@ -36,7 +36,7 @@ command. A hook with no concrete consumer is speculative infrastructure and is r
   once the plugin dir exists): a later `alfred plugins remove` sticks, a failed install retries.
   Core special cases become `PlatformEntry` seams the plugin sets (`trusted_inbound`,
   `display_tier`, `shared_env_prefixes`), never a name check. A core `alfred auth <name>` login
-  becomes the plugin's own `hermes <name>` command (row field `cli`; the old spelling prints the new one).
+  becomes the plugin's own `alfred <name>` command (row field `cli`; the old spelling prints the new one).
 - **No new third-party-product plugins (June 2026).** Observability/metrics backends, vendor SaaS
   connectors, analytics dashboards, paid-service tie-ins ship as standalone plugin repos
   (`~/.hermes/plugins/` or pip entry point) promoted in Discord `#plugins-skills-and-skins`. Reason:

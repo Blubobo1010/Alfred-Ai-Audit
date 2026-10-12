@@ -148,7 +148,7 @@ def test_cli_board_flag_trumps_worker_env_pin_end_to_end(monkeypatch, tmp_path):
     monkeypatch.setenv("HERMES_KANBAN_DB", str(worker_pinned_db))
     monkeypatch.setenv("HERMES_KANBAN_BOARD", "worker-own-board")
 
-    parser = argparse.ArgumentParser(prog="hermes", add_help=False)
+    parser = argparse.ArgumentParser(prog="alfred", add_help=False)
     sub = parser.add_subparsers(dest="command")
     kc.build_parser(sub)
     args = parser.parse_args(["kanban", "--board", "target-board", "create", "cross-board task"])

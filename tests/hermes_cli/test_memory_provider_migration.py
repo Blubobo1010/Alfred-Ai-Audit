@@ -261,7 +261,7 @@ def test_startup_hint_installs_into_the_profile_that_printed_it(tmp_path, monkey
 
 def test_missing_catalog_provider_recovery_names_the_profile_install_command(tmp_path, monkeypatch, capsys):
     """Offline, lazy installs off, or a failed migration: every surface a user turns to (doctor,
-    ``memory status``, ``memory setup honcho``, ``hermes honcho``) names the one command that installs
+    ``memory status``, ``memory setup honcho``, ``alfred honcho``) names the one command that installs
     the catalog plugin into THIS profile. Real in-tree catalog, nothing installed."""
     from types import SimpleNamespace
     from hermes_cli import doctor_state, memory_setup

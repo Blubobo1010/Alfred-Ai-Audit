@@ -24,6 +24,7 @@ def _profile_name_from_hermes_home(hermes_home) -> str | None:
 
 def _setup_telegram_auto_result():
     """Attempt automatic Telegram bot creation via managed QR onboarding."""
+    return None  # alfred:keep — the managed bot is a Nous Research service; manual BotFather token only
     from hermes_cli.setup import get_hermes_home
     try:
         from hermes_cli.telegram_managed_bot import auto_setup_telegram_bot_result
@@ -121,15 +122,11 @@ def _telegram_allowlist_nudge() -> None:
 
 def _obtain_telegram_token():
     """Return (token, setup_result); auto flow first when chosen, else manual paste."""
-    from hermes_cli.setup import _info, print_error, prompt
-    _info("How would you like to create your Telegram bot?", None,
-          "  [1] Automatic (recommended)",
-          "      Scan a QR code → confirm in Telegram → done.",
-          "      No token copy-paste needed.", None,
-          "  [2] Manual",
-          "      Create a bot via @BotFather yourself and paste the token.", None)
+    from hermes_cli.setup import _info, print_error
+    # alfred:keep — the managed bot is a Nous Research service; Alfred ships BotFather tokens only.
+    _info("Create a bot via @BotFather on Telegram (/newbot) and paste its token.", None)
     token = setup_result = None
-    if prompt("Choice [1/2]", default="1").strip() == "1":
+    if False:
         setup_result = _setup_telegram_auto_result()
         if setup_result:
             token = setup_result.token

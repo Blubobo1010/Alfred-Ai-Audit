@@ -44,7 +44,7 @@ HOST_UNSUPPORTED_CTX_METHODS: dict[str, str] = {
 # Registered in-process only; skipped (with a warning, the plugin still loads) inside the host
 # because the surface they extend does not exist in a server process.
 HOST_SKIPPED_CTX_METHODS: dict[str, str] = {
-    "register_cli_command": "`hermes <command>` subcommands are wired into the local CLI parser",
+    "register_cli_command": "`alfred <command>` subcommands are wired into the local CLI parser",
 }
 
 # Live ctx facades the host reaches by method call; each call returns plain data.

@@ -355,7 +355,7 @@ def role_agent(a: dict, out: Out) -> int:
 
 
 def role_cli(a: dict, out: Out) -> int:
-    """``hermes <argv>``: ``hermes_cli.main`` run as ``__main__``, i.e. ``python -m hermes_cli.main <argv>``."""
+    """``alfred <argv>``: ``hermes_cli.main`` run as ``__main__``, i.e. ``python -m hermes_cli.main <argv>``."""
     import runpy
 
     sys.argv = ["hermes", *a["argv"]]

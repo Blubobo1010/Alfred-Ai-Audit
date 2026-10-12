@@ -297,13 +297,13 @@ def test_spotify_in_use_is_a_stored_login_or_the_toolset(tmp_path, auth_json, co
 
 
 def test_old_spotify_commands_point_at_the_plugin(tmp_path, monkeypatch):
-    """`alfred auth spotify` / `hermes spotify` name the new command and how to get it for this home."""
+    """`alfred auth spotify` / `alfred spotify` name the new command and how to get it for this home."""
     home = _home(tmp_path)
     monkeypatch.setenv("HERMES_HOME", str(home))
     hint = lcm.moved_command_hint("alfred auth", "spotify", "status")
-    assert "`alfred auth status spotify` is now `hermes spotify status`" in hint
+    assert "`alfred auth status spotify` is now `alfred spotify status`" in hint
     assert "plugins install spotify" in hint
-    assert "plugins install spotify" in lcm.moved_command_hint("hermes", "spotify")
+    assert "plugins install spotify" in lcm.moved_command_hint("alfred", "spotify")
     (home / "plugins" / "spotify").mkdir(parents=True)  # installed but disabled
-    assert "plugins enable spotify" in lcm.moved_command_hint("hermes", "spotify")
-    assert lcm.moved_command_hint("hermes", "honcho") == ""
+    assert "plugins enable spotify" in lcm.moved_command_hint("alfred", "spotify")
+    assert lcm.moved_command_hint("alfred", "honcho") == ""

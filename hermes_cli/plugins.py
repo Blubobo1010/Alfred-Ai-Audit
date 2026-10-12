@@ -634,7 +634,7 @@ class PluginContext:
         self, name: str, help: str, setup_fn: Callable, handler_fn: Callable | None = None,
         description: str = "",
     ) -> PluginRegistration:
-        """Register a CLI subcommand (``hermes <name> ...``). *setup_fn* receives the argparse
+        """Register a CLI subcommand (``alfred <name> ...``). *setup_fn* receives the argparse
         subparser; *handler_fn* becomes ``set_defaults(func=...)``."""
         entry = {
             "name": name, "help": help, "description": description, "setup_fn": setup_fn,

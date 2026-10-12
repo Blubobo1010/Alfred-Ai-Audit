@@ -12,7 +12,7 @@ import argparse
 from hermes_cli.subcommands.gui import build_gui_parser
 
 def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="hermes")
+    parser = argparse.ArgumentParser(prog="alfred")
     subparsers = parser.add_subparsers(dest="command")
     build_gui_parser(subparsers, cmd_gui=lambda args: None)
 

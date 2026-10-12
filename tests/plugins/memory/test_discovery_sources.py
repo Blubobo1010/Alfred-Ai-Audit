@@ -132,7 +132,7 @@ def test_entry_point_provider_is_listed(entry_points, tmp_path, monkeypatch):
 
 def test_find_provider_dir_resolves_a_package_entry_point(entry_points, tmp_path, monkeypatch):
     """Without a directory, a pip-installed provider silently loses its
-    dashboard config panel and its `hermes <provider>` subcommands — both are
+    dashboard config panel and its `alfred <provider>` subcommands — both are
     read from disk rather than imported."""
     package = tmp_path / "pipmem_pkg"
     package.mkdir()

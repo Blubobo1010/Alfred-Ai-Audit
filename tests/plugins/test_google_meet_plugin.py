@@ -218,7 +218,7 @@ def test_cli_register_includes_node_subcommand():
     import argparse
     from plugins.google_meet.cli import register_cli
 
-    parser = argparse.ArgumentParser(prog="hermes meet")
+    parser = argparse.ArgumentParser(prog="alfred meet")
     register_cli(parser)
 
     # Parse a known-good node invocation to prove the subtree is wired.

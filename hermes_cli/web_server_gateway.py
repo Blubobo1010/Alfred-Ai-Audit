@@ -362,7 +362,7 @@ def _is_host_gateway_spawn(subcommand: list[str]) -> bool:
 def _profile_action_environment(
     subcommand: list[str], env_overrides: Optional[dict[str, str]] = None,
 ) -> dict[str, str]:
-    """Environment for a detached ``hermes <subcommand>`` action.
+    """Environment for a detached ``alfred <subcommand>`` action.
 
     The dashboard loads its own profile's ``.env`` into process-global ``os.environ``. Copying
     that mapping verbatim into ``alfred -p <other> ...`` lets the named child see the dashboard
@@ -475,7 +475,7 @@ def _action_targets_system_gateway(subcommand: list[str]) -> bool:
 def _spawn_hermes_action(
     subcommand: list[str], name: str, *, env_overrides: Optional[dict[str, str]] = None
 ) -> subprocess.Popen:
-    """Spawn ``hermes <subcommand>`` detached (via ``hermes_cli.main``) and record the handle."""
+    """Spawn ``alfred <subcommand>`` detached (via ``hermes_cli.main``) and record the handle."""
     from hermes_cli.web_server import PROJECT_ROOT
     _ACTION_LOG_DIR.mkdir(parents=True, exist_ok=True)
     log_file = open(_ACTION_LOG_DIR / _ACTION_LOG_FILES[name], "ab", buffering=0)
