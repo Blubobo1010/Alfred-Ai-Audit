@@ -236,8 +236,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
+          # The app's updater (electron/updater/mac-client.ts) sets channel "stable" at runtime, so it asks
+          # for stable-mac.yml; electron-builder only writes latest-mac.yml. Publish both, identical.
+          cp apps/desktop/release/latest-mac.yml apps/desktop/release/stable-mac.yml
           gh release upload "$TAG" apps/desktop/release/*.dmg apps/desktop/release/*.zip \
-            apps/desktop/release/*.blockmap apps/desktop/release/latest-mac.yml --clobber
+            apps/desktop/release/*.blockmap apps/desktop/release/latest-mac.yml \
+            apps/desktop/release/stable-mac.yml --clobber
 
   publish:
     needs: [verify-tag, draft-release, build-macos-arm64]
