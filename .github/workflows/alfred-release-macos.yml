@@ -246,9 +246,15 @@ jobs:
           latest="$(gh api "repos/$GITHUB_REPOSITORY/releases/latest" --jq .tag_name)"
           [ "$latest" = "$TAG" ] || { echo "::error::releases/latest is $latest, expected $TAG"; exit 1; }
           pip install --quiet uv
-          uv run --frozen --no-dev python - <<EOF
+          # GitHub's unauthenticated releases/latest can lag the edit by a minute: retry before failing.
+          for attempt in 1 2 3 4 5 6; do
+            if uv run --frozen --no-dev python - <<EOF
           from hermes_cli.source_releases import resolve_source_release
           tag, sha = resolve_source_release("stable", ["git"], ".")
           assert tag == "$TAG", (tag, sha)
           print("stable channel resolves", tag, sha)
           EOF
+            then exit 0; fi
+            echo "attempt $attempt: stable channel not resolved yet, retrying in 30s"; sleep 30
+          done
+          echo "::error::the updater does not resolve $TAG as the stable release"; exit 1
