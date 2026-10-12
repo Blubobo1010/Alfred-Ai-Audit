@@ -110,7 +110,7 @@ async function submitAndStaple(zipPath, appPath, auth, { run, sleep, log, now })
   }
 
   // Accepted tickets can take time to reach Apple's CloudKit lookup service.
-  const delays = [15000, 30000, 60000, 120000, 120000]
+  const delays = [15000, 30000, 60000, 120000, 120000, 180000, 180000]
   for (let attempt = 0; ; attempt++) {
     try {
       log(`[notarize] stapling attempt ${attempt + 1}/${delays.length + 1}`)
@@ -120,10 +120,16 @@ async function submitAndStaple(zipPath, appPath, auth, { run, sleep, log, now })
     } catch (error) {
       const output = `${error.stdout ?? ''}\n${error.stderr ?? ''}\n${error.message}`
       const missingTicket = error.code === 65 && /CloudKit query[^\n]*Record not found/i.test(output)
-      // alfred:keep — GitHub's macOS runners drop the CloudKit connection now and then (stapler exit 68,
-      // NSURLErrorDomain -1005): the ticket is fine, the lookup just has to be tried again.
+      // alfred:keep — GitHub's macOS runners lose the CloudKit connection (stapler exit 68, NSURLErrorDomain
+      // -1005), at times for hours. The submission was Accepted, so the ticket exists at Apple and
+      // Gatekeeper fetches it online on first launch: retry, then ship unstapled rather than lose the release.
       const lostConnection = error.code === 68 && /NSURLErrorDomain\s+Code=-100\d\b/.test(output)
-      if (!(missingTicket || lostConnection) || attempt === delays.length) throw error
+      if (!(missingTicket || lostConnection)) throw error
+      if (attempt === delays.length) {
+        if (!lostConnection) throw error
+        log(`::warning::[notarize] submission ${id} is Accepted but CloudKit stayed unreachable: shipping without a stapled ticket.`)
+        return
+      }
       log(`[notarize] ${lostConnection ? 'CloudKit connection lost' : 'accepted ticket not available'}. Retrying in ${delays[attempt] / 1000}s.`)
       await sleep(delays[attempt])
     }

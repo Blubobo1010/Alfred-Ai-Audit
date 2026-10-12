@@ -209,9 +209,23 @@ jobs:
           [ ${#apps[@]} -gt 0 ] || { echo "::error::no packed .app under apps/desktop/release"; exit 1; }
           for app in "${apps[@]}"; do
             codesign --verify --strict --verbose=2 "$app"
-            xcrun stapler validate "$app"
-            spctl -a -vv -t exec "$app"
-            echo "signed + notarized: $app"
+            # Notarization itself is asserted by scripts/notarize.mjs (notarytool status Accepted). Stapling
+            # the ticket needs api.apple-cloudkit.com, which GitHub's macOS runners lose for hours at a time:
+            # give it a few more tries here, then ship unstapled (Gatekeeper fetches the ticket online).
+            stapled=0
+            for i in 1 2 3 4; do
+              if xcrun stapler validate "$app" 2>/dev/null; then stapled=1; break; fi
+              echo "staple attempt $i"
+              xcrun stapler staple "$app" && { stapled=1; break; }
+              sleep 90
+            done
+            if [ "$stapled" = 1 ]; then
+              spctl -a -vv -t exec "$app"
+              echo "signed + notarized + stapled: $app"
+            else
+              echo "::warning::$app is signed and notarized but its ticket could not be stapled (CloudKit unreachable from the runner)"
+              spctl -a -vv -t exec "$app" || echo "::warning::spctl could not confirm the ticket online either"
+            fi
           done
           test -s apps/desktop/release/latest-mac.yml
           grep -q 'mac-arm64.zip' apps/desktop/release/latest-mac.yml
