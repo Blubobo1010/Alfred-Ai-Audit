@@ -10,5 +10,10 @@ environment (network, Docker, macOS-specific launchers, WhatsApp bridge, git upd
 | `tests/scripts/test_release_tags.py` | fixture remaps `https://github.com/NousResearch/` with `pushInsteadOf`; the rebrand rewrites the full repo URL but not the owner-only prefix | upstream release plumbing, not used by Alfred |
 | `tests/scripts/test_termux_build_driver.py` | Termux (Android) release driver expects the upstream repository and release assets | Termux builds are not shipped by Alfred |
 
+Skipped by a codemod (`neutralise_brand_fixtures`), not failing: in
+`tests/hermes_cli/test_source_release_channels.py`, `test_selected_draft_never_falls_back_to_other_tags` and
+`test_origin_tag_cannot_substitute_a_fork_commit` assume the official repository publishes a release
+pointer on hermes-assets; Alfred publishes none and resolves its stable release from GitHub's latest.
+
 Removed from the tree (they test the upstream GitHub workflows or the docs site, both replaced):
 `tests/ci/`, `tests/website/`, `tests/scripts/test_dispatch_log.py`.
