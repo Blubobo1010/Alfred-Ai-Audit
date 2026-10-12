@@ -120,8 +120,11 @@ async function submitAndStaple(zipPath, appPath, auth, { run, sleep, log, now })
     } catch (error) {
       const output = `${error.stdout ?? ''}\n${error.stderr ?? ''}\n${error.message}`
       const missingTicket = error.code === 65 && /CloudKit query[^\n]*Record not found/i.test(output)
-      if (!missingTicket || attempt === delays.length) throw error
-      log(`[notarize] accepted ticket not available. Retrying in ${delays[attempt] / 1000}s.`)
+      // alfred:keep — GitHub's macOS runners drop the CloudKit connection now and then (stapler exit 68,
+      // NSURLErrorDomain -1005): the ticket is fine, the lookup just has to be tried again.
+      const lostConnection = error.code === 68 && /NSURLErrorDomain\s+Code=-100\d\b/.test(output)
+      if (!(missingTicket || lostConnection) || attempt === delays.length) throw error
+      log(`[notarize] ${lostConnection ? 'CloudKit connection lost' : 'accepted ticket not available'}. Retrying in ${delays[attempt] / 1000}s.`)
       await sleep(delays[attempt])
     }
   }
