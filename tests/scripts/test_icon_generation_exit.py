@@ -116,7 +116,7 @@ def test_icon_portrait_sits_on_the_plain_tile_inside_the_outer_silhouette(monkey
     geometry = tuple(float(original.attrib[key]) for key in ("x", "y", "width", "height", "rx"))
     assert tuple(float(tile.attrib[key]) for key in ("x", "y", "width", "height", "rx")) == geometry
     assert tile.get("stroke") is None and tile.get("stroke-width") is None
-    expected_fill = (colors or ("#ffffff", module.DARK_HEX))[appearance == "dark"]
+    expected_fill = (colors or (module.PLATE_LIGHT, module.PLATE_DARK))[appearance == "dark"]  # alfred:keep
     assert tile.get("fill") == expected_fill
     clip = result.find("svg:defs/svg:clipPath/svg:rect", ns)
     assert clip is not None

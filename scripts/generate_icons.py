@@ -122,6 +122,8 @@ _CANARY_TAG_RE = re.compile(
 
 # The nous dark background (#0d1117) — fixed dark tile/background everywhere.
 DARK_HEX = "#0d1117"
+PLATE_LIGHT = "#2F6B4F"  # alfred:keep — stable app-icon plate behind the black mark
+PLATE_DARK = "#14332A"  # alfred:keep — stable app-icon plate behind the white mark
 DARK_RGB = (13, 17, 23)
 BORDER_FRACTION = 0.0407747197
 # The brand ring is switched off everywhere (tiles and the macOS 26 layers):
@@ -359,9 +361,9 @@ def girl_layer(
 def background_inner(art: IconArt, name: str) -> tuple[str, int, int]:
     """Inner content + (width, height) of a background SVG asset."""
     text = (art.backgrounds / name).read_text(encoding="utf-8-sig")
-    if art.colors:
-        text = text.replace('fill="#ffffff"', f'fill="{art.colors[0]}"')
-        text = text.replace(f'fill="{DARK_HEX}"', f'fill="{art.colors[1]}"')
+    light, dark = art.colors or (PLATE_LIGHT, PLATE_DARK)  # alfred:keep
+    text = text.replace('fill="#ffffff"', f'fill="{light}"')
+    text = text.replace(f'fill="{DARK_HEX}"', f'fill="{dark}"')
     root = ET.fromstring(text)
     m = re.fullmatch(r"0 0 (\d+(?:\.\d+)?) (\d+(?:\.\d+)?)", root.get("viewBox", ""))
     assert m, f"cannot parse viewBox of {name}"
@@ -686,7 +688,7 @@ def icon_manifest(art: IconArt) -> str:
     """icon.json: flat brand fill (flavoured for canary/commit builds), the
     art layer (and ring, when enabled) with light/dark variants, and the mono
     layer that replaces them under Clear and Tinted."""
-    light, dark = art.colors or ("#ffffff", DARK_HEX)
+    light, dark = art.colors or (PLATE_LIGHT, PLATE_DARK)  # alfred:keep
 
     def layer(name: str) -> dict:
         # No fixed "image-name": actool treats it as the image for every

@@ -320,7 +320,8 @@ def test_layered_macos_icon_mono_layer_and_flavor_stays_in_the_fill(generate, mo
         assert changed is not None and changed[3] <= canvas * 0.25 + 3, (name, changed)
 
     light, dark = manifest_fills(stable)
-    assert light == (1.0, 1.0, 1.0) and max(dark) < 0.1
+    plate = tuple(int(module.PLATE_LIGHT.lstrip("#")[i:i + 2], 16) / 255 for i in (0, 2, 4))  # alfred:keep
+    assert all(abs(a - b) < 0.01 for a, b in zip(light, plate)) and max(dark) < 0.25
     for package, low, high in ((canary, 0.10, 0.18), (commit, -0.05, 0.05)):
         light, dark = manifest_fills(package)
         for fill, dark_fill in ((light, False), (dark, True)):
@@ -378,6 +379,7 @@ def test_msix_logos_resolve_every_slot_windows_draws(generate, monkeypatch):
         light = Image.open(appx / f"Square44x44Logo.targetsize-{size}_altform-lightunplated.png").convert("RGBA")
         assert plain.size == dark.size == light.size == (size, size)
         edge = (max(1, size // 24), size // 2)  # on the plate, left of the girl
-        assert light.getpixel(edge)[:3] == plain.getpixel(edge)[:3] == light_plate == (255, 255, 255), size
+        plate_rgb = tuple(int(module.PLATE_LIGHT.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))  # alfred:keep
+        assert light.getpixel(edge)[:3] == plain.getpixel(edge)[:3] == light_plate == plate_rgb, size
         dark_plate = dark.getpixel(edge)
         assert dark_plate[3] == 255 and max(dark_plate[:3]) < 60, (size, dark_plate)

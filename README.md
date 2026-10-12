@@ -1,5 +1,7 @@
 # Alfred
 
+<p align="center"><img src="assets/alfred-mascot.png" width="220" alt="Alfred, the butler dog"></p>
+
 Alfred is a personal AI agent that runs the same core across a CLI, a terminal UI, a native
 macOS desktop app and messaging gateways (Telegram, WhatsApp, Discord, Slack and more). It
 learns across sessions, delegates to sub-agents, runs scheduled jobs and is extended through
