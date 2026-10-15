@@ -122,8 +122,8 @@ _CANARY_TAG_RE = re.compile(
 
 # The nous dark background (#0d1117) — fixed dark tile/background everywhere.
 DARK_HEX = "#0d1117"
-PLATE_LIGHT = "#2F6B4F"  # alfred:keep — stable app-icon plate behind the black mark
-PLATE_DARK = "#14332A"  # alfred:keep — stable app-icon plate behind the white mark
+PLATE_LIGHT = "#FD5E15"  # alfred:keep — stable app-icon plate behind the black mark
+PLATE_DARK = "#3A120A"  # alfred:keep — stable app-icon plate behind the white mark
 DARK_RGB = (13, 17, 23)
 BORDER_FRACTION = 0.0407747197
 # The brand ring is switched off everywhere (tiles and the macOS 26 layers):
@@ -996,6 +996,145 @@ def cmd_check(source: Path, out: Path) -> int:
     for line in problems:
         print(f"  - {line}")
     return 1
+
+
+# ─── Alfred: full-colour raster art ─────────────────────────────────────────
+# alfred-build codemod C0151. When assets/alfred-icon-art.png exists (a colour bust on transparency, cut straight
+# at the bottom) every target composed from the masters shows it instead of the stencil: over a gradient plate on
+# stable builds, over the flavour colour on canary and commit builds, with a soft halo behind the head. The Icon
+# Composer art layer carries halo and bust; its fill stays solid (PLATE_LIGHT / PLATE_DARK or the flavour), so the
+# flavour still lives in the fill. Without the file nothing changes: each function hands over to upstream's.
+ALFRED_ART = "alfred-icon-art.png"  # alfred:keep
+ALFRED_GRADIENT = ("#FC3F2A", "#FF7D00")  # alfred:keep — stable light plate, left to right
+ALFRED_HALO = ("#FEB888", "#6B2A14")  # alfred:keep — behind the head on the light / dark plate
+ALFRED_HALO_BOX = (0.506, 0.557, 0.389, 0.03)  # alfred:keep — centre x, centre y, radius, soft edge (tile widths)
+ALFRED_ART_HEIGHT = 0.95  # alfred:keep — bust height in tile heights; its straight edge sits on the tile's bottom
+ALFRED_RENDER_SIZE = 1024  # alfred:keep — resvg does not average an image it shrinks: render here, then resample
+_ALFRED_ART_CACHE: dict = {}
+
+
+def _alfred_art(art) -> tuple | None:
+    """(data URI, width, height) of the colour bust, or None in stencil mode (no file, or a test double)."""
+    source = getattr(art, "source", None)
+    path = Path(source) / "assets" / ALFRED_ART if source is not None else None
+    if path is None or not path.is_file():
+        return None
+    if path not in _ALFRED_ART_CACHE:
+        import base64
+
+        with Image.open(path) as im:
+            width, height = im.size
+        _ALFRED_ART_CACHE[path] = (f"data:image/png;base64,{base64.b64encode(path.read_bytes()).decode('ascii')}",
+                                   width, height)
+    return _ALFRED_ART_CACHE[path]
+
+
+def _alfred_layers(art, box: tuple, *, dark: bool, halo: bool = True) -> str:
+    """Halo and bust in `box` (x, y, width, height): the bust centred, its bottom edge just past the box's."""
+    uri, width, height = _alfred_art(art)
+    x, y, w, h = box
+    parts = []
+    if halo:
+        cx, cy, radius, soft = ALFRED_HALO_BOX
+        colour, ident = ALFRED_HALO[dark], "alfred-halo-dark" if dark else "alfred-halo"
+        cx, cy, radius, inner = x + w * cx, y + h * cy, w * radius, 1 - soft / radius
+        parts.append(
+            f'<defs><radialGradient id="{ident}" gradientUnits="userSpaceOnUse" cx="{cx:.2f}" cy="{cy:.2f}" '
+            f'r="{radius:.2f}"><stop offset="{inner:.4f}" stop-color="{colour}"/><stop offset="1" '
+            f'stop-color="{colour}" stop-opacity="0"/></radialGradient></defs>'
+            f'<circle cx="{cx:.2f}" cy="{cy:.2f}" r="{radius:.2f}" fill="url(#{ident})"/>'
+        )
+    bust_h = h * ALFRED_ART_HEIGHT
+    bust_w = bust_h * width / height
+    parts.append(
+        f'<image x="{x + (w - bust_w) / 2:.2f}" y="{y + h - bust_h + h * 0.004:.2f}" width="{bust_w:.2f}" '
+        f'height="{bust_h:.2f}" preserveAspectRatio="none" href="{uri}"/>'
+    )
+    return "".join(parts)
+
+
+_upstream_compose_svg = compose_svg
+
+
+def compose_svg(art: IconArt, girl: str, bg: str, *, badge: bool = True) -> str:
+    if _alfred_art(art) is None:
+        return _upstream_compose_svg(art, girl, bg, badge=badge)
+    dark = girl == "white"
+    inner, w, h = background_inner(art, bg)
+    background = ET.fromstring(f"<g>{inner}</g>")
+    tile = background.find("{http://www.w3.org/2000/svg}rect")
+    assert tile is not None, f"no background rectangle in {bg}"
+    geometry = {key: float(tile.attrib[key]) for key in ("x", "y", "width", "height", "rx")}
+    silhouette = ET.tostring(ET.Element("rect", {key: str(value) for key, value in geometry.items()}), encoding="unicode")
+    defs = f'<clipPath id="icon-silhouette">{silhouette}</clipPath>'
+    if not art.colors and not dark:  # stable light plate: the brand gradient
+        tile.set("fill", "url(#alfred-plate)")
+        left, right = ALFRED_GRADIENT
+        defs += (f'<linearGradient id="alfred-plate" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{left}"/>'
+                 f'<stop offset="1" stop-color="{right}"/></linearGradient>')
+    inner = "".join(ET.tostring(child, encoding="unicode") for child in background)
+    box = (geometry["x"], geometry["y"], geometry["width"], geometry["height"])
+    # The badge goes in front of the bust: unlike the stencil, the bust fills the top of the tile.
+    badge_svg = commit_layer(art.commit, bg) if art.commit and badge else ""
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {w} {h}">\n'
+        f"  <defs>{defs}</defs>\n"
+        f"  {inner.strip()}\n"
+        f'  <g clip-path="url(#icon-silhouette)">{_alfred_layers(art, box, dark=dark)}{badge_svg}</g>\n'
+        "</svg>\n"
+    )
+
+
+_upstream_icon_art_svg = icon_art_svg
+
+
+def icon_art_svg(art: IconArt, girl: str) -> str:
+    if _alfred_art(art) is None:
+        return _upstream_icon_art_svg(art, girl)
+    canvas = (0, 0, ICON_CANVAS, ICON_CANVAS)
+    badge = commit_layer(art.commit, "icon.icon") if art.commit else ""
+    return (
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {ICON_CANVAS} {ICON_CANVAS}">\n'
+        f"  {_alfred_layers(art, canvas, dark=girl == 'white')}{badge}\n"
+        "</svg>\n"
+    )
+
+
+_upstream_icon_mono_image = icon_mono_image
+
+
+def icon_mono_image(art: IconArt) -> Image.Image:
+    """Clear/Tinted: the bust's luminance (no halo), never darker than upstream's ink tone."""
+    if _alfred_art(art) is None:
+        return _upstream_icon_mono_image(art)
+    canvas = (0, 0, ICON_CANVAS, ICON_CANVAS)
+    svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {ICON_CANVAS} {ICON_CANVAS}">'
+           f"{_alfred_layers(art, canvas, dark=False, halo=False)}</svg>")
+    bust = render_svg(svg, ICON_CANVAS)
+    floor = round(MONO_INK[0] * 255)
+    grey = bust.convert("L").point(lambda v: max(floor, v))
+    return Image.merge("RGBA", (grey, grey, grey, bust.getchannel("A")))
+
+
+_upstream_render = render
+_upstream_render_svg = render_svg
+
+
+def render(master: str, size: int, *, background: str | None = None) -> Image.Image:
+    if size >= ALFRED_RENDER_SIZE or "data:image/png;base64," not in master:
+        return _upstream_render(master, size, background=background)
+    big = _upstream_render(master, ALFRED_RENDER_SIZE, background=background)
+    return big.resize((size, size), Image.LANCZOS)
+
+
+def render_svg(svg: str, size: int | tuple[int, int]) -> Image.Image:
+    w, h = (size, size) if isinstance(size, int) else size
+    if max(w, h) >= ALFRED_RENDER_SIZE or "data:image/png;base64," not in svg:
+        return _upstream_render_svg(svg, size)
+    scale = ALFRED_RENDER_SIZE / max(w, h)
+    big = _upstream_render_svg(svg, (round(w * scale), round(h * scale)))
+    return big.resize((w, h), Image.LANCZOS)
+
 
 
 def main() -> None:
