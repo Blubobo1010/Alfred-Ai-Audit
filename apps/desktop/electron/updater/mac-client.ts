@@ -1,4 +1,6 @@
-import { autoUpdater as nativeUpdater } from 'electron'
+import path from 'node:path'
+
+import { app } from 'electron'
 import electronUpdater from 'electron-updater'
 import { SemVer } from 'semver'
 
@@ -7,9 +9,12 @@ import feedContract from '../../update-feed.cjs'
 import type { ChannelTarget } from './channel'
 import { verifyChannelDownload } from './channel-native'
 import { channelPublicBase } from './channel-protocol'
-import { MacStrategy, type MacStrategyDeps, prepareMacInstall } from './mac'
+import { MacStrategy, type MacStrategyDeps } from './mac'
+import { createMacBundleInstaller, SWAP_LOG_FILENAME } from './mac-bundle-install'
+import { registerUpdateRelaunch } from './relaunch'
 
-export interface MacClientDeps extends Omit<MacStrategyDeps, 'updater' | 'prepareInstall'> {
+export interface MacClientDeps
+  extends Omit<MacStrategyDeps, 'updater' | 'prepareInstall' | 'preflightInstall' | 'relaunch' | 'install'> {
   light: boolean
   feedBaseUrl: string
   /** Exact per-build metadata, not a moving channel directory. */
@@ -73,5 +78,32 @@ export function createMacStrategy(deps: MacClientDeps): MacStrategy {
     updater.setFeedURL({ provider: 'generic', url: `${base}/${legacy.directory}/`, channel })
   }
 
-  return new MacStrategy({ ...deps, updater, prepareInstall: () => prepareMacInstall(nativeUpdater) })
+  // Squirrel.Mac reads the whole update zip into memory and crashes past 1 GiB (alfred C0152): the app stages
+  // the zip itself and its own signed binary swaps the bundle once this process has quit.
+  const installer = createMacBundleInstaller({
+    execPath: process.execPath,
+    stagingRoot: (): string => path.join(app.getPath('userData'), 'updates'),
+    logFile: (): string => path.join(app.getPath('logs'), SWAP_LOG_FILENAME),
+    productName: 'Alfred',
+    releasesUrl: 'https://github.com/Blubobo1010/Alfred-Ai-Audit/releases/latest',
+    log: deps.log,
+    emitProgress: deps.emitProgress
+  })
+
+  return new MacStrategy({
+    ...deps,
+    updater,
+    preflightInstall: () => installer.preflight(),
+    prepareInstall: (files: string[], version: string) => installer.stage(files, version),
+    relaunch: {
+      register: () => registerUpdateRelaunch(app, deps.appVersion, { relaunch: () => installer.startSwap() }),
+      onManual: (): never => {
+        throw new Error('The macOS update helper did not start')
+      }
+    },
+    install: (): void => {
+      installer.assertSwapRunning()
+      app.quit()
+    }
+  })
 }

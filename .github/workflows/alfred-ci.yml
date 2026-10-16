@@ -131,6 +131,12 @@ jobs:
       - name: Desktop typecheck
         working-directory: apps/desktop
         run: npx tsc --build
+      # tsconfig.json leaves out electron/; the main process has its own project.
+      - name: Desktop main-process typecheck
+        working-directory: apps/desktop
+        run: npx tsc -p tsconfig.electron.json --noEmit
       - name: Desktop i18n + updater tests
         working-directory: apps/desktop
-        run: npx vitest run src/i18n/catalog-completeness.test.ts electron/updater/mac-client.test.ts
+        run: >-
+          npx vitest run src/i18n/catalog-completeness.test.ts electron/updater/mac-client.test.ts
+          electron/updater/mac.test.ts electron/updater/mac-bundle-install.test.ts

@@ -1,6 +1,7 @@
 import type { AppUpdater } from 'electron-updater'
 
 import { applyPackagedHandoff } from './packaged-handoff'
+import type { RelaunchRegistration } from './relaunch'
 
 import type { UpdaterApplyResultWire, UpdaterStatusWire, UpdaterStrategy } from './index'
 
@@ -10,8 +11,15 @@ export interface MacStrategyDeps {
   expectedVersion?: string
   verifyDownload?: (files: string[]) => Promise<void>
   appVersion: string
-  /** Squirrel verifies the signed app before any backend is stopped. */
-  prepareInstall: () => Promise<void>
+  /** Unpacks and verifies the signed app before any backend is stopped. Squirrel.Mac never runs: it reads
+   * the whole update zip into memory and crashes past 1 GiB (alfred C0152). */
+  prepareInstall: (files: string[], version: string) => Promise<void>
+  /** Refuses, before the download, an install this copy cannot finish. */
+  preflightInstall: () => Promise<void>
+  /** Starts the swap helper; it waits for this process to exit. */
+  relaunch: { register: () => Promise<RelaunchRegistration>; onManual: () => void }
+  /** Quits so the helper can replace the bundle. */
+  install: () => void
   beforeInstall: () => Promise<void>
   onInstallFailure: () => Promise<void>
   emitProgress: (payload: { stage: string; message: string; percent: number | null }) => void
@@ -71,7 +79,8 @@ export class MacStrategy implements UpdaterStrategy {
         {
           teardown: this.deps.beforeInstall,
           restore: this.deps.onInstallFailure,
-          emitProgress: this.deps.emitProgress
+          emitProgress: this.deps.emitProgress,
+          relaunch: this.deps.relaunch
         },
         async (stop: () => Promise<void>): Promise<UpdaterApplyResultWire> => {
           const status = await this.checkRelease()
@@ -80,17 +89,18 @@ export class MacStrategy implements UpdaterStrategy {
             return { ok: true, mechanism: this.mechanism }
           }
 
+          await this.deps.preflightInstall()
           const files = await this.deps.updater.downloadUpdate()
           await this.deps.verifyDownload?.(files)
           this.deps.emitProgress({ stage: 'prepare', message: 'Verifying the signed macOS update.', percent: null })
-          await this.deps.prepareInstall()
+          await this.deps.prepareInstall(files, (status.latestTag ?? '').replace(/^v/, ''))
           await stop()
           this.deps.emitProgress({
             stage: 'restart',
             message: 'Restarting Alfred to install the update.',
             percent: 100
           })
-          this.deps.updater.quitAndInstall()
+          this.deps.install()
 
           return { ok: true, bundled: true, handedOff: true, mechanism: this.mechanism }
         }

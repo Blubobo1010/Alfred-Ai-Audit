@@ -32,6 +32,14 @@ function fixture() {
     prepareInstall: vi.fn(async () => {
       events.push('verify')
     }),
+    preflightInstall: vi.fn(async (): Promise<void> => undefined),
+    relaunch: {
+      register: vi.fn(async () => ({ automatic: true, cancel: vi.fn(async (): Promise<void> => undefined) })),
+      onManual: vi.fn()
+    },
+    install: vi.fn((): void => {
+      events.push('install')
+    }),
     beforeInstall: vi.fn(async () => {
       events.push('stop')
     }),
@@ -98,7 +106,7 @@ describe('macOS strategy', () => {
 
   it('restores the backend if install handoff throws', async () => {
     const { deps, strategy, events } = fixture()
-    vi.mocked(deps.updater.quitAndInstall).mockImplementation(() => {
+    vi.mocked(deps.install).mockImplementation(() => {
       throw new Error('handoff failed')
     })
     await expect(strategy.apply()).rejects.toThrow('handoff failed')
@@ -109,7 +117,7 @@ describe('macOS strategy', () => {
     const { deps, strategy, emitter } = fixture()
     const handoff = new Error('native handoff failed')
     const recovery = new Error('backend recovery failed')
-    vi.mocked(deps.updater.quitAndInstall).mockImplementation((): never => {
+    vi.mocked(deps.install).mockImplementation((): never => {
       throw handoff
     })
     vi.mocked(deps.onInstallFailure).mockRejectedValue(recovery)
