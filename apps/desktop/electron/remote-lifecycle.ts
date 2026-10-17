@@ -264,7 +264,7 @@ async function locateHermes(ssh, remoteHermesPath) {
 
   const err: any = new Error(
     'Alfred is not installed on the remote host (could not find a `alfred` executable). ' +
-      'Install it on the remote with:  curl -fsSL https://hermes-agent.nousresearch.com/install.sh | sh  ' +
+      'Install it on the remote with:  curl -fsSL https://raw.githubusercontent.com/Blubobo1010/Alfred-Ai-Audit/main/scripts/install.sh | bash  ' +
       '— or set the Alfred path explicitly in the SSH connection settings.'
   )
 

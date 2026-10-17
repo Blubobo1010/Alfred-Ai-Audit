@@ -1315,7 +1315,7 @@ export const ruOverrides = {
       sshErrHostKey:
         'Ключ хоста ИЗМЕНИЛСЯ с последнего подключения. Убедитесь, что это ожидаемо, затем выполните ssh-keygen -R <host> и переподключитесь.',
       sshErrNotInstalled:
-        'Alfred не установлен на удалённой машине. Установите его там (curl -fsSL https://hermes-agent.nousresearch.com/install.sh | sh) или задайте путь к Alfred.',
+        'Alfred не установлен на удалённой машине. Установите его там (curl -fsSL https://raw.githubusercontent.com/Blubobo1010/Alfred-Ai-Audit/main/scripts/install.sh | bash) или задайте путь к Alfred.',
       sshErrPlatform:
         'Неподдерживаемая удалённая платформа. SSH-режим Alfred Desktop поддерживает удалённые хосты Linux, macOS и Windows.',
       sshErrTimeout: 'SSH-соединение истекло. Хост может быть недоступен или «спит».',

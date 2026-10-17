@@ -1877,7 +1877,7 @@ export const esOverrides = {
       sshErrHostKey:
         'La clave del host CAMBIÓ desde la última conexión. Confirma que sea un cambio esperado, ejecuta ssh-keygen -R <host> y vuelve a conectar.',
       sshErrNotInstalled:
-        'Alfred no está instalado en el host remoto. Instálalo allí (curl -fsSL https://hermes-agent.nousresearch.com/install.sh | sh) o indica la ruta de Alfred.',
+        'Alfred no está instalado en el host remoto. Instálalo allí (curl -fsSL https://raw.githubusercontent.com/Blubobo1010/Alfred-Ai-Audit/main/scripts/install.sh | bash) o indica la ruta de Alfred.',
       sshErrPlatform:
         'Plataforma remota no compatible. El modo SSH de Alfred Desktop admite hosts remotos Linux, macOS y Windows.',
       sshErrTimeout: 'La conexión SSH agotó el tiempo de espera. Es posible que el host no responda o esté en reposo.',

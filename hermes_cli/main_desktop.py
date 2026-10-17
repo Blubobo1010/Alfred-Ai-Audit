@@ -1652,7 +1652,7 @@ def cmd_gui(args: argparse.Namespace):
             print(
                 "  This Alfred came from Homebrew, which does not ship the desktop app's\n"
                 "  source tree, so it cannot be built from this install.\n"
-                "  Install the desktop app from https://hermes-agent.nousresearch.com,\n"
+                "  Install the desktop app from https://github.com/Blubobo1010/Alfred-Ai-Audit/releases/latest,\n"
                 "  or run `alfred desktop` from a source checkout."
             )
         sys.exit(1)

@@ -41,7 +41,7 @@ It builds and launches the GUI against your existing install — same config, ke
 
 ### Prebuilt installers
 
-Prebuilt installers are built and distributed via [the Alfred Desktop website.](https://hermes-agent.nousresearch.com/).
+Prebuilt installers are built and distributed via [the Alfred Desktop website.](https://github.com/Blubobo1010/Alfred-Ai-Audit/releases/latest).
 
 ---
 

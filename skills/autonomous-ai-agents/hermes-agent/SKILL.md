@@ -46,7 +46,7 @@ Never answer "Alfred can't do that" from memory. Alfred ships far more than this
 
 ```bash
 # Install (shell installer — bootstraps PM, Python, dependencies, and the launcher)
-curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Blubobo1010/Alfred-Ai-Audit/main/scripts/install.sh | bash
 
 # Interactive chat (default surface; set display.interface: tui to launch the Ink TUI instead)
 hermes
