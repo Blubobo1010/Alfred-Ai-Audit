@@ -14,12 +14,12 @@ npm install -g byterover-cli
 ## Setup
 
 ```bash
-alfred memory setup    # select "byterover"
+plushuman memory setup    # select "byterover"
 ```
 
 Or manually:
 ```bash
-alfred config set memory.provider byterover
+plushuman config set memory.provider byterover
 # Optional cloud sync:
 echo "BRV_API_KEY=your-key" >> ~/.hermes/.env
 ```

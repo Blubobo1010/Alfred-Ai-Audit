@@ -14,7 +14,7 @@ from hermes_cli.completion import _walk, generate_bash, generate_fish
 
 def _make_parser() -> argparse.ArgumentParser:
     """Build a minimal parser that mirrors the real hermes structure."""
-    p = argparse.ArgumentParser(prog="alfred")
+    p = argparse.ArgumentParser(prog="plushuman")
     p.add_argument("--version", "-V", action="store_true")
     p.add_argument("-p", "--profile", help="Profile name")
     sub = p.add_subparsers(dest="command")
@@ -102,7 +102,7 @@ class TestProfileCompletion:
 
 
     def test_bash_profile_actions_complete_profile_names(self):
-        """After 'alfred profile use', complete with profile names."""
+        """After 'plushuman profile use', complete with profile names."""
         out = generate_bash(_make_parser())
         # The profile case should have _hermes_profiles for name-taking actions
         lines = out.split("\n")

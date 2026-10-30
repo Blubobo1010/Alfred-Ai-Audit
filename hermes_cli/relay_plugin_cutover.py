@@ -1,4 +1,4 @@
-"""Shared migration guards for Alfred' native NeMo Relay ownership."""
+"""Shared migration guards for +Human' native NeMo Relay ownership."""
 
 from __future__ import annotations
 

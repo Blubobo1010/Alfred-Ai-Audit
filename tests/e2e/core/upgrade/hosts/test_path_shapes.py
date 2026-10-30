@@ -8,9 +8,9 @@ Failure class: PATH shapes. Two things users report once the install "works":
   installer must not edit the startup files again;
 * a node/npm the user already has, earlier on PATH, must never stand in for the managed toolchain:
   not for the TUI/web builds and not for an MCP server configured with a bare ``command: node``.
-  Alfred only ever runs its own packaged node/npm; when such a server's native addon was built by
-  the user's Node it fails under Alfred's, and that failure must reach the user with the remedy
-  (rebuild it under Alfred's Node) instead of a silent park (#124264).
+  +Human only ever runs its own packaged node/npm; when such a server's native addon was built by
+  the user's Node it fails under +Human's, and that failure must reach the user with the remedy
+  (rebuild it under +Human's Node) instead of a silent park (#124264).
 
 One real install through HEAD's ``scripts/install.sh`` into a HOME carrying Fedora's stock
 ``.bashrc`` / ``.bash_profile``, with a user-owned ``node``/``npm`` first on PATH. That node
@@ -118,7 +118,7 @@ def _user_toolchain(root: Path) -> dict[str, Path]:
             f"  --version|-v) echo {ver}; exit 0 ;;\n"
             f"{serve}"
             "esac\n"
-            f'echo "user {name} {ver}: refusing to run \'$*\' (Alfred must use its managed toolchain here)" >&2\n'
+            f'echo "user {name} {ver}: refusing to run \'$*\' (+Human must use its managed toolchain here)" >&2\n'
             "exit 1\n", encoding="utf-8")
         p.chmod(0o755)
     return {"bin": sysbin, "calls": calls, "server_js": server_js, "marker": marker}
@@ -205,13 +205,13 @@ def test_mcp_server_runs_on_the_managed_node_and_an_abi_mismatch_names_the_rebui
     ran_js = [c for c in _calls(world)[before:] if c.startswith("node ") and c.endswith("server.js")]
     managed = user["marker"].read_text(encoding="utf-8").split()[0] if user["marker"].exists() else ""
     assert I.TRACEBACK not in out, I.describe(probe)
-    assert not ran_js, f"the user's node ({USER_NODE_VERSION}) ran the MCP server instead of Alfred's: {ran_js}"
+    assert not ran_js, f"the user's node ({USER_NODE_VERSION}) ran the MCP server instead of +Human's: {ran_js}"
     assert managed.startswith(str(sb.home / ".hermes")), (
-        f"the MCP server did not run on Alfred's managed node (ran on {managed!r}):\n" + I.describe(probe))
-    assert probe.returncode == 1, "`alfred mcp test` passed for a server that died at startup:\n" + I.describe(probe)
-    # The failure reaches the user with the remedy: drop the npx entry, or rebuild with Alfred's own npm
-    # under Alfred's own node (never "point the server at your node").
+        f"the MCP server did not run on +Human's managed node (ran on {managed!r}):\n" + I.describe(probe))
+    assert probe.returncode == 1, "`plushuman mcp test` passed for a server that died at startup:\n" + I.describe(probe)
+    # The failure reaches the user with the remedy: drop the npx entry, or rebuild with +Human's own npm
+    # under +Human's own node (never "point the server at your node").
     assert "NODE_MODULE_VERSION 127" in out and f"rm -rf {sb.home / NPX_ENTRY}" in out, (
         "the ABI mismatch was not surfaced with the npx-cache remedy:\n" + I.describe(probe))
     assert f"PATH={Path(managed).parent}:" in out and " rebuild better-sqlite3 --prefix " in out, (
-        "the rebuild command does not run Alfred's npm under Alfred's node:\n" + I.describe(probe))
+        "the rebuild command does not run +Human's npm under +Human's node:\n" + I.describe(probe))

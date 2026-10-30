@@ -426,7 +426,7 @@ def auto_prune_from_config() -> dict[str, object]:
     """``maybe_auto_prune_checkpoints`` driven by the ``checkpoints:`` config section — the one
     startup/housekeeping entry point for the CLI and the gateway. ``delete_orphans`` is never
     honoured unattended: a missing workdir is ambiguous (deleted vs. unmounted share); orphan
-    cleanup is only via explicit ``alfred checkpoints prune``. Never raises."""
+    cleanup is only via explicit ``plushuman checkpoints prune``. Never raises."""
     try:
         from hermes_cli.config import load_config
         cfg = load_config().get("checkpoints") or {}
@@ -466,15 +466,15 @@ def checkpoint_footprint_notice() -> Optional[str]:
         from hermes_cli.sizefmt import format_bytes
         return (f"Filesystem checkpoints (/rollback) are on: {format_bytes(size)} across "
                 f"{project_count} project(s), above the {cap_mb} MB cap (one snapshot per project is "
-                f"always kept). Not using /rollback? `alfred config set checkpoints.enabled false` then "
-                f"`alfred checkpoints clear`; or lower `checkpoints.retention_days`.")
+                f"always kept). Not using /rollback? `plushuman config set checkpoints.enabled false` then "
+                f"`plushuman checkpoints clear`; or lower `checkpoints.retention_days`.")
     except Exception as exc:
         logger.debug("checkpoint footprint notice skipped: %s", exc)
         return None
 
 
 # ---------------------------------------------------------------------------
-# Public helpers for `alfred checkpoints` CLI
+# Public helpers for `plushuman checkpoints` CLI
 # ---------------------------------------------------------------------------
 
 def store_status(checkpoint_base: Optional[Path] = None) -> dict:

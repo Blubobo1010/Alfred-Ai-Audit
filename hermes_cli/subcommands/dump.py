@@ -1,4 +1,4 @@
-"""``alfred dump`` subcommand parser."""
+"""``plushuman dump`` subcommand parser."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ def build_dump_parser(subparsers, *, cmd_dump: Callable) -> None:
     """Attach the ``dump`` subcommand to ``subparsers``."""
     dump_parser = subparsers.add_parser(
         "dump", help="Dump setup summary for support/debugging",
-        description="Output a compact, plain-text summary of your Alfred setup "
+        description="Output a compact, plain-text summary of your +Human setup "
         "that can be copy-pasted into Discord/GitHub for support context")
     dump_parser.add_argument(
         "--show-keys", action="store_true",

@@ -3,46 +3,46 @@ import type { TranslationOverrides } from './define-locale'
 // The boot screen's copy (including the update-hold screen), composed by es.ts.
 export const esBoot = {
   boot: {
-    ready: 'Alfred Desktop está listo',
+    ready: '+Human Desktop está listo',
     desktopBootFailedWithMessage: message => `Falló el arranque del escritorio: ${message}`,
     steps: {
       connectingGateway: 'Conectando el gateway de escritorio en vivo',
-      loadingSettings: 'Cargando la configuración de Alfred',
+      loadingSettings: 'Cargando la configuración de +Human',
       loadingSessions: 'Cargando sesiones recientes',
-      retryingRemoteBackend: 'Reconectando al backend remoto de Alfred…',
+      retryingRemoteBackend: 'Reconectando al backend remoto de +Human…',
       startingDesktopConnection: 'Iniciando la conexión de escritorio',
-      startingHermesDesktop: 'Iniciando Alfred Desktop…'
+      startingHermesDesktop: 'Iniciando +Human Desktop…'
     },
     errors: {
       backgroundExited:
         'El servicio que ejecuta tus chats se cerró de forma inesperada. Reinícialo para continuar; tus chats y ajustes están a salvo.',
-      backgroundExitedDuringStartup: 'Alfred se detuvo justo después de iniciarse.',
-      backendStopped: 'Alfred dejó de funcionar en segundo plano',
-      restartHermes: 'Reiniciar Alfred',
+      backgroundExitedDuringStartup: '+Human se detuvo justo después de iniciarse.',
+      backendStopped: '+Human dejó de funcionar en segundo plano',
+      restartHermes: 'Reiniciar +Human',
       openLogs: 'Abrir registros',
-      desktopBootFailed: 'Alfred no pudo iniciarse',
-      gatewayConnectionLost: 'Alfred perdió la conexión',
+      desktopBootFailed: '+Human no pudo iniciarse',
+      gatewayConnectionLost: '+Human perdió la conexión',
       gatewayConnectionLostDetail:
         'Seguimos intentando reconectar. Puedes seguir leyendo y escribiendo borradores. Si continúa, reconecta ahora o revisa los ajustes de conexión.',
       reconnectNow: 'Reconectar ahora',
       connectionSettings: 'Configuración de conexión',
-      gatewaySignInRequired: 'Tu Alfred remoto cerró tu sesión',
+      gatewaySignInRequired: 'Tu +Human remoto cerró tu sesión',
       gatewaySignInRequiredDetail: 'Vuelve a iniciar sesión para reconectar. Tus chats y ajustes están a salvo.',
       signInAgain: 'Volver a iniciar sesión',
-      ipcBridgeUnavailable: 'Alfred Desktop no pudo comunicarse con su propia capa en segundo plano. Reinicia la app.'
+      ipcBridgeUnavailable: '+Human Desktop no pudo comunicarse con su propia capa en segundo plano. Reinicia la app.'
     },
     causes: {
-      exitedEarly: 'El servicio en segundo plano de Alfred se detuvo justo después de iniciarse.',
-      timedOut: 'El servicio en segundo plano de Alfred no respondió a tiempo.',
-      permission: 'Alfred no pudo escribir en su carpeta de datos (problema de permisos).',
-      diskFull: 'El disco está lleno, así que Alfred no pudo iniciarse.',
-      portInUse: 'Otro programa está usando el puerto de red que necesita Alfred.',
-      installMissing: 'Falta parte de la instalación de Alfred. Elige Reparar instalación para restaurarla.'
+      exitedEarly: 'El servicio en segundo plano de +Human se detuvo justo después de iniciarse.',
+      timedOut: 'El servicio en segundo plano de +Human no respondió a tiempo.',
+      permission: '+Human no pudo escribir en su carpeta de datos (problema de permisos).',
+      diskFull: 'El disco está lleno, así que +Human no pudo iniciarse.',
+      portInUse: 'Otro programa está usando el puerto de red que necesita +Human.',
+      installMissing: 'Falta parte de la instalación de +Human. Elige Reparar instalación para restaurarla.'
     },
     failure: {
-      title: 'Alfred no pudo iniciarse',
+      title: '+Human no pudo iniciarse',
       description:
-        'El servicio en segundo plano de Alfred no arrancó. Prueba uno de los pasos de recuperación de abajo. Nada de esto elimina tus chats ni tus ajustes.',
+        'El servicio en segundo plano de +Human no arrancó. Prueba uno de los pasos de recuperación de abajo. Nada de esto elimina tus chats ni tus ajustes.',
       details: 'Detalles',
       remoteTitle: 'Se requiere iniciar sesión en el gateway remoto',
       remoteDescription:
@@ -77,30 +77,30 @@ export const esBoot = {
       identityProvider: 'tu proveedor de identidad'
     },
     updateHold: {
-      title: 'Una actualización anterior todavía retiene Alfred',
-      titleUnverified: 'Alfred no puede confirmar que la última actualización terminó',
+      title: 'Una actualización anterior todavía retiene +Human',
+      titleUnverified: '+Human no puede confirmar que la última actualización terminó',
       description:
-        'Alfred espera antes de iniciar para no cargar archivos que una actualización quizá todavía esté cambiando. Se inicia solo en cuanto termine la retención.',
+        '+Human espera antes de iniciar para no cargar archivos que una actualización quizá todavía esté cambiando. Se inicia solo en cuanto termine la retención.',
       heldByProcess: pid =>
-        `La actualización (proceso ${pid}) terminó, pero un proceso que inició todavía retiene la instalación de Alfred.`,
-      heldUnknown: 'Una actualización terminó, pero un proceso que inició todavía retiene la instalación de Alfred.',
+        `La actualización (proceso ${pid}) terminó, pero un proceso que inició todavía retiene la instalación de +Human.`,
+      heldUnknown: 'Una actualización terminó, pero un proceso que inició todavía retiene la instalación de +Human.',
       unverified:
-        'El asistente de actualización no pudo comprobar quién tiene la instalación de Alfred. Alfred sigue comprobando.',
+        'El asistente de actualización no pudo comprobar quién tiene la instalación de +Human. +Human sigue comprobando.',
       since: time => `Esperando desde ${time}`,
       lastChecked: time => `Última comprobación ${time}`,
       recoveryHint:
-        'Esto suele resolverse en unos minutos. Si no: cierra Alfred, termina los procesos git o hermes que queden (o reinicia el equipo) y vuelve a abrir Alfred.',
+        'Esto suele resolverse en unos minutos. Si no: cierra +Human, termina los procesos git o hermes que queden (o reinicia el equipo) y vuelve a abrir +Human.',
       checkAgain: 'Comprobar de nuevo',
-      quit: 'Salir de Alfred',
+      quit: 'Salir de +Human',
       openLogs: 'Abrir registros',
       startAnyway: 'Iniciar de todos modos…',
-      confirmTitle: '¿Iniciar Alfred mientras la actualización todavía lo retiene?',
+      confirmTitle: '¿Iniciar +Human mientras la actualización todavía lo retiene?',
       confirmBody:
-        'El proceso de actualización restante quizá siga cambiando archivos de Alfred. Iniciar ahora puede cargar una instalación a medio actualizar, que puede no funcionar hasta que vuelvas a ejecutar la actualización. Alfred registra esta decisión y deja el marcador de actualización en su lugar.',
+        'El proceso de actualización restante quizá siga cambiando archivos de +Human. Iniciar ahora puede cargar una instalación a medio actualizar, que puede no funcionar hasta que vuelvas a ejecutar la actualización. +Human registra esta decisión y deja el marcador de actualización en su lugar.',
       confirmKeepWaiting: 'Seguir esperando',
       confirmStart: 'Iniciar de todos modos',
       startAnywayRefused:
-        'Lo que retiene la instalación cambió antes de que Alfred pudiera iniciar. Revísalo e inténtalo de nuevo.'
+        'Lo que retiene la instalación cambió antes de que +Human pudiera iniciar. Revísalo e inténtalo de nuevo.'
     }
   }
 } satisfies Pick<TranslationOverrides, 'boot'>

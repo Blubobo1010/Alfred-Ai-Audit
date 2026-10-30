@@ -7,7 +7,7 @@ import { everforestTheme, midnightTheme } from './presets'
 import type { DesktopTheme } from './types'
 import { installUserTheme } from './user-themes'
 
-// The live-authoring loop: Alfred writes/edits one skin file and every surface
+// The live-authoring loop: +Human writes/edits one skin file and every surface
 // repaints. An in-place edit keeps the NAME — only the palette moves.
 const bloomberg = (foreground: string) => ({
   name: 'bloomberg',

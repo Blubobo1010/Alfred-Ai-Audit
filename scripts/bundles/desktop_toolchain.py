@@ -1,4 +1,4 @@
-"""Child-scoped desktop build tools, independent of the invoking Alfred install.
+"""Child-scoped desktop build tools, independent of the invoking +Human install.
 
 This module is stdlib-only until preparation runs inside the isolated child.
 """

@@ -1,4 +1,4 @@
-"""Behaviour contracts for ``alfred connectors``."""
+"""Behaviour contracts for ``plushuman connectors``."""
 
 from __future__ import annotations
 

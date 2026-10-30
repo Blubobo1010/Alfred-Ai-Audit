@@ -33,7 +33,7 @@ def denied(*args, **kwargs):
 venv_sync.prepare_launch = denied if phase == "preparation" else lambda *_: None
 _early_recovery.recover_if_needed = lambda *_: False
 environments.activate_dependencies = denied if phase == "activation" else lambda *_: None
-sys.argv = ["alfred", "-z", "hi"]
+sys.argv = ["plushuman", "-z", "hi"]
 import hermes_bootstrap
 """
     result = subprocess.run(
@@ -47,7 +47,7 @@ import hermes_bootstrap
     assert "install state is not writable by this user" in result.stderr
     assert str(target) in result.stderr
     assert "source-update completion failed" not in result.stderr
-    assert "run `alfred update`" not in result.stderr
+    assert "run `plushuman update`" not in result.stderr
     assert "hermes pm repair" not in result.stderr
     assert "Traceback" not in result.stderr
 

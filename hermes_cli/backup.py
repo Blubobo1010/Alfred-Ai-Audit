@@ -52,15 +52,15 @@ def _foreign_db_holder_pids(db_path: Path) -> Optional[list[int]]:
 
 # --- Exclusion rules ---
 
-# Where ``alfred backup --quick`` / ``/snapshot`` / the pre-update safety net write state
+# Where ``plushuman backup --quick`` / ``/snapshot`` / the pre-update safety net write state
 # snapshots (see ``create_quick_snapshot``); defined here because the exclusion set needs it.
 _QUICK_SNAPSHOTS_DIR = "state-snapshots"
 
 
 def _snapshot_recovery_hint() -> str:
     """How to restore a state snapshot. There is no `hermes snapshot` subcommand — only the /snapshot
-    slash command inside a `alfred` session (hermes_cli/commands.py)."""
-    return ("To restore a newer snapshot, start `alfred` in a terminal and run `/snapshot list`, then "
+    slash command inside a `plushuman` session (hermes_cli/commands.py)."""
+    return ("To restore a newer snapshot, start `plushuman` in a terminal and run `/snapshot list`, then "
             "`/snapshot restore <id>` (CLI only).")
 
 # Directory names to skip (matched against each path component). ``hermes-agent`` only matches at
@@ -89,7 +89,7 @@ _EXCLUDED_DIRS = {
     ".cache", ".tox", ".nox", ".pytest_cache", ".mypy_cache", ".ruff_cache",
 }
 
-# Alfred-managed runtime downloads are regenerable. Match only profile roots:
+# +Human-managed runtime downloads are regenerable. Match only profile roots:
 # a deeper directory of the same name (such as a skill's models/) is user data.
 _EXCLUDED_ROOT_DIRS = LOCAL_RUNTIME_ROOT_DIRS | (PM_RUNTIME_ROOT_DIRS - {"cache"})
 
@@ -138,7 +138,7 @@ _EXCLUDED_PREFIXES = (
     f"state.db{RETIRED_GENERATION_DIR_SUFFIX}",
 )
 
-# Files ``alfred import`` must never overwrite, matched by basename so root and named profiles are
+# Files ``plushuman import`` must never overwrite, matched by basename so root and named profiles are
 # both covered. They hold runtime state namespaced to the SOURCE machine: ``gateway_state.json``
 # drives the container-boot reconciler (a foreign value leaves the gateway stuck "starting" and
 # disconnected from the Nous portal); PID/lock/registry files reference source PIDs. Mirrors
@@ -170,7 +170,7 @@ _EXTERNAL_PREFIX = "_external/"
 
 
 class BackupInProgressError(RuntimeError):
-    """Raised when another process already owns the Alfred backup slot."""
+    """Raised when another process already owns the +Human backup slot."""
 
 
 class _SQLiteSnapshotError(RuntimeError):
@@ -206,7 +206,7 @@ def _backup_operation_lock(hermes_home: Path, timeout_seconds: float = 0.25):
                 acquired = True
             except OSError:
                 if time.monotonic() >= deadline:
-                    raise BackupInProgressError("another Alfred backup is already running")
+                    raise BackupInProgressError("another +Human backup is already running")
                 time.sleep(0.05)
         yield
     finally:
@@ -327,7 +327,7 @@ def _iter_backup_files(hermes_root: Path, out_path: Path, skipped_dirs: Optional
 
     The one owner of the walk policy (directory pruning so os.walk never descends a multi-GB
     excluded tree, the root-only ``hermes-agent`` carve-out, root runtime trees, per-file rules),
-    shared by ``alfred backup`` and the pre-update path so they can never drift.
+    shared by ``plushuman backup`` and the pre-update path so they can never drift.
     """
     for dirpath, dirnames, filenames in os.walk(hermes_root, followlinks=False):
         rel_dir = Path(dirpath).relative_to(hermes_root)
@@ -397,7 +397,7 @@ def is_zeroed_sqlite_file(path: Path, *, probe_bytes: int = 100, force: bool = F
 _SQLITE_HEADER = b"SQLite format 3\0"
 
 # Above this size ``PRAGMA integrity_check`` (walks every b-tree page — minutes of pegged CPU on a
-# 30 GB state.db, reading as a hung ``alfred update``) is replaced by the O(1) header+schema probe.
+# 30 GB state.db, reading as a hung ``plushuman update``) is replaced by the O(1) header+schema probe.
 # Default ceiling above which ``PRAGMA integrity_check`` is skipped in favour of the (O(1)) header +
 # structural probe. Sessions databases in the tens of GB are normal for heavy users, so the size-unbounded
 # check is never an acceptable default on the update path. See #70553.
@@ -587,7 +587,7 @@ def _collect_external_entries() -> tuple[list[tuple[Path, str]], list[str]]:
 
 
 def run_backup(args) -> bool:
-    """Create a zip backup of the Alfred home directory.
+    """Create a zip backup of the +Human home directory.
 
     True when every selected file landed in the archive (or there was nothing to back up); False
     when the zip was written but is incomplete — it is kept so the rest can still be restored, and
@@ -597,7 +597,7 @@ def run_backup(args) -> bool:
     hermes_root = get_default_hermes_root()
 
     if not hermes_root.is_dir():
-        print(f"Error: Alfred home directory not found at {hermes_root}")
+        print(f"Error: +Human home directory not found at {hermes_root}")
         sys.exit(1)
 
     try:
@@ -667,7 +667,7 @@ def _run_backup_locked(args, hermes_root: Path) -> bool:
     if errors:
         _print_capped(f"\n  Archive kept, but {len(errors)} file(s) could not be added:", errors, "  ")
     else:
-        print(f"\nRestore with: alfred import {out_path.name}")
+        print(f"\nRestore with: plushuman import {out_path.name}")
     # Prune only after a complete archive: a timer hitting the same unreadable file every run must
     # not rotate the last good backups out in favour of incomplete ones.
     keep = getattr(args, "keep", 0)  # 0 / absent: never prune (non-CLI callers)
@@ -729,7 +729,7 @@ def _import_member_rel(member: str, prefix: str) -> tuple[str, bool]:
 
 
 def run_import(args) -> Optional[int]:
-    """Restore a Alfred backup; return 1 on damaged archives or incomplete restores."""
+    """Restore a +Human backup; return 1 on damaged archives or incomplete restores."""
     zip_path = Path(args.zipfile).expanduser().resolve()
 
     if not zip_path.is_file():
@@ -770,7 +770,7 @@ def run_import(args) -> Optional[int]:
 
         if (has_config or has_env) and not args.force:
             print()
-            print("Warning: Target directory already has Alfred configuration.")
+            print("Warning: Target directory already has +Human configuration.")
             print("Importing will overwrite existing files with backup contents.")
             print()
             try:
@@ -996,19 +996,19 @@ def run_import(args) -> Optional[int]:
                 # hermes_cli.profiles might not be available (fresh install)
                 if any(profiles_dir.iterdir()):
                     print("\n  Profiles detected but aliases could not be created.")
-                    print("  Run: alfred profile list  (after installing hermes)")
+                    print("  Run: plushuman profile list  (after installing hermes)")
 
         # Guidance
         print()
         if not (hermes_root / "hermes-agent").is_dir():
             print("Note: The hermes-agent codebase was not included in the backup.")
-            print("  If this is a fresh install, run: alfred update")
+            print("  If this is a fresh install, run: plushuman update")
 
         if restored_profiles:
             gw_profiles = [n for n, _ in restored_profiles]
             print("\nTo re-enable gateway services for profiles:")
             for pname in gw_profiles:
-                print(f"  alfred -p {pname} gateway install")
+                print(f"  plushuman -p {pname} gateway install")
 
         # Bring the restored install to life: the backup may contain bot
         # tokens and registered cron jobs, but they're inert without a
@@ -1032,7 +1032,7 @@ def run_import(args) -> Optional[int]:
                 "alone to avoid clashing with the install at "
                 f"{native_default}."
             )
-            print("To start a gateway for this home, run:  alfred gateway install")
+            print("To start a gateway for this home, run:  plushuman gateway install")
         else:
             try:
                 from hermes_cli.gateway import ensure_gateway_service, _is_service_running
@@ -1042,22 +1042,22 @@ def run_import(args) -> Optional[int]:
                     ensure_gateway_service(context="import")
             except Exception:
                 print("\nStart the gateway to activate cron jobs and messaging:")
-                print("  alfred gateway install")
+                print("  plushuman gateway install")
 
         if errors:
             print(f"Import incomplete: {len(errors)} file(s) were not restored (see Warnings above). "
                   "Fix the cause and re-run the import.")
             return 1
-        print("Done. Your Alfred configuration has been restored.")
+        print("Done. Your +Human configuration has been restored.")
 
 
 
-# --- Quick state snapshots (used by /snapshot slash command and alfred backup --quick) ---
+# --- Quick state snapshots (used by /snapshot slash command and plushuman backup --quick) ---
 
 # Critical state files (relative to HERMES_HOME) for quick snapshots; everything else is
 # regeneratable or managed separately (skills, repo, sessions/). Entries may be files OR
 # directories (recursive); missing entries are skipped. Pairing data lives in platform JSON blobs
-# outside state.db, so it is listed explicitly — ``alfred update`` snapshots this set (#15733).
+# outside state.db, so it is listed explicitly — ``plushuman update`` snapshots this set (#15733).
 _QUICK_STATE_FILES = (
     "state.db", "config.yaml", ".env", "auth.json", "cron/jobs.json", "cron/executions.db",
     "gateway_state.json", "channel_directory.json", "channel_aliases.json", "processes.json",
@@ -1176,14 +1176,14 @@ def create_pre_update_backup(
     hermes_home: Optional[Path] = None, keep: int = _PRE_UPDATE_DEFAULT_KEEP) -> Optional[Path]:
     """Full zip backup to ``backups/pre-update-<timestamp>.zip``, auto-pruned; ``None`` if nothing
     was found, the backup failed, or it was incomplete (salvage kept as ``*.incomplete.zip``).
-    Never raises — ``alfred update`` continues anyway."""
+    Never raises — ``plushuman update`` continues anyway."""
     return _create_prefixed_full_backup(hermes_home, _PRE_UPDATE_PREFIX, max(keep, 1), "pre-update", "backup")
 
 
 def create_pre_migration_backup(
     hermes_home: Optional[Path] = None, keep: int = _PRE_MIGRATION_DEFAULT_KEEP) -> Optional[Path]:
-    """Full zip backup to ``backups/pre-migration-<timestamp>.zip`` before ``alfred claw migrate``
-    (same dir as update backups so listings/``alfred import`` find it); ``None`` if nothing was
+    """Full zip backup to ``backups/pre-migration-<timestamp>.zip`` before ``plushuman claw migrate``
+    (same dir as update backups so listings/``plushuman import`` find it); ``None`` if nothing was
     found, the write failed, or it was incomplete (salvage kept as ``*.incomplete.zip``). Never
     raises."""
     return _create_prefixed_full_backup(
@@ -1191,7 +1191,7 @@ def create_pre_migration_backup(
 
 
 # ---------------------------------------------------------------------------
-# Quick state snapshots (used by /snapshot slash command and alfred backup --quick)
+# Quick state snapshots (used by /snapshot slash command and plushuman backup --quick)
 # ---------------------------------------------------------------------------
 
 def create_quick_snapshot(
@@ -1226,10 +1226,10 @@ def _create_quick_snapshot_locked(
         max_file_size: When set, individual files larger than this many bytes
             are skipped (with a printed warning) instead of copied. Used by
             the pre-update safety snapshot so a multi-GB ``state.db`` can
-            never stall ``alfred update`` or silently eat disk — the small
+            never stall ``plushuman update`` or silently eat disk — the small
             pairing/cron/config files the snapshot exists to protect are
             always captured. ``None`` (default) copies everything, which
-            preserves manual ``/snapshot`` and ``alfred backup --quick``
+            preserves manual ``/snapshot`` and ``plushuman backup --quick``
             behavior.
 
     Returns:
@@ -1634,7 +1634,7 @@ def restore_cron_jobs_if_emptied(
     snapshot_id: str,
     hermes_home: Optional[Path] = None,
 ) -> Optional[dict[str, Any]]:
-    """Safety net for silent cron-job loss across ``alfred update``.
+    """Safety net for silent cron-job loss across ``plushuman update``.
 
     Config-version migrations have been observed to leave ``cron/jobs.json``
     valid-but-empty after an update, silently dropping every scheduled job
@@ -1655,7 +1655,7 @@ def restore_cron_jobs_if_emptied(
     Args:
         snapshot_id: The pre-update quick-snapshot id (from
             :func:`create_quick_snapshot`).
-        hermes_home: Override for the Alfred home directory (tests).
+        hermes_home: Override for the +Human home directory (tests).
 
     Returns:
         ``None`` when no action was taken (the common, healthy path). On a
@@ -1752,7 +1752,7 @@ def restore_cron_prompt_fields_if_degraded(
     snapshot_id: str,
     hermes_home: Optional[Path] = None,
 ) -> Optional[dict[str, Any]]:
-    """Safety net for field-level cron-job degradation across ``alfred update``.
+    """Safety net for field-level cron-job degradation across ``plushuman update``.
 
     A writer active during the update's mutation window replaced every
     agent-job ``prompt`` with the job's own ``name`` while the job COUNT
@@ -1778,7 +1778,7 @@ def restore_cron_prompt_fields_if_degraded(
     Args:
         snapshot_id: The pre-update quick-snapshot id (from
             :func:`create_quick_snapshot`).
-        hermes_home: Override for the Alfred home directory (tests/siblings).
+        hermes_home: Override for the +Human home directory (tests/siblings).
 
     Returns:
         ``None`` when no action was taken (the common, healthy path). On a
@@ -2006,7 +2006,7 @@ def restore_config_model_settings_if_rewritten(
     snapshot_id: str,
     hermes_home: Optional[Path] = None,
 ) -> Optional[dict[str, Any]]:
-    """Safety net for silent config.yaml model/MoA loss across ``alfred update``.
+    """Safety net for silent config.yaml model/MoA loss across ``plushuman update``.
 
     Desktop update/repair cycles have been observed to rewrite user-set
     ``model.provider``/``model.default`` and drop the ``moa:`` section
@@ -2025,7 +2025,7 @@ def restore_config_model_settings_if_rewritten(
     Args:
         snapshot_id: The pre-update quick-snapshot id (from
             :func:`create_quick_snapshot`).
-        hermes_home: Override for the Alfred home directory (tests/siblings).
+        hermes_home: Override for the +Human home directory (tests/siblings).
 
     Returns:
         ``None`` when no action was taken (the common, healthy path). On a
@@ -2188,7 +2188,7 @@ def prune_quick_snapshots(
 
 
 def run_quick_backup(args) -> None:
-    """CLI entry point for alfred backup --quick."""
+    """CLI entry point for plushuman backup --quick."""
     label = getattr(args, "label", None)
     snap_id = create_quick_snapshot(label=label)
     if snap_id:

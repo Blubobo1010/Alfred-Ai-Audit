@@ -113,9 +113,9 @@ def _running_interpreter_fallback() -> str:
 
 
 def resolve_exec_command(project_root: Optional[Path] = None) -> str:
-    """Build the absolute ``Exec=`` command line for ``alfred desktop``.
+    """Build the absolute ``Exec=`` command line for ``plushuman desktop``.
 
-    Prefer the real ``alfred`` launcher; fall back to ``<python> -m hermes_cli.main desktop``.
+    Prefer the real ``plushuman`` launcher; fall back to ``<python> -m hermes_cli.main desktop``.
     """
     from hermes_cli.relaunch import resolve_hermes_bin
 
@@ -134,7 +134,7 @@ def resolve_exec_command(project_root: Optional[Path] = None) -> str:
     argv = [interpreter, "-m", "hermes_cli.main", *_desktop_argv_tail(project_root)]
     if bin_path:
         resolved = Path(bin_path).resolve()
-        # A Python launcher whose shebang points OUTSIDE the venv (e.g. the repo's `alfred` script
+        # A Python launcher whose shebang points OUTSIDE the venv (e.g. the repo's `plushuman` script
         # with `#!/usr/bin/env python3`) would die silently on the first third-party import under
         # Terminal=false — run it under the venv interpreter explicitly.
         prefix = [interpreter] if _needs_interpreter(resolved) else []
@@ -160,7 +160,7 @@ def _desktop_argv_tail(project_root: Optional[Path]) -> list[str]:
     packaged = any(
         (release / dist / name).exists()
         for dist in ("linux-unpacked", "linux-arm64-unpacked")
-        for name in ("hermes", "Alfred")
+        for name in ("hermes", "+Human")
     )
     return ["desktop", "--skip-build"] if packaged else ["desktop"]
 
@@ -184,7 +184,7 @@ def _inside_checkout(candidate: str, checkout_root: Path, original_argv0: str) -
         path = Path(candidate).resolve()
     except OSError:
         return False
-    # Anything shipped in the tree (e.g. the repo `alfred` script) is checkout-internal. Compare
+    # Anything shipped in the tree (e.g. the repo `plushuman` script) is checkout-internal. Compare
     # against BOTH the lexical and resolved roots: candidates resolve, so a symlinked home needs
     # the resolved comparison too.
     try:
@@ -235,7 +235,7 @@ def _resolve_hermes_bin_for_desktop_entry(
     checkout is a launch-context artifact, not a durable installed launcher — persisting it makes
     the entry depend on how the previous launch happened (a bootstrap loop). Skip such candidates
     and fall through to PATH, then to the installer's known wrapper locations. A candidate that
-    provably cannot serve ``alfred desktop`` (a code tree carrying ``hermes_cli`` but no desktop
+    provably cannot serve ``plushuman desktop`` (a code tree carrying ``hermes_cli`` but no desktop
     app beside it — a managed runtime env's console script) is skipped the same way: its entry
     would only ever die with "Desktop GUI source not found". ``resolve_fn`` is injectable for tests.
 
@@ -260,7 +260,7 @@ def _resolve_hermes_bin_for_desktop_entry(
     primary = resolve_fn()
     # A managed-environment console script is outside the checkout but is not a durable desktop
     # launcher: its workspace has no apps/desktop (#122438). The same holds for any launcher
-    # that provably cannot serve `alfred desktop` (another install's managed env, #122485).
+    # that provably cannot serve `plushuman desktop` (another install's managed env, #122485).
     # Fall through so the durable-wrapper probe below can still find a working one.
     if (
         primary
@@ -285,7 +285,7 @@ def _resolve_hermes_bin_for_desktop_entry(
         sys.argv[0] = original_argv0
 
     # A resolver miss (argv[0] is ``-c`` under ``python -m`` on a cold relaunch AND PATH has no
-    # ``alfred``) must NOT return None here: that skipped the durable-wrapper probe below and persisted
+    # ``plushuman``) must NOT return None here: that skipped the durable-wrapper probe below and persisted
     # the module form, so the entry's bytes flipped on every alternating launch context — and
     # gnome-shell 50.x crashes when the entry changes while its ShellApp is STARTING (#110885).
     # ``primary is None`` implies ``rerouted is None`` (the rerun only hides argv[0]), so only the
@@ -421,7 +421,7 @@ def _launcher_tree(path: Path) -> Path:
 
 
 def _tree_desktop_state(tree: Path) -> Optional[bool]:
-    """``True`` when *tree* can serve ``alfred desktop``, ``False`` when it provably cannot, else ``None``.
+    """``True`` when *tree* can serve ``plushuman desktop``, ``False`` when it provably cannot, else ``None``.
 
     ``False`` is reserved for a tree that IS a hermes code tree (carries ``hermes_cli``) yet has no
     desktop app beside it — the managed runtime env layout, whose launcher runs but dies with
@@ -505,7 +505,7 @@ def _known_wrapper_candidates():
     """Durable installed-launcher locations, most likely first.
 
     Mirrors the installer's ``get_command_link_dir()`` layouts: Termux (``$PREFIX/bin``), root FHS
-    (``/usr/local/bin``), and user (``~/.local/bin``). The wrapper is always named ``alfred``.
+    (``/usr/local/bin``), and user (``~/.local/bin``). The wrapper is always named ``plushuman``.
     """
     candidates = []
     prefix = os.environ.get("PREFIX")
@@ -582,9 +582,9 @@ def render_desktop_entry(exec_command: str, icon: str) -> str:
     return (
         "[Desktop Entry]\n"
         "Type=Application\n"
-        "Name=Alfred\n"
-        "GenericName=Alfred Desktop\n"
-        "Comment=Launch Alfred Desktop\n"
+        "Name=+Human\n"
+        "GenericName=+Human Desktop\n"
+        "Comment=Launch +Human Desktop\n"
         f"Exec={exec_command}\n"
         f"Icon={icon}\n"
         "Terminal=false\n"
@@ -772,7 +772,7 @@ def _alias_legacy_desktop_entry(applications_dir: Path, exec_command: str, icon:
 
     Shells resolve a taskbar pin by the entry file name it was pinned against: deleting the
     file makes GNOME drop the favourite and Plasma leave an inert item, and nothing can
-    re-pin for the user. The alias stays launchable for old pins without listing Alfred
+    re-pin for the user. The alias stays launchable for old pins without listing +Human
     twice. Only a file that still names this app is converted; anything else at that path
     is left alone. True when the legacy file was (re)written.
     """
@@ -781,7 +781,7 @@ def _alias_legacy_desktop_entry(applications_dir: Path, exec_command: str, icon:
         text = legacy.read_text(encoding="utf-8-sig")
     except OSError:
         return False
-    if not any(line.strip() == "Name=Alfred" for line in text.splitlines()):
+    if not any(line.strip() == "Name=+Human" for line in text.splitlines()):
         return False
     alias_contents = _render_legacy_alias_entry(exec_command, icon)
     if text == alias_contents:
@@ -803,7 +803,7 @@ def install_desktop_entry(project_root: Path) -> Optional[Path]:
     into a hidden alias once the new entry exists, and only while launcher management is
     enabled — deleting it instead would silently kill existing taskbar pins (#124492).
     ``None`` on non-Linux platforms, when the write fails, or when the resolved ``Exec``
-    provably cannot serve ``alfred desktop`` — a convenience, never a reason to fail a launch.
+    provably cannot serve ``plushuman desktop`` — a convenience, never a reason to fail a launch.
     """
     if not is_supported():
         return None

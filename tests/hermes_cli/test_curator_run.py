@@ -1,4 +1,4 @@
-"""Tests for `alfred curator run` CLI behavior."""
+"""Tests for `plushuman curator run` CLI behavior."""
 
 from __future__ import annotations
 

@@ -1,10 +1,10 @@
 """Tests for the setup wizard's returning-user behavior.
 
 On an existing install:
-- Bare `alfred setup` drops straight into the full reconfigure wizard
+- Bare `plushuman setup` drops straight into the full reconfigure wizard
   (every prompt shows the current value as its default).
-- `alfred setup --quick` runs the narrower "fill in missing items" flow.
-- `alfred setup --reconfigure` is a backwards-compat alias for the
+- `plushuman setup --quick` runs the narrower "fill in missing items" flow.
+- `plushuman setup --reconfigure` is a backwards-compat alias for the
   bare-setup default.
 
 On a fresh install, all three are no-ops — fall through to first-time setup.
@@ -98,7 +98,7 @@ def _enter_fresh_install_patches(stack, **extra):
 
 
 class TestExistingInstallDefault:
-    """Bare `alfred setup` on an existing install = full reconfigure wizard."""
+    """Bare `plushuman setup` on an existing install = full reconfigure wizard."""
 
     def test_bare_setup_runs_full_reconfigure_without_menu(self, existing_install):
         """No menu, no prompt_choice — just run every section in sequence."""

@@ -1,4 +1,4 @@
-"""`alfred sessions export` single-file formats accept a directory as OUTPUT."""
+"""`plushuman sessions export` single-file formats accept a directory as OUTPUT."""
 
 import json
 import sys
@@ -23,7 +23,7 @@ class _FakeDB:
 
 def _export(monkeypatch, *argv):
     monkeypatch.setattr(hermes_state, "SessionDB", lambda *args, **kwargs: _FakeDB())
-    monkeypatch.setattr(sys, "argv", ["alfred", "sessions", "export", "--session-id", "sess", *argv])
+    monkeypatch.setattr(sys, "argv", ["plushuman", "sessions", "export", "--session-id", "sess", *argv])
     main_mod.main()
 
 

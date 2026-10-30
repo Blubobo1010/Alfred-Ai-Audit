@@ -1,4 +1,4 @@
-"""Interactive picker for ``alfred sessions browse``: curses UI with live search filtering and ``d``
+"""Interactive picker for ``plushuman sessions browse``: curses UI with live search filtering and ``d``
 delete-with-confirmation; numbered-list fallback when curses is unavailable (Windows, etc.)."""
 
 from typing import Optional

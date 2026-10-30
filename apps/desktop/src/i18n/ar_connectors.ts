@@ -3,7 +3,7 @@ import type { TranslationOverrides } from './define-locale'
 export const arConnectors = {
   sessionImport: {
     title: 'المتابعة من تطبيق آخر',
-    subtitle: 'انقل محادثة إلى Alfred وتابع من حيث توقفت.',
+    subtitle: 'انقل محادثة إلى +Human وتابع من حيث توقفت.',
     action: 'استيراد جلسة',
     readingFrom: 'القراءة من',
     connectedComputer: 'الكمبيوتر المتصل',
@@ -21,17 +21,17 @@ export const arConnectors = {
     more: 'تحميل المزيد من الجلسات',
     messages: 'رسائل',
     choose: 'محادثة تستحق المتابعة',
-    chooseHelp: 'اختر جلسة لقراءة سجلها قبل نقلها إلى Alfred.',
+    chooseHelp: 'اختر جلسة لقراءة سجلها قبل نقلها إلى +Human.',
     previewLoading: 'جارٍ فتح المعاينة',
     previewError: 'المعاينة غير متاحة',
     previewHelp: 'ربما تم نقل الملف الأصلي أو تغييره. حدّث القائمة وحاول مرة أخرى.',
     previewLimit: 'تم اختصار المعاينة لتسهيل القراءة. يتم استيراد المحادثة كاملة.',
     you: 'أنت',
-    snapshot: 'هذه المحادثة موجودة بالفعل في Alfred. افتح نسختك الحالية للمتابعة.',
+    snapshot: 'هذه المحادثة موجودة بالفعل في +Human. افتح نسختك الحالية للمتابعة.',
     copyNotice: 'ينسخ نص المحادثة دون تغيير الملفات الأصلية. لا يشمل مخرجات الأدوات أو الاستدلال.',
     importing: 'جارٍ الاستيراد…',
-    open: 'فتح في Alfred',
-    continue: 'المتابعة في Alfred',
+    open: 'فتح في +Human',
+    continue: 'المتابعة في +Human',
     importError: 'تعذر استيراد هذه المحادثة.'
   }
 } satisfies Pick<TranslationOverrides, 'sessionImport'>

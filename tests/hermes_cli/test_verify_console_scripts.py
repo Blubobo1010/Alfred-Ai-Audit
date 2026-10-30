@@ -22,6 +22,7 @@ def temp_pyproject(tmp_path, monkeypatch):
 
         [project.scripts]
         hermes = "hermes_cli.main:main"
+        plushuman = "hermes_cli.main:main"
         alfred = "hermes_cli.main:main"
         hermes-agent = "run_agent:main"
         hermes-acp = "acp_adapter.entry:main"

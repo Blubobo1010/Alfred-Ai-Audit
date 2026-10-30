@@ -78,15 +78,15 @@ _ACP_FLAGS = (
 
 
 def cmd_acp(args):
-    """Launch Alfred as an ACP server."""
+    """Launch +Human as an ACP server."""
     try:
         from acp_adapter.entry import main as acp_main
         acp_main([flag for attr, flag in _ACP_FLAGS if getattr(args, attr, False)])
     except ImportError as e:
         print("The ACP server can't start: its protocol packages are missing from this install.", file=sys.stderr)
-        print("From the Alfred environment, run: "
+        print("From the +Human environment, run: "
               f"{install_hint('acp')}", file=sys.stderr)
-        print("Then restart Alfred.", file=sys.stderr)
+        print("Then restart +Human.", file=sys.stderr)
         print(f"Details: {e}", file=sys.stderr)
         sys.exit(1)
 
@@ -184,7 +184,7 @@ def cmd_skills(args):
 
 
 def _cmd_skills_trust(args):
-    """``alfred skills trust|untrust [path]`` — manage ``skills.trusted_project_dirs``.
+    """``plushuman skills trust|untrust [path]`` — manage ``skills.trusted_project_dirs``.
 
     With no path, operates on the project root enclosing the current directory
     (nearest ancestor with ``.git``).

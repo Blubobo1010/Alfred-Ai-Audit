@@ -1,6 +1,6 @@
 """Strict gateway identity against a REAL process holding ``gateway.lock``.
 
-``alfred update`` on Windows maps live gateways to profiles through
+``plushuman update`` on Windows maps live gateways to profiles through
 ``get_running_pid_identity_strict``. A live gateway whose ``gateway.pid`` was
 unlinked still holds its runtime lock, and the lock carries the same identity
 record, so the updater must identify it from the lock instead of aborting the
@@ -125,7 +125,7 @@ def home(gateway_holder, monkeypatch):
 
 
 # The class-scoped holder spawns before the per-test live-system guard is armed; the mark
-# documents the `alfred gateway run` lookalike and covers it if the fixture is ever narrowed.
+# documents the `plushuman gateway run` lookalike and covers it if the fixture is ever narrowed.
 @pytest.mark.spawns_gateway_lookalike
 class TestStrictIdentityWithLiveLock:
     def test_missing_pid_file_resolves_from_the_lock_record(self, home, gateway_holder):

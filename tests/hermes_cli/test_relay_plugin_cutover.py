@@ -1,4 +1,4 @@
-"""Regression tests for migration from the removed Alfred Relay plugin."""
+"""Regression tests for migration from the removed +Human Relay plugin."""
 
 from __future__ import annotations
 

@@ -1,8 +1,8 @@
-"""Invariant: `alfred serve`'s opportunistic auto-archive never opens a WRITABLE
+"""Invariant: `plushuman serve`'s opportunistic auto-archive never opens a WRITABLE
 SessionDB for a profile whose gateway is live (#110405).
 
 The gateway stand-in is a real subprocess: it takes the same ``flock(LOCK_EX)`` on
-``gateway.lock`` that ``gateway.status`` uses, runs under a ``alfred gateway run``
+``gateway.lock`` that ``gateway.status`` uses, runs under a ``plushuman gateway run``
 command line and is recorded in ``gateway.pid``, so ``_check_gateway_running``
 decides on kernel lock state plus live process identity rather than a patched
 predicate.
@@ -68,7 +68,7 @@ def archive_probe(tmp_path, monkeypatch):
 @pytest.mark.spawns_gateway_lookalike  # a flock-holding stub this test reaps by PID
 def test_serve_auto_archive_defers_to_a_live_gateway_for_the_profile(archive_probe):
     tmp_path, opens, archived = archive_probe
-    # argv0 basename `alfred` + the `gateway run` subcommand is what
+    # argv0 basename `plushuman` + the `gateway run` subcommand is what
     # gateway.status's process-identity check reads off /proc for this PID.
     entrypoint = tmp_path / "hermes"
     entrypoint.write_text(_HOLDER, encoding="utf-8")

@@ -91,14 +91,14 @@ def reconcile_profile_gateways(
 
     Always registers a ``gateway-default`` slot for the root profile (the implicit profile at
     the top of ``$HERMES_HOME``): ``hermes_cli.gateway`` maps an empty profile suffix to it,
-    so it is what ``alfred gateway start`` (no ``-p``) targets.
+    so it is what ``plushuman gateway start`` (no ``-p``) targets.
 
-    Without it, bare ``alfred gateway start`` inside the container would land on ``s6-svc -u
+    Without it, bare ``plushuman gateway start`` inside the container would land on ``s6-svc -u
     /run/service/gateway-default`` → uncaught ``CalledProcessError`` → traceback to the user (PR #30136
     review).
     """
     actions: list[ReconcileAction] = []
-    # ONE multiplexing gateway per container: named slots are registered (so `alfred -p X gateway
+    # ONE multiplexing gateway per container: named slots are registered (so `plushuman -p X gateway
     # start` has a target and `s6-svstat` can report them) but are never booted from their persisted
     # run intent, except a `gateway.standalone` profile's (below).
     # This is the s6 leg of the multiplex-only convergence: an image upgraded from a release that
@@ -119,7 +119,7 @@ def reconcile_profile_gateways(
         hermes_home, container_argv=container_argv, dry_run=dry_run)
     default_prior_state = legacy_default_state or _read_desired_state(hermes_home)
     # The root slot INHERITS every named slot's autostart intent, because it is the one process
-    # that serves them. Without this an image only ever driven as `alfred -p coder gateway start`
+    # that serves them. Without this an image only ever driven as `plushuman -p coder gateway start`
     # booted with ZERO gateways: it has no root state (or "stopped"), every named slot is now
     # registered down unconditionally, and every action reported "registered" — a container that
     # looks healthy while nothing is listening.
@@ -218,7 +218,7 @@ def _strip_container_argv_prefix(argv: Sequence[str]) -> list[str]:
         args = args[1:]
     if args and args[0].endswith("entrypoint-dispatch.sh"):  # non-PID-1 dispatch shim
         args = args[1:]
-    if args and Path(args[0]).name == "hermes":  # the wrapper re-execs `alfred <subcommand>`
+    if args and Path(args[0]).name == "hermes":  # the wrapper re-execs `plushuman <subcommand>`
         args = args[1:]
     return args
 
@@ -308,7 +308,7 @@ def _register_service(scandir: Path, profile: str, *, start: bool) -> None:
         _write_exec(tmp_dir / "finish", S6ServiceManager._render_finish_script())
         (tmp_dir / "log").mkdir()
         _write_exec(tmp_dir / "log" / "run", S6ServiceManager._render_log_run(profile))
-        if not start:  # `alfred -p <profile> gateway start` brings it up later (s6-svc -u)
+        if not start:  # `plushuman -p <profile> gateway start` brings it up later (s6-svc -u)
             (tmp_dir / "down").touch()
         # Pre-create supervise/ with hermes ownership BEFORE publishing so s6-supervise inherits
         # it and runtime s6-svc calls as the hermes user won't EACCES.

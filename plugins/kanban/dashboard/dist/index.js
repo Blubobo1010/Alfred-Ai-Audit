@@ -1,5 +1,5 @@
 /**
- * Alfred Kanban — Dashboard Plugin
+ * +Human Kanban — Dashboard Plugin
  *
  * Board view for the multi-agent collaboration board backed by
  * ~/.hermes/kanban.db. Calls the plugin's backend at /api/plugins/kanban/
@@ -1805,8 +1805,8 @@
       target: "_blank",
       rel: "noopener noreferrer",
       className: "hermes-kanban-docs-link",
-      title: "Open Alfred Kanban docs in a new tab",
-      "aria-label": "Alfred Kanban documentation",
+      title: "Open +Human Kanban docs in a new tab",
+      "aria-label": "+Human Kanban documentation",
     }, "?");
   }
 
@@ -1908,7 +1908,7 @@
     // Mode pill — always visible (collapsed or expanded). One click flips
     // between Auto and Manual. Auto = dispatcher decomposes new triage tasks
     // every tick. Manual = pre-PR behavior, the user clicks ⚗ Decompose on
-    // each triage card (or runs `alfred kanban decompose <id>`) and tasks
+    // each triage card (or runs `plushuman kanban decompose <id>`) and tasks
     // stay in triage until then.
     const autoOn = !!(settings && settings.auto_decompose);
     const modePillTitle = settings === null
@@ -2221,7 +2221,7 @@
     );
   }
 
-  // Live (non-archived) Alfred projects available for board scoping,
+  // Live (non-archived) +Human projects available for board scoping,
   // fetched from GET /projects on mount. On failure the list stays empty
   // and both dialogs omit the project_id field from their payloads, so a
   // projects-store hiccup can never clear an existing binding.
@@ -2569,7 +2569,7 @@
         ),
       ),
       h("div", { className: "flex flex-col gap-1",
-                 title: "Filter by assigned Alfred profile. Profiles are the named agent identities that claim and work on tasks." },
+                 title: "Filter by assigned +Human profile. Profiles are the named agent identities that claim and work on tasks." },
         h(Label, { className: "text-xs text-muted-foreground" }, tx(t, "assignee", "Assignee")),
         h(Select, Object.assign({
           value: props.assigneeFilter,
@@ -2699,7 +2699,7 @@
         }, tx(t, "setPriority", "Set priority")),
       ),
       h("div", { className: "hermes-kanban-bulk-reassign",
-                 title: "Reassign selected tasks to a different Alfred profile. Pick a profile (or unassign) and click Apply." },
+                 title: "Reassign selected tasks to a different +Human profile. Pick a profile (or unassign) and click Apply." },
         h(Select, Object.assign({
           value: assignee,
           className: "h-7 text-xs",
@@ -3208,7 +3208,7 @@
               }),
             ),
             h("span", { className: "hermes-kanban-card-id",
-                        title: `Task id: ${t.id}. Use this id with kanban_show, /kanban show, or alfred kanban show.` }, t.id),
+                        title: `Task id: ${t.id}. Use this id with kanban_show, /kanban show, or plushuman kanban show.` }, t.id),
             t.warnings && t.warnings.count > 0
               ? h("span", {
                   className: cn(
@@ -3254,7 +3254,7 @@
           h("div", { className: "hermes-kanban-card-row hermes-kanban-card-meta" },
             t.assignee
               ? h("span", { className: "hermes-kanban-assignee",
-                            title: `Assigned to Alfred profile @${t.assignee}` }, "@", t.assignee)
+                            title: `Assigned to +Human profile @${t.assignee}` }, "@", t.assignee)
               : h("span", { className: "hermes-kanban-unassigned",
                             title: needsAssignee
                               ? tx(i18n, "needsAssigneeHint", "Dependencies are satisfied, but the dispatcher skips this task until you assign a profile.")
@@ -3401,8 +3401,8 @@
                   : tx(t, "assigneePlaceholder", "assignee"),
                 className: "h-8 text-sm",
                 title: props.columnName === "triage"
-                  ? "Alfred profile that will spec this task (default: the dispatcher's configured specifier). Leave blank to let the dispatcher pick."
-                  : "Alfred profile to assign. Leave blank and the dispatcher will pick from available profiles when the task is Ready.",
+                  ? "+Human profile that will spec this task (default: the dispatcher's configured specifier). Leave blank to let the dispatcher pick."
+                  : "+Human profile to assign. Leave blank and the dispatcher will pick from available profiles when the task is Ready.",
                 style: { textTransform: "none" },
                 autoCapitalize: "none",
                 autoCorrect: "off",

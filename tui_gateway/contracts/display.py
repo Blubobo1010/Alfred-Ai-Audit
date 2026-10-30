@@ -176,7 +176,7 @@ class DisplayStatusPayload(DisplayStatus, Payload):
 
 
 event("display.status", DisplayStatusPayload,
-      doc="This profile's screen started or stopped (also for transitions made outside alfred serve).")
+      doc="This profile's screen started or stopped (also for transitions made outside plushuman serve).")
 
 
 class DisplayLeasePayload(Payload):

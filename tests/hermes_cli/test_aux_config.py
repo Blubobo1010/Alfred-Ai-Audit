@@ -1,4 +1,4 @@
-"""Tests for the auxiliary-model configuration UI in ``alfred model``.
+"""Tests for the auxiliary-model configuration UI in ``plushuman model``.
 
 Covers the helper functions:
   - ``_save_aux_choice`` writes to config.yaml without touching main model config

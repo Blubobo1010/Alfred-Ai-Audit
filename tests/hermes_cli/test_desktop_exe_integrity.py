@@ -1,8 +1,8 @@
 """Behavior tests for the Windows desktop-exe integrity gate (#69179).
 
 The desktop self-update chain (Desktop → hermes-setup --update →
-``alfred update`` → ``alfred desktop --build-only`` → relaunch) rebuilds
-Alfred.exe on the end user's machine. Before this gate, "build succeeded" was
+``plushuman update`` → ``plushuman desktop --build-only`` → relaunch) rebuilds
++Human.exe on the end user's machine. Before this gate, "build succeeded" was
 just "the file exists", so a truncated PE (corrupt cached Electron zip), a
 non-PE file, or a wrong-architecture tree shipped as the new app — Windows
 then refuses to launch it with "This app can't run on your computer"
@@ -271,7 +271,7 @@ def test_gate_fails_clearly_without_backup(tmp_path, capsys):
     """Exercise the default Windows PE check, without injecting a validator."""
     desktop_dir = tmp_path / "apps" / "desktop"
     staging = main_desktop._desktop_staging_dir(desktop_dir)
-    exe = staging / "win-unpacked" / "Alfred.exe"
+    exe = staging / "win-unpacked" / "+Human.exe"
     exe.parent.mkdir(parents=True)
     exe.write_bytes(b"<html>proxy error</html>" + b" " * 600)
 
@@ -285,7 +285,7 @@ def test_gate_fails_clearly_without_backup(tmp_path, capsys):
     assert "missing MZ header" in out
 
 
-# ─── end-to-end: `alfred desktop --build-only` exits nonzero on corrupt exe ─
+# ─── end-to-end: `plushuman desktop --build-only` exits nonzero on corrupt exe ─
 
 
 def _ns(**kw):
@@ -305,7 +305,7 @@ def _ns(**kw):
 
 @pytest.mark.platforms("windows")
 def test_build_only_fails_when_pack_produces_corrupt_exe(tmp_path, monkeypatch, capsys):
-    """The updater chain's contract: a rebuild whose Alfred.exe cannot launch
+    """The updater chain's contract: a rebuild whose +Human.exe cannot launch
     must exit nonzero (so hermes-setup's retry-once kicks in) and must leave
     the previous working build in place instead of installing the corrupt one.
 
@@ -323,7 +323,7 @@ def test_build_only_fails_when_pack_produces_corrupt_exe(tmp_path, monkeypatch, 
     (desktop_dir / "package.json").write_text("{}", encoding="utf-8")
     monkeypatch.setattr(cli_main, "PROJECT_ROOT", root)
 
-    live_exe = desktop_dir / "release" / "win-unpacked" / "Alfred.exe"
+    live_exe = desktop_dir / "release" / "win-unpacked" / "+Human.exe"
     make_pe(live_exe, PE_AMD64)  # the previous, working app
     live_bytes = live_exe.read_bytes()
 
@@ -338,7 +338,7 @@ def test_build_only_fails_when_pack_produces_corrupt_exe(tmp_path, monkeypatch, 
         out_flag = next((a for a in cmd if str(a).startswith("-c.directories.output=")), None)
         assert out_flag is not None, "pack must be redirected into a staging dir"
         staging = Path(str(out_flag).split("=", 1)[1])
-        make_pe(staging / "win-unpacked" / "Alfred.exe", PE_AMD64, truncate_to=0x300)
+        make_pe(staging / "win-unpacked" / "+Human.exe", PE_AMD64, truncate_to=0x300)
         return subprocess.CompletedProcess(list(cmd), 0)
 
     def pinned_git(name, *, base_env):

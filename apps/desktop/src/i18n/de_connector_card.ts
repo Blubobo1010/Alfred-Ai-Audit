@@ -24,13 +24,13 @@ export const deConnectorCard: TranslationOverrides['connectors'] = {
   ownerMissing: 'Öffnen Sie diese Konversation erneut, um ihre Verbindungen zu verwalten.',
   search: 'App finden',
   empty: 'Keine passende App',
-  disclaimer: 'Das Verbinden ist freiwillig. Geben Sie nur den Apps Zugriff, die Alfred verwenden soll.',
+  disclaimer: 'Das Verbinden ist freiwillig. Geben Sie nur den Apps Zugriff, die +Human verwenden soll.',
   execution: 'Verbindungs-Tools',
   setup: server => `${server} einrichten`,
   openInBrowser: 'Im Browser öffnen',
   setupCancel: 'Abbrechen',
   authorizedToolsUnavailable: 'Autorisiert. Tools nicht verfügbar.',
   required: 'Erforderlich',
-  namedAccount: (app: string, alias: string) => `Alfred hat dieses ${app}-Konto ${alias} genannt.`,
+  namedAccount: (app: string, alias: string) => `+Human hat dieses ${app}-Konto ${alias} genannt.`,
   renameAccount: 'Umbenennen'
 }

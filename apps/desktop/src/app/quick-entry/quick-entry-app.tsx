@@ -83,7 +83,7 @@ export function QuickEntryApp() {
 
     const offLateResult = api?.onLateResult(payload => {
       dispatch({
-        message: payload?.result?.message ?? 'Alfred could not deliver the prompt.',
+        message: payload?.result?.message ?? '+Human could not deliver the prompt.',
         ok: payload?.result?.ok === true,
         type: 'late-result'
       })
@@ -162,7 +162,7 @@ export function QuickEntryApp() {
                 dispatch({ type: 'dismiss' })
               }
             }}
-            placeholder={state.connected ? 'Ask Alfred…' : 'Not connected — open Alfred to reconnect'}
+            placeholder={state.connected ? 'Ask +Human…' : 'Not connected — open +Human to reconnect'}
             ref={inputRef}
             spellCheck={false}
             style={{

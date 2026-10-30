@@ -1,4 +1,4 @@
-# Alfred - Development Guide
+# +Human - Development Guide
 
 For AI coding assistants and developers working on hermes-agent. This root file is a hub: what
 applies everywhere, then a routing table. Each area's `AGENTS.md` loads automatically when you work
@@ -7,9 +7,9 @@ and every root-to-area chain at 30k, so it loads whole on 128k+ models: long for
 
 **Never give up on the right solution.**
 
-## What Alfred Is
+## What +Human Is
 
-Alfred is a personal AI agent that runs the same agent core across a CLI, a messaging
++Human is a personal AI agent that runs the same agent core across a CLI, a messaging
 gateway (Telegram, Discord, Slack, ~20 platforms), a TUI, and an Electron desktop app. It
 learns across sessions (memory + skills), delegates to subagents, runs scheduled jobs, and
 drives a real terminal and browser. It is extended primarily through **plugins and skills**,
@@ -95,7 +95,7 @@ hermes-agent/
 └── tests/                # Pytest suite, mirrors the source tree
 ```
 
-**User state:** `~/.hermes/config.yaml` (settings), `.env` (secrets only), `logs/` (`alfred logs`);
+**User state:** `~/.hermes/config.yaml` (settings), `.env` (secrets only), `logs/` (`plushuman logs`);
 all profile-aware via `get_hermes_home()`.
 
 ### Facade + siblings layout
@@ -132,7 +132,7 @@ Every former god file is a **facade** (public entry points + the names other pac
   § Profile scope (HX002/HX004/HX005/HX012, PS-P05/P06).
 - **Machine facts and executable lookup go through `hermes_platform`** (`hermes_platform/AGENTS.md`).
 - **Dependencies carry upper bounds** (`>=floor,<next_major`; git URLs and Actions pinned to a SHA);
-  after editing `pyproject.toml` run `hermes pm lock` and commit `uv.lock`; never mutate a Alfred
+  after editing `pyproject.toml` run `hermes pm lock` and commit `uv.lock`; never mutate a +Human
   environment with raw pip/uv. Full policy: `pm/AGENTS.md`.
 - **TypeScript (desktop, TUI, website):** feature-owned nanostores over threaded state, thin route
   roots, narrow hooks and colocated action modules, `interface` for props and shared shapes,
@@ -150,7 +150,7 @@ Every former god file is a **facade** (public entry points + the names other pac
 | Area | Read | Covers |
 |---|---|---|
 | `run_agent.py`, `agent/` | `agent/AGENTS.md` | turn phases, caching and message-flow invariants, compression, model/aux resolution |
-| `cli.py`, `hermes_cli/` | `hermes_cli/AGENTS.md` | CLI mixins, slash registry, config system, skins, `alfred update`, profiles / multiplex |
+| `cli.py`, `hermes_cli/` | `hermes_cli/AGENTS.md` | CLI mixins, slash registry, config system, skins, `plushuman update`, profiles / multiplex |
 | `gateway/` | `gateway/AGENTS.md` | adapters, message guards, streaming, notifications, token locks, § Profile scope |
 | `gateway/platforms/` new adapter | `gateway/platforms/ADDING_A_PLATFORM.md` | step-by-step adapter guide |
 | `tools/`, `toolsets.py`, `model_tools.py` | `tools/AGENTS.md` | adding tools, registry, toolsets, delegation, session-scoped surface tools |

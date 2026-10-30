@@ -335,10 +335,10 @@ def admit_durable_turn_lease(
         nonlocal reload_needed, announced
         reload_needed = announced = True
         agent._emit_status(
-            "⏳ Another Alfred process is using this session; "
+            "⏳ Another +Human process is using this session; "
             "waiting for it to finish before starting your turn..."
             if elapsed < 1.0 else
-            f"⏳ Still waiting for the other Alfred process on this session ({int(elapsed)}s)..."
+            f"⏳ Still waiting for the other +Human process on this session ({int(elapsed)}s)..."
         )
 
     authority_floor = time.time()  # every acquisition attempt stamps its expiry after this instant
@@ -447,7 +447,7 @@ def _lease_not_acquired_result(agent, session_id: str, conversation_history) -> 
         )
         result = {
             "final_response": (
-                "Stopped waiting for another Alfred process on this session. "
+                "Stopped waiting for another +Human process on this session. "
                 "Your message was not processed."
             ),
             **base,
@@ -467,7 +467,7 @@ def _lease_not_acquired_result(agent, session_id: str, conversation_history) -> 
         return result
     # Fail closed like gateway TurnLeaseTimeoutError: surface a resend notice, not a bare TimeoutError.
     timeout_msg = (
-        "⏳ Another Alfred process kept this session busy too long. Your message was not "
+        "⏳ Another +Human process kept this session busy too long. Your message was not "
         "processed - wait for the other process to finish, then send it again."
     )
     logger.error("session turn lease wait timed out for %s", session_id)

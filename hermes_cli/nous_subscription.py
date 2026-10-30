@@ -640,7 +640,7 @@ def prompt_enable_tool_gateway(config: dict[str, object], *, force_fresh: bool =
     return changed
 
 
-# Inline Nous Portal login for the Tool Gateway picker (`alfred tools`)
+# Inline Nous Portal login for the Tool Gateway picker (`plushuman tools`)
 
 
 def ensure_nous_portal_access(*, capability: str = "the Nous Tool Gateway", coverage_category: Optional[str] = None) -> bool:

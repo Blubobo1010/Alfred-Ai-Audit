@@ -54,7 +54,7 @@ def _compress_context_via_codex_app_server(
 ) -> tuple[list, str]:
     """Route compaction to Codex app-server for Codex-owned threads.
     Rewriting the local transcript would not shrink the Codex thread, so Codex compacts its own thread and
-    Alfred' transcript is left unchanged. Every exit, raising ones included, logs one attempt record."""
+    +Human' transcript is left unchanged. Every exit, raising ones included, logs one attempt record."""
     from agent.conversation_compression import (
         COMPACTION_STATUS, _CompressionActivityHeartbeat, _emit_compaction_done, _existing_system_prompt,
         _reset_read_dedup_caches, _swallow,
@@ -99,7 +99,7 @@ def _compress_context_via_codex_app_server(
         result = codex_session.compact_thread()
     except BaseException as exc:
         _activity_heartbeat.stop("context compression failed")
-        # Same class shape as the Alfred route's raising exits; the caller still gets the original error.
+        # Same class shape as the +Human route's raising exits; the caller still gets the original error.
         _record("aborted", f"exception:{type(exc).__name__}")
         raise
     failed = bool(getattr(result, "interrupted", False) or getattr(result, "error", None))

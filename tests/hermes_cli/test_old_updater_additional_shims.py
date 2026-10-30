@@ -16,7 +16,7 @@ from tests.compat.old_updater_support import (
 
 
 @pytest.mark.parametrize("command,profile", [
-    ("", None), ("alfred -p ops gateway run", "ops"), ("alfred --profile=ops gateway run", "ops"),
+    ("", None), ("plushuman -p ops gateway run", "ops"), ("plushuman --profile=ops gateway run", "ops"),
 ])
 def test_live_profile_parser_does_no_external_work(command, profile, no_external_work):
     from gateway.status import profile_flag_value
@@ -100,7 +100,7 @@ def test_historical_payload_survives_bridge_and_cleanup_requires_ack(handled, fr
     receipt = SimpleNamespace(data={"update_id": "original-id", "steps": [{"name": "pull", "ok": True}]})
     slot = ContextVar("test_historical_receipt", default=receipt)
     monkeypatch.setattr(update_receipt, "_current", slot)
-    argv = ["alfred", "--profile", "ops team", "update", "--gateway", "--yes"]
+    argv = ["plushuman", "--profile", "ops team", "update", "--gateway", "--yes"]
     monkeypatch.setattr(sys, "argv", argv)
     expected = deepcopy({
         "desktop": had_desktop_app_before_update,

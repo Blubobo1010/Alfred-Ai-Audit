@@ -67,8 +67,8 @@ export function webPresetFromShared(
 
 export const defaultTheme: DashboardTheme = {
   name: "default",
-  label: "Alfred Teal",
-  description: "Classic dark teal — the canonical Alfred look",
+  label: "+Human Teal",
+  description: "Classic dark teal — the canonical +Human look",
   palette: {
     background: { hex: "#041c1c", alpha: 1 },
     midground: { hex: "#ffe6cb", alpha: 1 },
@@ -229,8 +229,8 @@ export const nousBlueTheme: DashboardTheme = {
  */
 export const defaultLargeTheme: DashboardTheme = {
   name: "default-large",
-  label: "Alfred Teal (Large)",
-  description: "Alfred Teal with bigger fonts and roomier spacing",
+  label: "+Human Teal (Large)",
+  description: "+Human Teal with bigger fonts and roomier spacing",
   palette: defaultTheme.palette,
   typography: {
     ...DEFAULT_TYPOGRAPHY,

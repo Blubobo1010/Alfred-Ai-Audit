@@ -1,4 +1,4 @@
-"""``alfred chat -q … --format stream-json`` emits a parseable JSONL event stream and nothing else on stdout."""
+"""``plushuman chat -q … --format stream-json`` emits a parseable JSONL event stream and nothing else on stdout."""
 
 import json
 import signal

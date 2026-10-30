@@ -9,7 +9,7 @@ class TestCoalesceSessionNameArgs:
     # ── -c / --continue ──────────────────────────────────────────────────
 
     def test_continue_multiword_unquoted(self):
-        """alfred -c Pokemon Agent Dev → -c 'Pokemon Agent Dev'"""
+        """plushuman -c Pokemon Agent Dev → -c 'Pokemon Agent Dev'"""
         assert _coalesce_session_name_args(
             ["-c", "Pokemon", "Agent", "Dev"]
         ) == ["-c", "Pokemon Agent Dev"]
@@ -24,7 +24,7 @@ class TestCoalesceSessionNameArgs:
     # ── passthrough (no session flags) ───────────────────────────────────
 
     def test_no_session_flags_passthrough(self):
-        """alfred -w chat -q hello (nothing to merge)"""
+        """plushuman -w chat -q hello (nothing to merge)"""
         result = _coalesce_session_name_args(["-w", "chat", "-q", "hello"])
         assert result == ["-w", "chat", "-q", "hello"]
 
@@ -33,7 +33,7 @@ class TestCoalesceSessionNameArgs:
 
 
     def test_stops_at_setup_subcommand(self):
-        """alfred -c my setup → 'setup' is a subcommand, not part of name"""
+        """plushuman -c my setup → 'setup' is a subcommand, not part of name"""
         assert _coalesce_session_name_args(
             ["-c", "my", "setup"]
         ) == ["-c", "my", "setup"]

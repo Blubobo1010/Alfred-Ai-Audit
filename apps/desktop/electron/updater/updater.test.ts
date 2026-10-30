@@ -57,12 +57,12 @@ describe('build stamp → update ownership', () => {
 
 describe('buildManualUpdateCommand', () => {
   it('bare command on main and detached HEAD', () => {
-    expect(buildManualUpdateCommand('main')).toBe('alfred update')
-    expect(buildManualUpdateCommand('HEAD')).toBe('alfred update')
-    expect(buildManualUpdateCommand(null)).toBe('alfred update')
+    expect(buildManualUpdateCommand('main')).toBe('plushuman update')
+    expect(buildManualUpdateCommand('HEAD')).toBe('plushuman update')
+    expect(buildManualUpdateCommand(null)).toBe('plushuman update')
   })
 
   it('branch-pinned for non-main checkouts', () => {
-    expect(buildManualUpdateCommand('ethie/pm')).toBe('alfred update --branch ethie/pm')
+    expect(buildManualUpdateCommand('ethie/pm')).toBe('plushuman update --branch ethie/pm')
   })
 })

@@ -1,6 +1,6 @@
-# The Alfred plugin catalog entry for this plugin.
+# The +Human plugin catalog entry for this plugin.
 #
-# THIS FILE IS NOT READ BY ALFRED. It is kept here so the submission is a copy,
+# THIS FILE IS NOT READ BY PLUSHUMAN. It is kept here so the submission is a copy,
 # not a reconstruction: the catalog lives in the hermes-agent repository, and
 # admission is a pull request adding `plugin-catalog/hermes-anilist.yaml` with
 # exactly these contents. Checklist: that repo's plugin-catalog/README.md.
@@ -37,7 +37,7 @@
 name: hermes-anilist
 repo: https://github.com/BatataBF/hermes-anilist
 sha: "0081dfd7b45a469eef1ec35d3d0797318694c640"
-description: "AniList tracker for Alfred Desktop — airing countdowns, a season browser, a local or account-backed watchlist, episode alerts and a daily digest, plus agent tools that read your own list and answer about a single show. Disclosure — stores your pasted AniList token in the active profile .env (sent only to graphql.anilist.co); alerts and the daily digest are Alfred cron jobs it creates on the host you pick, and the digest job asks that host's agent to query the public AniList API itself."
+description: "AniList tracker for +Human Desktop — airing countdowns, a season browser, a local or account-backed watchlist, episode alerts and a daily digest, plus agent tools that read your own list and answer about a single show. Disclosure — stores your pasted AniList token in the active profile .env (sent only to graphql.anilist.co); alerts and the daily digest are +Human cron jobs it creates on the host you pick, and the digest job asks that host's agent to query the public AniList API itself."
 maintainer: BatataBF
 tier: community
 category: desktop
@@ -47,7 +47,7 @@ version: "0.9.0"
 platforms: []
 image: https://raw.githubusercontent.com/BatataBF/hermes-anilist/0081dfd7b45a469eef1ec35d3d0797318694c640/docs/screenshots/popover-upcoming.png
 capabilities:
-  # Must match what register(ctx) actually does at `sha`: `alfred plugins
+  # Must match what register(ctx) actually does at `sha`: `plushuman plugins
   # validate` diffs these against reality and fails the entry on drift.
   provides_tools:
     - anilist_list

@@ -1,4 +1,4 @@
-"""What Alfred does when an existing ``config.yaml`` cannot be read or parsed.
+"""What +Human does when an existing ``config.yaml`` cannot be read or parsed.
 
 Readers fail open (``{}`` / defaults / last-known-good) so a broken file never takes the process
 down; this module makes that fallback loud (one warning per file signature, a ``corrupt`` backup),
@@ -28,15 +28,15 @@ _CONFIG_PARSE_WARNED: set = set()
 _CONFIG_PARSE_FAILURES: dict = {}
 
 _PARSE_FAILURE_FALLBACK_MSG = {
-    "last-known-good": "Alfred is running on the settings it loaded before the edit until it is fixed, so recent changes are not applied.",
-    "last-known-good-backup": "Alfred is running on your last good settings until it is fixed, so recent changes are not applied.",
+    "last-known-good": "+Human is running on the settings it loaded before the edit until it is fixed, so recent changes are not applied.",
+    "last-known-good-backup": "+Human is running on your last good settings until it is fixed, so recent changes are not applied.",
     "refuse-write": "Nothing was written, so the existing file is preserved."}
 _PARSE_FAILURE_DEFAULTS_MSG = (
-    "Alfred is running on default settings until it is fixed, so none of your saved settings are applied.")
-_PARSE_FAILURE_REPAIR_MSG = "Open it with `alfred config edit`, fix {where}, then run `alfred config check`."
+    "+Human is running on default settings until it is fixed, so none of your saved settings are applied.")
+_PARSE_FAILURE_REPAIR_MSG = "Open it with `plushuman config edit`, fix {where}, then run `plushuman config check`."
 _FIX_PERMS = "Fix the file permissions or move it aside first."
 _FIX_YAML = (
-    "Fix it with `alfred config edit` and check with `alfred config check`, or copy the newest good "
+    "Fix it with `plushuman config edit` and check with `plushuman config check`, or copy the newest good "
     "file from {backups} over config.yaml.")
 
 
@@ -55,7 +55,7 @@ def _yaml_error_details(exc: Exception) -> str:
 
 
 def format_config_parse_failure(config_path: Path, exc: Exception, *, fallback: str = "defaults") -> str:
-    """User copy for an unparseable config.yaml: what happened, what Alfred is doing, how to fix.
+    """User copy for an unparseable config.yaml: what happened, what +Human is doing, how to fix.
     Only the problem line/column is printed; the raw PyYAML text goes to a ``Details:`` line."""
     where = _yaml_error_location(exc)
     at = f" at {where}" if where else ""
@@ -93,7 +93,7 @@ def _warn_config_parse_failure(
         msg += f" A copy of the broken file was saved to {backup_path}."
     logger.warning("%s Details: %s", msg, _yaml_error_details(exc))
     try:
-        sys.stderr.write(f"⚠️  alfred config: {msg}\n    Details: {_yaml_error_details(exc)}\n")
+        sys.stderr.write(f"⚠️  plushuman config: {msg}\n    Details: {_yaml_error_details(exc)}\n")
         sys.stderr.flush()
     except Exception:
         pass
@@ -125,7 +125,7 @@ class FailedConfigRead(dict):
 
 def _read_error_fix(exc: OSError) -> str:
     return _FIX_PERMS if isinstance(exc, PermissionError) else (
-        "Try again; run `alfred config check` if it keeps failing.")
+        "Try again; run `plushuman config check` if it keeps failing.")
 
 
 def _refuse_failed_read(config_path: Path, data: Any) -> None:

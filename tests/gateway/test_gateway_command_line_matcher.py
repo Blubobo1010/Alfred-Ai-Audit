@@ -1,6 +1,6 @@
 """Tests for the strict gateway command-line matcher.
 
-Regression guard for the Windows ``alfred gateway restart`` silent-outage bug:
+Regression guard for the Windows ``plushuman gateway restart`` silent-outage bug:
 the previous loose substring match (``"... gateway" in cmdline``) false-matched
 ``gateway status``/``dashboard`` siblings and unrelated processes such as
 ``python -m tui_gateway``, which let ``restart()`` race a still-draining old
@@ -26,19 +26,19 @@ ACCEPT = [
     "python -m hermes_cli/main.py gateway run",
     "python gateway/run.py",
     "hermes-gateway.exe",
-    "alfred gateway",          # bare `alfred gateway` defaults to run
-    "alfred gateway run",
+    "plushuman gateway",          # bare `plushuman gateway` defaults to run
+    "plushuman gateway run",
     # profile selector AFTER the `gateway` token (argv is profile-position
     # agnostic — _apply_profile_override strips --profile/-p anywhere)
-    "alfred gateway --profile work run",
+    "plushuman gateway --profile work run",
     "python -m hermes_cli.main gateway -p work run",
-    "alfred gateway --profile=work run",
+    "plushuman gateway --profile=work run",
     # a profile literally NAMED "gateway"
-    "alfred -p gateway gateway run",
+    "plushuman -p gateway gateway run",
     "python -m hermes_cli.main --profile gateway gateway run",
     # quoted Windows paths with spaces (shlex-aware tokenization)
-    r'"C:\Program Files\Alfred\hermes-gateway.exe"',
-    r'"C:\Program Files\Alfred\gateway\run.py" run',
+    r'"C:\Program Files\+Human\hermes-gateway.exe"',
+    r'"C:\Program Files\+Human\gateway\run.py" run',
     r'"C:\Program Files\Py\pythonw.exe" -m hermes_cli.main gateway run',
 ]
 
@@ -73,13 +73,13 @@ INLINE_SOURCE_REJECT = [
     r'"C:\Users\me\hermes\venv\Scripts\python.exe" -c "import os" 14980 '
     r'"C:\Users\me\hermes\venv\Scripts\python.exe" -m hermes_cli.main gateway run',
     'python -u -c "import os" 14980 python -m hermes_cli.main --profile work gateway run',
-    'python -uc "import os" 14980 alfred gateway run',
+    'python -uc "import os" 14980 plushuman gateway run',
     # Options that take a SEPARATE operand must not end the option walk before ``-c`` (the operand
     # is not the start of the program's own argv). The repo itself spawns ``-I -S -B -X utf8 …``
     # (hermes_cli/_old_updater.py, _update_takeover.py), so this shape is not hypothetical.
     'python -X utf8 -c "import os" 14980 python -m hermes_cli.main gateway run',
     'python -W ignore -c "import os" 14980 python -m hermes_cli.main gateway run',
-    'python --check-hash-based-pycs always -c "import os" 14980 alfred gateway run',
+    'python --check-hash-based-pycs always -c "import os" 14980 plushuman gateway run',
     'python -I -S -B -X utf8 -c "import os" 14980 python -m hermes_cli.main gateway run',
     # ``-q`` (quiet) takes NO operand, unlike ``-Q``; a case-folded walk would skip past the ``-c``.
     'python -q -c "import os" 14980 python -m hermes_cli.main gateway run',
@@ -150,13 +150,13 @@ def test_spawn_intent_ignores_inline_source_without_a_gateway_argv():
     assert spawn_intent('python -c "import time; time.sleep(1)" 14980') is None
 
 
-# Atomic Alfred' bundled desktop runner (regression for #22418): it shares
+# Atomic +Human' bundled desktop runner (regression for #22418): it shares
 # HERMES_HOME with the CLI and must be recognised as a gateway so
 # ``gateway run --replace`` enters the replace/lock-handoff path instead of
 # colliding with the desktop runner's still-held scoped locks.
 ATOMIC_DESKTOP = (
-    "/Applications/Atomic Alfred.app/Contents/Resources/python-server/python "
-    "/Applications/Atomic Alfred.app/Contents/Resources/python-server/desktop-gateway.py"
+    "/Applications/Atomic +Human.app/Contents/Resources/python-server/python "
+    "/Applications/Atomic +Human.app/Contents/Resources/python-server/desktop-gateway.py"
 )
 
 

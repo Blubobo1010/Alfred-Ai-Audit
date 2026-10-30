@@ -1,10 +1,10 @@
-"""``alfred update`` refreshes the installed macOS ``Alfred.app`` from the rebuilt bundle (#52339).
+"""``plushuman update`` refreshes the installed macOS ``+Human.app`` from the rebuilt bundle (#52339).
 
-``alfred desktop --build-only`` only packages into ``apps/desktop/release/``; Finder launches the
+``plushuman desktop --build-only`` only packages into ``apps/desktop/release/``; Finder launches the
 copy in ``/Applications``. These pin the contract of ``_install_rebuilt_macos_bundles``: a stale
 or missing installed copy is (re)installed, a current one and a running one are never touched, and
 a failed swap leaves the previous bundle launchable. Which paths count as installed is decided by
-``_installed_desktop_apps``: a recorded copy that went missing comes back until Alfred' own GUI
+``_installed_desktop_apps``: a recorded copy that went missing comes back until +Human' own GUI
 uninstall drops the record.
 """
 
@@ -17,9 +17,9 @@ from hermes_cli import main_desktop
 
 
 def _bundle(root: Path, asar: bytes) -> Path:
-    app = root / "Alfred.app"
+    app = root / "+Human.app"
     (app / "Contents" / "MacOS").mkdir(parents=True)
-    (app / "Contents" / "MacOS" / "Alfred").write_bytes(b"\xcf\xfa\xed\xfe")
+    (app / "Contents" / "MacOS" / "+Human").write_bytes(b"\xcf\xfa\xed\xfe")
     (app / "Contents" / "Resources").mkdir()
     (app / "Contents" / "Resources" / "app.asar").write_bytes(asar)
     return app
@@ -44,14 +44,14 @@ def test_stale_and_missing_bundles_are_installed_current_and_running_are_left_al
     current_marker = current / "Contents" / "marker"
     current_marker.write_text("untouched", encoding="utf-8")
 
-    missing = tmp_path / "missing" / "Alfred.app"
+    missing = tmp_path / "missing" / "+Human.app"
     installed, problems = main_desktop._install_rebuilt_macos_bundles(
         rebuilt, [stale, current, running, missing], running={running.resolve()})
 
     assert installed == [stale, missing]
     assert _asar(stale) == b"rebuilt" and _asar(missing) == b"rebuilt"
-    assert not (stale.parent / "Alfred.app.hermes-update-old").exists()
-    assert not (stale.parent / "Alfred.app.hermes-update-new").exists()
+    assert not (stale.parent / "+Human.app.hermes-update-old").exists()
+    assert not (stale.parent / "+Human.app.hermes-update-new").exists()
     assert current_marker.read_text(encoding="utf-8") == "untouched"
     # A live app is reported, never swapped under.
     assert _asar(running) == b"older"
@@ -87,8 +87,8 @@ def test_publisher_signed_install_is_never_replaced_by_local_build(rebuilt, tmp_
     assert "publisher-signed app (Team ID TEAM0123)" in problems[0]
     assert "kept the existing app" in problems[0]
     assert _asar(stale) == b"stale"
-    assert not (stale.parent / "Alfred.app.hermes-update-new").exists()
-    assert not (stale.parent / "Alfred.app.hermes-update-old").exists()
+    assert not (stale.parent / "+Human.app.hermes-update-new").exists()
+    assert not (stale.parent / "+Human.app.hermes-update-old").exists()
 
 
 def test_team_id_mismatch_refuses_swap(rebuilt, tmp_path, monkeypatch):
@@ -172,7 +172,7 @@ def test_failed_swap_keeps_the_previous_bundle_launchable(rebuilt, tmp_path, mon
     assert installed == []
     assert len(problems) == 1
     assert stale.is_dir() and _asar(stale) == b"stale"
-    assert not (stale.parent / "Alfred.app.hermes-update-new").exists()
+    assert not (stale.parent / "+Human.app.hermes-update-new").exists()
 
 
 @pytest.mark.platforms("macos")
@@ -185,14 +185,14 @@ def test_recorded_app_that_went_missing_comes_back_until_gui_uninstall(rebuilt, 
     monkeypatch.setenv("HERMES_HOME", str(home))
     monkeypatch.setattr(hermes_main, "PROJECT_ROOT", home / "hermes-agent")
     (rebuilt / "Contents" / "Resources" / "install-stamp.json").write_text('{"updateMechanism": "self"}', encoding="utf-8")
-    app = tmp_path / "Applications" / "Alfred.app"
+    app = tmp_path / "Applications" / "+Human.app"
     shutil.copytree(rebuilt, app)
-    user_app = tmp_path / "user" / "Applications" / "Alfred.app"
+    user_app = tmp_path / "user" / "Applications" / "+Human.app"
     user_app.parent.mkdir(parents=True)
     monkeypatch.setattr(gui_uninstall, "packaged_gui_app_paths", lambda: [app, user_app])
     monkeypatch.setattr(gui_uninstall, "desktop_userdata_dir", lambda: tmp_path / "userdata")
     monkeypatch.setattr(main_desktop, "_desktop_packaged_executable",
-                        lambda _d: rebuilt / "Contents" / "MacOS" / "Alfred")
+                        lambda _d: rebuilt / "Contents" / "MacOS" / "+Human")
     monkeypatch.setattr(main_desktop, "_running_macos_app_bundles", set)
 
     main_desktop._refresh_installed_desktop_apps(tmp_path)  # current copy: recorded, untouched

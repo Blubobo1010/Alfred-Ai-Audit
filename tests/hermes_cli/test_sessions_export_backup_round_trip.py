@@ -1,4 +1,4 @@
-"""`alfred sessions export` JSONL — the documented backup format — must round-trip a compacted
+"""`plushuman sessions export` JSONL — the documented backup format — must round-trip a compacted
 session: import restores the turns in-place compaction archived, still archived (#122679 fixed
 only the console export; the primary CLI kept the live-only projection). That backup materializes
 every stored row in memory, so it is bounded per session by ``sessions.max_export_messages``, as the
@@ -33,7 +33,7 @@ def _seed_compacted_session() -> SessionDB:
 
 
 def _export(monkeypatch, backup, *selection):
-    monkeypatch.setattr(sys, "argv", ["alfred", "sessions", "export", str(backup), *selection])
+    monkeypatch.setattr(sys, "argv", ["plushuman", "sessions", "export", str(backup), *selection])
     main_mod.main()
 
 

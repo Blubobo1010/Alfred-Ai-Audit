@@ -122,7 +122,7 @@ async function openStoredBotChat(
   { background = false }: OpenStoredBotChatOptions = {}
 ): Promise<string> {
   if (!storedId || typeof host.openSession !== 'function') {
-    throw new Error('This Alfred Desktop version cannot open stored sessions')
+    throw new Error('This +Human Desktop version cannot open stored sessions')
   }
 
   const { bot, name, route } = botOwner(owner)
@@ -235,7 +235,7 @@ export function notifyBotOpenFailure(error: unknown, bot: RosterRow, step: BotOp
   const detail = errorDetail(error)
 
   if (botModeGatewayNeedsUpdate(error)) {
-    const connectionLabel = bot.connectionLabel || bot.connectionId || 'Alfred'
+    const connectionLabel = bot.connectionLabel || bot.connectionId || '+Human'
     host.notify?.({
       kind: 'error',
       title: b.openNeedsUpdateTitle,
@@ -664,7 +664,7 @@ export async function prepareBotSource(bot: RosterRow) {
   if (route && typeof host.requestProfile !== 'function') {
     throw new Error(
       getPluginCtx()?.i18n?.t('bot.remoteConnectionsUnsupported') ??
-        'Update Alfred Desktop to chat with bots on other connections.'
+        'Update +Human Desktop to chat with bots on other connections.'
     )
   }
 

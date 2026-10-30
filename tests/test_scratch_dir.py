@@ -15,7 +15,7 @@ from hermes_constants import apply_scratch_tmp_env, get_scratch_dir, prune_scrat
 
 
 def test_scratch_env_follows_home_and_respects_user_tmpdir(tmp_path):
-    """Unset temp vars → scratch of env HERMES_HOME; a Alfred-exported value re-derives for a routed
+    """Unset temp vars → scratch of env HERMES_HOME; a +Human-exported value re-derives for a routed
     home; a user/OS-set value (macOS ``/var/folders``, ``%TEMP%``) is never touched."""
     home_a, home_b = tmp_path / "a", tmp_path / "b"
     env = {"HERMES_HOME": str(home_a)}
@@ -153,7 +153,7 @@ class TestScratchDirPermissionPolicy:
 
     def test_effective_home_marker_does_not_govern_another_homes_scratch(self, tmp_path, monkeypatch):
         # The caller's home decides the policy. A boot caller (``export_scratch_tmp_env``) and
-        # ``alfred doctor`` have already resolved theirs, so the marker lookup must not fall back
+        # ``plushuman doctor`` have already resolved theirs, so the marker lookup must not fall back
         # to ``get_hermes_home()``: for a sticky profile with HERMES_HOME unset that lookup warns
         # about the default profile on every command, and it is the wrong home to judge by anyway.
         selected = tmp_path / "home"

@@ -284,7 +284,7 @@ def test_store_attachment_bytes_roundtrip(kanban_home):
 
 
 # ---------------------------------------------------------------------------
-# CLI — alfred kanban attach / attachments / attach-rm
+# CLI — plushuman kanban attach / attachments / attach-rm
 # ---------------------------------------------------------------------------
 
 

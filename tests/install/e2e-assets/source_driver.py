@@ -18,7 +18,7 @@ def desktop_outputs(root: Path) -> list[Path]:
     desktop = root / "apps/desktop"
     return [path for pattern in (
         "release/*/resources/app.asar.unpacked/dist",
-        "release/mac*/Alfred.app/Contents/Resources/app.asar.unpacked/dist",
+        "release/mac*/+Human.app/Contents/Resources/app.asar.unpacked/dist",
     ) for path in desktop.glob(pattern)]
 
 
@@ -32,8 +32,8 @@ def verify_products(root: Path, desktop: str, node: Path | None = None) -> None:
         if not outputs or not any((out / "index.html").is_file() for out in outputs):
             raise RuntimeError("desktop packaged renderer is missing or incomplete")
         executables = [path for pattern in (
-            "release/*/Alfred.exe", "release/*/Alfred", "release/*/hermes",
-            "release/mac*/Alfred.app/Contents/MacOS/Alfred",
+            "release/*/+Human.exe", "release/*/+Human", "release/*/hermes",
+            "release/mac*/+Human.app/Contents/MacOS/+Human",
         ) for path in app.glob(pattern) if path.is_file() and path.stat().st_size]
         if not executables:
             raise RuntimeError("desktop executable is missing or empty")

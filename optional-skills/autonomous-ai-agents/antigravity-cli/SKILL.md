@@ -2,7 +2,7 @@
 name: antigravity-cli
 description: "Operate the Antigravity CLI (agy): plugins, auth, sandbox."
 version: 0.2.0
-author: Tony Simons (asimons81), Alfred
+author: Tony Simons (asimons81), +Human
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -14,9 +14,9 @@ metadata:
 # Antigravity CLI (`agy`)
 
 Operator guide for the Antigravity CLI, invoked as `agy`. Run all `agy`
-commands through the Alfred `terminal` tool; inspect its config and logs with
+commands through the +Human `terminal` tool; inspect its config and logs with
 `read_file`. This skill is reference + procedure — it does not wrap a network
-API, so there is nothing to authenticate from Alfred itself.
+API, so there is nothing to authenticate from +Human itself.
 
 ## When to Use
 

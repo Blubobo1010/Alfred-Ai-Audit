@@ -62,7 +62,7 @@ const UPDATE_WINDOW_STATE = ['connection.json', 'connections.json'];
 
 /**
  * Give the independently driven update window its own Electron instance route.
- * Copy only Alfred-owned connection contracts. Cloning Chromium's profile
+ * Copy only +Human-owned connection contracts. Cloning Chromium's profile
  * carries browser locks and process state from the prior app into a supposedly
  * isolated launch. HERMES_HOME remains shared so the app updates the actual
  * installed runtime.

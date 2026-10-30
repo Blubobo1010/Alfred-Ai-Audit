@@ -1,4 +1,4 @@
-"""Regression tests: `alfred sessions` error paths return non-zero (SES-04).
+"""Regression tests: `plushuman sessions` error paths return non-zero (SES-04).
 
 Before this, delete/rename not-found, prune bad-arg, blank rename, and import
 of a missing file all printed an error and returned exit 0 — a scripting/CI
@@ -32,7 +32,7 @@ def test_delete_missing_returns_1(tmp_path, monkeypatch, capsys):
     rc = sc.cmd_sessions(_args("delete", session_id="nope_xyz"))
     assert rc == 1
     out = capsys.readouterr().out
-    assert "No session 'nope_xyz'" in out and "alfred sessions list" in out
+    assert "No session 'nope_xyz'" in out and "plushuman sessions list" in out
 
 
 def test_rename_missing_returns_1(tmp_path, monkeypatch):

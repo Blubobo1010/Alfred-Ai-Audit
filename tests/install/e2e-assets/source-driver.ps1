@@ -15,13 +15,13 @@ function Get-SourceHermes([string]$Root) {
     }
     $legacy = Join-Path $Root 'venv/Scripts/hermes.exe'
     if (Test-Path -LiteralPath $legacy -PathType Leaf) { return $legacy }
-    throw "No installed Alfred command under $Root"
+    throw "No installed +Human command under $Root"
 }
 
 # Hand out a command to DRIVE the next ordinary startup, even when the
 # published launcher is not there yet.
 #
-# A pre-handoff release cannot flip during `alfred update` -- there is no
+# A pre-handoff release cannot flip during `plushuman update` -- there is no
 # retired-hook seam on its update path to reach, so the update ends with the
 # tree at HEAD and no `.hermes/bin/*`. The NEXT ordinary startup is what
 # completes it: hermes_bootstrap calls prepare_launch() before importing
@@ -37,7 +37,7 @@ function Get-SourceHermesForStartup([string]$Root) {
     }
     $legacy = Join-Path $Root 'venv/Scripts/hermes.exe'
     if (Test-Path -LiteralPath $legacy -PathType Leaf) { return $legacy }
-    throw "No installed Alfred command to start under $Root"
+    throw "No installed +Human command to start under $Root"
 }
 
 # Official source checkouts default to the stable channel (the latest published

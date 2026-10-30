@@ -1,4 +1,4 @@
-"""``alfred profile`` command — one handler per action, dispatched by ``PROFILE_ACTIONS``.
+"""``plushuman profile`` command — one handler per action, dispatched by ``PROFILE_ACTIONS``.
 
 Imports from ``hermes_cli.profiles`` stay lazy (inside each handler) so tests can monkeypatch
 the module attributes.
@@ -47,7 +47,7 @@ def _render_distribution_plan(plan) -> None:
     if mf.author:
         print(f"  Author:   {mf.author}")
     if mf.hermes_requires:
-        print(f"  Requires: Alfred {mf.hermes_requires}")
+        print(f"  Requires: +Human {mf.hermes_requires}")
     print(f"  Source:   {plan.provenance}")
     print(f"  Target:   {plan.target_dir}")
     if plan.existing:
@@ -85,7 +85,7 @@ def _render_distribution_plan(plan) -> None:
 
 
 def _profile_status(args):
-    """Bare ``alfred profile`` — show current profile status."""
+    """Bare ``plushuman profile`` — show current profile status."""
     from hermes_constants import display_hermes_home
     from hermes_cli.profiles import format_profile_label, get_active_profile_name, list_profiles
     profile_name = get_active_profile_name()
@@ -101,7 +101,7 @@ def _profile_status(args):
         print(f"Gateway:        {'running' if p.gateway_running else 'stopped'}")
         print(f"Skills:         {p.skill_count} installed")
         if p.alias_path:
-            print(f"Alias:          {p.alias_name or p.name} → alfred -p {p.name}")
+            print(f"Alias:          {p.alias_name or p.name} → plushuman -p {p.name}")
     print()
 
 
@@ -224,7 +224,7 @@ def _profile_create(args):
             if memory_provider:
                 print(f"Cloned memory provider config ({memory_provider}) too.")
         if sync_imports:
-            print(f"Import sources carried over — `alfred -p {name} import-agent --sync` "
+            print(f"Import sources carried over — `plushuman -p {name} import-agent --sync` "
                   "keeps pulling the same Claude Code / Codex trees.")
         _print_channel_clone_notice(name, source_label, clone_channels, "--clone-all" if clone_all else "--clone")
         # Auto-clone Honcho config for the new profile (only with clone operations)
@@ -254,8 +254,8 @@ def _profile_create(args):
         collision = check_alias_collision(name)
         if collision:
             print(f"\n⚠ Cannot create alias '{name}' — {collision}")
-            print(f"  Choose a custom alias:  alfred profile alias {name} --name <custom>")
-            print(f"  Or access via flag:     alfred -p {name} chat")
+            print(f"  Choose a custom alias:  plushuman profile alias {name} --name <custom>")
+            print(f"  Or access via flag:     plushuman -p {name} chat")
         else:
             wrapper_path = create_wrapper_script(name)
             if wrapper_path:
@@ -278,7 +278,7 @@ def _profile_create(args):
         print("  (served now by the running multiplexed gateway — add its bot token and it connects)")
     elif served is not None:
         # The multiplexer did not pick the profile up (older gateway or the signal failed): a restart serves it.
-        print("  alfred gateway restart    Serve this profile from the running multiplexed gateway")
+        print("  plushuman gateway restart    Serve this profile from the running multiplexed gateway")
     else:
         print(f"  {name} gateway start      Start the messaging gateway")
     if clone or clone_all:
@@ -397,9 +397,9 @@ def _profile_show(args):
         print(f"Distribution: {dist_name}@{dist_version or '?'}")
         if dist_source:
             print(f"Installed from: {dist_source}")
-        print(f"  (run `alfred profile info {name}` for full manifest)")
+        print(f"  (run `plushuman profile info {name}` for full manifest)")
     if alias_name:
-        print(f"Alias:   {alias_name} → alfred -p {name}  ({_wrapper_path(alias_name)})")
+        print(f"Alias:   {alias_name} → plushuman -p {name}  ({_wrapper_path(alias_name)})")
     print()
 
 
@@ -456,7 +456,7 @@ def _profile_migrate_identity(args):
         _die(f"Error: {e}")
     if not migrated:
         _die(f"Error: session identity was not migrated. Restart or stop the gateway, then run:\n"
-             f"    alfred profile migrate-identity {args.old_name} {args.new_name}", err=True)
+             f"    plushuman profile migrate-identity {args.old_name} {args.new_name}", err=True)
     print(f"✓ Session/routing identity migrated: {args.old_name} → {args.new_name}")
 
 
@@ -471,7 +471,7 @@ def _profile_purge_identity(args):
         _die(f"Error: {e}")
     if not purged:
         _die(f"Error: session identity was not purged. Restart or stop the gateway, then run:\n"
-             f"    alfred profile purge-identity {args.profile_name}", err=True)
+             f"    plushuman profile purge-identity {args.profile_name}", err=True)
     print(f"✓ Session/routing identity purged: {args.profile_name}")
 
 
@@ -527,9 +527,9 @@ def _profile_install(args):
         if plan.has_cron:
             print(
                 "  Cron jobs were included but are NOT scheduled automatically.\n"
-                f"  Review them with:  alfred -p {plan.manifest.name} cron list"
+                f"  Review them with:  plushuman -p {plan.manifest.name} cron list"
             )
-        print(f"\n  Use with:      alfred -p {plan.manifest.name} chat")
+        print(f"\n  Use with:      plushuman -p {plan.manifest.name} chat")
     except (DistributionError, ValueError) as e:
         _die(f"Error: {e}")
 
@@ -543,7 +543,7 @@ def _profile_update(args):
         if current is None:
             _die(
                 f"Error: Profile '{canon}' is not a distribution (no distribution.yaml). "
-                "Only profiles installed via `alfred profile install` can be updated."
+                "Only profiles installed via `plushuman profile install` can be updated."
             )
         force_config = getattr(args, "force_config", False)
         if not getattr(args, "yes", False):
@@ -560,7 +560,7 @@ def _profile_update(args):
         plan = update_distribution(canon, force_config=force_config)
         print(f"\n✓ Updated '{plan.manifest.name}' → v{plan.manifest.version}")
         if plan.has_cron:
-            print(f"  Cron files were refreshed.  Review with:  alfred -p {plan.manifest.name} cron list")
+            print(f"  Cron files were refreshed.  Review with:  plushuman -p {plan.manifest.name} cron list")
     except (DistributionError, ValueError) as e:
         _die(f"Error: {e}")
 
@@ -569,7 +569,7 @@ _INFO_FIELDS = (
     ("description", "Description:  "),
     ("author", "Author:       "),
     ("license", "License:      "),
-    ("hermes_requires", "Requires:     Alfred "),
+    ("hermes_requires", "Requires:     +Human "),
     ("source", "Source:       "),
     ("installed_at", "Installed:    "),
 )
@@ -603,7 +603,7 @@ def _profile_info(args):
     print()
 
 
-# Order mirrors the original if/elif chain; None = bare ``alfred profile``.
+# Order mirrors the original if/elif chain; None = bare ``plushuman profile``.
 PROFILE_ACTIONS = {
     None: _profile_status,
     'list': _profile_list,

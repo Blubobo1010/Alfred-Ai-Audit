@@ -1,4 +1,4 @@
-"""Tests for the legacy-desktop-checkout report in alfred doctor."""
+"""Tests for the legacy-desktop-checkout report in plushuman doctor."""
 
 import json
 import subprocess

@@ -15,7 +15,7 @@
 //     so ShipIt's detached relaunch of the NEW bundle survives our exit.
 //
 // Usage (from the scratch dir with the driver's own @playwright/test):
-//   node mac-bundled-update-driver.mjs --app-bin <.app/Contents/MacOS/Alfred> \
+//   node mac-bundled-update-driver.mjs --app-bin <.app/Contents/MacOS/+Human> \
 //     --shots <dir> --close-timeout-ms 420000
 
 import fs from 'node:fs';

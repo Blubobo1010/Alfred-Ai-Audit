@@ -1,7 +1,7 @@
-"""Fold an agent-as-provider's own activity back into Alfred' turn state.
+"""Fold an agent-as-provider's own activity back into +Human' turn state.
 
 Agent providers (ACP CLI shims, the codex app-server) run their own tools, so that
-work must never come back as pending ``tool_calls`` (Alfred would re-run it) — but
+work must never come back as pending ``tool_calls`` (+Human would re-run it) — but
 the self-improvement loop (replays ``messages``) and the skill-review nudge
 (``_iters_since_skill`` counter) go blind if it is merely summarised into
 ``reasoning``. The client hands back ``hermes_projected_messages`` (completed

@@ -1,7 +1,7 @@
 import os
 import sys
 
-# Stop a ``utils/``-style package in the launch directory from shadowing Alfred's own
+# Stop a ``utils/``-style package in the launch directory from shadowing +Human's own
 # top-level modules; ``hermes_bootstrap``'s name can't collide, so importing it first is safe.
 import hermes_bootstrap
 
@@ -206,9 +206,9 @@ def mcp_discovery_in_flight() -> bool:
     """True if ANY background MCP discovery thread is still running: the late-refresh
     scheduler calls this regardless of surface, so it MUST consult both owners.
 
-    There are two independent discovery-thread owners by surface: the stdio ``alfred --tui`` path spawns ITS
+    There are two independent discovery-thread owners by surface: the stdio ``plushuman --tui`` path spawns ITS
     thread here (``_mcp_discovery_thread``), while the desktop app + dashboard WebSocket sidecar
-    (``tui_gateway/ws.py``) and ``alfred dashboard`` spawn theirs via
+    (``tui_gateway/ws.py``) and ``plushuman dashboard`` spawn theirs via
     ``hermes_cli.mcp_startup.start_background_mcp_discovery``. The late-refresh scheduler imports this
     function regardless of surface, so it MUST consult both — checking only the entry thread left the
     desktop/dashboard surfaces with no late refresh, so a slow MCP server's tools never surfaced for the
@@ -314,7 +314,7 @@ def main():
             "skin": resolve_skin(), "change_events": True, "replay_epoch": replay_epoch()}}},
         "startup write failed (broken stdout pipe before first event)")
 
-    # Live-apply skins Alfred activates mid-conversation.
+    # Live-apply skins +Human activates mid-conversation.
     server._ensure_skin_watcher()
 
     # Warm the /model picker's provider-models cache in this idle window (fire-and-forget).

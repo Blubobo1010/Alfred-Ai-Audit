@@ -1,6 +1,6 @@
-"""``alfred approvals suggest`` — mine approval history into allowlist proposals.
+"""``plushuman approvals suggest`` — mine approval history into allowlist proposals.
 
-Alfred has no dedicated approval-decision ledger: ``always`` answers land in ``command_allowlist``
++Human has no dedicated approval-decision ledger: ``always`` answers land in ``command_allowlist``
 (config.yaml) via :func:`tools.approval.save_permanent_allowlist`, while ``once``/``session``
 approvals are in-memory only. So this module mines *implied approvals*: a command that matches a
 dangerous-command class (the same :func:`tools.approval.detect_dangerous_command` classifier that
@@ -308,13 +308,13 @@ def _render_text(proposals: list[Proposal], days: int) -> None:
             print(f"       e.g. {ex}")
     print(
         "\nNothing has been changed. Apply selected entries with:\n"
-        "  alfred approvals suggest --apply 1,3\n"
+        "  plushuman approvals suggest --apply 1,3\n"
         "Entries are merged into command_allowlist in ~/.hermes/config.yaml."
     )
 
 
 def suggest_command(args) -> int:
-    """Entry point for ``alfred approvals suggest``."""
+    """Entry point for ``plushuman approvals suggest``."""
     db_path = Path(args.db) if getattr(args, "db", None) else default_db_path()
     days = getattr(args, "days", 90)
     if not db_path.exists():
@@ -367,7 +367,7 @@ def suggest_command(args) -> int:
 
 
 def approvals_command(args) -> int:
-    """Dispatch ``alfred approvals <subcommand>``."""
+    """Dispatch ``plushuman approvals <subcommand>``."""
     sub = getattr(args, "approvals_command", None)
     if sub == "suggest":
         return suggest_command(args)
@@ -375,7 +375,7 @@ def approvals_command(args) -> int:
         from hermes_cli.approvals_test import approvals_test_command
         return approvals_test_command(args)
     print(
-        "usage: alfred approvals <subcommand>\n"
+        "usage: plushuman approvals <subcommand>\n"
         "\n"
         "subcommands:\n"
         "  suggest    Mine past approval decisions into a proposed\n"
@@ -383,6 +383,6 @@ def approvals_command(args) -> int:
         "  test       Dry-run the approval verdict for a command without\n"
         "             executing it (exit 0 allow / 2 ask / 3 deny)\n"
         "\n"
-        "Run `alfred approvals <subcommand> -h` for details."
+        "Run `plushuman approvals <subcommand> -h` for details."
     )
     return 1

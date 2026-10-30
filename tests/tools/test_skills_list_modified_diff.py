@@ -1,6 +1,6 @@
 """Tests for discovering and diffing user-modified bundled skills.
 
-`alfred update` keeps (does not overwrite) bundled skills the user edited
+`plushuman update` keeps (does not overwrite) bundled skills the user edited
 locally, but historically only printed a *count* — there was no way to find
 which skills, or see what changed. These tests cover the two helpers that close
 that gap, exercising the real sync pipeline (no mocks of the comparison logic):

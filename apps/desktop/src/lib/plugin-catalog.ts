@@ -1,5 +1,5 @@
 /**
- * The curated Alfred plugin catalog as the Desktop sees it.
+ * The curated +Human plugin catalog as the Desktop sees it.
  *
  * The Capabilities → Plugins tab embeds the docs-site catalog page
  * (`CATALOG_PICKER_URL`) as a one-click picker; that page renders

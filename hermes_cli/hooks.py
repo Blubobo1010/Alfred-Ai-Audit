@@ -1,4 +1,4 @@
-"""alfred hooks — inspect and manage shell-script hooks."""
+"""plushuman hooks — inspect and manage shell-script hooks."""
 
 from __future__ import annotations
 
@@ -8,11 +8,11 @@ from typing import Any, Dict, List
 
 
 def hooks_command(args) -> None:
-    """Entry point for ``alfred hooks`` — dispatches to the requested action."""
+    """Entry point for ``plushuman hooks`` — dispatches to the requested action."""
     sub = getattr(args, "hooks_action", None)
     if not sub:
-        print("Usage: alfred hooks {list|test|revoke|doctor}")
-        print("Run 'alfred hooks --help' for details.")
+        print("Usage: plushuman hooks {list|test|revoke|doctor}")
+        print("Run 'plushuman hooks --help' for details.")
         return
     handler = _ACTIONS.get(sub)
     if handler is None:
@@ -35,7 +35,7 @@ def _cmd_list(_args) -> None:
 
     if not specs and not outbound:
         print("No shell hooks or outbound webhooks configured in ~/.hermes/config.yaml.")
-        print("See `alfred hooks --help` or")
+        print("See `plushuman hooks --help` or")
         print("    website/docs/user-guide/features/hooks.md")
         print("for the config schema and worked examples.")
         return
@@ -66,7 +66,7 @@ def _cmd_list(_args) -> None:
                         print(
                             f"      ⚠ script modified since approval "
                             f"(was {mtime_at}, now {mtime_now}) — "
-                            f"run `alfred hooks doctor` to re-validate"
+                            f"run `plushuman hooks doctor` to re-validate"
                         )
             print()
 
@@ -241,7 +241,7 @@ def _print_run_result(result: dict[str, Any]) -> None:
     # to show — failed-open and failed-closed must not render identically (#115968).
     parsed = result.get("parsed")
     if parsed:
-        print(f"      parsed (Alfred wire shape): {json.dumps(parsed)}")
+        print(f"      parsed (+Human wire shape): {json.dumps(parsed)}")
     else:
         print("      parsed: <none — hook contributed nothing to the dispatcher>")
 
@@ -309,7 +309,7 @@ def _doctor_one(spec, shell_hooks) -> int:
             problems += 1
             print(f"      ⚠ script modified since approval "
                   f"(was {mtime_at}, now {mtime_now}) — review changes, "
-                  f"then `alfred hooks revoke` + re-approve to refresh")
+                  f"then `plushuman hooks revoke` + re-approve to refresh")
         elif drift is False:
             print("      ✓ script unchanged since approval")
     # 4. JSON smoke test on a synthetic payload — ONLY when already allowlisted. Otherwise doctor
@@ -318,7 +318,7 @@ def _doctor_one(spec, shell_hooks) -> int:
     if not entry:
         print("      ℹ skipped JSON smoke test — not allowlisted yet. "
               "Approve the hook first (via TTY prompt or --accept-hooks), "
-              "then re-run `alfred hooks doctor`.")
+              "then re-run `plushuman hooks doctor`.")
     elif shell_hooks.script_is_executable(spec.command):
         result = shell_hooks.run_once(spec, _DEFAULT_PAYLOADS.get(spec.event, {"extra": {}}))
         if result.get("timed_out"):

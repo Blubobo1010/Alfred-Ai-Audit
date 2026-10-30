@@ -43,7 +43,7 @@ Pick `realtime` only when the user actually wants the agent to speak. It costs r
 Easiest path — run the built-in installer:
 
 ```bash
-alfred plugins enable google_meet
+plushuman plugins enable google_meet
 hermes meet install                 # PM dependencies + Chromium (transcribe only)
 hermes meet install --realtime      # + pulseaudio-utils / brew blackhole+ffmpeg
 hermes meet auth                    # optional; skips guest-lobby wait
@@ -66,7 +66,7 @@ For manual realtime audio setup:
 For a remote node:
 ```bash
 # on the user's Mac (where Chrome is signed in):
-alfred plugins enable google_meet
+plushuman plugins enable google_meet
 hermes meet install
 hermes meet node run --display-name my-mac    # persistent server
 # copy the printed token
@@ -81,7 +81,7 @@ Run `hermes meet setup` to preflight local prereqs.
 ## Flow
 
 1. **Join** — call `meet_join(url=..., mode=..., node=...)`. Returns immediately.
-2. **Announce yourself** — no auto-consent. Say (in whatever channel the user is watching): "A Alfred agent bot is in this call taking notes."
+2. **Announce yourself** — no auto-consent. Say (in whatever channel the user is watching): "A +Human agent bot is in this call taking notes."
 3. **Poll** — `meet_status()` for liveness, `meet_transcript(last=20)` for recent captions. Don't re-read the whole transcript every turn.
 4. **Speak (realtime only)** — `meet_say(text="...")` queues text for TTS. The speech lags by ~2s. Don't spam it.
 5. **Leave** — `meet_leave()` when done, or set `duration="30m"` on `meet_join` for auto-leave.

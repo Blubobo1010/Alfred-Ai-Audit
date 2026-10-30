@@ -66,7 +66,7 @@ test.skipIf(process.platform === 'win32')(
   }
 )
 
-test('a user-bin launcher is ignored when it reports no Alfred source tree', (): void => {
+test('a user-bin launcher is ignored when it reports no +Human source tree', (): void => {
   const base: string = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'user-launcher-')))
 
   try {

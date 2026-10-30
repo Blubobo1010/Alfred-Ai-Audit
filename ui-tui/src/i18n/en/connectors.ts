@@ -44,7 +44,7 @@ export const connectorsEn = {
     },
     remove: {
       // {0} app, {1} name
-      confirm: (app: string, name: string) => `Remove ${app} account ${name}? This signs Alfred out of it.`
+      confirm: (app: string, name: string) => `Remove ${app} account ${name}? This signs +Human out of it.`
     },
     notice: {
       // {0} app, {1} name

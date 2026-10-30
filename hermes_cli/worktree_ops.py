@@ -1,4 +1,4 @@
-"""Git worktree isolation for ``alfred -w`` sessions: create, classify, prune.
+"""Git worktree isolation for ``plushuman -w`` sessions: create, classify, prune.
 
 Every git call goes through ``_git``/``_git_out``/``_git_quiet`` (UTF-8 text, captured,
 bounded timeout). Classification helpers fail SAFE toward "preserve". ``cli`` re-exports
@@ -118,7 +118,7 @@ def _cleanup_failed_worktree_add(repo_root: str, wt_path: Path, branch_name: str
 
 _PACK_SPRAWL_THRESHOLD = 15
 _REPACK_TIMEOUT = 1800
-# One repack attempt per clone per interval, box-wide. Every ``alfred -w`` launch on a shared clone
+# One repack attempt per clone per interval, box-wide. Every ``plushuman -w`` launch on a shared clone
 # used to start its own ``git repack -a`` of the whole store; on a multi-agent box that stacked 50+
 # concurrent multi-GB repacks (each too slow under the others to ever finish inside the timeout).
 _REPACK_MIN_INTERVAL = 6 * 3600
@@ -428,7 +428,7 @@ def _setup_worktree(repo_root: str | None = None, sync_base: bool = True,
     repo_root = repo_root or _git_repo_root()
     if not repo_root:
         _cprint("\033[31m✗ --worktree requires being inside a git repository.\033[0m")
-        print("  cd into your project repo first, then run alfred -w")
+        print("  cd into your project repo first, then run plushuman -w")
         return None
 
     wt_name = ((name and re.sub(r"[^A-Za-z0-9._-]+", "-", name).strip("-._")[:40])
@@ -791,7 +791,7 @@ def _worktree_branch_pushed_exact(
 def _worktree_lock_is_live(repo_root: str, worktree_path: str, timeout: int = 10):
     """Lock state: ``"live"`` (owning pid runs), ``"dead"`` (pid gone / non-hermes reason), None (unlocked).
 
-    ``alfred -w`` locks with reason ``hermes pid=<pid>``; ``worktree remove --force`` refuses
+    ``plushuman -w`` locks with reason ``hermes pid=<pid>``; ``worktree remove --force`` refuses
     locked trees, so a crashed session's lock would keep its tree forever. Fails SAFE toward "live".
     """
     try:
@@ -1015,7 +1015,7 @@ def _prune_stale_worktree_trees(repo_root: str, max_age_hours: int) -> None:
 
     if preserved_stale:
         logger.warning("Preserving %d worktree(s) older than 7 days with unmerged work "
-                       "(run `alfred worktree prune` to review and reclaim): %s",
+                       "(run `plushuman worktree prune` to review and reclaim): %s",
                        len(preserved_stale), ", ".join(sorted(preserved_stale)))
 
     _prune_orphaned_branches(repo_root, protect=kept_branches)
@@ -1027,8 +1027,8 @@ def _prune_stale_worktree_trees(repo_root: str, max_age_hours: int) -> None:
         count, size_mb = worktrees_summary(repo_root)
         if count >= 10 or (size_mb or 0) >= 5120:
             size_txt = f"{size_mb / 1024:.1f}GB" if size_mb else "unknown size"
-            logger.warning(".worktrees/ holds %d tree(s) (%s) — run `alfred worktree list` "
-                           "to audit and `alfred worktree prune` to reclaim safely.", count, size_txt)
+            logger.warning(".worktrees/ holds %d tree(s) (%s) — run `plushuman worktree list` "
+                           "to audit and `plushuman worktree prune` to reclaim safely.", count, size_txt)
     except Exception:
         logger.debug("worktree summary failed", exc_info=True)
 

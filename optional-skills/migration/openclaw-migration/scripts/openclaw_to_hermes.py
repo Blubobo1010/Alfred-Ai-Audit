@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""OpenClaw -> Alfred migration helper.
+"""OpenClaw -> +Human migration helper.
 
 This script migrates the parts of an OpenClaw user footprint that map cleanly
-into Alfred, archives selected unmapped docs for manual review, and
+into +Human, archives selected unmapped docs for manual review, and
 reports exactly what was skipped and why.
 """
 
@@ -47,7 +47,7 @@ WORKSPACE_INSTRUCTIONS_FILENAME = "AGENTS" + ".md"
 MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     "soul": {
         "label": "SOUL.md",
-        "description": "Import the OpenClaw persona file into Alfred.",
+        "description": "Import the OpenClaw persona file into +Human.",
     },
     "workspace-agents": {
         "label": "Workspace instructions",
@@ -55,23 +55,23 @@ MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     },
     "memory": {
         "label": "MEMORY.md",
-        "description": "Import long-term memory entries into Alfred memories.",
+        "description": "Import long-term memory entries into +Human memories.",
     },
     "user-profile": {
         "label": "USER.md",
-        "description": "Import user profile entries into Alfred memories.",
+        "description": "Import user profile entries into +Human memories.",
     },
     "messaging-settings": {
         "label": "Messaging settings",
-        "description": "Import Alfred-compatible messaging settings such as allowlists and working directory.",
+        "description": "Import +Human-compatible messaging settings such as allowlists and working directory.",
     },
     "secret-settings": {
         "label": "Allowlisted secrets",
-        "description": "Import the small allowlist of Alfred-compatible secrets when explicitly enabled.",
+        "description": "Import the small allowlist of +Human-compatible secrets when explicitly enabled.",
     },
     "command-allowlist": {
         "label": "Command allowlist",
-        "description": "Merge OpenClaw exec approval patterns into Alfred command_allowlist.",
+        "description": "Merge OpenClaw exec approval patterns into +Human command_allowlist.",
     },
     "skills": {
         "label": "User skills",
@@ -83,39 +83,39 @@ MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     },
     "discord-settings": {
         "label": "Discord settings",
-        "description": "Import Discord bot token and allowlist into Alfred .env.",
+        "description": "Import Discord bot token and allowlist into +Human .env.",
     },
     "slack-settings": {
         "label": "Slack settings",
-        "description": "Import Slack bot/app tokens and allowlist into Alfred .env.",
+        "description": "Import Slack bot/app tokens and allowlist into +Human .env.",
     },
     "whatsapp-settings": {
         "label": "WhatsApp settings",
-        "description": "Import WhatsApp allowlist into Alfred .env.",
+        "description": "Import WhatsApp allowlist into +Human .env.",
     },
     "signal-settings": {
         "label": "Signal settings",
-        "description": "Import Signal account, HTTP URL, and allowlist into Alfred .env.",
+        "description": "Import Signal account, HTTP URL, and allowlist into +Human .env.",
     },
     "provider-keys": {
         "label": "Provider API keys",
-        "description": "Import model provider API keys into Alfred .env (requires --migrate-secrets).",
+        "description": "Import model provider API keys into +Human .env (requires --migrate-secrets).",
     },
     "model-config": {
         "label": "Default model",
-        "description": "Import the default model setting into Alfred config.yaml.",
+        "description": "Import the default model setting into +Human config.yaml.",
     },
     "tts-config": {
         "label": "TTS configuration",
-        "description": "Import TTS provider and voice settings into Alfred config.yaml.",
+        "description": "Import TTS provider and voice settings into +Human config.yaml.",
     },
     "shared-skills": {
         "label": "Shared skills",
-        "description": "Copy shared OpenClaw skills from ~/.openclaw/skills/ into Alfred.",
+        "description": "Copy shared OpenClaw skills from ~/.openclaw/skills/ into +Human.",
     },
     "daily-memory": {
         "label": "Daily memory files",
-        "description": "Merge daily memory entries from workspace/memory/ into Alfred MEMORY.md.",
+        "description": "Merge daily memory entries from workspace/memory/ into +Human MEMORY.md.",
     },
     "archive": {
         "label": "Archive unmapped docs",
@@ -123,7 +123,7 @@ MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     },
     "mcp-servers": {
         "label": "MCP servers",
-        "description": "Import MCP server definitions from OpenClaw into Alfred config.yaml.",
+        "description": "Import MCP server definitions from OpenClaw into +Human config.yaml.",
     },
     "plugins-config": {
         "label": "Plugins configuration",
@@ -131,7 +131,7 @@ MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     },
     "cron-jobs": {
         "label": "Cron / scheduled tasks",
-        "description": "Import cron job definitions. Archive for manual recreation via 'alfred cron'.",
+        "description": "Import cron job definitions. Archive for manual recreation via 'plushuman cron'.",
     },
     "hooks-config": {
         "label": "Hooks and webhooks",
@@ -139,7 +139,7 @@ MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     },
     "agent-config": {
         "label": "Agent defaults and multi-agent setup",
-        "description": "Import agent defaults (compaction, context, thinking) into Alfred config. Archive multi-agent list.",
+        "description": "Import agent defaults (compaction, context, thinking) into +Human config. Archive multi-agent list.",
     },
     "gateway-config": {
         "label": "Gateway configuration",
@@ -151,7 +151,7 @@ MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     },
     "full-providers": {
         "label": "Full model provider definitions",
-        "description": "Import custom model providers (baseUrl, apiType, headers) into Alfred custom_providers.",
+        "description": "Import custom model providers (baseUrl, apiType, headers) into +Human custom_providers.",
     },
     "deep-channels": {
         "label": "Deep channel configuration",
@@ -159,15 +159,15 @@ MIGRATION_OPTION_METADATA: dict[str, dict[str, str]] = {
     },
     "browser-config": {
         "label": "Browser configuration",
-        "description": "Import browser automation settings into Alfred config.yaml.",
+        "description": "Import browser automation settings into +Human config.yaml.",
     },
     "tools-config": {
         "label": "Tools configuration",
-        "description": "Import tool settings (exec timeout, sandbox, web search) into Alfred config.yaml.",
+        "description": "Import tool settings (exec timeout, sandbox, web search) into +Human config.yaml.",
     },
     "approvals-config": {
         "label": "Approval rules",
-        "description": "Import approval mode and rules into Alfred config.yaml approvals section.",
+        "description": "Import approval mode and rules into +Human config.yaml approvals section.",
     },
     "memory-backend": {
         "label": "Memory backend configuration",
@@ -387,12 +387,12 @@ def load_yaml_file(path: Path) -> dict[str, Any]:
         ) from exc
     try:
         reader = yaml.YAML(typ="safe")
-        reader.version = (1, 1)  # Match Alfred' existing config scalar semantics.
+        reader.version = (1, 1)  # Match +Human' existing config scalar semantics.
         data = reader.load(raw)
     except yaml.YAMLError as exc:
         raise ConfigReadError(
             f"Refusing to overwrite {path}: the existing file is not valid YAML "
-            f"({exc}). Fix it with `alfred config edit` (or move it aside), then "
+            f"({exc}). Fix it with `plushuman config edit` (or move it aside), then "
             f"re-run the migration."
         ) from exc
     # An empty file parses to None — a legitimate state with nothing to lose.
@@ -402,7 +402,7 @@ def load_yaml_file(path: Path) -> dict[str, Any]:
         raise ConfigReadError(
             f"Refusing to overwrite {path}: expected the existing file to hold a "
             f"YAML mapping but found {type(data).__name__}. Fix it with "
-            f"`alfred config edit` (or move it aside), then re-run the migration."
+            f"`plushuman config edit` (or move it aside), then re-run the migration."
         )
     return data
 
@@ -423,7 +423,7 @@ def dump_yaml_file(path: Path, data: dict[str, Any]) -> None:
     ``~/.hermes/config.yaml`` into a dotfiles repo or profile package.
     """
     if yaml is None:
-        raise RuntimeError("ruamel.yaml is required to update Alfred config.yaml")
+        raise RuntimeError("ruamel.yaml is required to update +Human config.yaml")
     ensure_parent(path)
     target = os.path.realpath(str(path)) if os.path.islink(str(path)) else str(path)
     fd, tmp_path = tempfile.mkstemp(
@@ -511,17 +511,17 @@ def backup_existing(path: Path, backup_root: Path) -> Optional[Path]:
 
 
 # ── Brand rewriting ─────────────────────────────────────────
-# Replace OpenClaw brand names with Alfred in migrated text so that
+# Replace OpenClaw brand names with +Human in migrated text so that
 # memory entries, user profiles, SOUL.md, and workspace instructions
 # read as self-referential to the new agent identity.
 #
-# Case-preserving: ``OpenClaw`` → ``Alfred`` (prose), but lowercase matches
-# like ``openclaw`` → ``alfred`` (so filesystem paths like ``~/.openclaw``
-# become ``~/.hermes`` — the real Alfred home — not the broken ``~/.Alfred``).
+# Case-preserving: ``OpenClaw`` → ``+Human`` (prose), but lowercase matches
+# like ``openclaw`` → ``plushuman`` (so filesystem paths like ``~/.openclaw``
+# become ``~/.hermes`` — the real +Human home — not the broken ``~/.+Human``).
 _REBRAND_PATTERNS: list[tuple[re.Pattern, str]] = [
-    (re.compile(r'\bOpen[\s-]?Claw\b', re.IGNORECASE), 'Alfred'),
-    (re.compile(r'\bClawdBot\b', re.IGNORECASE), 'Alfred'),
-    (re.compile(r'\bMoltBot\b', re.IGNORECASE), 'Alfred'),
+    (re.compile(r'\bOpen[\s-]?Claw\b', re.IGNORECASE), '+Human'),
+    (re.compile(r'\bClawdBot\b', re.IGNORECASE), '+Human'),
+    (re.compile(r'\bMoltBot\b', re.IGNORECASE), '+Human'),
 ]
 
 
@@ -529,10 +529,10 @@ def _case_preserving_replacement(replacement: str):
     """Return a re.sub replacement fn that lowercases the result when the
     matched text was all-lowercase.
 
-    Keeps ``OpenClaw`` → ``Alfred`` but maps ``openclaw`` → ``alfred`` so a
+    Keeps ``OpenClaw`` → ``+Human`` but maps ``openclaw`` → ``plushuman`` so a
     filesystem path like ``~/.openclaw/config.yaml`` rewrites to
-    ``~/.hermes/config.yaml`` (the real Alfred home) instead of the broken
-    ``~/.Alfred/config.yaml``.
+    ``~/.hermes/config.yaml`` (the real +Human home) instead of the broken
+    ``~/.+Human/config.yaml``.
     """
     def _sub(match: re.Match[str]) -> str:
         matched = match.group(0)
@@ -543,7 +543,7 @@ def _case_preserving_replacement(replacement: str):
 
 
 def rebrand_text(text: str) -> str:
-    """Replace OpenClaw / ClawdBot / MoltBot brand names with Alfred.
+    """Replace OpenClaw / ClawdBot / MoltBot brand names with +Human.
 
     Preserves case so filesystem-path matches (lowercase) don't become
     capitalized directory names that don't exist.
@@ -554,7 +554,7 @@ def rebrand_text(text: str) -> str:
 
 
 def parse_existing_memory_entries(path: Path) -> list[str]:
-    """Parse a DESTINATION Alfred memory store (memories/MEMORY.md, USER.md).
+    """Parse a DESTINATION +Human memory store (memories/MEMORY.md, USER.md).
 
     Splits on ``ENTRY_DELIMITER`` only, matching ``MemoryStore._parse_entries``
     in ``tools/memory_tool.py``: a store with no delimiter is ONE intact entry.
@@ -790,7 +790,7 @@ def write_report(output_dir: Path, report: dict[str, Any]) -> None:
         grouped.setdefault(item["status"], []).append(item)
 
     lines = [
-        "# OpenClaw -> Alfred Migration Report",
+        "# OpenClaw -> +Human Migration Report",
         "",
         f"- Timestamp: {redacted['timestamp']}",
         f"- Mode: {redacted['mode']}",
@@ -910,7 +910,7 @@ class Migrator:
     def is_selected(self, option_id: str) -> bool:
         return option_id in self.selected_options
 
-    # Option ids that mutate the Alfred config.yaml file.  Once any one of
+    # Option ids that mutate the +Human config.yaml file.  Once any one of
     # them records a conflict/error on config.yaml, subsequent ones are
     # short-circuited to avoid partial writes.  Keep in sync with methods
     # that call load_yaml_file(target_root / "config.yaml") + dump_yaml_file.
@@ -1207,7 +1207,7 @@ class Migrator:
             warnings.append(
                 "API keys and other credentials were detected but not imported. "
                 "Re-run with --migrate-secrets to copy supported keys into the "
-                "Alfred env file."
+                "+Human env file."
             )
         return warnings
 
@@ -1228,7 +1228,7 @@ class Migrator:
                 else "Review the migration report."
             )
             steps.append(
-                "Start a new Alfred session (or /reset) to pick up the imported config."
+                "Start a new +Human session (or /reset) to pick up the imported config."
             )
         if summary.get("conflict", 0) > 0:
             steps.append(
@@ -1376,7 +1376,7 @@ class Migrator:
             self.record("command-allowlist", source, destination, "skipped", "No allowlist patterns found")
             return
         if not destination.exists():
-            self.record("command-allowlist", source, destination, "skipped", "Alfred config.yaml does not exist yet")
+            self.record("command-allowlist", source, destination, "skipped", "+Human config.yaml does not exist yet")
             return
 
         config = load_yaml_file(destination)
@@ -1480,7 +1480,7 @@ class Migrator:
         if isinstance(workspace, str) and workspace.strip():
             ws_path = workspace.strip()
             # Skip if the workspace points inside the OpenClaw source directory —
-            # that path will be stale after migration and would cause the Alfred
+            # that path will be stale after migration and would cause the +Human
             # gateway to use the old OpenClaw workspace as its cwd, picking up
             # OpenClaw's AGENTS.md, MEMORY.md, etc.
             try:
@@ -1508,7 +1508,7 @@ class Migrator:
         if additions:
             self.merge_env_values(additions, "messaging-settings", self.source_root / "openclaw.json")
         else:
-            self.record("messaging-settings", self.source_root / "openclaw.json", self.target_root / ".env", "skipped", "No Alfred-compatible messaging settings found")
+            self.record("messaging-settings", self.source_root / "openclaw.json", self.target_root / ".env", "skipped", "No +Human-compatible messaging settings found")
 
     def handle_secret_settings(self, config: Optional[dict[str, Any]] = None) -> None:
         config = config or self.load_openclaw_config()
@@ -1552,7 +1552,7 @@ class Migrator:
                 self.source_root / "openclaw.json",
                 self.target_root / ".env",
                 "skipped",
-                "No allowlisted Alfred-compatible secrets found",
+                "No allowlisted +Human-compatible secrets found",
                 supported_targets=sorted(SUPPORTED_SECRET_TARGETS),
             )
 
@@ -1685,7 +1685,7 @@ class Migrator:
                             None,
                             "skipped",
                             f"Provider '{provider_name}' uses a {raw_key['source']}-backed SecretRef "
-                            f"that cannot be auto-migrated. Add this key manually via: alfred config set",
+                            f"that cannot be auto-migrated. Add this key manually via: plushuman config set",
                         )
                     continue
 
@@ -1889,7 +1889,7 @@ class Migrator:
 
         provider = tts.get("provider")
         if isinstance(provider, str) and provider in {"elevenlabs", "openai", "edge", "microsoft"}:
-            # OpenClaw renamed "edge" to "microsoft"; Alfred still uses "edge"
+            # OpenClaw renamed "edge" to "microsoft"; +Human still uses "edge"
             tts_data["provider"] = "edge" if provider == "microsoft" else provider
 
         # TTS provider settings live under messages.tts.providers.{provider}
@@ -2216,16 +2216,16 @@ class Migrator:
         ]
         for candidate in candidates:
             if candidate:
-                self.archive_path(candidate, reason="No direct Alfred destination; archived for manual review")
+                self.archive_path(candidate, reason="No direct +Human destination; archived for manual review")
 
         for rel in ("workspace/.learnings", "workspace/memory"):
             candidate = self.source_root / rel
             if candidate.exists():
-                self.archive_path(candidate, reason="No direct Alfred destination; archived for manual review")
+                self.archive_path(candidate, reason="No direct +Human destination; archived for manual review")
 
         partially_extracted = [
-            ("openclaw.json", "Selected Alfred-compatible values were extracted; raw OpenClaw config was not copied."),
-            ("credentials/telegram-default-allowFrom.json", "Selected Alfred-compatible values were extracted; raw credentials file was not copied."),
+            ("openclaw.json", "Selected +Human-compatible values were extracted; raw OpenClaw config was not copied."),
+            ("credentials/telegram-default-allowFrom.json", "Selected +Human-compatible values were extracted; raw credentials file was not copied."),
         ]
         for rel, reason in partially_extracted:
             candidate = self.source_root / rel
@@ -2274,7 +2274,7 @@ class Migrator:
                 continue
             if name in existing_mcp and not self.overwrite:
                 self.record("mcp-servers", f"mcp.servers.{name}", f"mcp_servers.{name}", "conflict",
-                            "MCP server already exists in Alfred config")
+                            "MCP server already exists in +Human config")
                 continue
 
             hermes_srv: dict[str, Any] = {}
@@ -2384,7 +2384,7 @@ class Migrator:
                 dest = self.archive_dir / "cron-config.json"
                 dest.write_text(json.dumps(cron, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
                 self.record("cron-jobs", "openclaw.json cron.*", str(dest), "archived",
-                            "Cron config archived. Use 'alfred cron' to recreate jobs manually.")
+                            "Cron config archived. Use 'plushuman cron' to recreate jobs manually.")
             else:
                 self.record("cron-jobs", "openclaw.json cron.*", "archive/cron-config.json",
                             "archived", "Would archive cron config")
@@ -2458,7 +2458,7 @@ class Migrator:
             agent_cfg["verbose"] = defaults["verboseDefault"]
             changes = True
         if defaults.get("thinkingDefault"):
-            # Map OpenClaw thinking -> Alfred reasoning_effort
+            # Map OpenClaw thinking -> +Human reasoning_effort
             thinking = defaults["thinkingDefault"]
             if thinking in {"always", "high", "xhigh"}:
                 agent_cfg["reasoning_effort"] = "high"
@@ -2529,7 +2529,7 @@ class Migrator:
                 self.maybe_backup(hermes_cfg_path)
                 dump_yaml_file(hermes_cfg_path, hermes_cfg)
             self.record("agent-config", "openclaw.json agents.defaults", "config.yaml agent/compression/terminal",
-                        "migrated", "Agent defaults mapped to Alfred config")
+                        "migrated", "Agent defaults mapped to +Human config")
 
         # Archive multi-agent list
         if agent_list:
@@ -2564,7 +2564,7 @@ class Migrator:
             dest = self.archive_dir / "gateway-config.json"
             dest.write_text(json.dumps(gateway, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
         self.record("gateway-config", "openclaw.json gateway.*", "archive/gateway-config.json",
-                    "archived", "Gateway config archived. Use 'alfred gateway' to configure.")
+                    "archived", "Gateway config archived. Use 'plushuman gateway' to configure.")
 
         # Extract gateway auth token to .env if present
         auth = gateway.get("auth") or {}
@@ -2581,7 +2581,7 @@ class Migrator:
 
         if session.get("reset") or session.get("resetTriggers") or session.get("reset_triggers"):
             self.record("session-config", "session reset timers", None, "skipped",
-                        "Alfred conversations do not reset on idle or daily timers")
+                        "+Human conversations do not reset on idle or daily timers")
 
         # Archive full session config (identity links, thread bindings, etc.)
         complex_keys = {"identityLinks", "threadBindings", "maintenance", "scope", "sendPolicy"}
@@ -2720,7 +2720,7 @@ class Migrator:
                         continue
                     self._set_env_var(env_key, str(val), f"channels.{ch_name}.{oc_key}")
 
-        # Map Discord-specific settings to Alfred config
+        # Map Discord-specific settings to +Human config
         discord_cfg = channels.get("discord") or {}
         if discord_cfg:
             hermes_cfg_path = self.target_root / "config.yaml"
@@ -2770,7 +2770,7 @@ class Migrator:
         browser_hermes = hermes_cfg.get("browser") or {}
         changed = False
 
-        # Map fields that have Alfred equivalents
+        # Map fields that have +Human equivalents
         if browser.get("cdpUrl"):
             browser_hermes["cdp_url"] = browser["cdpUrl"]
             changed = True
@@ -2959,7 +2959,7 @@ class Migrator:
         if not self.output_dir:
             return
         notes = [
-            "# OpenClaw -> Alfred Migration Notes",
+            "# OpenClaw -> +Human Migration Notes",
             "",
             "This document lists items that require manual attention after migration.",
             "",
@@ -2977,7 +2977,7 @@ class Migrator:
                 "## Archived Items (Manual Review Needed)",
                 "",
                 "These OpenClaw configurations were archived because they don't have a",
-                "direct 1:1 mapping in Alfred. Review each file and recreate manually:",
+                "direct 1:1 mapping in +Human. Review each file and recreate manually:",
                 "",
             ])
             for item in archived:
@@ -2987,9 +2987,9 @@ class Migrator:
         conflicts = [i for i in self.items if i.status == "conflict"]
         if conflicts:
             notes.extend([
-                "## Conflicts (Existing Alfred Config Not Overwritten)",
+                "## Conflicts (Existing +Human Config Not Overwritten)",
                 "",
-                "These items already existed in your Alfred config. Re-run with",
+                "These items already existed in your +Human config. Re-run with",
                 "`--overwrite` to force, or merge manually:",
                 "",
             ])
@@ -3010,29 +3010,29 @@ class Migrator:
             "## IMPORTANT: Archive the OpenClaw Directory",
             "",
             "After migration, your OpenClaw directory still exists on disk with workspace",
-            "state files (todo.json, sessions, logs). If the Alfred agent discovers these",
-            "directories, it may read/write to them instead of the Alfred state, causing",
+            "state files (todo.json, sessions, logs). If the +Human agent discovers these",
+            "directories, it may read/write to them instead of the +Human state, causing",
             "confusion (e.g., cron jobs reading a different todo list than interactive sessions).",
             "",
-            "**Strongly recommended:** Run `alfred claw cleanup` to rename the OpenClaw",
+            "**Strongly recommended:** Run `plushuman claw cleanup` to rename the OpenClaw",
             "directory to `.openclaw.pre-migration`. This prevents the agent from finding it.",
             "The directory is renamed, not deleted — you can undo this at any time.",
             "",
             "If you skip this step and notice the agent getting confused about workspaces",
-            "or todo lists, run `alfred claw cleanup` to fix it.",
+            "or todo lists, run `plushuman claw cleanup` to fix it.",
             "",
-            "## Alfred-Specific Setup",
+            "## +Human-Specific Setup",
             "",
             "After migration, you may want to:",
-            "- Run `alfred claw cleanup` to archive the OpenClaw directory (prevents state confusion)",
-            "- Run `alfred setup` to configure any remaining settings",
-            "- Run `alfred mcp list` to verify MCP servers were imported correctly",
+            "- Run `plushuman claw cleanup` to archive the OpenClaw directory (prevents state confusion)",
+            "- Run `plushuman setup` to configure any remaining settings",
+            "- Run `plushuman mcp list` to verify MCP servers were imported correctly",
         ])
 
         if has_cron_config_archive:
-            notes.append("- Run `alfred cron` to recreate scheduled tasks (see archive/cron-config.json)")
+            notes.append("- Run `plushuman cron` to recreate scheduled tasks (see archive/cron-config.json)")
         elif has_cron_store_archive:
-            notes.append("- Run `alfred cron` to recreate scheduled tasks (see archived cron-store)")
+            notes.append("- Run `plushuman cron` to recreate scheduled tasks (see archived cron-store)")
 
         # Check if skills were imported
         has_skills = any(i.kind == "skills" and i.status == "migrated" for i in self.items)
@@ -3057,12 +3057,12 @@ class Migrator:
                 "WhatsApp uses QR-code pairing, not token-based auth. Your allowlist",
                 "was migrated, but you must re-pair the device by running:",
                 "",
-                "    alfred whatsapp",
+                "    plushuman whatsapp",
                 "",
             ])
 
         notes.extend([
-            "- Run `alfred gateway install` if you need the gateway service",
+            "- Run `plushuman gateway install` if you need the gateway service",
             "- Review `~/.hermes/config.yaml` for any adjustments",
             "",
         ])
@@ -3075,19 +3075,19 @@ class Migrator:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Migrate OpenClaw user state into Alfred.")
+    parser = argparse.ArgumentParser(description="Migrate OpenClaw user state into +Human.")
     parser.add_argument("--source", default=str(Path.home() / ".openclaw"), help="OpenClaw home directory")
-    parser.add_argument("--target", default=os.environ.get("HERMES_HOME") or str(Path.home() / ".hermes"), help="Alfred home directory")
+    parser.add_argument("--target", default=os.environ.get("HERMES_HOME") or str(Path.home() / ".hermes"), help="+Human home directory")
     parser.add_argument(
         "--workspace-target",
         help="Optional workspace root where the workspace instructions file should be copied",
     )
     parser.add_argument("--execute", action="store_true", help="Apply changes instead of reporting a dry run")
-    parser.add_argument("--overwrite", action="store_true", help="Overwrite existing Alfred targets after backing them up")
+    parser.add_argument("--overwrite", action="store_true", help="Overwrite existing +Human targets after backing them up")
     parser.add_argument(
         "--migrate-secrets",
         action="store_true",
-        help="Import a narrow allowlist of Alfred-compatible secrets into the target env file",
+        help="Import a narrow allowlist of +Human-compatible secrets into the target env file",
     )
     parser.add_argument(
         "--skill-conflict",
@@ -3161,7 +3161,7 @@ def main() -> int:
 
     print()
     print("  ╔══════════════════════════════════════════════════════╗")
-    print(f"  ║   OpenClaw -> Alfred Migration   [{mode_label:>8s}]   ║")
+    print(f"  ║   OpenClaw -> +Human Migration   [{mode_label:>8s}]   ║")
     print("  ╠══════════════════════════════════════════════════════╣")
     print(f"  ║  Source:  {str(report['source_root'])[:42]:<42s}  ║")
     print(f"  ║  Target:  {str(report['target_root'])[:42]:<42s}  ║")
@@ -3231,9 +3231,9 @@ def main() -> int:
         print()
         print("  Next steps:")
         print("    1. Review ~/.hermes/config.yaml")
-        print("    2. Run: alfred mcp list")
+        print("    2. Run: plushuman mcp list")
         if any(i["kind"] == "cron-jobs" and i["status"] == "archived" for i in items):
-            print("    3. Recreate cron jobs: alfred cron")
+            print("    3. Recreate cron jobs: plushuman cron")
         if report.get("output_dir"):
             print(f"    → Full report: {report['output_dir']}/MIGRATION_NOTES.md")
     elif not args.execute:

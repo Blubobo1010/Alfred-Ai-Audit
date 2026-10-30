@@ -1,7 +1,7 @@
 /**
  * Profile share: export/import a profile as a portable bundle.
  *
- * The archive is the CLI's own `alfred profile export` tar.gz (config, skills,
+ * The archive is the CLI's own `plushuman profile export` tar.gz (config, skills,
  * SOUL.md, cron — credentials always excluded), plus one desktop-only file at
  * the root: `desktop.json`, the appearance/interface overlay (skin + mode,
  * any user-theme definitions the skin needs, the profile rail color, and the
@@ -152,7 +152,7 @@ export function activeProfileKey(): string {
 // item all funnel here). Toasts via the shared notification store; strings via
 // translateNow so the flows stay callable from non-React surfaces.
 
-const ARCHIVE_FILTERS = [{ extensions: ['tar.gz', 'tgz'], name: 'Alfred profile' }]
+const ARCHIVE_FILTERS = [{ extensions: ['tar.gz', 'tgz'], name: '+Human profile' }]
 
 /** Pick a save location and export `profile` (default: the active one).
  *  Returns the archive path, or null when the user cancelled. */

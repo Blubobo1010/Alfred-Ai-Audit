@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * Launch the Alfred desktop app from a captured launch spec and click the
+ * Launch the +Human desktop app from a captured launch spec and click the
  * real update flow: Settings -> About -> "Update now".
  *
  * The spec is written by launch-capture/sitecustomize.py at `hermes

@@ -4,10 +4,10 @@ export const arChat = {
   composer: {
     message: 'الرسالة',
     wakingProfile: profile => `جار إيقاظ ${profile}`,
-    placeholderStarting: 'جار بدء Alfred...',
+    placeholderStarting: 'جار بدء +Human...',
     placeholderReconnecting: 'جار إعادة الاتصال...',
     placeholderFollowUp: 'اكتب متابعة...',
-    newSessionPlaceholders: ['اسأل Alfred عن شيء...', 'اطلب من Alfred تنفيذ مهمة...', 'ابدأ محادثة جديدة...'],
+    newSessionPlaceholders: ['اسأل +Human عن شيء...', 'اطلب من +Human تنفيذ مهمة...', 'ابدأ محادثة جديدة...'],
     followUpPlaceholders: ['اكتب متابعة...', 'أضف توجيها...', 'اسأل سؤالا آخر...'],
     startVoice: 'بدء الصوت',
     openDirective: 'فتح',
@@ -67,7 +67,7 @@ export const arChat = {
       '/journey': 'فتح رسم الذاكرة لعرض المهارات والذكريات عبر الزمن',
       '/queue': 'إضافة طلبات للدور التالي أو عرضها أو تعديلها أو حذفها أو نقلها أو مسحها',
       '/steer': 'إدراج رسالة بعد استدعاء الأداة التالي دون مقاطعة العمل',
-      '/goal': 'تحديد هدف مستمر يعمل عليه Alfred حتى إنجازه',
+      '/goal': 'تحديد هدف مستمر يعمل عليه +Human حتى إنجازه',
       '/heartbeat': 'تحديد طلب متكرر يعود إلى هذه الجلسة عندما تكون خاملة',
       '/refine': 'مراجعة هذه المحادثة وحفظ الدروس في الذاكرة أو المهارات',
       '/review': 'تشغيل وكيل فرعي مستقل لمراجعة العمل الذي نوقش',
@@ -79,7 +79,7 @@ export const arChat = {
       '/egress': 'عرض حالة وكيل الاتصالات الصادرة في Docker',
       '/context': 'عرض استخدام السياق وتفاصيله وإحصاءات الضغط ومعدل المعالجة',
       '/whoami': 'عرض صلاحية الوصول إلى أوامر الشرطة المائلة',
-      '/profile': 'تبديل ملف Alfred الشخصي النشط',
+      '/profile': 'تبديل ملف +Human الشخصي النشط',
       '/codex-runtime': 'تبديل بيئة Codex app-server لنماذج OpenAI/Codex',
       '/personality': 'اختيار شخصية محددة مسبقًا',
       '/battery': 'تبديل عرض مؤشر البطارية الملون في شريط الحالة',
@@ -106,7 +106,7 @@ export const arChat = {
       '/subscription': 'عرض خطة Nous وتغييرها في المتصفح',
       '/topup': 'عرض رصيد Nous وإدارة الفواتير',
       '/platform': 'إيقاف منصة بوابة متعثرة مؤقتًا أو استئنافها أو عرضها',
-      '/version': 'عرض إصدار Alfred',
+      '/version': 'عرض إصدار +Human',
       '/debug': 'رفع تقرير تصحيح يتضمن معلومات النظام والسجلات للحصول على رابط قابل للمشاركة',
       '/model': 'تبديل نموذج هذه الجلسة'
     },
@@ -123,7 +123,7 @@ export const arChat = {
     attachUrlTitle: 'إرفاق رابط',
     attachUrlDesc: 'أضف رابطا إلى الرسالة.',
     urlPlaceholder: 'https://example.com',
-    urlHintPre: 'سيقرأ Alfred الرابط ضمن السياق.',
+    urlHintPre: 'سيقرأ +Human الرابط ضمن السياق.',
     attach: 'إرفاق',
     queued: count => `${count} في الطابور`,
     attachmentOnly: 'إرفاق فقط',
@@ -335,7 +335,7 @@ export const arChat = {
       createPr: 'إنشاء PR',
       openPr: 'فتح PR',
       ghMissing: 'ثبّت GitHub CLI (gh) وسجّل الدخول لفتح طلبات السحب',
-      agentShip: 'اطلب من Alfred فتح PR',
+      agentShip: 'اطلب من +Human فتح PR',
       agentShipUnavailable: 'المحادثة التي تملك هذه التغييرات ليست على الشاشة.',
       agentShipPrompt: 'راجع التغييرات الحالية، وأودعها برسالة إيداع تقليدية واضحة، وادفع الفرع، وافتح طلب سحب.',
       newBranch: 'فرع جديد',
@@ -354,7 +354,7 @@ export const arChat = {
       'راجع الأمر قبل إدخال كلمة مرور sudo. تُرسل كلمة المرور إلى الوكيل الذي ينفّذه وتُحفظ مؤقتًا لهذه الجلسة.',
     sudoCommandUnavailable: 'لم يقدّم هذا الوكيل الأمر. ألغِ الطلب إذا لم تتمكن من التحقق منه في المحادثة.',
     sudoInstallDesc:
-      'يحتاج Alfred إلى كلمة مرور sudo لتثبيت حزم Bot Screen (TigerVNC + Xfce) على مضيف البوابة. تُرسل إلى ذلك المضيف فقط.',
+      'يحتاج +Human إلى كلمة مرور sudo لتثبيت حزم Bot Screen (TigerVNC + Xfce) على مضيف البوابة. تُرسل إلى ذلك المضيف فقط.',
     sudoPlaceholder: 'كلمة المرور',
     secretTitle: 'مطلوب سر',
     secretDesc: 'أدخل القيمة المطلوبة لمتابعة المهمة.',
@@ -369,7 +369,7 @@ export const arChat = {
     vaultSaveSendFailed: 'تعذر حفظ بيانات الدخول',
     vaultSaveTitle: site => `حفظ بيانات الدخول إلى ${site}؟`,
     vaultSaveDesc: origin =>
-      `وصل Alfred إلى صفحة تسجيل الدخول في ${origin} ولا توجد بيانات دخول محفوظة لها. أدخلها هنا مرة واحدة؛ تُشفَّر على هذا الجهاز وتُملأ في الصفحة مباشرة، ولا يرى النموذج كلمة المرور أبدًا.`,
+      `وصل +Human إلى صفحة تسجيل الدخول في ${origin} ولا توجد بيانات دخول محفوظة لها. أدخلها هنا مرة واحدة؛ تُشفَّر على هذا الجهاز وتُملأ في الصفحة مباشرة، ولا يرى النموذج كلمة المرور أبدًا.`,
     vaultSaveIdentifierLabel: 'البريد الإلكتروني أو اسم المستخدم',
     vaultSaveIdentifierPlaceholder: 'you@example.com',
     vaultSavePasswordPlaceholder: 'كلمة المرور',
@@ -379,10 +379,10 @@ export const arChat = {
     vaultCodeSendFailed: 'تعذر إرسال الرمز',
     vaultCodeTitle: site => `رمز التحقق لـ ${site}`,
     vaultCodeDesc: site =>
-      `يطلب ${site} رمزًا لمرة واحدة (رسالة نصية أو بريد إلكتروني أو تطبيق مصادقة). أدخله هنا وسيكتبه Alfred في الصفحة؛ لا يراه النموذج أبدًا.`,
+      `يطلب ${site} رمزًا لمرة واحدة (رسالة نصية أو بريد إلكتروني أو تطبيق مصادقة). أدخله هنا وسيكتبه +Human في الصفحة؛ لا يراه النموذج أبدًا.`,
     vaultCodeLabel: 'الرمز',
     vaultCodeFootnote:
-      'تلميح: احفظ مفتاح المصادقة مع بيانات الدخول هذه في الإعدادات ← كلمات المرور وتسجيلات الدخول وسيُدخل Alfred الرموز نيابةً عنك.',
+      'تلميح: احفظ مفتاح المصادقة مع بيانات الدخول هذه في الإعدادات ← كلمات المرور وتسجيلات الدخول وسيُدخل +Human الرموز نيابةً عنك.',
     vaultCodeSkip: 'تخطٍ',
     vaultCodeConfirm: 'إدخال الرمز'
   },
@@ -477,7 +477,7 @@ export const arChat = {
       success: platform => `تم التسليم إلى ${platform}. استأنف هنا في أي وقت.`,
       systemNote: platform => `↻ تم التسليم إلى ${platform} — استأنف هنا في أي وقت.`,
       failed: error => `فشل التسليم: ${error}`,
-      timedOut: 'انتهت المهلة في انتظار البوابة. هل `alfred gateway` قيد التشغيل؟'
+      timedOut: 'انتهت المهلة في انتظار البوابة. هل `plushuman gateway` قيد التشغيل؟'
     }
   },
   tips: {
@@ -489,14 +489,14 @@ export const arChat = {
       },
       skills: {
         title: 'علّمه مرة واحدة',
-        text: 'المهارات مجلدات من التعليمات يحمّلها Alfred عندما يقتضي العمل ذلك.'
+        text: 'المهارات مجلدات من التعليمات يحمّلها +Human عندما يقتضي العمل ذلك.'
       },
       messaging: {
-        title: 'Alfred بعيدًا عن مكتبك',
+        title: '+Human بعيدًا عن مكتبك',
         text: 'اربطه بـ Telegram وDiscord وSlack وغيرها — الوكيل نفسه والذاكرة نفسها.'
       },
       artifacts: {
-        title: 'كل ما صنعه Alfred',
+        title: 'كل ما صنعه +Human',
         text: 'الصور والملفات والروابط من كل الجلسات، مفهرسة في مكان واحد.'
       },
       cron: {
@@ -509,7 +509,7 @@ export const arChat = {
       },
       profiles: {
         title: 'الملفات الشخصية منفصلة',
-        text: 'كل واحد منها Alfred مستقل — مفاتيحه وذاكرته وجلساته الخاصة.'
+        text: 'كل واحد منها +Human مستقل — مفاتيحه وذاكرته وجلساته الخاصة.'
       },
       'composer-mentions': {
         title: 'المرفقات والأوامر',

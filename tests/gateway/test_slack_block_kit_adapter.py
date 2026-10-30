@@ -32,7 +32,7 @@ RICH_MD = "# Title\n\n- a\n  - nested\n\n---\n\nbody text"
 RICH_TABLE_MD = (
     "| Item | Status | Note |\n"
     "|---|---:|---|\n"
-    "| Alfred | ok | table |"
+    "| +Human | ok | table |"
 )
 
 
@@ -70,12 +70,12 @@ class TestSendMessageBlocks:
         adapter, client = _make_adapter(
             {"unfurl_links": False, "unfurl_media": False}
         )
-        content = "[Alfred](https://example.com/hermes)"
+        content = "[+Human](https://example.com/hermes)"
 
         await adapter.send("C1", content)
 
         kwargs = client.chat_postMessage.await_args.kwargs
-        assert kwargs["text"] == "<https://example.com/hermes|Alfred>"
+        assert kwargs["text"] == "<https://example.com/hermes|+Human>"
         assert kwargs["unfurl_links"] is False
         assert kwargs["unfurl_media"] is False
 

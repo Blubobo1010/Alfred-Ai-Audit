@@ -72,7 +72,7 @@ class _HomeLayer:
     its own plugins, so user plugins are keyed by the home bound at lookup time instead of the home
     that happened to be bound at first discovery — that made a plugin installed in a secondary
     profile ``Unknown provider`` in Desktop while the same profile worked in a terminal (#88143).
-    ``stamps`` are the plugin dirs' mtimes: a directory added by ``alfred plugins install`` while the
+    ``stamps`` are the plugin dirs' mtimes: a directory added by ``plushuman plugins install`` while the
     process runs changes them, and the next lookup imports it without a restart.
     """
     registry: dict[str, ProviderProfile] = field(default_factory=dict)
@@ -368,7 +368,7 @@ def _user_plugins_dir() -> Path | None:
 def _installed_plugins_dir() -> Path | None:
     """Return ``$HERMES_HOME/plugins/`` if it exists.
 
-    This is where ``alfred plugins install`` clones a plugin — flat, one
+    This is where ``plushuman plugins install`` clones a plugin — flat, one
     directory per plugin, NOT under ``model-providers/``. See
     :func:`_discover_installed_provider_plugins`.
     """
@@ -420,7 +420,7 @@ def _scan_home_layer(layer: _HomeLayer, key: str) -> None:
     """Import the bound home's not-yet-imported provider plugins into *layer*.
 
     ``$HERMES_HOME/plugins/model-providers/<name>/`` first, then plugins cloned flat by
-    ``alfred plugins install`` into ``$HERMES_HOME/plugins/<name>/`` that declare
+    ``plushuman plugins install`` into ``$HERMES_HOME/plugins/<name>/`` that declare
     ``kind: model-provider`` (PluginManager owns every other kind there). Per-home module names
     let two profiles carry the same plugin without aliasing each other's registrations.
     """

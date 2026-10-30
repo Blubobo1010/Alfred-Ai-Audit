@@ -1,4 +1,4 @@
-"""``alfred kanban …`` — dispatch (``kanban_command``), task-verb handlers, ``run_slash`` for ``/kanban``.
+"""``plushuman kanban …`` — dispatch (``kanban_command``), task-verb handlers, ``run_slash`` for ``/kanban``.
 DB work lives in ``kanban_db``; siblings: ``kanban_parser`` (argparse, re-exported ``build_parser``),
 ``kanban_output`` (text/--json), ``kanban_boards`` (``boards …``), ``kanban_ops`` (dispatch/daemon/
 tail/watch/gc/repair).
@@ -126,9 +126,9 @@ def _check_dispatcher_presence(hermes_home: Optional[Path] = None) -> tuple[bool
         return (False, "Gateway is running but kanban.dispatch_in_gateway=false in "
                 "config.yaml — the task will sit in 'ready' until you flip it "
                 "back on and restart the gateway, OR run the legacy "
-                "standalone daemon (`alfred kanban daemon --force`).")
+                "standalone daemon (`plushuman kanban daemon --force`).")
     return (False, "No gateway is running — the task will sit in 'ready' until you "
-            "start it. Run:\n    alfred gateway start\n"
+            "start it. Run:\n    plushuman gateway start\n"
             "The gateway hosts an embedded dispatcher (tick interval 60s by "
             "default); your task will be picked up on the next tick after "
             "the gateway comes up.")
@@ -137,15 +137,15 @@ def _check_dispatcher_presence(hermes_home: Optional[Path] = None) -> tuple[bool
 # --- Command dispatch ---
 
 def kanban_command(args: argparse.Namespace) -> int:
-    """Entry point from ``alfred kanban …``; returns a shell-style exit code."""
+    """Entry point from ``plushuman kanban …``; returns a shell-style exit code."""
     action = getattr(args, "kanban_action", None)
     if not action:
         parser = getattr(args, "_kanban_parser", None)
         if parser is not None:
             parser.print_help()
         else:
-            print("usage: alfred kanban <action> [options]\n"
-                  "Run 'alfred kanban --help' for the full list of actions.", file=sys.stderr)
+            print("usage: plushuman kanban <action> [options]\n"
+                  "Run 'plushuman kanban --help' for the full list of actions.", file=sys.stderr)
         return 0
 
     # Fast-fail for UX only; the durable trust boundary is in kanban_db, since children can
@@ -173,7 +173,7 @@ def kanban_command(args: argparse.Namespace) -> int:
         # create an empty board.
         if normed != kb.DEFAULT_BOARD and not kb.board_exists(normed):
             return _err(f"kanban: board {normed!r} does not exist. "
-                        f"Create it with `alfred kanban boards create {normed}`.")
+                        f"Create it with `plushuman kanban boards create {normed}`.")
         board_scope = kb.scoped_current_board(normed)
 
     with board_scope:
@@ -298,10 +298,10 @@ def _cmd_init(args: argparse.Namespace) -> int:
             print(f"  {name}")
     else:
         print("No profiles found under ~/.hermes/profiles/.\n"
-              "Create one with `alfred -p <name> setup` before assigning tasks.")
+              "Create one with `plushuman -p <name> setup` before assigning tasks.")
     print(
         "\nNext step: start the gateway so ready tasks actually get picked up.\n"
-        "  alfred gateway start\n\n"
+        "  plushuman gateway start\n\n"
         "The gateway hosts an embedded dispatcher that ticks every 60 seconds\n"
         "by default (config: kanban.dispatch_interval_seconds). Without a\n"
         "running gateway, tasks stay in 'ready' forever."
@@ -323,7 +323,7 @@ def _cmd_assignees(args: argparse.Namespace) -> int:
     if _json_out(args, data):
         return 0
     if not data:
-        print("(no assignees — create a profile with `alfred -p <name> setup`)")
+        print("(no assignees — create a profile with `plushuman -p <name> setup`)")
         return 0
     print(f"{'NAME':20s}  {'ON DISK':8s}  COUNTS")
     for entry in data:
@@ -438,7 +438,7 @@ def _cmd_list(args: argparse.Namespace) -> int:
     if len(all_boards) > 1:
         other_count = len(all_boards) - 1
         print(f"Board: {kb.get_current_board()} ({other_count} other board{'s' if other_count != 1 else ''} — "
-              f"`alfred kanban boards list`)\n")
+              f"`plushuman kanban boards list`)\n")
     if not tasks:
         print("(no matching tasks)")
         return 0
@@ -719,7 +719,7 @@ def _cmd_link(args: argparse.Namespace) -> int:
             f"Note: {args.child_id} was ready and is now todo — parent "
             f"{args.parent_id} is not done yet. The ready -> running claim "
             f"re-checks parents, so the child only runs after the parent "
-            f"completes; use `alfred kanban unlink {args.parent_id} {args.child_id}` "
+            f"completes; use `plushuman kanban unlink {args.parent_id} {args.child_id}` "
             f"to run it now."
         )
     return 0
@@ -924,7 +924,7 @@ def _cmd_complete(args: argparse.Namespace) -> int:
                                         force=bool(getattr(args, "force", False)))
             except kb.LiveClaimError:
                 fail_msg[tid] = (f"cannot complete {tid}: a live worker is running it. Wait for the "
-                                 f"worker, `alfred kanban reclaim {tid}` to release it, or re-run with "
+                                 f"worker, `plushuman kanban reclaim {tid}` to release it, or re-run with "
                                  f"--force to close its run and complete anyway.")
                 return False
             except kb.EmptyCompletionError as empty_err:
@@ -938,7 +938,7 @@ def _cmd_complete(args: argparse.Namespace) -> int:
                 if blockers:
                     detail = ", ".join(f"{pid} ({status})" for pid, status in blockers)
                     fail_msg[tid] = (f"cannot complete {tid}: unsatisfied parent dependencies: {detail}; "
-                                     f"complete the parents first, or `alfred kanban unlink <parent> {tid}`.")
+                                     f"complete the parents first, or `plushuman kanban unlink <parent> {tid}`.")
             return done
 
         return _bulk_apply(ids, op, lambda tid: f"Completed {tid}", fail_msg.__getitem__)

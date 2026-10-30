@@ -2,7 +2,7 @@
 name: heartmula
 description: "HeartMuLa: Suno-like song generation from lyrics + tags."
 version: 1.0.0
-author: Teknium (teknium1), Alfred
+author: Teknium (teknium1), +Human
 license: MIT
 platforms: [linux, macos]
 metadata:

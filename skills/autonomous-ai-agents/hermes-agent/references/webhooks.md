@@ -1,19 +1,19 @@
 # Webhook Subscriptions
 
-Create dynamic webhook subscriptions so external services (GitHub, GitLab, Stripe, CI/CD, IoT sensors, monitoring tools) can trigger Alfred agent runs by POSTing events to a URL.
+Create dynamic webhook subscriptions so external services (GitHub, GitLab, Stripe, CI/CD, IoT sensors, monitoring tools) can trigger +Human agent runs by POSTing events to a URL.
 
 ## Setup (Required First)
 
 The webhook platform must be enabled before subscriptions can be created. Check with:
 ```bash
-alfred webhook list
+plushuman webhook list
 ```
 
 If it says "Webhook platform is not enabled", set it up:
 
 ### Option 1: Setup wizard
 ```bash
-alfred gateway setup
+plushuman gateway setup
 ```
 Follow the prompts to enable webhooks, set the port, and set a global HMAC secret.
 
@@ -41,7 +41,7 @@ WEBHOOK_SECRET=your-webhook-secret-here
 
 After configuration, start (or restart) the gateway:
 ```bash
-alfred gateway run
+plushuman gateway run
 # Or if using systemd:
 systemctl --user restart hermes-gateway
 ```
@@ -53,11 +53,11 @@ curl http://localhost:8644/health
 
 ## Commands
 
-All management is via the `alfred webhook` CLI command:
+All management is via the `plushuman webhook` CLI command:
 
 ### Create a subscription
 ```bash
-alfred webhook subscribe <name> \
+plushuman webhook subscribe <name> \
   --prompt "Prompt template with {payload.fields}" \
   --events "event1,event2" \
   --description "What this does" \
@@ -77,7 +77,7 @@ Two mechanisms narrow broad event streams (e.g. Todoist/GitHub fire on every upd
 - **Route scripts** (`--script` on subscribe, or `script:` on a config route): a script under `~/.hermes/scripts/` receives the payload as JSON on stdin. JSON stdout replaces the payload before prompt templating; empty stdout, `[SILENT]`, or a nonzero exit ignores the webhook. `.sh`/`.bash` run with bash, everything else with Python. Scripts cannot live outside `~/.hermes/scripts/` (path traversal is blocked).
 
 ```bash
-alfred webhook subscribe todoist-hermes \
+plushuman webhook subscribe todoist-hermes \
   --prompt "Task changed: {payload.content}" \
   --script "todoist-hermes-label.py" \
   --deliver telegram --deliver-chat-id "12345"
@@ -87,18 +87,18 @@ Full filter syntax: https://hermes-agent.nousresearch.com/docs/user-guide/messag
 
 ### List subscriptions
 ```bash
-alfred webhook list
+plushuman webhook list
 ```
 
 ### Remove a subscription
 ```bash
-alfred webhook remove <name>
+plushuman webhook remove <name>
 ```
 
 ### Test a subscription
 ```bash
-alfred webhook test <name>
-alfred webhook test <name> --payload '{"key": "value"}'
+plushuman webhook test <name>
+plushuman webhook test <name> --payload '{"key": "value"}'
 ```
 
 ## Prompt Templates
@@ -116,7 +116,7 @@ If no prompt is specified, the full JSON payload is dumped into the agent prompt
 
 ### GitHub: new issues
 ```bash
-alfred webhook subscribe github-issues \
+plushuman webhook subscribe github-issues \
   --events "issues" \
   --prompt "New GitHub issue #{issue.number}: {issue.title}\n\nAction: {action}\nAuthor: {issue.user.login}\nBody:\n{issue.body}\n\nPlease triage this issue." \
   --deliver telegram \
@@ -131,7 +131,7 @@ Then in GitHub repo Settings → Webhooks → Add webhook:
 
 ### GitHub: PR reviews
 ```bash
-alfred webhook subscribe github-prs \
+plushuman webhook subscribe github-prs \
   --events "pull_request" \
   --prompt "PR #{pull_request.number} {action}: {pull_request.title}\nBy: {pull_request.user.login}\nBranch: {pull_request.head.ref}\n\n{pull_request.body}" \
   --skills "github-code-review" \
@@ -140,7 +140,7 @@ alfred webhook subscribe github-prs \
 
 ### Stripe: payment events
 ```bash
-alfred webhook subscribe stripe-payments \
+plushuman webhook subscribe stripe-payments \
   --events "payment_intent.succeeded,payment_intent.payment_failed" \
   --prompt "Payment {data.object.status}: {data.object.amount} cents from {data.object.receipt_email}" \
   --deliver telegram \
@@ -149,7 +149,7 @@ alfred webhook subscribe stripe-payments \
 
 ### CI/CD: build notifications
 ```bash
-alfred webhook subscribe ci-builds \
+plushuman webhook subscribe ci-builds \
   --events "pipeline" \
   --prompt "Build {object_attributes.status} on {project.name} branch {object_attributes.ref}\nCommit: {commit.message}" \
   --deliver discord \
@@ -158,7 +158,7 @@ alfred webhook subscribe ci-builds \
 
 ### Generic monitoring alert
 ```bash
-alfred webhook subscribe alerts \
+plushuman webhook subscribe alerts \
   --prompt "Alert: {alert.name}\nSeverity: {alert.severity}\nMessage: {alert.message}\n\nPlease investigate and suggest remediation." \
   --deliver origin
 ```
@@ -174,7 +174,7 @@ Use this for:
 - Any webhook where an LLM round trip would be wasted effort
 
 ```bash
-alfred webhook subscribe antenna-matches \
+plushuman webhook subscribe antenna-matches \
   --deliver telegram \
   --deliver-chat-id "123456789" \
   --deliver-only \
@@ -199,7 +199,7 @@ Each event runs in its own session, so by default the agent in the target chat h
 
 ## How It Works
 
-1. `alfred webhook subscribe` writes to `~/.hermes/webhook_subscriptions.json`
+1. `plushuman webhook subscribe` writes to `~/.hermes/webhook_subscriptions.json`
 2. The webhook adapter hot-reloads this file on each incoming request (mtime-gated, negligible overhead)
 3. When a POST arrives matching a route, the adapter formats the prompt and triggers an agent run
 4. The agent's response is delivered to the configured target (Telegram, Discord, GitHub comment, etc.)
@@ -211,6 +211,6 @@ If webhooks aren't working:
 1. **Is the gateway running?** Check with `systemctl --user status hermes-gateway` or `ps aux | grep gateway`
 2. **Is the webhook server listening?** `curl http://localhost:8644/health` should return `{"status": "ok"}`
 3. **Check gateway logs:** `grep webhook ~/.hermes/logs/gateway.log | tail -20`
-4. **Signature mismatch?** Verify the secret in your service matches the one from `alfred webhook list`. GitHub sends `X-Hub-Signature-256`, GitLab sends `X-Gitlab-Token`.
+4. **Signature mismatch?** Verify the secret in your service matches the one from `plushuman webhook list`. GitHub sends `X-Hub-Signature-256`, GitLab sends `X-Gitlab-Token`.
 5. **Firewall/NAT?** The webhook URL must be reachable from the service. For local development, use a tunnel (ngrok, cloudflared).
-6. **Wrong event type?** Check `--events` filter matches what the service sends. Use `alfred webhook test <name>` to verify the route works.
+6. **Wrong event type?** Check `--events` filter matches what the service sends. Use `plushuman webhook test <name>` to verify the route works.

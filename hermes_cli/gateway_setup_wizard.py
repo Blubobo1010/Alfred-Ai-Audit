@@ -1,4 +1,4 @@
-"""Gateway platform setup wizard (alfred gateway setup): platform registry/status table, per-platform setup prompts, service offer.
+"""Gateway platform setup wizard (plushuman gateway setup): platform registry/status table, per-platform setup prompts, service offer.
 
 Extracted from ``hermes_cli/gateway.py``. Bodies read facade helpers through ``_gw()`` (late
 binding on ``hermes_cli.gateway``) so the seams tests and callers patch on the facade keep
@@ -42,7 +42,7 @@ _PLATFORMS = [
              "password": False, "is_allowlist": True, "help": "Your Mattermost user ID from step 4 above."},
             {"name": "MATTERMOST_HOME_CHANNEL",
              "prompt": "Home channel ID (for cron/notification delivery, or empty to set later with /set-home)",
-             "password": False, "help": "Channel ID where Alfred delivers cron results and notifications."},
+             "password": False, "help": "Channel ID where +Human delivers cron results and notifications."},
             {"name": "MATTERMOST_REPLY_MODE",
              "prompt": "Reply mode — 'off' for flat messages, 'thread' for threaded replies (default: off)",
              "password": False,
@@ -60,9 +60,9 @@ _PLATFORMS = [
             "2. Complete the BlueBubbles setup wizard — sign in with your Apple ID",
             "3. In BlueBubbles Settings → API, note the Server URL and password",
             "4. The server URL is typically http://<your-mac-ip>:1234",
-            "5. Alfred connects via the BlueBubbles REST API and receives",
+            "5. +Human connects via the BlueBubbles REST API and receives",
             "   incoming messages via a local webhook",
-            "6. To authorize users, use DM pairing: alfred pairing generate bluebubbles",
+            "6. To authorize users, use DM pairing: plushuman pairing generate bluebubbles",
             "   Share the code — the user sends it via iMessage to get approved",
         ],
         "vars": [
@@ -109,7 +109,7 @@ _PLATFORMS = [
             "1. Download the Yuanbao app from https://yuanbao.tencent.com/",
             "2. In the app, go to PAI → My Bot and create a new bot",
             "3. After the bot is created, copy the App ID and App Secret",
-            "4. Enter them below and Alfred will connect automatically over WebSocket",
+            "4. Enter them below and +Human will connect automatically over WebSocket",
         ],
         "vars": [
             {"name": "YUANBAO_APP_ID", "prompt": "App ID", "password": False,
@@ -224,7 +224,7 @@ _UNAUTHORIZED_ACCESS_CHOICES = {
         "Keep unknown senders silent"),
     False: (1,
         "Enable open access (anyone can message the bot)",
-        "Use DM pairing (unknown users request access, you approve with 'alfred pairing approve')",
+        "Use DM pairing (unknown users request access, you approve with 'plushuman pairing approve')",
         "Politely decline unknown senders (one-time message, then silence)",
         "Skip for now (bot will deny all users until configured)"),
 }
@@ -243,14 +243,14 @@ def _prompt_unauthorized_access(platform_key: str) -> None:
         if is_email:
             _set_platform_unauthorized_dm_behavior("email", "pair")
         _gw().print_success("  DM pairing mode — users will receive a code to request access.")
-        _gw().print_info("  Approve with: alfred pairing approve <platform> <code>")
+        _gw().print_info("  Approve with: plushuman pairing approve <platform> <code>")
     elif access_idx == 2:
         _set_platform_unauthorized_dm_behavior(platform_key, "decline")
         _gw().print_success("  Unknown senders get one polite decline, then silence (unauthorized_dm_behavior: decline).")
     elif is_email:
         _gw().print_success("  Unknown email senders will be ignored.")
     else:
-        _gw().print_info("  Skipped — configure later with 'alfred gateway setup'")
+        _gw().print_info("  Skipped — configure later with 'plushuman gateway setup'")
 
 
 def _telegram_auto_setup(token_var: str) -> tuple[bool, object]:
@@ -417,9 +417,9 @@ def _setup_weixin():
     _print_setup_header("💬 Weixin / WeChat")
     print()
     _gw()._print_info_lines(
-        "  1. Alfred will open Tencent iLink QR login in this terminal.",
+        "  1. +Human will open Tencent iLink QR login in this terminal.",
         "  2. Use WeChat to scan and confirm the QR code.",
-        "  3. Alfred will store the returned account_id/token in ~/.hermes/.env.",
+        "  3. +Human will store the returned account_id/token in ~/.hermes/.env.",
         "  4. This adapter supports native text, image, video, and document delivery.",
     )
 
@@ -435,7 +435,7 @@ def _setup_weixin():
 
     if not check_weixin_requirements():
         _gw().print_error("  Missing dependencies: Weixin needs aiohttp and cryptography.")
-        _gw().print_info("  Install them, then rerun `alfred gateway setup`.")
+        _gw().print_info("  Install them, then rerun `plushuman gateway setup`.")
         return
 
     print()
@@ -485,7 +485,7 @@ def _setup_weixin():
         emit(message)
         if access_idx == 0:
             _gw().print_info(
-                "  Unknown DM users can request access and you approve them with `alfred pairing approve`."
+                "  Unknown DM users can request access and you approve them with `plushuman pairing approve`."
             )
 
     print()
@@ -572,7 +572,7 @@ def _setup_qqbot():
                 _gw().print_success(f"  Allow list set to {user_openid}")
         _gw().save_env_value("QQ_ALLOWED_USERS", allowed)
         _gw().print_success("  DM pairing enabled.")
-        _gw().print_info("  Unknown users can request access; approve with `alfred pairing approve`.")
+        _gw().print_info("  Unknown users can request access; approve with `plushuman pairing approve`.")
     elif access_idx == 1:
         _save_env_values(QQ_ALLOW_ALL_USERS="true", QQ_ALLOWED_USERS="")
         _gw().print_warning("  Open DM access enabled for QQ Bot.")
@@ -755,7 +755,7 @@ def _setup_service_action(
             _gw()._service_call(backend, action, None if action == "restart" else system)
         elif action == "restart" and windows:
             _gw().stop_profile_gateway()
-            _gw().print_info("Start manually: alfred gateway")
+            _gw().print_info("Start manually: plushuman gateway")
     except _gw().UserSystemdUnavailableError as e:
         _gw().print_error(f"  {failed_label} — user systemd not reachable:")
         _gw()._print_indented(str(e))
@@ -769,7 +769,7 @@ def _setup_service_action(
 
 _WIZARD_BANNER = (
     "┌─────────────────────────────────────────────────────────┐",
-    "│             🎩 Gateway Setup                            │",
+    "│             ✚ Gateway Setup                            │",
     "├─────────────────────────────────────────────────────────┤",
     "│  Configure messaging platforms and the gateway service. │",
     "│  Press Ctrl+C at any time to exit.                     │",
@@ -783,16 +783,16 @@ _WIZARD_BACKEND_LABELS = {"systemd": "systemd", "launchd": "launchd", "windows":
 # Post-setup guidance when no service backend applies, keyed by the fallthrough reason.
 _WIZARD_NO_SERVICE_LINES = {
     "wsl": (
-        "  WSL detected but systemd is not running.", "  Run in foreground: alfred gateway run",
-        "  For persistence:   tmux new -s hermes 'alfred gateway run'",
+        "  WSL detected but systemd is not running.", "  Run in foreground: plushuman gateway run",
+        "  For persistence:   tmux new -s hermes 'plushuman gateway run'",
         "  To enable systemd: add systemd=true to /etc/wsl.conf, then 'wsl --shutdown'",
     ),
     "termux": (
-        "  Termux does not use systemd/launchd services.", "  Run in foreground: alfred gateway run",
-        "  Or start it manually in the background (best effort): nohup alfred gateway run >{home}/logs/gateway.log 2>&1 &",
+        "  Termux does not use systemd/launchd services.", "  Run in foreground: plushuman gateway run",
+        "  Or start it manually in the background (best effort): nohup plushuman gateway run >{home}/logs/gateway.log 2>&1 &",
     ),
     "unsupported": (
-        "  Service install not supported on this platform.", "  Run in foreground: alfred gateway run",
+        "  Service install not supported on this platform.", "  Run in foreground: plushuman gateway run",
     ),
 }
 
@@ -851,10 +851,10 @@ def _wizard_install_service(backend: str) -> None:
     )
     if not (start_now or start_on_login):
         _gw().print_info("  Skipped start and auto-start setup.")
-        _gw().print_info("  You can install later: alfred gateway install")
+        _gw().print_info("  You can install later: plushuman gateway install")
         if _gw().supports_systemd_services():
-            _gw().print_info("  Or as a boot-time service: sudo alfred gateway install --system")
-        _gw().print_info("  Or run in foreground:  alfred gateway run")
+            _gw().print_info("  Or as a boot-time service: sudo plushuman gateway install --system")
+        _gw().print_info("  Or run in foreground:  plushuman gateway run")
         return
     try:
         installed_scope, did_install = None, True
@@ -872,12 +872,12 @@ def _wizard_install_service(backend: str) -> None:
             _gw()._setup_service_action("start", failed_label="Start failed", system=installed_scope == "system")
     except subprocess.CalledProcessError as e:
         _gw().print_error(f"  Install failed: {e}")
-        _gw().print_info("  You can try manually: alfred gateway install")
+        _gw().print_info("  You can try manually: plushuman gateway install")
     except SystemExit:
         # The backend installers exit non-zero on a refused write (a unit pinning another home);
         # setup reports it and goes on rather than ending the wizard.
         _gw().print_warning("  Gateway service install did not complete.")
-        _gw().print_info("  You can try manually: alfred gateway install")
+        _gw().print_info("  You can try manually: plushuman gateway install")
 
 
 def _wizard_post_setup() -> None:
@@ -931,6 +931,6 @@ def gateway_setup():
         _gw()._wizard_post_setup()
     else:
         print()
-        _gw().print_info("No platforms configured. Run 'alfred gateway setup' when ready.")
+        _gw().print_info("No platforms configured. Run 'plushuman gateway setup' when ready.")
 
     print()

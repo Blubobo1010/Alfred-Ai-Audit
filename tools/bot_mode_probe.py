@@ -141,7 +141,7 @@ def _bullet(handle: str, *parts: str) -> str:
 
 def _profile_role(profile_dir: Path) -> str:
     """Teammate role line: Bot Mode title — profile description; tells a teammate
-    WHO to message for a job. A friendly ``display_name`` (``alfred profile rename``) that
+    WHO to message for a job. A friendly ``display_name`` (``plushuman profile rename``) that
     differs from both the folder id and the title leads the line, so an untagged
     "talk to Scribe" maps to the folder handle without a disk search (#100671).
     Single-line, ≤160 chars, "" when nothing. Never raises."""
@@ -169,12 +169,12 @@ def _friendly_names(profile_dir: Path) -> tuple[str, str]:
 
 def _display_name(name: str, profile_dir: Path) -> str:
     """Human-facing sender name, in the Desktop's ``botFriendlyNames`` order: Bot Mode title,
-    then profile.yaml ``display_name`` (``alfred profile rename``), else the @handle — the
+    then profile.yaml ``display_name`` (``plushuman profile rename``), else the @handle — the
     renamed primary signs as ``Maia (@hermes)``, not ``hermes (@hermes)`` (#89720)."""
     return next((n for n in _friendly_names(profile_dir) if n), None) or _handle(name)
 
 
-# Tokens the Desktop mention parser reserves; a bot titled "Alfred" never hijacks @hermes.
+# Tokens the Desktop mention parser reserves; a bot titled "+Human" never hijacks @hermes.
 _RESERVED_ALIASES = frozenset({"all", "everyone", "user", "default", "hermes"})
 
 
@@ -206,7 +206,7 @@ def local_alias_map(root: Path) -> dict[str, set[str]]:
 
 
 def _peers(root: Path) -> list[str]:
-    """Registered peer gateway names (``alfred peer``) from config.yaml, read
+    """Registered peer gateway names (``plushuman peer``) from config.yaml, read
     directly (no config-loader import; the section is absent on most installs). Never raises."""
     def _names() -> list[str]:
         peers = (_read_yaml_dict(root / "config.yaml", "bot_peers") or {}).get("bot_peers")
@@ -260,7 +260,7 @@ def _peer_paragraph(root: Path) -> str:
         "\n\nTeammates on OTHER machines: this install also has peer gateways "
         f"registered ({listed}). Message an agent on a peer the same way — "
         'message_agent with target "<peer>/<agent-name>" (or "<peer>" alone '
-        "for the peer's main agent). Run `alfred peer list` for the live "
+        "for the peer's main agent). Run `plushuman peer list` for the live "
         "peer list."
     )
 
@@ -276,7 +276,7 @@ def _build_section(home: Path) -> str:
 
     return (
         f"{_PROTOCOL_HEADING}\n"
-        "This install runs Bot Mode: each Alfred profile is an agent teammate with "
+        "This install runs Bot Mode: each +Human profile is an agent teammate with "
         'one canonical "Bot Chat" conversation, and you have the `message_agent` '
         "tool to DM any of them. It is FIRE-AND-FORGET: it delivers your message "
         "with your attribution prefixed automatically and returns an acknowledgement "
@@ -386,7 +386,7 @@ def capability_fingerprint(home: str | os.PathLike | None = None) -> str:
         surface["disabled_skills"] = sorted(str(s).lower() for s in (skills_cfg.get("disabled") or []))
         # The live selection is platform_toolsets.<platform> minus agent.disabled_toolsets;
         # tools.enabled_toolsets is written by no surface, so watching it left Bot Chats
-        # blind to `alfred tools enable/disable` (#124211). Raw slices: an edit that leaves
+        # blind to `plushuman tools enable/disable` (#124211). Raw slices: an edit that leaves
         # the effective selection unchanged costs one spurious rebuild at most.
         agent_cfg = cfg.get("agent") if isinstance(cfg.get("agent"), dict) else {}
         surface["platform_toolsets"] = json.dumps(cfg.get("platform_toolsets") or {}, sort_keys=True, default=str)

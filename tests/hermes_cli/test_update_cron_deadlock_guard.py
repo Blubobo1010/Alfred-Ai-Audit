@@ -1,12 +1,12 @@
 """Regression tests for #100179: cron-update three-way restart deadlock.
 
-When `alfred update` runs INSIDE the gateway's own process tree (the
+When `plushuman update` runs INSIDE the gateway's own process tree (the
 hermes-auto-update cron job), waiting for that gateway to exit is a
 circular wait:
 
   gateway waits on all in-flight work units (#77184)
-    -> cron agent session waits on the `alfred update` process
-      -> `alfred update` waits on the gateway to exit  [back to A]
+    -> cron agent session waits on the `plushuman update` process
+      -> `plushuman update` waits on the gateway to exit  [back to A]
 
 The wedged-loop probe cannot break it: the cron session posts activity
 every ~180s (process-tool poll return), so it is never marked wedged and

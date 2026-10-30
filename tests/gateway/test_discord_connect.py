@@ -99,7 +99,7 @@ class FakeBot:
         self.intents = intents
         self.allowed_mentions = allowed_mentions
         self.application_id = 999
-        self.user = SimpleNamespace(id=999, name="Alfred")
+        self.user = SimpleNamespace(id=999, name="+Human")
         self._events = {}
         self.tree = FakeTree()
         self.http = SimpleNamespace(
@@ -411,7 +411,7 @@ async def test_safe_sync_slash_commands_only_mutates_diffs():
 
     desired_same = {
         "name": "status",
-        "description": "Show Alfred session status",
+        "description": "Show +Human session status",
         "type": 1,
         "options": [],
         "nsfw": False,

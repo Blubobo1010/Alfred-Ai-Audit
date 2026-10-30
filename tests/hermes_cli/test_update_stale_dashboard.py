@@ -1,6 +1,6 @@
-"""Tests for the stale-dashboard handling run at the end of ``alfred update``.
+"""Tests for the stale-dashboard handling run at the end of ``plushuman update``.
 
-``alfred update`` detects ``alfred dashboard`` processes left over from the
+``plushuman update`` detects ``plushuman dashboard`` processes left over from the
 previous version and kills them (SIGTERM + SIGKILL grace, or ``taskkill /F``
 on Windows).  Without this, the running backend silently serves stale Python
 against a freshly-updated JS bundle, producing 401s / empty data.
@@ -150,7 +150,7 @@ class TestFindStaleDashboardPids:
                 returncode=0,
                 stdout="\n".join([
                     _ps_line(os.getpid(), "python3 -m hermes_cli.main dashboard"),
-                    _ps_line(12345, "alfred dashboard --port 9119"),
+                    _ps_line(12345, "plushuman dashboard --port 9119"),
                 ]) + "\n",
                 stderr="",
             )
@@ -337,7 +337,7 @@ class TestSupervisedBackendRestart:
         assert "when you're ready" not in capsys.readouterr().out
 
     def test_already_restarted_unit_is_left_untouched(self):
-        """Review on #83595: alfred update's systemd fleet-restart loop may
+        """Review on #83595: plushuman update's systemd fleet-restart loop may
         already have restarted this PID's owning unit directly (e.g. a
         Serve-only install). Passing it via already_restarted_units must
         skip killing/restarting it again here."""
@@ -368,7 +368,7 @@ class TestSupervisedBackendRestart:
         backend supervises it; any other unit is not restarted and the backend is respawned from
         its argv instead."""
         live = self._live()
-        argv = ["alfred", "dashboard", "--port", "8300"]
+        argv = ["plushuman", "dashboard", "--port", "8300"]
         unit_cgroup = "/system.slice/hosted-compute-agent.service"
         probes: list[list[str]] = []
 
@@ -435,7 +435,7 @@ class TestManualBackendRespawn:
     def test_non_orphan_fixed_port_still_respawns(self, capsys):
         """A supervised-by-shell dashboard with a fixed port is still restarted."""
         live = self._live()
-        argv = ["alfred", "dashboard", "--port", "8300"]
+        argv = ["plushuman", "dashboard", "--port", "8300"]
 
         def fake_kill(pid, sig):
             if sig == 0:
@@ -503,13 +503,13 @@ class TestManualBackendRespawn:
         with patch.object(live.subprocess, "Popen", _FakePopen), \
              patch.object(live.time, "sleep"):
             failed = live._respawn_dashboard_processes([
-                ["alfred", "dashboard", "--port", "8300"],
-                ["alfred", "serve", "--host", "0.0.0.0"],
+                ["plushuman", "dashboard", "--port", "8300"],
+                ["plushuman", "serve", "--host", "0.0.0.0"],
             ])
 
         assert failed == []
-        assert spawned[0] == ["alfred", "dashboard", "--port", "8300", "--no-open"]
-        assert spawned[1] == ["alfred", "serve", "--host", "0.0.0.0"]
+        assert spawned[0] == ["plushuman", "dashboard", "--port", "8300", "--no-open"]
+        assert spawned[1] == ["plushuman", "serve", "--host", "0.0.0.0"]
 
     def test_respawn_failure_returned(self, tmp_path, monkeypatch, capsys):
         live = self._live()
@@ -517,9 +517,9 @@ class TestManualBackendRespawn:
 
         with patch.object(live.subprocess, "Popen", side_effect=OSError("no such file")), \
              patch.object(live.time, "sleep"):
-            failed = live._respawn_dashboard_processes([["alfred", "serve"]])
+            failed = live._respawn_dashboard_processes([["plushuman", "serve"]])
 
-        assert failed == [["alfred", "serve"]]
+        assert failed == [["plushuman", "serve"]]
 
     def test_pre_takeover_interpreter_launcher_argv_is_rebuilt(self, tmp_path, monkeypatch):
         """A kernel-captured ``[old venv python, launcher, ...]`` argv is respawned through
@@ -571,10 +571,10 @@ class TestManualBackendRespawn:
 
         with patch.object(live.subprocess, "Popen", _DyingPopen), \
              patch.object(live.time, "sleep"):
-            failed = live._respawn_dashboard_processes([["alfred", "dashboard", "--port", "8300"]])
+            failed = live._respawn_dashboard_processes([["plushuman", "dashboard", "--port", "8300"]])
 
         out = capsys.readouterr().out
-        assert failed == [["alfred", "dashboard", "--port", "8300"]]
+        assert failed == [["plushuman", "dashboard", "--port", "8300"]]
         assert "✓ restarted" not in out
         assert "✗ failed to restart" in out
 
@@ -598,7 +598,7 @@ class TestFilterDashboardRespawnCandidates:
         from hermes_cli.dashboard_procs import _filter_dashboard_respawn_candidates
 
         argv = [
-            "alfred", "--profile", "coder",
+            "plushuman", "--profile", "coder",
             "dashboard", "--no-open", "--host", "127.0.0.1", "--port", "0",
         ]
         assert _filter_dashboard_respawn_candidates([(7, argv, None)]) == []
@@ -606,7 +606,7 @@ class TestFilterDashboardRespawnCandidates:
     def test_skips_serve_port_equals_zero(self):
         from hermes_cli.dashboard_procs import _filter_dashboard_respawn_candidates
 
-        argv = ["alfred", "serve", "--port=0"]
+        argv = ["plushuman", "serve", "--port=0"]
         assert _filter_dashboard_respawn_candidates([(1, argv, None)]) == []
 
 
@@ -624,9 +624,9 @@ class TestFilterDashboardRespawnCandidates:
     def test_caps_one_per_profile(self):
         from hermes_cli.dashboard_procs import _filter_dashboard_respawn_candidates
 
-        a = ["alfred", "--profile", "coder", "dashboard", "--port", "8300"]
-        b = ["alfred", "--profile", "coder", "dashboard", "--port", "8301"]
-        c = ["alfred", "--profile", "writer", "dashboard", "--port", "8302"]
+        a = ["plushuman", "--profile", "coder", "dashboard", "--port", "8300"]
+        b = ["plushuman", "--profile", "coder", "dashboard", "--port", "8301"]
+        c = ["plushuman", "--profile", "writer", "dashboard", "--port", "8302"]
         out = _filter_dashboard_respawn_candidates([
             (1, a, None),
             (2, b, None),
@@ -638,8 +638,8 @@ class TestFilterDashboardRespawnCandidates:
         from hermes_cli.dashboard_procs import _filter_dashboard_respawn_candidates
 
         home = "/tmp/hermes-home-a"
-        a = ["alfred", "dashboard", "--port", "8300"]
-        b = ["alfred", "dashboard", "--port", "8301"]
+        a = ["plushuman", "dashboard", "--port", "8300"]
+        b = ["plushuman", "dashboard", "--port", "8301"]
         out = _filter_dashboard_respawn_candidates(
             [
                 (1, a, home),
@@ -652,8 +652,8 @@ class TestFilterDashboardRespawnCandidates:
     def test_profile_flag_and_profiles_home_share_cap(self):
         from hermes_cli.dashboard_procs import _filter_dashboard_respawn_candidates
 
-        a = ["alfred", "--profile", "coder", "dashboard", "--port", "8300"]
-        b = ["alfred", "dashboard", "--port", "8301"]
+        a = ["plushuman", "--profile", "coder", "dashboard", "--port", "8300"]
+        b = ["plushuman", "dashboard", "--port", "8301"]
         out = _filter_dashboard_respawn_candidates([
             (1, a, None),
             (2, b, "/home/u/.hermes/profiles/coder"),
@@ -663,8 +663,8 @@ class TestFilterDashboardRespawnCandidates:
     def test_default_profile_same_root_home_caps(self):
         from hermes_cli.dashboard_procs import _filter_dashboard_respawn_candidates
 
-        a = ["alfred", "--profile", "default", "dashboard", "--port", "8300"]
-        b = ["alfred", "dashboard", "--port", "8301"]
+        a = ["plushuman", "--profile", "default", "dashboard", "--port", "8300"]
+        b = ["plushuman", "dashboard", "--port", "8301"]
         home = "/home/u/.hermes"
         out = _filter_dashboard_respawn_candidates(
             [
@@ -685,8 +685,8 @@ class TestFilterDashboardRespawnCandidates:
         """
         from hermes_cli.dashboard_procs import _filter_dashboard_respawn_candidates
 
-        a = ["alfred", "dashboard", "--port", "8300"]
-        b = ["alfred", "dashboard", "--port", "8301"]
+        a = ["plushuman", "dashboard", "--port", "8300"]
+        b = ["plushuman", "dashboard", "--port", "8301"]
         out = _filter_dashboard_respawn_candidates(
             [
                 (1, a, "/home/u/.hermes"),
@@ -714,7 +714,7 @@ class TestFilterDashboardRespawnCandidates:
     def test_matching_hermes_home_is_kept(self):
         from hermes_cli.dashboard_procs import _filter_dashboard_respawn_candidates
 
-        argv = ["alfred", "serve", "--host", "127.0.0.1", "--port", "9118"]
+        argv = ["plushuman", "serve", "--host", "127.0.0.1", "--port", "9118"]
         out = _filter_dashboard_respawn_candidates(
             [(15364, argv, "/Users/u/.hermes")],
             own_home="/Users/u/.hermes",
@@ -732,7 +732,7 @@ class TestFilterDashboardRespawnCandidates:
         except (OSError, NotImplementedError):
             pytest.skip("symlinks unavailable on this platform")
 
-        argv = ["alfred", "serve", "--port", "9118"]
+        argv = ["plushuman", "serve", "--port", "9118"]
         out = _filter_dashboard_respawn_candidates(
             [(15364, argv, str(real))],
             own_home=str(link),
@@ -743,7 +743,7 @@ class TestFilterDashboardRespawnCandidates:
         """Unreadable HERMES_HOME (env probe failed) keeps pre-#94030 behaviour."""
         from hermes_cli.dashboard_procs import _filter_dashboard_respawn_candidates
 
-        argv = ["alfred", "dashboard", "--port", "8300"]
+        argv = ["plushuman", "dashboard", "--port", "8300"]
         out = _filter_dashboard_respawn_candidates(
             [(1, argv, None)],
             own_home="/home/u/.hermes",
@@ -759,7 +759,7 @@ class TestFilterDashboardRespawnCandidates:
         monkeypatch.setattr(
             hermes_constants, "get_hermes_home", lambda: Path("/home/u/.hermes")
         )
-        argv = ["alfred", "serve", "--port", "9118"]
+        argv = ["plushuman", "serve", "--port", "9118"]
         foreign = _filter_dashboard_respawn_candidates([
             (1, argv, "/Users/u/.hermes-lifeos"),
         ])
@@ -810,13 +810,13 @@ class TestCmdlineCapture:
 
         def fake_run(args, *a, **kw):
             assert args == ["ps", "-p", "888", "-o", "command="]
-            return MagicMock(returncode=0, stdout="alfred serve --port 8300\n", stderr="")
+            return MagicMock(returncode=0, stdout="plushuman serve --port 8300\n", stderr="")
 
         with patch.object(live.os.path, "exists", return_value=False), \
              patch("subprocess.run", side_effect=fake_run):
             argv = main_dashboard._dashboard_cmdline_for_pid(888)
 
-        assert argv == ["alfred", "serve", "--port", "8300"]
+        assert argv == ["plushuman", "serve", "--port", "8300"]
 
     @pytest.mark.platforms("windows")
     def test_returns_none_on_windows(self):
@@ -913,7 +913,7 @@ class TestLaunchdSupervisedBackends:
             self._run(9105, [("system", "ai.hermes.serve", list(self.ARGV), None)], restart_ok=False)
         assert "run: sudo launchctl kickstart -k system/ai.hermes.serve" in capsys.readouterr().out
 
-        other = ("gui/501", "ai.hermes.other", ["alfred", "dashboard", "--port", "8300"], 777)
+        other = ("gui/501", "ai.hermes.other", ["plushuman", "dashboard", "--port", "8300"], 777)
         result, restart, respawn = self._run(9104, [other])
         restart.assert_not_called()
         respawn.assert_called_once_with([list(self.ARGV)])

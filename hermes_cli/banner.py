@@ -70,31 +70,31 @@ def _skin_color(key: str, fallback: str) -> str:
 from hermes_cli import __release_date__ as RELEASE_DATE
 from hermes_cli.version_info import get_version_info
 
-HERMES_AGENT_LOGO = """[bold #408E65] █████╗ ██╗     ███████╗██████╗ ███████╗██████╗[/]
-[bold #568E50]██╔══██╗██║     ██╔════╝██╔══██╗██╔════╝██╔══██╗[/]
-[#6E8B38]███████║██║     █████╗  ██████╔╝█████╗  ██║  ██║[/]
-[#868718]██╔══██║██║     ██╔══╝  ██╔══██╗██╔══╝  ██║  ██║[/]
-[#9D8000]██║  ██║███████╗██║     ██║  ██║███████╗██████╔╝[/]
-[#B27800]╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝  ╚═╝╚══════╝╚═════╝[/]"""
+HERMES_AGENT_LOGO = """[bold #2B5CFF]        ██╗  ██╗██╗   ██╗███╗   ███╗ █████╗ ███╗   ██╗[/]
+[bold #385CFF]   ██╗  ██║  ██║██║   ██║████╗ ████║██╔══██╗████╗  ██║[/]
+[#445CFF]██████╗ ███████║██║   ██║██╔████╔██║███████║██╔██╗ ██║[/]
+[#515CFF]╚═██╔═╝ ██╔══██║██║   ██║██║╚██╔╝██║██╔══██║██║╚██╗██║[/]
+[#5D5CFF]  ╚═╝   ██║  ██║╚██████╔╝██║ ╚═╝ ██║██║  ██║██║ ╚████║[/]
+[#6A5CFF]        ╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝[/]"""
 
-HERMES_CADUCEUS = """[#408E65]⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⠴⠖⠒⠊⡩⣭⣉⡉⣒⡒⠲⢤⠀⠀⠀⠀⠀⠀⠀⠀[/]
-[#498E5D]⠀⠀⠀⠀⠀⠀⠀⣠⣴⣕⠀⣾⠇⠀⠀⠀⢻⣿⣏⠀⠹⣆⢷⣄⡀⠀⠀⠀⠀⠀[/]
-[#528E54]⠀⠀⠀⠀⠀⠀⣾⣿⣿⣧⣰⡟⠀⡨⣓⡻⡇⣿⡇⣾⣂⢹⣼⣿⡷⠀⠀⠀⠀⠀[/]
-[#5C8D4B]⠀⠀⠀⠀⠀⠀⠙⣿⣿⣿⣿⠇⢴⣇⠛⢓⣽⣿⣿⣿⢋⢼⣿⣿⠃⠀⠀⠀⠀⠀[/]
-[#668C41]⠀⠀⠀⠀⠀⠀⠀⠸⣿⡿⠹⠃⢸⢸⣭⣽⣿⣿⣿⣿⣿⡀⢏⠛⠀⠀⠀⠀⠀⠀[/]
-[#708B36]⠀⠀⠀⠀⠀⠀⠀⠀⢰⡃⡦⠀⢸⠐⣿⣿⣿⣿⣿⣿⣿⡇⢸⠄⠀⠀⠀⠀⠀⠀[/]
-[#7A892A]⠀⠀⠀⠀⠀⠀⠀⠀⠘⣇⠙⣄⡜⠐⠾⣿⣿⣿⣿⣿⡿⠇⡾⠀⠀⠀⠀⠀⠀⠀[/]
-[#84871C]⠀⠀⠀⠀⠀⠀⠀⢀⣠⣿⣶⣄⣧⡀⠀⠈⠁⡀⠔⠁⢀⡾⠃⠀⠀⠀⠀⠀⠀⠀[/]
-[#8E8506]⠀⠀⠀⠀⠀⢠⣴⣿⣿⣿⣿⣿⣷⡉⢲⠤⣀⣈⣠⠖⢻⣿⣦⣄⠀⠀⠀⠀⠀⠀[/]
-[#978200]⠀⠀⠀⠀⡔⠁⢌⢻⣿⣿⣿⣿⣷⣍⠙⣶⣾⡿⢿⣿⣿⣿⣿⣿⡱⡄⠀⠀⠀⠀[/]
-[#A17F00]⠀⠀⠀⠘⠀⠀⠈⢂⢿⣿⣿⣿⣿⣿⣷⡍⠁⢡⢶⢀⣿⣿⣿⣿⡿⠸⠀⠀⠀⠀[/]
-[#AA7B00]⠀⠀⠀⠀⠀⠀⠀⠀⠸⣿⣿⣿⣿⣿⣿⣿⣦⣸⢾⣾⣿⣿⣿⡿⠃⠀⠀⠀⠀⠀[/]
-[#B27800]⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠻⠿⠿⣿⣿⣿⣿⡿⠿⠛⠉⠀⠀⠀⠀⠀⠀⠀[/]"""
+HERMES_CADUCEUS = """[#2B5CFF]⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[/]
+[#305CFF]⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[/]
+[#365CFF]⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[/]
+[#3B5CFF]⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[/]
+[#405CFF]⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀[/]
+[#455CFF]⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀[/]
+[#4A5CFF]⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀[/]
+[#505CFF]⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀[/]
+[#555CFF]⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀[/]
+[#5A5CFF]⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[/]
+[#605CFF]⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[/]
+[#655CFF]⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[/]
+[#6A5CFF]⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[/]"""
 
 # === Skills scanning ===
 
 # Per-process caches: ``None`` until computed, then a 1-tuple ``(value,)`` so a computed ``None``
-# is distinguishable from "not yet computed". Reset by assigning ``None`` (tests, ``alfred skills``).
+# is distinguishable from "not yet computed". Reset by assigning ``None`` (tests, ``plushuman skills``).
 _available_skills_cache: Optional[tuple] = None
 _git_banner_state_cache: Optional[tuple] = None
 _latest_release_cache: Optional[tuple] = None
@@ -142,7 +142,7 @@ def get_available_skills() -> dict[str, list[str]]:
 
 
 def _resolve_repo_dir() -> Optional[Path]:
-    """The active Alfred git checkout, or None if this isn't a git install.
+    """The active +Human git checkout, or None if this isn't a git install.
 
     Prefers the running code's location: ``$HERMES_HOME/hermes-agent/`` may be a stale copy
     carried over by ``--clone-all``.
@@ -208,7 +208,7 @@ def format_banner_version_label() -> str:
 
     stamp = read_install_stamp(get_project_root())
     if stamp.get("distribution") == "desktop-app":
-        label = f"Alfred v{get_version_info().derived_version}"
+        label = f"+Human v{get_version_info().derived_version}"
         if stamp.get("source") == "commit-build":
             return f"{label} · commit-build · {str(stamp.get('commit') or '')[:12]}"
         if stamp.get("tag"):
@@ -221,7 +221,7 @@ def format_banner_version_label() -> str:
             return f"{label} · installer"
         return label
 
-    base = f"Alfred v{get_version_info().derived_version} ({RELEASE_DATE})"
+    base = f"+Human v{get_version_info().derived_version} ({RELEASE_DATE})"
     from hermes_cli.config import load_config
     from hermes_cli.update_channel import resolve_update_channel
 
@@ -514,8 +514,8 @@ def _mcp_failed_line(name: str, transport: str, error: Optional[str]) -> str:
     exact next command, so 'failed' is never the whole story."""
     from rich.markup import escape
     reason = escape(" ".join(str(error or "").split())[:120]) or "no details recorded"
-    next_cmd = (f"alfred mcp login {name}" if re.search(r"\b401\b|unauthori[sz]ed", reason, re.IGNORECASE)
-                else f"alfred mcp test {name}")
+    next_cmd = (f"plushuman mcp login {name}" if re.search(r"\b401\b|unauthori[sz]ed", reason, re.IGNORECASE)
+                else f"plushuman mcp test {name}")
     return (f"[red]{name}[/] [dim]({transport})[/] [red]— could not connect:[/] {reason} "
             f"[dim]— run `{next_cmd}`[/]")
 
@@ -625,7 +625,7 @@ def _banner_left_lines(model: str, cwd: str, session_id, context_length, provide
         lines.append(f"[{accent}]MoA: {_short_label(model)}[/]{agg_str}{ctx_str}{nous_str}")
     elif not (model or "").strip() or (model or "").strip().lower() == "unknown":
         # Unconfigured install: the clearest place to say what is wrong and how to fix it.
-        lines.append(f"[bold red]no model configured[/] [dim {dim}]— run /model or alfred setup[/]")
+        lines.append(f"[bold red]no model configured[/] [dim {dim}]— run /model or plushuman setup[/]")
     else:
         model_short = model.split("/")[-1].removesuffix(".gguf")
         lines.append(f"[{accent}]{_short_label(model_short)}[/]{ctx_str}{nous_str}")

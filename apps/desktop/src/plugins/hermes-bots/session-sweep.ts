@@ -238,7 +238,7 @@ function hidePersistedBotSession(bot: RosterRow, sessionId: string, profileOverr
 }
 
 // Titles Bot Mode itself mints for its plumbing sessions. Bot-to-bot CLI
-// handoffs (`alfred -p <bot> chat --in ~ -c "Bot Chat" --create-if-missing`)
+// handoffs (`plushuman -p <bot> chat --in ~ -c "Bot Chat" --create-if-missing`)
 // create sessions with EXACTLY these titles; the "Group: " prefix is the
 // member-session title ensureGroupChatSession has
 // used since group chats shipped. Exact/prefix matching is deliberate — a

@@ -1,7 +1,7 @@
-"""Alfred-owned PYTHONPATH stripping for child processes. Launchers prepend the repo
-root and the Alfred venv's site-packages so the backend can ``import tools``; leaked
+"""+Human-owned PYTHONPATH stripping for child processes. Launchers prepend the repo
+root and the +Human venv's site-packages so the backend can ``import tools``; leaked
 into a child Python of a DIFFERENT version they load the backend's C extensions and
-crash. Only entries proven Alfred-owned by *path provenance* are removed — never by a
+crash. Only entries proven +Human-owned by *path provenance* are removed — never by a
 cross-version heuristic. Module state (``_hermes_repo_root_aliases``, ``_in_venv``,
 ``_hermes_site_packages``) lives in ``tools.environments.local`` (via :func:`_state`)
 so tests monkeypatching it there keep working."""
@@ -34,10 +34,10 @@ def _same_path(left: Path, right: Path) -> bool:
 def _build_hermes_repo_root_aliases(
     resolved_root: Path, lexical_root: Path, configured_home: Path,
 ) -> tuple[Path, ...]:
-    """Exact repo-root spellings emitted by Alfred launchers. Mirrors
+    """Exact repo-root spellings emitted by +Human launchers. Mirrors
     ``gateway_windows._preserve_hermes_home_path`` (physical path under the resolved
     HERMES_HOME -> configured spelling) so a junction-backed install matches without
-    treating arbitrary HERMES_HOME descendants as Alfred-owned. A repo-level junction
+    treating arbitrary HERMES_HOME descendants as +Human-owned. A repo-level junction
     (possibly cross-drive) is accepted only when a strict resolve proves
     <root>/<repo dirname> is the physical root (fail-closed)."""
     candidates = [resolved_root, lexical_root]
@@ -90,7 +90,7 @@ def _validated_runtime_venv(env: dict) -> Path | None:
 
 
 def _get_hermes_site_packages(env: dict) -> list[Path]:
-    """Exact site-packages dirs owned by the Alfred runtime (cached):
+    """Exact site-packages dirs owned by the +Human runtime (cached):
     ``site.getsitepackages()`` with a ``sys.prefix`` fallback, plus a validated
     Windows base-interpreter launch's ``VIRTUAL_ENV/Lib/site-packages``."""
     local = _state()
@@ -119,7 +119,7 @@ def _get_hermes_site_packages(env: dict) -> list[Path]:
 
 
 def _strip_hermes_owned_pythonpath_and_runtime_markers(env: dict) -> None:
-    """Strip Alfred-owned PYTHONPATH entries, then the runtime marker vars. Order is
+    """Strip +Human-owned PYTHONPATH entries, then the runtime marker vars. Order is
     load-bearing: PYTHONPATH filtering runs BEFORE the markers go so a validated Windows
     base-interpreter launch (VIRTUAL_ENV -> <repo>/venv) can still prove ownership."""
     _strip_hermes_owned_pythonpath(env)
@@ -128,7 +128,7 @@ def _strip_hermes_owned_pythonpath_and_runtime_markers(env: dict) -> None:
 
 
 def _strip_hermes_owned_pythonpath(env: dict) -> None:
-    """Remove Alfred-owned PYTHONPATH entries: only exact matches of the repo root
+    """Remove +Human-owned PYTHONPATH entries: only exact matches of the repo root
     (any launcher spelling) and runtime site-packages — never descendants, which are
     user paths. Empty components (= cwd) and everything else are preserved.
 
@@ -148,4 +148,4 @@ def _strip_hermes_owned_pythonpath(env: dict) -> None:
     else:
         env.pop("PYTHONPATH", None)
     if stripped:
-        logger.debug("Stripped Alfred-owned entries from PYTHONPATH: %s", stripped)
+        logger.debug("Stripped +Human-owned entries from PYTHONPATH: %s", stripped)

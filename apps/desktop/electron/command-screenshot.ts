@@ -82,7 +82,7 @@ export function installCommandScreenshot({ rendererUrl }: { rendererUrl: string 
           return
         }
 
-        // Retain the last Alfred chat window when another application takes focus.
+        // Retain the last +Human chat window when another application takes focus.
         // Closing it cancels this destination; never silently pick another chat.
         const focused = BrowserWindow.getFocusedWindow()
         const recipient = focused && recipients.has(focused.webContents.id) ? focused : lastRecipient

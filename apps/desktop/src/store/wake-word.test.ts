@@ -123,13 +123,13 @@ describe('toggleWakeWord', () => {
 
     await toggleWakeWord(
       requester(() => {
-        throw new Error('Alfred gateway unavailable')
+        throw new Error('+Human gateway unavailable')
       })
     )
 
     expect($wakeWord.get()).toMatchObject({
       listening: false,
-      notice: 'Alfred gateway unavailable',
+      notice: '+Human gateway unavailable',
       pending: false
     })
   })

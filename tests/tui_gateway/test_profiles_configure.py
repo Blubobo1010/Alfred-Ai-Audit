@@ -54,7 +54,7 @@ def test_describe_matches_the_runtime_once_legacy_disabled_is_migrated(profile_d
     _write_mcp(profile_dir, {
         "on": {"command": "on", "enabled": True},
         "off": {"command": "off", "enabled": False},
-        # `alfred mcp add` writes `enabled: true`; the old editor then only added `disabled: true`.
+        # `plushuman mcp add` writes `enabled: true`; the old editor then only added `disabled: true`.
         "legacy-off": {"command": "legacy", "enabled": True, "disabled": True},
         "implicit-on": {"command": "implicit"},
     })

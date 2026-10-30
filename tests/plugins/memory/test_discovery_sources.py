@@ -132,7 +132,7 @@ def test_entry_point_provider_is_listed(entry_points, tmp_path, monkeypatch):
 
 def test_find_provider_dir_resolves_a_package_entry_point(entry_points, tmp_path, monkeypatch):
     """Without a directory, a pip-installed provider silently loses its
-    dashboard config panel and its `alfred <provider>` subcommands — both are
+    dashboard config panel and its `plushuman <provider>` subcommands — both are
     read from disk rather than imported."""
     package = tmp_path / "pipmem_pkg"
     package.mkdir()
@@ -235,7 +235,7 @@ def test_provider_registered_past_the_first_8kb_is_discovered(tmp_path, monkeypa
 
 def test_unreadable_user_plugin_does_not_abort_memory_discovery(tmp_path, monkeypatch):
     """One mode-000 / ACL-denied ``$HERMES_HOME/plugins/<x>`` must not hide the bundled
-    providers or its readable siblings from the dashboard / ``alfred memory`` pickers (#111804)."""
+    providers or its readable siblings from the dashboard / ``plushuman memory`` pickers (#111804)."""
     plugins_root = tmp_path / "plugins"
     _write_provider_dir(plugins_root, "goodmem")
     denied = plugins_root / "denied"

@@ -1,7 +1,7 @@
-"""``alfred doctor`` names the Relay plugin files the runtime actually loads.
+"""``plushuman doctor`` names the Relay plugin files the runtime actually loads.
 
-Relay discovers user and system ``plugins.toml`` files outside the Alfred home, so doctor is the one
-Alfred surface that shows a user which files apply. It must agree with what initialization loads.
+Relay discovers user and system ``plugins.toml`` files outside the +Human home, so doctor is the one
++Human surface that shows a user which files apply. It must agree with what initialization loads.
 """
 
 import pytest

@@ -61,7 +61,7 @@ def test_each_start_checks_pm_once_before_dispatch(surface, tmp_path, monkeypatc
 
         monkeypatch.setattr(main, "cmd_dashboard", lambda args: dispatched.append(len(checked)))
         monkeypatch.setattr(main, "cmd_version", lambda args: dispatched.append(len(checked)))
-        monkeypatch.setattr(sys, "argv", ["alfred", "serve" if surface == "serve" else "--version"])
+        monkeypatch.setattr(sys, "argv", ["plushuman", "serve" if surface == "serve" else "--version"])
         run = main.main
     for _ in range(2):
         checked.clear()

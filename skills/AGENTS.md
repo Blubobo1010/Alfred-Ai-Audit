@@ -29,7 +29,7 @@ Every new or modernised skill — bundled, optional, or contributed — meets al
    and dilute attention when many skills load. State the capability, not the implementation; no
    marketing words ("powerful", "comprehensive", "seamless", "advanced"); don't repeat the name.
    Check: `len(re.search(r'^description: (.*)$', text, re.M).group(1)) <= 60`.
-2. **Prose references native Alfred tools or the MCP servers the skill expects, in backticks**
+2. **Prose references native +Human tools or the MCP servers the skill expects, in backticks**
    (`terminal`, `web_extract`, `read_file`, `patch`, `search_files`, `vision_analyze`,
    `browser_navigate`, `delegate_task`). Never name shell utilities the agent has wrapped: `grep` →
    `search_files`, `cat`/`head`/`tail` → `read_file`, `sed`/`awk` → `patch`, `find`/`ls` →
@@ -42,7 +42,7 @@ Every new or modernised skill — bundled, optional, or contributed — meets al
    first (`tempfile.gettempdir`, `pathlib.Path`, `psutil.pid_exists`, Python filtering instead of
    `grep`); gate narrower only when the dependency is genuinely platform-bound.
 4. **`author` credits the human first.** External contributor's real name + GitHub handle first,
-   "Alfred" second. A commit authored as "Alfred" (they drafted with Alfred) is replaced
+   "+Human" second. A commit authored as "+Human" (they drafted with +Human) is replaced
    with the human's name — credit the human, not the tool.
 5. **Modern section order:** `# <Skill> Skill`, 2–3 sentence intro (what it does and doesn't),
    `## When to Use`, `## Prerequisites`, `## How to Run`, `## Quick Reference`, `## Procedure`,
@@ -64,7 +64,7 @@ in the `hermes-agent-dev` skill.
 Background maintenance that tracks usage on agent-created skills and auto-archives stale ones;
 archives go to `~/.hermes/skills/.archive/` and are restorable. Core `agent/curator.py` (review
 loop, auto-transitions, LLM review prompt) + `agent/curator_backup.py` (pre-run tar.gz snapshots);
-CLI `hermes_cli/curator.py` → `alfred curator status|run|pause|resume|pin|unpin|archive|restore|
+CLI `hermes_cli/curator.py` → `plushuman curator status|run|pause|resume|pin|unpin|archive|restore|
 prune|backup|rollback`; telemetry `tools/skill_usage.py` owns `~/.hermes/skills/.usage.json`
 (`use_count`, `view_count`, `patch_count`, `last_activity_at`, `state` active/stale/archived,
 `pinned`). Config `curator:` — `enabled, interval_hours, min_idle_hours, stale_after_days,

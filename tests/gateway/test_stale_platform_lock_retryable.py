@@ -78,7 +78,7 @@ def test_explicit_replace_takeover_reacquires_lock_once(adapter):
     existing = {
         "pid": 4242,
         "kind": "hermes-gateway",
-        "argv": ["alfred", "gateway", "run"],
+        "argv": ["plushuman", "gateway", "run"],
         "start_time": 123,
     }
     acquire = MagicMock(side_effect=[(False, existing), (True, None)])

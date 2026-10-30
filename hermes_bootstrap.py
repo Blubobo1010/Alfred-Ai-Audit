@@ -1,16 +1,16 @@
-"""Process bootstrap for Alfred entry points: Windows UTF-8 stdio and ANSI console, import-path
+"""Process bootstrap for +Human entry points: Windows UTF-8 stdio and ANSI console, import-path
 hardening, durable lazy-install target, and dual-stack (Happy Eyeballs) connects.
 
 Windows binds stdio to the console code page (cp1252), so ``print("café")`` raises
 ``UnicodeEncodeError``, and Python children inherit the same default unless
 ``PYTHONUTF8``/``PYTHONIOENCODING`` are set. Import this module first in every entry
-point (``alfred``, ``hermes-agent``, ``hermes-acp``, ``gateway.run``, ``batch_runner``,
+point (``plushuman``, ``hermes-agent``, ``hermes-acp``, ``gateway.run``, ``batch_runner``,
 ``cron/scheduler``). It does NOT re-exec with ``-X utf8``: ``open()`` in the current
 process still needs an explicit ``encoding="utf-8"`` (ruff ``PLW1514``). POSIX is left
 alone deliberately — users' ``LANG``/``LC_*`` choices are respected.
 
 Stdlib only: entry points import this before ``harden_import_path()`` runs, so nothing
-here may pull in a Alfred package that a project-local directory could shadow.
+here may pull in a +Human package that a project-local directory could shadow.
 """
 
 from __future__ import annotations
@@ -166,7 +166,7 @@ def _patch_urllib3_create_connection(module) -> None:
 class _Urllib3ConnectionPatcher(importlib.abc.MetaPathFinder, importlib.abc.Loader):
     """One-shot import hook: patch urllib3's connect walker the moment the module loads.
 
-    Importing urllib3 eagerly costs ~50 ms on every CLI start, and ``alfred`` / the TUI
+    Importing urllib3 eagerly costs ~50 ms on every CLI start, and ``plushuman`` / the TUI
     gateway never load it unless something actually calls ``requests``.
     """
 
@@ -260,7 +260,7 @@ def enable_windows_vt(streams=None) -> bool:
     """Opt the console behind stdout/stderr in to ANSI escape processing.
 
     ``hermes_cli.colors`` and the skins emit raw SGR codes whenever stdout is a TTY. A
-    conhost console (PowerShell 5.1, cmd.exe, the installer's ``alfred setup``) prints
+    conhost console (PowerShell 5.1, cmd.exe, the installer's ``plushuman setup``) prints
     them as ``←[35m`` until the output handle has ENABLE_VIRTUAL_TERMINAL_PROCESSING, and
     shells hand native children a console with it off. The mode belongs to the console
     buffer, so setting it here also covers the relaunched child. Handles that are not a
@@ -339,7 +339,7 @@ def install_never_free_environ() -> None:
     On glibc < 2.41 adding a name reallocs ``environ`` and frees the old array while a
     thread that dropped the GIL (``getaddrinfo``, OpenSSL's ``SSL_CERT_FILE`` lookup) may
     still be walking it; the freed slots hold tcache pointers, so the walk segfaults the
-    whole process. Alfred writes new names at runtime from many places (``session.create``
+    whole process. +Human writes new names at runtime from many places (``session.create``
     turns on gateway prompts, the agent build sets ``HERMES_SESSION_ID``) while background
     threads fetch catalogs, so the tui_gateway died with SIGSEGV. This is glibc 2.41's own
     fix: entry strings are cached per ``NAME=value`` and never freed; a new name is
@@ -432,13 +432,13 @@ def install_never_free_environ() -> None:
 
 
 def harden_import_path(src_root: str | None = None) -> None:
-    """Stop a package in the current directory from shadowing Alfred modules.
+    """Stop a package in the current directory from shadowing +Human modules.
 
-    Alfred ships top-level modules with common names (``utils``, ``proxy``, ``ui``); a
+    +Human ships top-level modules with common names (``utils``, ``proxy``, ``ui``); a
     project with its own ``utils/`` launched from its directory would win the import.
     The cwd reaches ``sys.path`` as ``""``/``"."`` (script/``-m`` launches) AND as an
     absolute path (venv activation, PYTHONPATH), so both are handled: relative forms are
-    dropped and the Alfred root is *relocated* to the front, not merely inserted when
+    dropped and the +Human root is *relocated* to the front, not merely inserted when
     absent. ``src_root`` defaults to this module's directory (the repo root for every
     shipped entry point), so no spawner env var is required.
     """
@@ -456,7 +456,7 @@ def harden_import_path(src_root: str | None = None) -> None:
 def export_scratch_tmp_env() -> None:
     """Point ``TMPDIR``/``TMP``/``TEMP`` at ``HERMES_HOME/cache/scratch`` unless the user set them.
 
-    System temp is tmpfs on most Linux hosts and containers; Alfred' browser profiles, PTY
+    System temp is tmpfs on most Linux hosts and containers; +Human' browser profiles, PTY
     probes and every ``tempfile`` default a child script makes would eat RAM there. Runs at
     import so every entry point and every child they spawn inherits it; ``hermes_cli.main``
     re-runs it after ``--profile`` re-homes the process. Never raises.
@@ -502,15 +502,15 @@ def _legacy_post_swap_invocation(argv: list[str]) -> tuple[Path, list[str]] | No
     return Path(argv[marker + 1]), argv[1:marker]
 
 
-# Everything below imports Alfred packages, so the root goes on sys.path first. A venv
+# Everything below imports +Human packages, so the root goes on sys.path first. A venv
 # editable-installed from a pre-PM tree maps only the top-level packages it knew then:
 # without this, ``pm`` is unimportable and the launch silently skips PM adoption.
 harden_import_path(str(_root))
 
 
 def _settle_interrupted_update() -> None:
-    """Put back the tree a killed ``alfred update`` left half-moved, before PM, launch preparation or
-    any Alfred package imports from it (``hermes_cli._early_recovery``; ``hermes_cli.main`` repeats the
+    """Put back the tree a killed ``plushuman update`` left half-moved, before PM, launch preparation or
+    any +Human package imports from it (``hermes_cli._early_recovery``; ``hermes_cli.main`` repeats the
     call for entries that never reach this module). A killed ZIP swap can leave ``hermes_cli/`` itself
     moved aside: the journal-driven restore then runs from that moved-aside copy, the code that wrote
     the journal. Root files are never absent mid-swap (``update_cmd_zip._commit_staged_replacements``)."""
@@ -603,10 +603,10 @@ if not _pm_repair:
             raise SystemExit(1) from None
         # Degrade, never brick the CLI: the previous dependency generation is still selected
         # (a failed sync commits nothing), so an offline or half-finished update leaves a
-        # usable Alfred plus a warning. Activation below is the real gate — a tree whose
+        # usable +Human plus a warning. Activation below is the real gate — a tree whose
         # dependencies cannot load still exits with the repair remedy.
         print(f"hermes: source-update completion failed: {exc}; "
-              "running with the previous dependencies — run `alfred update` to finish it",
+              "running with the previous dependencies — run `plushuman update` to finish it",
               file=sys.stderr)
     try:
         recover_if_needed(_root)

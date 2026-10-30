@@ -3,10 +3,10 @@ repo: https://github.com/matebenyovszky/agentplaybooks
 sha: 819c3491d83c0371b678e2ccd7e95679b8a7d288
 subdir: packages/hermes-portable/agentplaybooks-tools
 description: >-
-  Connect AgentPlaybooks skills and hosted MCP/OpenAPI tools to Alfred, with guided authentication and
+  Connect AgentPlaybooks skills and hosted MCP/OpenAPI tools to +Human, with guided authentication and
   API-key setup. Requires Node.js 20+ and @agentplaybooks/cli@0.5.0; the CLI is installed separately.
   Disclosure — skill-only; the separately installed apb CLI does the work. `apb connect
-  --target=alfred --apply` and `apb sync --target=alfred --apply` edit the selected Alfred profile's
+  --target=plushuman --apply` and `apb sync --target=plushuman --apply` edit the selected +Human profile's
   config.yaml (adding the hosted playbook MCP endpoint and merged MCP definitions, so that playbook's
   remote tools become available to the agent); local writes require --apply; hosted operations contact
   agentplaybooks.ai after `apb login`, and `apb push --apply` uploads your project's configuration

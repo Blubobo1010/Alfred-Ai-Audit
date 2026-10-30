@@ -2,7 +2,7 @@
  * Minimal OpenAI-compatible mock inference server for E2E tests and the
  * dev:mock dev flow.
  *
- * Implements just enough of the /v1/* surface for `alfred serve` to resolve a
+ * Implements just enough of the /v1/* surface for `plushuman serve` to resolve a
  * provider, list models, and stream a canned chat completion back to the
  * desktop app — without any real LLM.
  *
@@ -288,7 +288,7 @@ const CORRECTION_SWITCH_SCRIPT: ScriptedTurn[] = [
 export const CORRECTION_SWITCH_TRIGGER = 'E2E_CORRECTION_SWITCH_TRIGGER'
 
 /**
- * Drives a real code edit followed by two finish attempts. Alfred should add
+ * Drives a real code edit followed by two finish attempts. +Human should add
  * its synthetic verify-on-stop continuation after each finish attempt until
  * the bounded verifier gives up. The mock's request capture proves the nudge
  * reached the model; desktop must never render it as chat content.

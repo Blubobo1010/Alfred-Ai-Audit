@@ -1,7 +1,7 @@
 """The desktop subcommand's --local launch flag.
 
-Local models ship on main behind this flag: `alfred desktop --local` (or
-`Alfred.exe --local` directly) shows the local-models GUI surfaces; without
+Local models ship on main behind this flag: `plushuman desktop --local` (or
+`+Human.exe --local` directly) shows the local-models GUI surfaces; without
 it the desktop hides them all, even when local models are configured. These
 tests pin the argparse contract; the pass-through to the Electron argv lives
 in cmd_gui's launch paths.
@@ -12,7 +12,7 @@ import argparse
 from hermes_cli.subcommands.gui import build_gui_parser
 
 def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="alfred")
+    parser = argparse.ArgumentParser(prog="plushuman")
     subparsers = parser.add_subparsers(dest="command")
     build_gui_parser(subparsers, cmd_gui=lambda args: None)
 

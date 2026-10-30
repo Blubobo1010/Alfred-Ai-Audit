@@ -1,8 +1,8 @@
 /**
  * Failure class: FIRST RUN on a healthy install.
  *
- * A user who installed Alfred with scripts/install.sh and built the Desktop
- * app with `alfred desktop` opens the app. It must find that install and go
+ * A user who installed +Human with scripts/install.sh and built the Desktop
+ * app with `plushuman desktop` opens the app. It must find that install and go
  * straight to chat — on the first launch and on every later one — and never
  * show the first-run setup chooser or start the bootstrap installer
  * (#123888, #123800: the chooser / installer came back on every launch while

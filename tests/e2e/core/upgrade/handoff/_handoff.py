@@ -363,7 +363,7 @@ def cell(column: str, root: Path, provider_url: str, *, extra: dict | None = Non
 
 
 def start_gateway(inst: Install, *args: str) -> dict:
-    """``alfred gateway run`` as a user starts it by hand; returns its ``identify`` answer."""
+    """``plushuman gateway run`` as a user starts it by hand; returns its ``identify`` answer."""
     inst.spawn("gateway", "gateway", "run", *args)
     try:
         wait_for(lambda: health(inst.port), timeout=240, what="the gateway API server /health")

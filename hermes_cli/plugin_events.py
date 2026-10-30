@@ -19,11 +19,11 @@ is core-internal. The ``plugin.`` prefix keeps plugin traffic out of core's own
 event names (``skin.changed``, ``session.reclaimed``, …).
 
 Delivery is per process: the frame goes to the clients of the gateway the
-caller runs in. Under ``alfred serve`` (the Desktop backend, where plugin
+caller runs in. Under ``plushuman serve`` (the Desktop backend, where plugin
 routers, slash commands and the agent turn's tools/hooks run) that is every
 connected window; a call from the ``dashboard.turn_isolation`` compute-host
-child rides the host pipe to ``alfred serve`` and fans out there. A process
-with no Desktop client at all (``alfred gateway run``, ``alfred chat``, cron)
+child rides the host pipe to ``plushuman serve`` and fans out there. A process
+with no Desktop client at all (``plushuman gateway run``, ``plushuman chat``, cron)
 has nobody to deliver to: the call is a logged no-op.
 """
 
@@ -80,7 +80,7 @@ def broadcast_plugin_event(plugin_id: str, event: str, payload: Optional[dict[st
     try:
         from tui_gateway.server import _broadcast_global_event
     except ImportError:
-        # A plugin-only process (``alfred plugins validate`` importing the backend, a trimmed
+        # A plugin-only process (``plushuman plugins validate`` importing the backend, a trimmed
         # install) has no gateway at all: nobody to deliver to, and the handler must not die for it.
         logger.warning("plugin event %s dropped: no tui_gateway in this process", name, exc_info=True)
         return

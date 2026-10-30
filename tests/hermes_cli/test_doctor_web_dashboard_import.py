@@ -1,8 +1,8 @@
-"""``alfred doctor`` reports a dashboard web surface that dies at import (#124214).
+"""``plushuman doctor`` reports a dashboard web surface that dies at import (#124214).
 
 The optional ``web`` extra pins fastapi/starlette in lockstep, but the standalone starlette
 security pin ships in several other extras — so a venv can end up with starlette 1.x beside an
-older fastapi. ``alfred dashboard`` then dies constructing ``FastAPI(...)`` with a TypeError
+older fastapi. ``plushuman dashboard`` then dies constructing ``FastAPI(...)`` with a TypeError
 (not an ImportError), so the module's own lazy-install fallback never fires, and the process
 exits before printing anything. The doctor probe imports the web surface in a subprocess so the
 crash lands in the report instead of the user's terminal.

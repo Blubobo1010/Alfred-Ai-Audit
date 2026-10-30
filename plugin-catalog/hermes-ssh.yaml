@@ -1,7 +1,7 @@
 name: hermes-ssh
 repo: https://github.com/Adolanium/hermes-ssh
 sha: ea815bd671737a01948a4d77bad1d6b3a935b2bb
-description: Manage SSH connections and remote workspaces in Alfred Desktop.
+description: Manage SSH connections and remote workspaces in +Human Desktop.
 maintainer: Adolanium
 tier: community
 category: desktop

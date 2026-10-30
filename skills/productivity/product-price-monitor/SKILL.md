@@ -2,7 +2,7 @@
 name: product-price-monitor
 description: "Watch product, flight, or listing prices; alert on target."
 version: 0.1.0
-author: Ben Barclay (benbarclay), Alfred
+author: Ben Barclay (benbarclay), +Human
 license: MIT
 platforms: [linux, macos, windows]
 metadata:

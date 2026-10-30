@@ -24,13 +24,13 @@ export const enConnectorCard: Translations['connectors'] = {
   ownerMissing: 'Reopen this conversation to manage its connections.',
   search: 'Find an app',
   empty: 'No matching apps',
-  disclaimer: 'Connecting is optional. Only authorize the apps you want Alfred to use.',
+  disclaimer: 'Connecting is optional. Only authorize the apps you want +Human to use.',
   execution: 'Connector tools',
   setup: server => `Set up ${server}`,
   openInBrowser: 'Open in browser',
   setupCancel: 'Cancel',
   authorizedToolsUnavailable: 'Authorized. Tools unavailable.',
   required: 'Required',
-  namedAccount: (app: string, alias: string) => `Alfred named this ${app} account ${alias}.`,
+  namedAccount: (app: string, alias: string) => `+Human named this ${app} account ${alias}.`,
   renameAccount: 'Rename'
 }

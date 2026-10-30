@@ -110,7 +110,7 @@ describe('isRemoteReauthError', () => {
   })
 
   it('ignores non-auth boot errors and nullish', () => {
-    expect(isRemoteReauthError('Alfred background process exited during startup.')).toBe(false)
+    expect(isRemoteReauthError('+Human background process exited during startup.')).toBe(false)
     expect(isRemoteReauthError(null)).toBe(false)
   })
 })
@@ -120,7 +120,7 @@ describe('shouldApplyPostBootProgressError', () => {
     expect(shouldApplyPostBootProgressError('Your remote gateway session has expired.')).toBe(true)
     expect(
       shouldApplyPostBootProgressError(
-        'Could not reach the remote Alfred gateway while refreshing its WebSocket ticket. Try reconnecting.'
+        'Could not reach the remote +Human gateway while refreshing its WebSocket ticket. Try reconnecting.'
       )
     ).toBe(false)
     expect(shouldApplyPostBootProgressError('Lost connection to the gateway')).toBe(false)

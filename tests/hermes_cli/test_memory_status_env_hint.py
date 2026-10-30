@@ -1,4 +1,4 @@
-"""`alfred memory status` should explain *why* a provider is unavailable.
+"""`plushuman memory status` should explain *why* a provider is unavailable.
 
 Regression coverage for Blubobo1010/Alfred-Ai-Audit#2765: when the selected
 provider reports unavailable, status lists the missing env vars and surfaces

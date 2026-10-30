@@ -1,4 +1,4 @@
-"""``alfred setup`` subcommand parser."""
+"""``plushuman setup`` subcommand parser."""
 
 from __future__ import annotations
 
@@ -9,9 +9,9 @@ def build_setup_parser(subparsers, *, cmd_setup: Callable) -> None:
     """Attach the ``setup`` subcommand to ``subparsers``."""
     setup_parser = subparsers.add_parser(
         "setup", help="Interactive setup wizard",
-        description="Configure Alfred with an interactive wizard. "
+        description="Configure +Human with an interactive wizard. "
         "Run a specific section: "
-        "alfred setup model|tts|terminal|gateway|tools|telemetry|agent")
+        "plushuman setup model|tts|terminal|gateway|tools|telemetry|agent")
     setup_parser.add_argument(
         "section", nargs="?",
         choices=["model", "tts", "terminal", "gateway", "tools", "telemetry", "agent"],
@@ -25,7 +25,7 @@ def build_setup_parser(subparsers, *, cmd_setup: Callable) -> None:
         "--reconfigure", action="store_true",
         help="(Default on existing installs.) Re-run the full wizard, "
         "showing current values as defaults. Kept for backwards "
-        "compatibility — a bare 'alfred setup' now does this.")
+        "compatibility — a bare 'plushuman setup' now does this.")
     setup_parser.add_argument(
         "--quick", action="store_true",
         help="On existing installs: only prompt for items that are missing "

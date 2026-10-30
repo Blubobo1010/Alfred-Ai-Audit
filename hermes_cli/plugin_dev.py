@@ -1,4 +1,4 @@
-"""Runtime-backed validation behind ``alfred plugins doctor``: every manifest/import/registration
+"""Runtime-backed validation behind ``plushuman plugins doctor``: every manifest/import/registration
 check routes through the real runtime contracts instead of a parallel scanner."""
 
 from __future__ import annotations
@@ -69,7 +69,7 @@ def _doctor_runtime(plugin_path: Path):
     try:
         manifests = manager._scan_directory(plugins_root, source="user")
         if not manifests:
-            raise _DoctorLoadError(f"Alfred discovery found no valid plugin manifest under {copied}")
+            raise _DoctorLoadError(f"+Human discovery found no valid plugin manifest under {copied}")
         if len(manifests) != 1:
             raise _DoctorLoadError(
                 f"Expected one plugin manifest, discovered {len(manifests)} under {copied}")
@@ -281,7 +281,7 @@ def _check_manifest_v2(report: DoctorReport, manifest: Any) -> None:
     mv = getattr(manifest, "manifest_version", 1)
     if mv > SUPPORTED_MANIFEST_VERSION:
         report.warning(
-            f"manifest_version {mv} is newer than this Alfred supports "
+            f"manifest_version {mv} is newer than this +Human supports "
             f"({SUPPORTED_MANIFEST_VERSION}); unknown fields are ignored")
 
     api_version = getattr(manifest, "api_version", None)
@@ -321,8 +321,8 @@ def _check_manifest_v2(report: DoctorReport, manifest: Any) -> None:
     if missing:
         report.warning(
             "declared python_dependencies not installed: " + ", ".join(missing)
-            + " — install and enable the plugin with alfred plugins. "
-            "For an enabled plugin, run hermes pm repair, then restart Alfred.")
+            + " — install and enable the plugin with plushuman plugins. "
+            "For an enabled plugin, run hermes pm repair, then restart +Human.")
 
     schema = getattr(manifest, "config_schema", {}) or {}
     if schema:
@@ -368,7 +368,7 @@ def _check_desktop_half_copy(report: DoctorReport, path: Path) -> None:
 
 
 def doctor_plugin(target: str | os.PathLike[str] | None = None) -> DoctorReport:
-    """Validate one plugin through Alfred' real scanner and registration path."""
+    """Validate one plugin through +Human' real scanner and registration path."""
     try:
         path = resolve_plugin_path(target)
     except FileNotFoundError as exc:

@@ -1,4 +1,4 @@
-"""Tests for the session-store size-delta label (`alfred sessions optimize*`).
+"""Tests for the session-store size-delta label (`plushuman sessions optimize*`).
 
 A negative before/after delta means the DB grew — printing
 "reclaimed -163.0 MB" for that reads as data loss (issue #70146).

@@ -446,7 +446,7 @@ class TestHasAzureIdentityCredentials:
 
 
 # ---------------------------------------------------------------------------
-# describe_active_credential — used by alfred doctor + alfred auth
+# describe_active_credential — used by plushuman doctor + plushuman auth
 # ---------------------------------------------------------------------------
 
 

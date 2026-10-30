@@ -126,7 +126,7 @@ config = {
         }
     },
 }
-# JSON is valid YAML; only the temporary Alfred home is written.
+# JSON is valid YAML; only the temporary +Human home is written.
 Path(os.environ["HERMES_HOME"], "config.yaml").write_text(
     json.dumps(config), encoding="utf-8"
 )

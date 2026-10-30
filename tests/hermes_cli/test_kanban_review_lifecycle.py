@@ -320,7 +320,7 @@ def test_complete_task_closes_review_to_done(kanban_home: Path) -> None:
         )
         assert kb.get_task(conn, tid).status == "review"
         # The review lane has no active run — the exact state that used to
-        # make `alfred kanban complete` a no-op (#54823).
+        # make `plushuman kanban complete` a no-op (#54823).
         assert kb.get_task(conn, tid).current_run_id is None
 
         ok = kb.complete_task(conn, tid, summary="LGTM — merged", result="approved")

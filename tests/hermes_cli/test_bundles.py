@@ -1,4 +1,4 @@
-"""Tests for hermes_cli/bundles.py — the `alfred bundles` CLI subcommand."""
+"""Tests for hermes_cli/bundles.py — the `plushuman bundles` CLI subcommand."""
 
 import argparse
 

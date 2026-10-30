@@ -8,9 +8,9 @@ description: >-
   Bases, tables, and records from your Airtable workspace.
 source: https://support.airtable.com/articles/9897799762-using-the-airtable-mcp-server
 
-# Official vendor-hosted remote MCP (URL-only — Alfred never spawns a local
+# Official vendor-hosted remote MCP (URL-only — +Human never spawns a local
 # process for this entry). Native OAuth 2.1 + Dynamic Client Registration;
-# Alfred's MCP client + mcp_oauth_manager handle discovery, PKCE, token
+# +Human's MCP client + mcp_oauth_manager handle discovery, PKCE, token
 # exchange, and refresh.
 transport:
   type: http
@@ -27,6 +27,6 @@ suggest:
     - airtable.com
 
 post_install: |
-  On first connection Alfred opens a browser to authorize with
-  Airtable (or run `alfred mcp login airtable`). Approve access,
+  On first connection +Human opens a browser to authorize with
+  Airtable (or run `plushuman mcp login airtable`). Approve access,
   then restart the session so tools load.

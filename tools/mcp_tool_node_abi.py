@@ -1,10 +1,10 @@
 """Stdio MCP servers whose native addon was built for a different Node.js (#124264).
 
-Alfred runs every stdio MCP server on its own managed Node, never the user's. A server whose
++Human runs every stdio MCP server on its own managed Node, never the user's. A server whose
 ``.node`` addon was compiled under another Node (typically through the ``~/.npm/_npx`` cache the
 user's ``npx`` shares with ours) dies at startup with ``NODE_MODULE_VERSION`` /
 ``ERR_DLOPEN_FAILED`` and only its stderr says so. This module turns that stderr into an error that
-names the remedy: rebuild the server under Alfred's Node.
+names the remedy: rebuild the server under +Human's Node.
 """
 
 import os
@@ -19,12 +19,12 @@ _ABI_VERSIONS = re.compile(r"using\s+NODE_MODULE_VERSION (\d+)\..*?requires\s+NO
 
 
 class NodeAbiMismatchError(RuntimeError):
-    """A stdio server's native addon does not load under Alfred's Node. Permanent: every retry
+    """A stdio server's native addon does not load under +Human's Node. Permanent: every retry
     loads the same binary, so the server parks until the user rebuilds it."""
 
 
 def _managed(name: str) -> tuple[Optional[Path], str]:
-    """``(binary, version)`` of Alfred's own node/npm, or ``(None, "")`` when PM has none."""
+    """``(binary, version)`` of +Human's own node/npm, or ``(None, "")`` when PM has none."""
     try:
         from pm import installed_package
         installed = installed_package(name)
@@ -48,8 +48,8 @@ def _package_of(module_path: str) -> tuple[Optional[Path], str]:
 
 
 def _remedy(root: Optional[Path], package: str, node: Path, npm: Path) -> str:
-    """The fix in the host shell's syntax: delete an npx cache entry (Alfred's npx reinstalls it on the
-    next start) or rebuild with Alfred's npm, Alfred's Node first on PATH because npm's shebang and its
+    """The fix in the host shell's syntax: delete an npx cache entry (+Human's npx reinstalls it on the
+    next start) or rebuild with +Human's npm, +Human's Node first on PATH because npm's shebang and its
     lifecycle scripts both run the first ``node`` there."""
     windows = os.name == "nt"
     q = (lambda p: "'" + str(p).replace("'", "''") + "'") if windows else (lambda p: shlex.quote(str(p)))
@@ -63,7 +63,7 @@ def _remedy(root: Optional[Path], package: str, node: Path, npm: Path) -> str:
     if root.parent.name != "_npx":
         return rebuild
     delete = f"Remove-Item -Recurse -Force {q(root)}" if windows else f"rm -rf {q(root)}"
-    return f"{delete} (Alfred reinstalls it on the next start), or {rebuild}"
+    return f"{delete} (+Human reinstalls it on the next start), or {rebuild}"
 
 
 def node_abi_error(server_name: str, stderr_text: str) -> Optional[NodeAbiMismatchError]:
@@ -75,14 +75,14 @@ def node_abi_error(server_name: str, stderr_text: str) -> Optional[NodeAbiMismat
     versions = _ABI_VERSIONS.search(stderr_text)
     node, node_version = _managed("node")
     npm, _ = _managed("npm")
-    ours = f"Alfred's Node {node_version}".strip() if node_version else "Alfred's Node"
+    ours = f"+Human's Node {node_version}".strip() if node_version else "+Human's Node"
     built = (f"NODE_MODULE_VERSION {versions.group(1)}; {ours} needs {versions.group(2)}" if versions
              else f"it does not load under {ours}")
     # Diagnosis first: the startup banner keeps only the first ~120 characters.
     head = (f"native addon built for a different Node.js ({built}): {module or 'see logs/mcp-stderr.log'}. "
-            "Alfred runs MCP servers on its own Node; rebuild the server under it")
+            "+Human runs MCP servers on its own Node; rebuild the server under it")
     if node is None or npm is None:
-        return NodeAbiMismatchError(f"{head}: install Alfred's Node with `hermes pm install npm`, then run "
-                                    f"`alfred mcp test {server_name}`")
+        return NodeAbiMismatchError(f"{head}: install +Human's Node with `hermes pm install npm`, then run "
+                                    f"`plushuman mcp test {server_name}`")
     root, package = _package_of(module) if module else (None, "")
     return NodeAbiMismatchError(f"{head}: {_remedy(root, package, node, npm)}")

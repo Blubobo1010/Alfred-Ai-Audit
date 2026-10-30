@@ -143,7 +143,7 @@ def _generate_pyproject(plugin_dirs: list[Path] | Mapping[Path, Path], root: Pat
 def _core_release_quarantine(document: dict, core_lock: Path) -> None:
     """Scope core's ``exclude-newer`` to the packages in core's own lock.
 
-    The quarantine covers Alfred's own dependencies only; a plugin's dependencies
+    The quarantine covers +Human's own dependencies only; a plugin's dependencies
     follow the plugin's own policy, so a catalog pin floored on a fresh release still
     installs. A global cutoff would filter plugin-only packages too, so it moves onto
     every registry package core locks. A plugin still cannot drag one of those past
@@ -319,7 +319,7 @@ def install_node_sidecar(
 
     # Tool availability does not authorize mutation of the sidecar itself.
     if not explicit and not lazy_installs_allowed():
-        return "lazy installs are disabled — run `alfred plugins install` and approve Node dependencies"
+        return "lazy installs are disabled — run `plushuman plugins install` and approve Node dependencies"
 
     # a lockfile means reproducible `npm ci`; plain `npm install` otherwise
     install_cmd = ["ci"] if (plugin_dir / "package-lock.json").is_file() else ["install"]

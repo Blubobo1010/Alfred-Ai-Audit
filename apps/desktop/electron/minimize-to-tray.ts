@@ -183,13 +183,13 @@ export function createMinimizeToTray(options: Options) {
             height: process.platform === 'darwin' ? 18 : 24
           })
         )
-        tray.setToolTip('Alfred')
+        tray.setToolTip('+Human')
         tray.setContextMenu(
           Menu.buildFromTemplate([
-            { label: 'Show Alfred', click: restore },
+            { label: 'Show +Human', click: restore },
             { type: 'separator' },
             // Do not bypass the ordinary active-work confirmation or teardown.
-            { label: 'Quit Alfred', click: () => app.quit() }
+            { label: 'Quit +Human', click: () => app.quit() }
           ])
         )
 

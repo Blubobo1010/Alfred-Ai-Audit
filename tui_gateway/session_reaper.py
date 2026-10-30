@@ -199,7 +199,7 @@ def install_exit_flush_signal_handlers() -> bool:
 
 def _transport_is_dead(transport) -> bool:
     # _detached_ws_transport is the post-disconnect drop sentinel. _stdio_transport is the REAL transport for
-    # standalone `alfred --tui` and must NOT count as dead.
+    # standalone `plushuman --tui` and must NOT count as dead.
     if transport is _detached_ws_transport:
         return True
     if isinstance(transport, FanoutTransport):

@@ -1,4 +1,4 @@
-"""Tests for `alfred secrets bitwarden token` / `alfred secrets onepassword token`.
+"""Tests for `plushuman secrets bitwarden token` / `plushuman secrets onepassword token`.
 
 The rotation command must: verify the candidate token BEFORE persisting,
 never touch .env on a rejected token, store + clear caches on success,

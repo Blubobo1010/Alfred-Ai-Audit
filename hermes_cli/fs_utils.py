@@ -1,4 +1,4 @@
-"""Filesystem helpers shared across Alfred CLI subsystems."""
+"""Filesystem helpers shared across +Human CLI subsystems."""
 
 import os
 import shutil

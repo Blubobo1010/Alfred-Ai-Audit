@@ -75,7 +75,7 @@ def test_main_timestamps_each_stderr_line(tmp_path):
 
 def test_wrapper_timestamps_child_stdout_into_its_own_stdout(tmp_path):
     """launchd appends the wrapper's stdout to gateway.log; a raw print() there has no stamp,
-    so ``alfred logs gateway --since`` can never filter it out."""
+    so ``plushuman logs gateway --since`` can never filter it out."""
     stdout_log = tmp_path / "gateway.log"
     error_log = tmp_path / "gateway.error.log"
     code = (
@@ -142,7 +142,7 @@ def test_prepare_skips_interactive_xpc_zero_even_for_gateway_argv():
 def test_child_launchd_label_env_exports_only_hermes_job_labels():
     assert stderr_timestamp._child_launchd_label_env(_LAUNCHD_ENV) == {LAUNCHD_LABEL_ENV: "ai.hermes.gateway-butler"}
     # Interactive shells and the grandchild itself read "0": nothing to export. App-coalition labels
-    # (IDE integrated terminals) are not a Alfred job identity either.
+    # (IDE integrated terminals) are not a +Human job identity either.
     for env in ({"PATH": "/usr/bin", "XPC_SERVICE_NAME": "0"}, {"PATH": "/usr/bin"},
                 {"PATH": "/usr/bin", "XPC_SERVICE_NAME": "application.com.example.ide.123"}):
         assert stderr_timestamp._child_launchd_label_env(env) == {}
@@ -301,7 +301,7 @@ def test_main_maps_gateway_ex_config_to_clean_stop(tmp_path):
 
 @pytest.mark.platforms("posix")  # POSIX signals
 def test_wrapper_forwards_sigusr1_restart_request_to_child(tmp_path):
-    """Regression for #101426: launchd owns the wrapper's PID, so ``alfred update`` sends its
+    """Regression for #101426: launchd owns the wrapper's PID, so ``plushuman update`` sends its
     drain-aware SIGUSR1 to the wrapper. It must reach the gateway child and the wrapper must
     report the child's planned exit code — not die of the signal itself (which makes launchd
     treat the restart as a crash and apply its back-off to every sibling profile)."""

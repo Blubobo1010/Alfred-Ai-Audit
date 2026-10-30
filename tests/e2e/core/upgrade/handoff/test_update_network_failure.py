@@ -1,4 +1,4 @@
-"""A network failure during ``alfred update`` must never take down a healthy gateway (the exit-75
+"""A network failure during ``plushuman update`` must never take down a healthy gateway (the exit-75
 class, #123370: keep it closed).
 
 The upstream is published, but the git transport is refused: the official URL is rewritten to a

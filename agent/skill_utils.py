@@ -275,7 +275,7 @@ def get_disabled_skill_names(platform: str | None = None) -> set[str]:
 
 def parse_config_string_list(value) -> list[str]:
     """Normalize a config value that may hold a JSON-array string into a list.
-    ``alfred config set`` stores lists as quoted JSON/Python-literal strings;
+    ``plushuman config set`` stores lists as quoted JSON/Python-literal strings;
     treating one as a single name would silently filter nothing. A scalar
     string still means one name.
 
@@ -597,7 +597,7 @@ def get_untrusted_project_skills_root() -> Optional[tuple[Path, int]]:
 # cached under HERMES_HOME, never inside the repo); "dangerous" excludes the
 # skill from index, list, view and slash commands ("caution" loads, as on the hub).
 
-# ── Project skill quarantine (scan-time injection defense) ──────────────── Trust (`alfred skills trust`)
+# ── Project skill quarantine (scan-time injection defense) ──────────────── Trust (`plushuman skills trust`)
 # is a REPO-level decision made once; the repo's skill content keeps changing underneath it with every pull.
 # The hub install path runs skills_guard on install, but project skills are read straight from a checkout —
 # without this gate a `git pull` could inject a malicious skill into an already-trusted repo with no scan
@@ -788,7 +788,7 @@ _HOME_VAR_RE = re.compile(r"\$(?:\{HOME\}|HOME)(?=$|[/\\])")
 
 
 def _expand_skill_config_path(value: str) -> str:
-    """Expand ``~`` / ``$HOME`` against the HOME Alfred injects into tool subprocesses.
+    """Expand ``~`` / ``$HOME`` against the HOME +Human injects into tool subprocesses.
 
     Skill config defaults describe paths the agent hands to tools, so in a container where the
     control process HOME (``/opt/data``) differs from the tool HOME (``{HERMES_HOME}/home``) a

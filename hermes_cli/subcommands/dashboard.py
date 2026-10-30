@@ -1,4 +1,4 @@
-"""``alfred dashboard`` / ``alfred serve`` subcommand parsers.
+"""``plushuman dashboard`` / ``plushuman serve`` subcommand parsers.
 
 ``dashboard`` is the browser web UI; ``serve`` is the same gateway, headless —
 what the desktop app and remote backends run. ``serve`` also skips the web UI
@@ -37,12 +37,12 @@ def _add_server_runtime_args(parser) -> None:
     # Internal: set by the unified-launch re-exec to preselect the launching profile.
     parser.add_argument("--open-profile", dest="open_profile", default="", help=argparse.SUPPRESS)
     # Lifecycle flags win over the start-a-server flags (they exit first). No service
-    # manager / PID file: they scan the process table for `alfred dashboard|serve`
-    # cmdlines and SIGTERM them — the same path `alfred update` uses.
+    # manager / PID file: they scan the process table for `plushuman dashboard|serve`
+    # cmdlines and SIGTERM them — the same path `plushuman update` uses.
     parser.add_argument(
-        "--stop", action="store_true", help="Stop all running Alfred web server processes and exit")
+        "--stop", action="store_true", help="Stop all running +Human web server processes and exit")
     parser.add_argument(
-        "--status", action="store_true", help="List running Alfred web server processes and exit")
+        "--status", action="store_true", help="List running +Human web server processes and exit")
 
 
 def _configure_serve_parser(parser, *, cmd_dashboard: Callable) -> None:
@@ -64,8 +64,8 @@ def build_serve_parser(
 ) -> argparse.ArgumentParser:
     """Build the standalone parser used by the lean ``serve`` dispatch path."""
     parser = argparse.ArgumentParser(
-        prog="alfred serve",
-        description="Run the Alfred backend server - the JSON-RPC/WebSocket gateway the "
+        prog="plushuman serve",
+        description="Run the +Human backend server - the JSON-RPC/WebSocket gateway the "
             "desktop app and remote clients connect to. Headless: it never opens "
             "a browser UI.",
         add_help=add_help, exit_on_error=exit_on_error)
@@ -78,12 +78,12 @@ def build_dashboard_parser(
     """Attach ``dashboard`` (browser UI) and ``serve`` (headless backend the desktop spawns)."""
     dashboard_parser = subparsers.add_parser(
         "dashboard", help="Start the web UI dashboard",
-        description="Launch the Alfred web dashboard for managing config, API keys, and sessions",
+        description="Launch the +Human web dashboard for managing config, API keys, and sessions",
     )
     _add_server_runtime_args(dashboard_parser)
     dashboard_parser.add_argument(
         "--no-open", action="store_true", help="Don't open browser automatically")
-    # Compat shim: desktop shells <= 0.15.x spawn `alfred dashboard --no-open --tui ...`;
+    # Compat shim: desktop shells <= 0.15.x spawn `plushuman dashboard --no-open --tui ...`;
     # `--tui` was removed (embedded chat always on). Accept + ignore so an old app with a
     # new CLI doesn't die on "unrecognized arguments". Drop once the app floor is > 0.16.0.
     dashboard_parser.add_argument("--tui", action="store_true", help=argparse.SUPPRESS)
@@ -94,13 +94,13 @@ def build_dashboard_parser(
     # surfaces that merely share this server.
     serve_parser = subparsers.add_parser(
         "serve",
-        help="Start the Alfred backend server (headless; powers the desktop app and remote backends)",
-        description="Run the Alfred backend server — the JSON-RPC/WebSocket gateway the "
+        help="Start the +Human backend server (headless; powers the desktop app and remote backends)",
+        description="Run the +Human backend server — the JSON-RPC/WebSocket gateway the "
             "desktop app and remote clients connect to. Headless: it never opens "
             "a browser UI.")
     _configure_serve_parser(serve_parser, cmd_dashboard=cmd_dashboard)
 
-    # `register` is nested so bare `alfred dashboard` keeps launching the server.
+    # `register` is nested so bare `plushuman dashboard` keeps launching the server.
     dashboard_subparsers = dashboard_parser.add_subparsers(dest="dashboard_subcommand")
     dashboard_register_parser = dashboard_subparsers.add_parser(
         "register",
@@ -108,7 +108,7 @@ def build_dashboard_parser(
         description="Register this install as a self-hosted dashboard with your Nous "
             "Portal account. Creates an OAuth client, writes "
             "HERMES_DASHBOARD_OAUTH_CLIENT_ID into ~/.hermes/.env, and prints "
-            "how to engage the login gate. Requires being logged in (alfred setup).")
+            "how to engage the login gate. Requires being logged in (plushuman setup).")
     dashboard_register_parser.add_argument(
         "--name", default=None,
         help="Human-readable label for the dashboard (default: an auto-generated name)")

@@ -1,6 +1,6 @@
 """Keep-data uninstall must not delete the desktop app's Electron userData dir.
 
-Regression for #122548: ``alfred uninstall`` option 1 (Keep data) wiped
+Regression for #122548: ``plushuman uninstall`` option 1 (Keep data) wiped
 ``desktop_userdata_dir()`` (connections.json, OAuth partitions, renderer state)
 because ``_perform_uninstall`` never forwarded ``remove_userdata``.
 """
@@ -20,7 +20,7 @@ def homes(tmp_path, monkeypatch):
     """Temp home/checkout/userData; every step that reaches outside tmp_path is stubbed.
 
     The full wipe otherwise boots out real launchd jobs, rmtrees real
-    ~/Library/Caches dirs and /Applications/Alfred.app, and (on Windows) edits
+    ~/Library/Caches dirs and /Applications/+Human.app, and (on Windows) edits
     the registry — so stub those helpers and refuse any stray rmtree or
     subprocess instead of silently touching the developer's machine. Refusals
     are recorded in ``violations`` because the uninstall steps catch and log

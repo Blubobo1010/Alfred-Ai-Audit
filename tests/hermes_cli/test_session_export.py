@@ -117,7 +117,7 @@ def test_sessions_export_cli_prompt_only_stdout(monkeypatch, capsys):
     monkeypatch.setattr(
         sys,
         "argv",
-        ["alfred", "sessions", "export", "-", "--session-id", "sess", "--only", "user-prompts"],
+        ["plushuman", "sessions", "export", "-", "--session-id", "sess", "--only", "user-prompts"],
     )
 
     main_mod.main()

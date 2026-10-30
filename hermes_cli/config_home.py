@@ -1,4 +1,4 @@
-"""Directory initialization and storage diagnostics for the active Alfred home."""
+"""Directory initialization and storage diagnostics for the active +Human home."""
 
 import os
 from pathlib import Path
@@ -44,11 +44,11 @@ def _ensure_directory(path: Path, *, create: bool, secure: bool, home: Path) -> 
             _secure_dir(path)
     except OSError as exc:
         raise HomeInitializationError(
-            f"Cannot initialize Alfred directory {path}: {exc}. "
+            f"Cannot initialize +Human directory {path}: {exc}. "
             + (f"Directory links: {detail}. " if detail else "")
             + "Check the directory/link target, mount availability and access permissions; "
             "restore the mount or repair the link before retrying. "
-            "Alfred has not replaced the link or created its missing target."
+            "+Human has not replaced the link or created its missing target."
         ) from exc
 
 
@@ -68,7 +68,7 @@ def initialize_home(home: Path, subdirs: tuple[str, ...], ensured: set[str]) -> 
             _ensure_default_soul_md(home)
         except OSError as exc:
             raise HomeInitializationError(
-                f"Cannot initialize Alfred home {home}: {exc}. "
+                f"Cannot initialize +Human home {home}: {exc}. "
                 "Check storage availability and access permissions."
             ) from exc
     finally:
@@ -84,7 +84,7 @@ def config_load_issue(exc: Exception):
 
     if isinstance(exc, (HomeInitializationError, OSError)):
         return ConfigIssue(
-            "error", f"Alfred storage is unavailable: {exc}",
+            "error", f"+Human storage is unavailable: {exc}",
             "Check the reported path, link target, mount and permissions; keep config.yaml unchanged.",
         )
-    return ConfigIssue("error", "Could not load config.yaml", "Run 'alfred setup' to create a valid config")
+    return ConfigIssue("error", "Could not load config.yaml", "Run 'plushuman setup' to create a valid config")

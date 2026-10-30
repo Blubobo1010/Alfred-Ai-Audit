@@ -1,14 +1,14 @@
 """Install, update, gateway and a turn in a home whose path has spaces and non-ASCII bytes.
 
-Failure class: path handling. Users run Alfred from homes like ``/home/José Müller`` or a
+Failure class: path handling. Users run +Human from homes like ``/home/José Müller`` or a
 CJK-named directory. Every path the installer and updater write (clone target, uv/python/node
 store, PM generation, the ``~/.local/bin/hermes`` launcher, the rc-file PATH line, sys.path) must
 survive a space and non-ASCII bytes.
 
 One real install through HEAD's ``scripts/install.sh`` with the whole sandbox (HOME, HERMES_HOME,
 TMPDIR) under ``José Müller 漢字 dir``; then a one-shot turn, a new login shell resolving
-``alfred``, an upstream release and ``alfred update``, a turn on the new commit and
-``alfred gateway run``. The symlinked-home shapes live in ``test_paths_symlinked.py`` so the two
+``plushuman``, an upstream release and ``plushuman update``, a turn on the new commit and
+``plushuman gateway run``. The symlinked-home shapes live in ``test_paths_symlinked.py`` so the two
 installs run in parallel.
 """
 
@@ -62,7 +62,7 @@ def test_install_update_gateway_and_turn_under_a_non_ascii_spaced_home(odd_home,
     assert not X.reran_completion(t1), "the first launch after install re-ran the completion:\n" + I.describe(t1)
 
     # A new login shell finds the launcher through the rc line the installer wrote.
-    probe = X.login_shell(sb, "command -v hermes; alfred --version >/dev/null && echo LAUNCH-OK")
+    probe = X.login_shell(sb, "command -v hermes; plushuman --version >/dev/null && echo LAUNCH-OK")
     assert probe.returncode == 0, H.describe(probe)
     lines = probe.stdout.strip().splitlines()
     assert lines and lines[0] == sb.hermes and "LAUNCH-OK" in lines, (
@@ -77,7 +77,7 @@ def test_install_update_gateway_and_turn_under_a_non_ascii_spaced_home(odd_home,
                               {"docs/e2e-host-paths-marker.txt": "release 1\n"})
     up = sb.cli("update", "--yes", "--branch", "main", timeout=X.UPDATE_TIMEOUT)
     assert up.returncode == 0 and I.TRACEBACK not in up.stdout + up.stderr, (
-        "alfred update failed under a non-ASCII, spaced HOME:\n" + I.describe(up))
+        "plushuman update failed under a non-ASCII, spaced HOME:\n" + I.describe(up))
     assert I.git("rev-parse", "HEAD", cwd=sb.checkout) == target, "update exited 0 but HEAD is not the new release"
     t2 = X.turn(sb, provider, "turn after updating under a non-ASCII home")
     assert not X.reran_completion(t2), "the first launch after a finished update re-ran the completion:\n" + I.describe(t2)

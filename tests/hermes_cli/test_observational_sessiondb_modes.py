@@ -1,4 +1,4 @@
-"""Regression coverage for #110173: observational `alfred sessions` readers stay read-only."""
+"""Regression coverage for #110173: observational `plushuman sessions` readers stay read-only."""
 
 from argparse import Namespace
 

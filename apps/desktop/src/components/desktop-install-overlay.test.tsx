@@ -106,15 +106,15 @@ describe('DesktopInstallOverlay first-run setup', () => {
 
     render(<DesktopInstallOverlay />)
 
-    expect(await screen.findByText('Set up Alfred Desktop')).toBeTruthy()
-    expect(screen.getByText('Connect to existing Alfred')).toBeTruthy()
-    expect(screen.getByText('Install Alfred locally')).toBeTruthy()
+    expect(await screen.findByText('Set up +Human Desktop')).toBeTruthy()
+    expect(screen.getByText('Connect to existing +Human')).toBeTruthy()
+    expect(screen.getByText('Install +Human locally')).toBeTruthy()
     expect(screen.getByText(/Will install to/i)).toBeTruthy()
     expect(screen.queryByText(/steps complete/i)).toBeNull()
     expect(screen.queryByText(/Fetching installer manifest/i)).toBeNull()
   })
 
-  it('continues local bootstrap only when Install Alfred locally is selected', async () => {
+  it('continues local bootstrap only when Install +Human locally is selected', async () => {
     const desktop = installDesktopMock(
       bootstrapState({
         setupChoice: {
@@ -128,16 +128,16 @@ describe('DesktopInstallOverlay first-run setup', () => {
 
     render(<DesktopInstallOverlay />)
 
-    fireEvent.click(await screen.findByText('Install Alfred locally'))
+    fireEvent.click(await screen.findByText('Install +Human locally'))
 
     expect(desktop.continueBootstrapLocal).toHaveBeenCalledTimes(1)
-    expect(screen.getByText('Set up Alfred Desktop')).toBeTruthy()
+    expect(screen.getByText('Set up +Human Desktop')).toBeTruthy()
 
     act(() => {
       desktop.emitBootstrapEvent({ type: 'manifest', protocolVersion: 1, stages: [] })
     })
 
-    await waitFor(() => expect(screen.queryByText('Set up Alfred Desktop')).toBeNull())
+    await waitFor(() => expect(screen.queryByText('Set up +Human Desktop')).toBeNull())
     expect(screen.getByText(/Fetching installer manifest/i)).toBeTruthy()
   })
 
@@ -156,11 +156,11 @@ describe('DesktopInstallOverlay first-run setup', () => {
     desktop.continueBootstrapLocal = undefined as never
     render(<DesktopInstallOverlay />)
 
-    const install = (await screen.findByText('Install Alfred locally')).closest('button') as HTMLButtonElement
+    const install = (await screen.findByText('Install +Human locally')).closest('button') as HTMLButtonElement
     fireEvent.click(install)
 
     expect(
-      await screen.findByText('Local installation could not start. Restart Alfred Desktop and try again.')
+      await screen.findByText('Local installation could not start. Restart +Human Desktop and try again.')
     ).toBeTruthy()
     expect(install.disabled).toBe(false)
   })
@@ -183,14 +183,14 @@ describe('DesktopInstallOverlay first-run setup', () => {
     // Click the instant the choice paints, before React drains the passive
     // effect that reacts to the first snapshot. A loaded runner hits this
     // window by accident; observing the DOM directly hits it every time.
-    const install = (await whenPresent('Install Alfred locally')).closest('button') as HTMLButtonElement
+    const install = (await whenPresent('Install +Human locally')).closest('button') as HTMLButtonElement
     fireEvent.click(install)
 
     await act(async () => {
       await Promise.resolve()
     })
 
-    expect(screen.queryByText('Local installation could not start. Restart Alfred Desktop and try again.')).toBeTruthy()
+    expect(screen.queryByText('Local installation could not start. Restart +Human Desktop and try again.')).toBeTruthy()
   })
 
   it('clears a stale local-start error when a repair presents a different root', async () => {
@@ -208,9 +208,9 @@ describe('DesktopInstallOverlay first-run setup', () => {
     desktop.continueBootstrapLocal = undefined as never
     render(<DesktopInstallOverlay />)
 
-    fireEvent.click((await screen.findByText('Install Alfred locally')).closest('button') as HTMLButtonElement)
+    fireEvent.click((await screen.findByText('Install +Human locally')).closest('button') as HTMLButtonElement)
     expect(
-      await screen.findByText('Local installation could not start. Restart Alfred Desktop and try again.')
+      await screen.findByText('Local installation could not start. Restart +Human Desktop and try again.')
     ).toBeTruthy()
 
     act(() => {
@@ -222,7 +222,7 @@ describe('DesktopInstallOverlay first-run setup', () => {
       })
     })
 
-    expect(screen.queryByText('Local installation could not start. Restart Alfred Desktop and try again.')).toBeNull()
+    expect(screen.queryByText('Local installation could not start. Restart +Human Desktop and try again.')).toBeNull()
   })
 
   it('opens the remote connection form from the first-run choice', async () => {
@@ -234,7 +234,7 @@ describe('DesktopInstallOverlay first-run setup', () => {
 
     render(<DesktopInstallOverlay />)
 
-    fireEvent.click(await screen.findByText('Connect to existing Alfred'))
+    fireEvent.click(await screen.findByText('Connect to existing +Human'))
 
     expect(await screen.findByText('Gateway URL')).toBeTruthy()
     expect(screen.getByText('Test connection')).toBeTruthy()
@@ -250,13 +250,13 @@ describe('DesktopInstallOverlay first-run setup', () => {
 
     render(<DesktopInstallOverlay />)
 
-    fireEvent.click(await screen.findByText('Connect to existing Alfred'))
+    fireEvent.click(await screen.findByText('Connect to existing +Human'))
     expect(await screen.findByText('Gateway URL')).toBeTruthy()
 
     fireEvent.click(screen.getByText('Back'))
 
-    expect(await screen.findByText('Set up Alfred Desktop')).toBeTruthy()
-    expect(screen.getByText('Install Alfred locally')).toBeTruthy()
+    expect(await screen.findByText('Set up +Human Desktop')).toBeTruthy()
+    expect(screen.getByText('Install +Human locally')).toBeTruthy()
   })
 
   it('requires a successful token connection test before applying remote config', async () => {
@@ -287,7 +287,7 @@ describe('DesktopInstallOverlay first-run setup', () => {
 
     render(<DesktopInstallOverlay />)
 
-    fireEvent.click(await screen.findByText('Connect to existing Alfred'))
+    fireEvent.click(await screen.findByText('Connect to existing +Human'))
     fireEvent.change(await screen.findByPlaceholderText('https://gateway.example.com/hermes'), {
       target: { value: 'https://gateway.example.com/hermes' }
     })
@@ -353,7 +353,7 @@ describe('DesktopInstallOverlay first-run setup', () => {
 
     render(<DesktopInstallOverlay />)
 
-    fireEvent.click(await screen.findByText('Connect to existing Alfred'))
+    fireEvent.click(await screen.findByText('Connect to existing +Human'))
     fireEvent.change(await screen.findByPlaceholderText('https://gateway.example.com/hermes'), {
       target: { value: 'https://gateway.example.com/hermes' }
     })
@@ -405,7 +405,7 @@ describe('DesktopInstallOverlay first-run setup', () => {
 
     render(<DesktopInstallOverlay />)
 
-    fireEvent.click(await screen.findByText('Connect to existing Alfred'))
+    fireEvent.click(await screen.findByText('Connect to existing +Human'))
     fireEvent.change(await screen.findByPlaceholderText('https://gateway.example.com/hermes'), {
       target: { value: 'https://gateway.example.com/hermes' }
     })
@@ -471,7 +471,7 @@ describe('DesktopInstallOverlay first-run setup', () => {
       })
     )
     render(<DesktopInstallOverlay />)
-    fireEvent.click(await screen.findByText('Connect to existing Alfred'))
+    fireEvent.click(await screen.findByText('Connect to existing +Human'))
     const url = screen.getByPlaceholderText('https://gateway.example.com/hermes')
     fireEvent.change(url, { target: { value: 'https://a.example' } })
     fireEvent.click(await screen.findByRole('button', { name: /Sign in with/ }))
@@ -484,7 +484,7 @@ describe('DesktopInstallOverlay first-run setup', () => {
     expect(saveConnectionConfig).not.toHaveBeenCalled()
     expect(desktop.applyConnectionConfig).not.toHaveBeenCalled()
     fireEvent.click(screen.getByText('Back'))
-    fireEvent.click(await screen.findByText('Install Alfred locally'))
+    fireEvent.click(await screen.findByText('Install +Human locally'))
     expect(desktop.continueBootstrapLocal).toHaveBeenCalledTimes(1)
     expect(saveConnectionConfig).not.toHaveBeenCalled()
   })
@@ -503,7 +503,7 @@ describe('DesktopInstallOverlay first-run setup', () => {
 
     render(<DesktopInstallOverlay />)
 
-    expect(await screen.findByText('Alfred needs a one-time install')).toBeTruthy()
+    expect(await screen.findByText('+Human needs a one-time install')).toBeTruthy()
 
     fireEvent.click(screen.getByText('Connect existing'))
 
@@ -544,7 +544,7 @@ describe('DesktopInstallOverlay first-run setup', () => {
     fireEvent.click(screen.getByText('Apply and reconnect'))
 
     await waitFor(() => expect(screen.queryByText('Gateway URL')).toBeNull())
-    expect(screen.queryByText('Alfred needs a one-time install')).toBeNull()
+    expect(screen.queryByText('+Human needs a one-time install')).toBeNull()
   })
 
   it('dismisses a cancelled/failed install via the footer Close button, without reloading or resetting bootstrap', async () => {
@@ -577,9 +577,9 @@ describe('DesktopInstallOverlay first-run setup', () => {
 })
 
 it.each([
-  ['installed', false, 'Use Alfred on this computer', /already installed here/i, false],
-  ['bundled', true, 'Use Alfred on this computer', /included with this app/i, false],
-  [undefined, false, 'Install Alfred locally', /Will install to/i, true]
+  ['installed', false, 'Use +Human on this computer', /already installed here/i, false],
+  ['bundled', true, 'Use +Human on this computer', /included with this app/i, false],
+  [undefined, false, 'Install +Human locally', /Will install to/i, true]
 ] as const)(
   'local presentation for %s (including old backends)',
   async (
@@ -590,7 +590,7 @@ it.each([
     footer: boolean
   ): Promise<void> => {
     const state: DesktopBootstrapState = bootstrapState({
-      setupChoice: { platform: 'win32', activeRoot: 'C:\\Alfred', local: local ?? 'none', bundled }
+      setupChoice: { platform: 'win32', activeRoot: 'C:\\+Human', local: local ?? 'none', bundled }
     })
 
     if (local === undefined && state.setupChoice) {
@@ -604,7 +604,7 @@ it.each([
     expect(screen.queryByText(/Will install to/i) !== null).toBe(footer)
 
     if (!footer) {
-      expect(screen.queryByText('Install Alfred locally')).toBeNull()
+      expect(screen.queryByText('Install +Human locally')).toBeNull()
     }
   }
 )

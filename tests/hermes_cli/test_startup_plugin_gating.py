@@ -2,8 +2,8 @@
 
 ``hermes_cli.main`` skips eager plugin discovery at argparse-setup time
 when the invocation is clearly targeting a known built-in subcommand.
-This saves 500-650ms on ``alfred --help``, ``alfred --version``,
-``alfred logs``, etc., by not importing ``google.cloud.pubsub_v1``,
+This saves 500-650ms on ``plushuman --help``, ``plushuman --version``,
+``plushuman logs``, etc., by not importing ``google.cloud.pubsub_v1``,
 ``aiohttp``, ``grpc``, and friends.
 
 Invariants: ``_plugin_cli_discovery_needed()`` classifies flag/positional argv
@@ -53,7 +53,7 @@ def test_deferred_platform_loader_registers_cli_command_before_parser_table():
 
     def _fake_loader():
         # Mirrors what a real platform adapter does on import: register its
-        # top-level alfred <name> CLI command via PluginContext.
+        # top-level plushuman <name> CLI command via PluginContext.
         ctx = PluginContext(manifest, mgr)
         ctx.register_cli_command(
             name=command_name,
@@ -83,7 +83,7 @@ def test_deferred_platform_loader_registers_cli_command_before_parser_table():
     assert cmd_info["plugin"] == "fake-photon-platform"
 
     # Same parser-table assembly main() uses after reading _cli_commands.
-    parser = argparse.ArgumentParser(prog="alfred")
+    parser = argparse.ArgumentParser(prog="plushuman")
     subparsers = parser.add_subparsers(dest="command")
     for info in mgr._cli_commands.values():
         plugin_parser = subparsers.add_parser(

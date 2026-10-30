@@ -1,8 +1,8 @@
-"""Tests for SIGHUP protection and stdout mirroring in ``alfred update``.
+"""Tests for SIGHUP protection and stdout mirroring in ``plushuman update``.
 
 Covers ``_UpdateOutputStream``, ``_install_hangup_protection``, and
 ``_finalize_update_output`` in ``hermes_cli/main.py``.  These exist so
-that ``alfred update`` survives a terminal disconnect mid-install
+that ``plushuman update`` survives a terminal disconnect mid-install
 (SSH drop, shell close) without leaving the venv half-installed.
 """
 

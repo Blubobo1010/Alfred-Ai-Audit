@@ -18,7 +18,7 @@ def preview_close(url: str = "") -> str:
         "preview.close",
         {"url": target},
         "Failed to close the preview: ",
-        "The preview pane is only available in the Alfred desktop app.",
+        "The preview pane is only available in the +Human desktop app.",
         {"success": True, "closed": target or "all"},
     )
 

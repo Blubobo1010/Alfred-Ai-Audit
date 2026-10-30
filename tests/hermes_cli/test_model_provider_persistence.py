@@ -1,4 +1,4 @@
-"""Tests that provider selection via `alfred model` always persists correctly.
+"""Tests that provider selection via `plushuman model` always persists correctly.
 
 Regression tests for the bug where _save_model_choice could save config.model
 as a plain string, causing subsequent provider writes (which check

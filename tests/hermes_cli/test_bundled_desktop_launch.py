@@ -1,4 +1,4 @@
-"""``alfred desktop`` from inside a BUNDLED desktop payload.
+"""``plushuman desktop`` from inside a BUNDLED desktop payload.
 
 A bundled artifact ships the CLI inside ``<app>/resources/agent-payload``
 and the desktop app is the artifact itself — there is no source tree to
@@ -66,7 +66,7 @@ def _payload(app_root: Path, *, resources_name: str = "resources") -> Path:
 def _linux_bundle(tmp_path: Path) -> Path:
     app = tmp_path / "linux-unpacked"
     repo = _payload(app)
-    _exe(app / "Alfred")
+    _exe(app / "+Human")
     # The helpers a Linux Electron tree ships beside its launcher.
     _exe(app / "chrome-sandbox")
     _exe(app / "chrome_crashpad_handler")
@@ -76,17 +76,17 @@ def _linux_bundle(tmp_path: Path) -> Path:
 
 
 def _windows_bundle(tmp_path: Path) -> Path:
-    app = tmp_path / "Alfred"
+    app = tmp_path / "+Human"
     repo = _payload(app)
-    _exe(app / "Alfred.exe")
-    _exe(app / "Uninstall Alfred.exe")
+    _exe(app / "+Human.exe")
+    _exe(app / "Uninstall +Human.exe")
     return repo
 
 
 def _macos_bundle(tmp_path: Path) -> Path:
-    app = tmp_path / "Alfred.app"
+    app = tmp_path / "+Human.app"
     repo = _payload(app / "Contents", resources_name="Resources")
-    _exe(app / "Contents" / "MacOS" / "Alfred")
+    _exe(app / "Contents" / "MacOS" / "+Human")
     return repo
 
 
@@ -99,11 +99,11 @@ def _host_bundle(tmp_path: Path) -> tuple[Path, Path]:
     """
     if sys.platform == "win32":
         repo = _windows_bundle(tmp_path)
-        return repo, tmp_path / "Alfred" / "Alfred.exe"
+        return repo, tmp_path / "+Human" / "+Human.exe"
     if sys.platform == "darwin":
-        return _macos_bundle(tmp_path), tmp_path / "Alfred.app/Contents/MacOS/Alfred"
+        return _macos_bundle(tmp_path), tmp_path / "+Human.app/Contents/MacOS/+Human"
     repo = _linux_bundle(tmp_path)
-    return repo, tmp_path / "linux-unpacked" / "Alfred"
+    return repo, tmp_path / "linux-unpacked" / "+Human"
 
 
 class TestResolveBundleLayout:
@@ -113,19 +113,19 @@ class TestResolveBundleLayout:
         layout = resolve_bundle_layout(repo, platform="linux")
         assert layout.app_root == tmp_path / "linux-unpacked"
         assert layout.payload.name == "agent-payload"
-        assert layout.launcher == tmp_path / "linux-unpacked" / "Alfred"
+        assert layout.launcher == tmp_path / "linux-unpacked" / "+Human"
 
     def test_windows_launcher_is_never_the_uninstaller(self, tmp_path):
         repo = _windows_bundle(tmp_path)
         layout = resolve_bundle_layout(repo, platform="win32")
-        assert layout.launcher == tmp_path / "Alfred" / "Alfred.exe"
+        assert layout.launcher == tmp_path / "+Human" / "+Human.exe"
 
     def test_macos_app_root_climbs_out_of_contents_resources(self, tmp_path):
         repo = _macos_bundle(tmp_path)
         layout = resolve_bundle_layout(repo, platform="darwin")
-        assert layout.app_root == tmp_path / "Alfred.app"
-        assert layout.resources == tmp_path / "Alfred.app" / "Contents" / "Resources"
-        assert layout.launcher == tmp_path / "Alfred.app" / "Contents" / "MacOS" / "Alfred"
+        assert layout.app_root == tmp_path / "+Human.app"
+        assert layout.resources == tmp_path / "+Human.app" / "Contents" / "Resources"
+        assert layout.launcher == tmp_path / "+Human.app" / "Contents" / "MacOS" / "+Human"
 
     def test_ambiguous_launcher_reports_none_rather_than_guessing(self, tmp_path):
         repo = _windows_bundle(tmp_path)
@@ -184,10 +184,10 @@ class TestLaunchDetached:
             return SimpleNamespace(pid=1234)
 
         with patch("hermes_cli.bundled_app.subprocess.Popen", side_effect=fake_popen):
-            pid = launch_detached(["/app/Alfred", "--no-sandbox"], cwd="/app")
+            pid = launch_detached(["/app/+Human", "--no-sandbox"], cwd="/app")
 
         assert pid == 1234
-        assert seen["argv"] == ["/app/Alfred", "--no-sandbox"]
+        assert seen["argv"] == ["/app/+Human", "--no-sandbox"]
         assert seen["kwargs"]["cwd"] == "/app"
         assert seen["kwargs"]["stdout"] is subprocess.DEVNULL
         assert seen["kwargs"]["stderr"] is subprocess.DEVNULL
@@ -270,7 +270,7 @@ class TestCmdGuiOnABundle:
         assert launches == [[str(launcher)]]
 
     def test_explicit_profile_reaches_the_bundled_launcher(self, tmp_path, monkeypatch):
-        """`alfred -p work desktop` on a bundle hands Electron --profile work."""
+        """`plushuman -p work desktop` on a bundle hands Electron --profile work."""
         repo, launcher = _host_bundle(tmp_path / "app")
         # HERMES_HOME outside the platform home is the root itself on every OS.
         root = tmp_path / "hermes-root"
@@ -278,7 +278,7 @@ class TestCmdGuiOnABundle:
         profile.mkdir(parents=True)
         (profile / "config.yaml").write_text("{}\n", encoding="utf-8")
         monkeypatch.setenv("HERMES_HOME", str(root))
-        monkeypatch.setattr(sys, "argv", ["alfred", "-p", "work", "desktop"])
+        monkeypatch.setattr(sys, "argv", ["plushuman", "-p", "work", "desktop"])
         monkeypatch.setattr(cli_main, "_explicit_cli_profile", None)
         cli_main._apply_profile_override()
 
@@ -323,8 +323,8 @@ class TestCmdGuiOnABundle:
     def test_a_bundle_with_no_resolvable_launcher_reports_damage(self, tmp_path, monkeypatch):
         app = tmp_path / "linux-unpacked"
         repo = _payload(app)
-        _exe(app / "Alfred")
-        _exe(app / "Alfred-Other")
+        _exe(app / "+Human")
+        _exe(app / "+Human-Other")
         code, builds, launches = self._run(monkeypatch, repo, self._args())
 
         assert code == 1

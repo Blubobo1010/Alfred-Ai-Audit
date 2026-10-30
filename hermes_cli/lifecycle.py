@@ -1,4 +1,4 @@
-"""Alfred lifecycle dispatch for first-party observers and plugins."""
+"""+Human lifecycle dispatch for first-party observers and plugins."""
 
 from __future__ import annotations
 

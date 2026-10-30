@@ -1,4 +1,4 @@
-"""Tests for alfred -z --usage-file (per-run JSON usage report)."""
+"""Tests for plushuman -z --usage-file (per-run JSON usage report)."""
 
 import json
 

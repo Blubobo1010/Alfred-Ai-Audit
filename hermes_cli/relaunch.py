@@ -1,5 +1,5 @@
-"""Unified self-relaunch for Alfred CLI: preserves inherited flags (--tui, --dev, --profile, --model…)
-across process replacement so ``alfred sessions browse`` / post-setup relaunch keep the user's mode."""
+"""Unified self-relaunch for +Human CLI: preserves inherited flags (--tui, --dev, --profile, --model…)
+across process replacement so ``plushuman sessions browse`` / post-setup relaunch keep the user's mode."""
 
 import os
 import pathlib
@@ -60,7 +60,7 @@ def _extract_inherited_flags(argv: Sequence[str]) -> list[str]:
 
 
 def resolve_hermes_bin() -> Optional[str]:
-    """Alfred entry point: ``sys.argv[0]`` if a real executable, else ``which hermes``, else ``None``
+    """+Human entry point: ``sys.argv[0]`` if a real executable, else ``which hermes``, else ``None``
     (caller falls back to ``python -m hermes_cli.main``).
 
     Python launchers are never returned: on Windows a ``.py`` can't be exec'd directly, and on
@@ -129,10 +129,10 @@ def relaunch(
         except KeyboardInterrupt:
             sys.exit(130)
         except OSError as exc:
-            # Raw ``[Errno 8] Exec format error`` is cryptic; usual causes are ``alfred`` not on
+            # Raw ``[Errno 8] Exec format error`` is cryptic; usual causes are ``plushuman`` not on
             # PATH yet (install hasn't propagated User PATH into this shell) or a stale shim.
             print(
-                f"\nAlfred relaunch failed: {exc}\n"
+                f"\n+Human relaunch failed: {exc}\n"
                 f"Command: {' '.join(new_argv)}\n"
                 f"Fix: open a new terminal so PATH picks up, then re-run hermes.",
                 file=sys.stderr,

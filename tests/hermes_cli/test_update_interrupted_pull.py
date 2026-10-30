@@ -1,9 +1,9 @@
-"""A `alfred update` killed while git writes the new tree must leave a recoverable install.
+"""A `plushuman update` killed while git writes the new tree must leave a recoverable install.
 
 Git rewrites the checkout file by file and moves HEAD last, so a kill in between leaves HEAD on the
 old commit with some files already new — a mix that fails at import in every entry point. The
 updater brackets the move with a marker; the next launch (``_early_recovery``, before any other
-checkout import) puts the old tree back so ``alfred update`` can simply run again.
+checkout import) puts the old tree back so ``plushuman update`` can simply run again.
 """
 
 from __future__ import annotations
@@ -117,7 +117,7 @@ def test_killed_pull_is_restored_on_next_launch_and_update_reruns(checkout, monk
     # The user re-applies their stash to a file the update also changes (git had not written it yet).
     (root / "other.py").write_text("a = 1  # my edit\n", encoding="utf-8", newline="")
 
-    # Another `alfred` launched while an update is mid-pull must not race its git.
+    # Another `plushuman` launched while an update is mid-pull must not race its git.
     updater = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])
     try:
         marker.write_text(recorded.replace(f"pid={os.getpid()}", f"pid={updater.pid}"), encoding="utf-8",
@@ -146,7 +146,7 @@ def test_killed_pull_is_restored_on_next_launch_and_update_reruns(checkout, monk
     assert not (root / "newpkg").exists() and not (root / ".git" / "index.lock").exists()
     assert not marker.exists()
     (root / "other.py").write_text("a = 1\n", encoding="utf-8", newline="")
-    _pull(root)  # `alfred update` again: a normal fast-forward
+    _pull(root)  # `plushuman update` again: a normal fast-forward
     assert _git(root, "rev-parse", "HEAD") == b and not marker.exists()
 
 
@@ -182,10 +182,10 @@ def test_restore_runs_the_installers_store_git_when_path_has_none(checkout, monk
     assert calls.read_text(encoding="utf-8-sig").count("rev-parse HEAD") >= 1, "the store's git ran the restore"
     assert _git(root, "rev-parse", "HEAD") == a and _git(root, "status", "--porcelain") == ""
     assert not (root / ".git" / "index.lock").exists() and not er.interrupted_pull_marker(root).exists()
-    _pull(root)  # the next `alfred update` is not refused on the lock
+    _pull(root)  # the next `plushuman update` is not refused on the lock
     assert _git(root, "rev-parse", "HEAD") == b
 
-    # Every console script (`alfred`, `hermes-agent`, `hermes-acp`) repairs before its entry module imports
+    # Every console script (`plushuman`, `hermes-agent`, `hermes-acp`) repairs before its entry module imports
     # any other checkout module past hermes_bootstrap: any of them may be a half-written file.
     repo = os.path.realpath(Path(er.__file__).parent.parent)
     for entry in ("hermes_cli.main", "agent.legacy_cli", "run_agent", "acp_adapter.entry"):

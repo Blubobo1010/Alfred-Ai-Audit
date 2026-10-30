@@ -170,7 +170,7 @@ class TestVersionRequires:
         if ok:
             check_hermes_requires(spec, cur)
         else:
-            with pytest.raises(DistributionError, match="requires Alfred"):
+            with pytest.raises(DistributionError, match="requires +Human"):
                 check_hermes_requires(spec, cur)
 
     def test_parse_semver_handles_prerelease(self):
@@ -404,7 +404,7 @@ class TestInstall:
 
 
     def test_install_enforces_hermes_requires(self, profile_env, monkeypatch):
-        # Pin current Alfred version to something well below the requirement
+        # Pin current +Human version to something well below the requirement
         monkeypatch.setattr(
             "hermes_cli.version_info.get_version_info",
             lambda: SimpleNamespace(base_version="0.1.0"),
@@ -416,7 +416,7 @@ class TestInstall:
             hermes_requires=">=99.0.0",
         )
         staged = _make_staging_dir(profile_env, "future", manifest=mf)
-        with pytest.raises(DistributionError, match="requires Alfred"):
+        with pytest.raises(DistributionError, match="requires +Human"):
             install_distribution(str(staged), name="future")
 
 
@@ -477,7 +477,7 @@ class TestUpdate:
 
     def test_an_owned_category_keeps_skills_the_installer_added_to_it(self, profile_env):
         """``distribution_owned: [skills/research/]`` owns the author's research skills, not the
-        category: ``alfred skills install`` and agent-created skills land in ``skills/<category>/``
+        category: ``plushuman skills install`` and agent-created skills land in ``skills/<category>/``
         too. The category was replaced wholesale, deleting them (the #25120 loss, still live for
         the explicit form the docs show)."""
         staged, plan = self._owned_category(profile_env, "rb")
@@ -691,7 +691,7 @@ class TestDescribe:
 
 
     def test_describe_missing_profile_raises(self, profile_env):
-        with pytest.raises(DistributionError, match="No profile named .*alfred profile list"):
+        with pytest.raises(DistributionError, match="No profile named .*plushuman profile list"):
             describe_distribution("nonexistent")
 
 

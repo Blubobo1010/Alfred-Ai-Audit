@@ -1,4 +1,4 @@
-"""A killed ``alfred serve`` must not lose in-memory session transcripts.
+"""A killed ``plushuman serve`` must not lose in-memory session transcripts.
 
 Regression for #94724 (item 2, @ruangraung): a serve terminated mid-update
 lost every un-flushed in-memory session — the next RPC failed with

@@ -65,10 +65,10 @@ class TestBuildLocalTranscribeKwargs:
 
     def test_language_and_prompt_resolved(self, monkeypatch):
         monkeypatch.delenv("HERMES_LOCAL_STT_LANGUAGE", raising=False)
-        cfg = {"language": "en", "local": {"initial_prompt": "Alfred glossary"}}
+        cfg = {"language": "en", "local": {"initial_prompt": "+Human glossary"}}
         kwargs = build_local_transcribe_kwargs(cfg)
         assert kwargs["language"] == "en"
-        assert kwargs["initial_prompt"] == "Alfred glossary"
+        assert kwargs["initial_prompt"] == "+Human glossary"
 
 
 class TestConfidenceGate:

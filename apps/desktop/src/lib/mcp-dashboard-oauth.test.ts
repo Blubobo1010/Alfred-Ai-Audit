@@ -131,7 +131,7 @@ describe('Desktop MCP client callback lifecycle', () => {
     if (outcome === 'cancel') {
       await expect(action).rejects.toBeInstanceOf(McpOAuthCancelled)
     } else {
-      await expect(action).rejects.toThrow('Update the Alfred backend')
+      await expect(action).rejects.toThrow('Update the +Human backend')
     }
 
     expect(openExternal).not.toHaveBeenCalled()

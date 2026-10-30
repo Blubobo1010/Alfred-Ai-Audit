@@ -1,7 +1,7 @@
 """Optional packages the default install carries, and the user's opt-outs.
 
 A ``default`` package (see ``Package.default``) joins the installers' PM stage,
-a bare ``hermes pm install`` and ``alfred update`` on every target it builds
+a bare ``hermes pm install`` and ``plushuman update`` on every target it builds
 for. The user can decline one (``install.sh --skip-browser`` /
 ``--skip-computer-use``, ``install.ps1 -SkipBrowser`` / ``-SkipComputerUse``,
 ``hermes pm install --without NAME``). The choice

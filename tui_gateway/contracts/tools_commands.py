@@ -181,7 +181,7 @@ class CliExecResult(Result):
 
 
 method("cli.exec", params=CliExecParams, result=CliExecResult,
-       doc="Run ``alfred <argv>`` non-interactively and capture its output; ``blocked`` explains a refusal.")
+       doc="Run ``plushuman <argv>`` non-interactively and capture its output; ``blocked`` explains a refusal.")
 
 
 # ── command catalog / resolve / dispatch / slash.exec ─────────────────────────────────────────

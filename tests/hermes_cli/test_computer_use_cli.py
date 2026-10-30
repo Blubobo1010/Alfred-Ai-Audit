@@ -14,7 +14,7 @@ from tools.computer_use import cua_backend_driver
 
 def _invoke(monkeypatch, *args: str) -> int:
     cli_main = import_module("hermes_cli.main")
-    monkeypatch.setattr(sys, "argv", ["alfred", "computer-use", *args])
+    monkeypatch.setattr(sys, "argv", ["plushuman", "computer-use", *args])
     monkeypatch.setattr(cli_main, "_prepare_agent_startup", lambda _args: None)
     try:
         cli_main.main()
@@ -35,7 +35,7 @@ def test_computer_use_status_reports_pm_without_polling_vendor(monkeypatch, caps
     monkeypatch.setattr(cua, "_cua_driver_contract_status", lambda _binary=None: {"ready": True, "version": "0.20.0"})
     assert _invoke(monkeypatch, "status") == 0
     output = capsys.readouterr().out
-    assert "Alfred PM" in output
+    assert "+Human PM" in output
     assert "latest" not in output
 
 
@@ -65,7 +65,7 @@ def test_computer_use_status_reports_unusable_driver(monkeypatch, capsys, tmp_pa
         assert "custom binary from HERMES_CUA_DRIVER_CMD" in output
         assert "unset the override" in output
     else:
-        assert "Run: alfred computer-use install" in output
+        assert "Run: plushuman computer-use install" in output
 
 
 @pytest.mark.parametrize("ready", [False, True])
@@ -97,4 +97,4 @@ def test_permissions_status_names_the_stale_tcc_row_for_the_missing_grant(
     out = capsys.readouterr().out
     assert "tccutil reset Accessibility com.trycua.driver" in out
     assert "ScreenCapture" not in out
-    assert "alfred computer-use permissions grant" in out
+    assert "plushuman computer-use permissions grant" in out

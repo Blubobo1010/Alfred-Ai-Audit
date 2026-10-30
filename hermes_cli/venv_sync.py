@@ -180,7 +180,7 @@ def arm_completion(project_root: Path) -> Path:
 #: failing re-runs on every launch ("every launch burns ~4 minutes"), so after
 #: this many consecutive failures the tail waits out a backoff window before
 #: trying again, and past the cap it stops self-starting entirely and leaves
-#: the marker for an explicit ``alfred update`` instead. The counter is the
+#: the marker for an explicit ``plushuman update`` instead. The counter is the
 #: tail's own attempt record beside the pending marker: same lifetime, same
 #: install scope, cleared by the same success path.
 COMPLETION_RETRY_BACKOFF_ATTEMPTS = 2
@@ -317,7 +317,7 @@ def _tree_matches_completed_stamp(root: Path) -> bool:
     stale venv only needs re-provisioning and a marker armed BEFORE that stamp is a
     leftover from a previous home/install, never a rebuild of the same SHA (fresh
     Windows installs and pristine HERMES_HOMEs hit exactly this: #123314). A marker
-    armed after the stamp is newer debt (a same-commit ``alfred update`` that failed
+    armed after the stamp is newer debt (a same-commit ``plushuman update`` that failed
     or was killed) and is still owed. Boot-time adoption also stamps HEAD but builds
     nothing, so its stamp (``adoptedAt``) is not evidence; neither is a dirty tree.
     """
@@ -343,7 +343,7 @@ def prepare_launch(project_root: Path, argv: list[str]) -> Path | None:
     so a tail that failed is retried on the next launch WITHOUT rebuilding
     dependencies that are already current. Old updaters need not write a
     marker (and cannot accidentally clear this obligation).
-    A supervised child leaves that tail to ``alfred update`` when its dependencies
+    A supervised child leaves that tail to ``plushuman update`` when its dependencies
     are current: its manager restarts it on every start, so a sticky marker would
     re-run the tail (and its environment builds) on each boot until the disk fills.
     Return the store interpreter when this process must restart cleanly.
@@ -390,10 +390,10 @@ def prepare_launch(project_root: Path, argv: list[str]) -> Path | None:
     if not _may_retry and _attempts >= COMPLETION_RETRY_MAX_ATTEMPTS:
         # The tail has failed often enough that every relaunch re-running it
         # does more harm than good (#122206: "every launch burns ~4 minutes").
-        # Leave the marker for an explicit `alfred update`; say so once.
+        # Leave the marker for an explicit `plushuman update`; say so once.
         print(
             f"hermes: a source update could not be finished automatically "
-            f"({_attempts} attempts); run `alfred update` from a shell to finish it",
+            f"({_attempts} attempts); run `plushuman update` from a shell to finish it",
             file=sys.stderr, flush=True,
         )
     elif not _may_retry:
@@ -406,7 +406,7 @@ def prepare_launch(project_root: Path, argv: list[str]) -> Path | None:
         # keeps a dead update's marker (R6: refused as held, never reclaimed).
         lock = UpdateLock(install_root=root, checkout_first=False)
         if not lock.acquire():
-            raise RuntimeError("an update is still running; wait for it to exit, then relaunch Alfred")
+            raise RuntimeError("an update is still running; wait for it to exit, then relaunch +Human")
         try:
             # Under the launching update's own claim (its pid is our ancestor) a process it
             # spawned owes no tail: that obligation is the updater's.
@@ -425,7 +425,7 @@ def prepare_launch(project_root: Path, argv: list[str]) -> Path | None:
                 # marker over a held checkout lock is a killed update whose tree (its completion
                 # child) still runs.
                 if not lock.acquire_checkout(root):
-                    raise RuntimeError("an update is still running; wait for it to exit, then relaunch Alfred")
+                    raise RuntimeError("an update is still running; wait for it to exit, then relaunch +Human")
                 _finish_source_update(root, current=current, pending=pending)
         finally:
             lock.release()
@@ -444,7 +444,7 @@ def prepare_launch(project_root: Path, argv: list[str]) -> Path | None:
     if owed_to_cli:
         # Left owed, not dropped: say so (once, in the process that boots) where an
         # operator of the unit will read it.
-        print("hermes: a source update is unfinished; run `alfred update` from a shell to finish it",
+        print("hermes: a source update is unfinished; run `plushuman update` from a shell to finish it",
               file=sys.stderr, flush=True)
     return None
 
@@ -469,7 +469,7 @@ def _prepare_borrowed_launch(root: Path, owner: Path, *, current: bool) -> Path 
     if not current:
         lock = UpdateLock(install_root=root, checkout_first=False)  # R6, as in prepare_launch
         if not lock.acquire():
-            raise RuntimeError("an update is still running; wait for it to exit, then relaunch Alfred")
+            raise RuntimeError("an update is still running; wait for it to exit, then relaunch +Human")
         try:
             _sync_source_dependencies(root, arm=False, borrowed_from=owner)
         finally:
@@ -495,7 +495,7 @@ def _finish_source_update(root: Path, *, current: bool, pending: Path) -> None:
         # Current post-sync verification children can boot under a live updater.
         legacy_markers = (root / ".update-incomplete", root / ".lazy-refresh-incomplete")
         if any(_marker_owner_is_live(marker) for marker in legacy_markers):
-            raise RuntimeError("an update is still running; wait for it to exit, then relaunch Alfred")
+            raise RuntimeError("an update is still running; wait for it to exit, then relaunch +Human")
         print("hermes: completing source-update dependencies...", file=sys.stderr, flush=True)
         completed = _tree_matches_completed_stamp(root)
         # ponytail: commit-only match; a product dir deleted by hand is rebuilt on demand
@@ -544,7 +544,7 @@ def _finish_source_update(root: Path, *, current: bool, pending: Path) -> None:
     if code != 0:
         _record_completion_attempt(root, failed=True)
         raise RuntimeError(
-            "source update completion failed; run `alfred update` to finish it"
+            "source update completion failed; run `plushuman update` to finish it"
         )
     clear_completion(root)
 
@@ -574,7 +574,7 @@ def _sync_source_dependencies(root: Path, *, arm: bool, borrowed_from: Path | No
     # Main-era installs have no PM ledger; carry what their venv held.
     # Established PM installs retain their recorded extras and plugin union instead.
     extras = legacy_selection(root) if not runtime_facts_path(root).is_file() else None
-    # Same order as `alfred update`: an interrupted update or a hand-run
+    # Same order as `plushuman update`: an interrupted update or a hand-run
     # `git pull` leaves this tree's lockfile ahead of the installed tools.
     ensure_tools_for_sync()
     pm.sync_venv(extras, explicit=True, project_root=root, evict_incompatible_plugins=True)

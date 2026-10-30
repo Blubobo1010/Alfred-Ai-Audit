@@ -84,7 +84,7 @@ export function createMacStrategy(deps: MacClientDeps): MacStrategy {
     execPath: process.execPath,
     stagingRoot: (): string => path.join(app.getPath('userData'), 'updates'),
     logFile: (): string => path.join(app.getPath('logs'), SWAP_LOG_FILENAME),
-    productName: 'Alfred',
+    productName: '+Human',
     releasesUrl: 'https://github.com/Blubobo1010/Alfred-Ai-Audit/releases/latest',
     log: deps.log,
     emitProgress: deps.emitProgress

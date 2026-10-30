@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 
-// `alfred serve` announces HERMES_BACKEND_READY; the legacy `alfred dashboard`
+// `plushuman serve` announces HERMES_BACKEND_READY; the legacy `plushuman dashboard`
 // backend announces HERMES_DASHBOARD_READY. Accept either so the desktop spawn
 // works against both the headless backend and old/dashboard runtimes.
 const _READY_RE = /^HERMES_(?:BACKEND|DASHBOARD)_READY port=(\d+)/m
@@ -25,7 +25,7 @@ const DEFAULT_PORT_ANNOUNCE_TIMEOUT_MS = 90_000
 const MIN_PORT_ANNOUNCE_TIMEOUT_MS = 45_000
 
 // While the backend prints venv_sync's source-update completion banners it is
-// finishing an owed update tail BEFORE `alfred serve` starts, and that tail
+// finishing an owed update tail BEFORE `plushuman serve` starts, and that tail
 // legitimately runs minutes (dependency sync alone measured at ~19-22 min,
 // #122206) — far past the 90s cold-start budget, which is sized for imports
 // and AV scans, not repairs. Killing the child mid-repair and respawning it
@@ -99,7 +99,7 @@ function waitForDashboardPort(
     let buf = ''
     let done = false
     // #122206: the child is finishing an owed source-update completion
-    // (venv_sync banners) before `alfred serve` starts. While that repair is
+    // (venv_sync banners) before `plushuman serve` starts. While that repair is
     // visibly in progress the 90s deadline is re-armed, up to the total cap,
     // instead of killing a healthy repair mid-run.
     const startedAt = realNow()
@@ -120,7 +120,7 @@ function waitForDashboardPort(
           cleanup()
           reject(
             new Error(
-              `Timed out waiting for Alfred backend port announcement (${timeoutMs}ms)${deadline ? ' while an update completion was in progress' : ''}`
+              `Timed out waiting for +Human backend port announcement (${timeoutMs}ms)${deadline ? ' while an update completion was in progress' : ''}`
             )
           )
         },
@@ -157,7 +157,7 @@ function waitForDashboardPort(
         }
 
         // venv_sync's banner is the signal that an owed source-update tail is
-        // running ahead of `alfred serve` (#122206): re-arm the deadline so a
+        // running ahead of `plushuman serve` (#122206): re-arm the deadline so a
         // healthy multi-minute repair is not killed and re-run per boot.
         if (SOURCE_COMPLETION_BANNER_RE.test(line)) {
           completionInProgress = true
@@ -168,7 +168,7 @@ function waitForDashboardPort(
 
     function onExit(code, signal) {
       cleanup()
-      reject(new Error(`Alfred backend: exited before port announcement (${signal || code})${describeOutputTail()}`))
+      reject(new Error(`+Human backend: exited before port announcement (${signal || code})${describeOutputTail()}`))
     }
 
     function onError(err) {
@@ -256,7 +256,7 @@ function waitForDashboardReadyFile(
 
     function onExit(code, signal) {
       cleanup()
-      reject(new Error(`Alfred backend: exited before port announcement (${signal || code})${describeOutputTail()}`))
+      reject(new Error(`+Human backend: exited before port announcement (${signal || code})${describeOutputTail()}`))
     }
 
     function onError(err) {
@@ -266,7 +266,7 @@ function waitForDashboardReadyFile(
 
     const timer = setTimeout(() => {
       cleanup()
-      reject(new Error(`Timed out waiting for Alfred backend port announcement (${timeoutMs}ms)`))
+      reject(new Error(`Timed out waiting for +Human backend port announcement (${timeoutMs}ms)`))
     }, timeoutMs)
 
     child.on('exit', onExit)

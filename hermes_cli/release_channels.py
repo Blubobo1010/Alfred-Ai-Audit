@@ -123,13 +123,13 @@ def validate_identity(value: object) -> dict:
     if not isinstance(value, dict):
         raise ChannelError("Invalid channel identity")
     _match(r"[a-f0-9]{16}", value.get("token"), "identity token")
-    _match(r"[A-Za-z0-9][A-Za-z0-9 ._-]{0,79}", value.get("displayName"), "identity display name")
+    _match(r"[A-Za-z0-9+][A-Za-z0-9 ._+-]{0,79}", value.get("displayName"), "identity display name")  # alfred:keep
     for field in ("appNamePascal", "artifactNamePascal"):
         _match(r"[A-Za-z][A-Za-z0-9]{0,63}", value.get(field), field)
     _match(r"[a-z][a-z0-9.-]{2,127}", value.get("appId"), "app ID")
     _match(r"[A-Za-z][A-Za-z0-9.-]{2,49}", value.get("msixAppIdWithOrg"), "MSIX identity")
     _match(r"[a-z][a-z0-9-]{0,63}", value.get("cliName"), "CLI name")
-    _match(r"[A-Za-z][A-Za-z0-9 ._-]{0,79}", value.get("windowsExecutableName"), "Windows executable")
+    _match(r"[A-Za-z+][A-Za-z0-9 ._+-]{0,79}", value.get("windowsExecutableName"), "Windows executable")  # alfred:keep
     return value
 
 
@@ -262,7 +262,7 @@ _RETRY_READS: ContextVar[bool] = ContextVar("release_channel_read_retries", defa
 def retrying_reads():
     """Let channel reads inside the block wait out a CDN blip with PM's bounded retries.
 
-    Only an explicit ``alfred update`` opts in. Passive checks (``alfred --version``, the
+    Only an explicit ``plushuman update`` opts in. Passive checks (``plushuman --version``, the
     banner, the Desktop/dashboard update check) make one attempt: offline also reads as
     transient (DNS EAI_AGAIN, ENETUNREACH), so retrying there adds backoff to a synchronous
     status line, stretches a hung CDN from 30 s to ~2 min and logs a WARNING per retry.

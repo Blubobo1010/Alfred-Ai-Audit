@@ -1,4 +1,4 @@
-"""``alfred gui --setup-tcc-identity``: a persistent self-signed macOS code-signing identity.
+"""``plushuman gui --setup-tcc-identity``: a persistent self-signed macOS code-signing identity.
 
 Split out of ``hermes_cli/main_desktop.py``. The facade's build/sign helpers are imported lazily
 inside the function that uses them (the facade late-imports this module from ``cmd_gui``).
@@ -101,7 +101,7 @@ def _macos_create_signing_identity(
         shutil.rmtree(tmp_dir, ignore_errors=True)
 
 
-def _desktop_macos_setup_tcc_identity(identity: str = "Alfred Local Signing") -> bool:
+def _desktop_macos_setup_tcc_identity(identity: str = "+Human Local Signing") -> bool:
     """``--setup-tcc-identity``: create/import a self-signed code-signing cert, point
     ``desktop.macos_signing_identity`` at it and re-sign the packaged app. TCC grants follow the
     signing identity, so a certificate-anchored one is stable across rebuilds (the yabai/skhd

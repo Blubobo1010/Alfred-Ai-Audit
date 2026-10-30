@@ -95,8 +95,8 @@ _SCHEMA_OVERRIDES: dict[str, dict[str, Any]] = {
     "proxy.enabled": {
         "type": "boolean",
         "description": (
-            "Docker-only egress credential firewall. Requires `alfred egress setup` "
-            "and `alfred egress start`; Modal/SSH/Daytona are not wired yet."
+            "Docker-only egress credential firewall. Requires `plushuman egress setup` "
+            "and `plushuman egress start`; Modal/SSH/Daytona are not wired yet."
         ),
         "category": "security",
     },
@@ -111,8 +111,8 @@ _SCHEMA_OVERRIDES: dict[str, dict[str, Any]] = {
     "auth.adopt_external_logins": {
         "type": "boolean",
         "description": (
-            "Borrow and refresh the Codex CLI / Claude Code logins when Alfred has no usable login of its own. "
-            "Off: Alfred uses only its own logins (`alfred auth add <provider>`)."
+            "Borrow and refresh the Codex CLI / Claude Code logins when +Human has no usable login of its own. "
+            "Off: +Human uses only its own logins (`plushuman auth add <provider>`)."
         ),
         "category": "security",
     },
@@ -153,7 +153,7 @@ _SCHEMA_OVERRIDES: dict[str, dict[str, Any]] = {
         "", "minimal", "low", "medium", "high", "xhigh", "max", "ultra",
     ),
     "updates.non_interactive_local_changes": _select(
-        "When the chat app / gateway updates Alfred (no terminal prompt), "
+        "When the chat app / gateway updates +Human (no terminal prompt), "
         "what to do with uncommitted local source edits. 'stash' keeps them "
         "and re-applies them after the update; 'discard' throws them away. "
         "Terminal updates always ask, regardless of this setting.",
@@ -162,7 +162,7 @@ _SCHEMA_OVERRIDES: dict[str, dict[str, Any]] = {
     "updates.refresh_cua_driver": {
         "type": "boolean",
         "description": (
-            "Refresh an already-installed cua-driver during alfred update. "
+            "Refresh an already-installed cua-driver during plushuman update. "
             "Disable this on non-admin macOS accounts where /Applications is "
             "not writable."
         ),
@@ -412,7 +412,7 @@ def _normalize_main_model_assignment(provider: str, model: str) -> tuple[str, st
     ``provider: anthropic`` + ``default: anthropic/claude-opus-4.6`` — an aggregator slug on
     the native provider, which 400s. Two repairs at this single chokepoint:
 
-    1. Vendor-name → Alfred-provider: when the provider is not a known provider/alias but the
+    1. Vendor-name → +Human-provider: when the provider is not a known provider/alias but the
        model is a vendor-prefixed slug, keep the user's CURRENT aggregator if on one, else
        openrouter. User-declared ``providers:``/``custom_providers:`` entries resolve first,
        and durable named-custom slugs (``custom`` / ``custom:<name>``) are excluded —
@@ -556,7 +556,7 @@ _AUX_TASK_SLOTS: tuple[str, ...] = (
 
 def _plugin_aux_tasks() -> list[dict[str, Any]]:
     """Auxiliary tasks registered by plugins (``PluginContext.register_auxiliary_task``) for the
-    Alfred home active in this context.
+    +Human home active in this context.
 
     Callers run inside ``_profile_scope`` / ``_config_profile_scope``, and ``get_plugin_manager()``
     keys its manager on the same context-local home, so a request for profile B enumerates
@@ -574,7 +574,7 @@ def _plugin_aux_tasks() -> list[dict[str, Any]]:
 
 def _aux_task_slots() -> tuple[str, ...]:
     """Every auxiliary slot the dashboard may read or assign: built-ins first (UI order), then
-    plugin-registered keys. The picker in ``alfred model`` (``main_provider_setup._all_aux_tasks``)
+    plugin-registered keys. The picker in ``plushuman model`` (``main_provider_setup._all_aux_tasks``)
     folds plugin tasks in the same way; the dashboard must not disagree with it."""
     return _AUX_TASK_SLOTS + tuple(entry["key"] for entry in _plugin_aux_tasks())
 
@@ -582,8 +582,8 @@ def _aux_task_slots() -> tuple[str, ...]:
 def _dashboard_code_skew_guard() -> Optional[str]:
     """Return a "restart required" message when this process runs stale code, else None.
 
-    Long-lived dashboard / Desktop-owned ``alfred serve`` processes freeze ``sys.modules``
-    at boot; after ``alfred update`` replaces the checkout, a first-time lazy import can
+    Long-lived dashboard / Desktop-owned ``plushuman serve`` processes freeze ``sys.modules``
+    at boot; after ``plushuman update`` replaces the checkout, a first-time lazy import can
     resolve a fresh consumer module against a stale cached dependency -> ImportError.
     Mirrors the gateway's ``_model_switch_skew_guard``: refuse the risky call with an
     actionable message. Never a false positive (non-git installs return None).
@@ -606,7 +606,7 @@ def _dashboard_code_skew_guard() -> Optional[str]:
 
 def _dashboard_skew_restart_hint() -> str:
     """Restart advice matching how this process is owned — the same app backs the browser
-    dashboard and Desktop-owned ``alfred serve``; naming a systemd unit would mislead
+    dashboard and Desktop-owned ``plushuman serve``; naming a systemd unit would mislead
     macOS/launchd hosts and Desktop SSH backends.
 
     See #97046.
@@ -614,11 +614,11 @@ def _dashboard_skew_restart_hint() -> str:
     if os.environ.get("HERMES_SERVE_HEADLESS") == "1":
         return (
             "restart the Desktop-owned backend to load the new code "
-            "(use Restart backend in Alfred Desktop, or quit and reopen the app)"
+            "(use Restart backend in +Human Desktop, or quit and reopen the app)"
         )
     return (
-        "restart this Alfred process to load the new code "
-        "(alfred dashboard --port <port>, or the equivalent service restart for this install)"
+        "restart this +Human process to load the new code "
+        "(plushuman dashboard --port <port>, or the equivalent service restart for this install)"
     )
 
 
@@ -687,7 +687,7 @@ def _endpoint_known_to_config(cfg: dict, base_url: str) -> bool:
 
 def _register_custom_endpoint(base_url: str, api_key: str, model: str) -> None:
     """Register a named ``custom_providers`` entry for a custom/local endpoint (mirrors the
-    ``alfred model`` custom flow) so the picker gets a proper ready row instead of a "needs
+    ``plushuman model`` custom flow) so the picker gets a proper ready row instead of a "needs
     setup" dead-end. Dedups by base_url; never blocks the already-persisted assignment.
 
     SKIPPED when the endpoint is already a fact in the config (#76324): the CLI gateway setup

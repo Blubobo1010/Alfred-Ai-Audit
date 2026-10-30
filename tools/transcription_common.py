@@ -42,7 +42,7 @@ LOCAL_NATIVE_AUDIO_FORMATS = {".wav", ".aiff", ".aif"}
 MAX_FILE_SIZE = 25 * 1024 * 1024  # 25 MB
 
 # Per-provider model catalogs keyed by ``stt.<provider>`` section, default first. This one table
-# feeds the `alfred tools` picker, the dashboard selects and the auto-correction sets below.
+# feeds the `plushuman tools` picker, the dashboard selects and the auto-correction sets below.
 # DeepInfra has no static list: its picker reads the live catalog.
 STT_MODEL_CATALOG = {
     "local": ["base", "tiny", "small", "medium", "large-v3", "turbo"],
@@ -86,7 +86,7 @@ class STTResponseError(ValueError):
 
 
 def normalize_xai_stt_model(model: Any) -> str:
-    """Return a valid xAI STT model: blank or Alfred' old ``grok-stt`` alias -> ``STT_XAI_MODEL`` (read
+    """Return a valid xAI STT model: blank or +Human' old ``grok-stt`` alias -> ``STT_XAI_MODEL`` (read
     per call, so a profile's env applies), else the catalog default."""
     value = str(model or "").strip()
     if not value or value == LEGACY_XAI_STT_MODEL:

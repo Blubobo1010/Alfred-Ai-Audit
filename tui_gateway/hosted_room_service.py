@@ -128,7 +128,7 @@ class HostedRoomService:
 
         profiles, profiles_dir = {"default"}, self.root / "profiles"
         if profiles_dir.is_dir():
-            # ``profiles/.deleted/`` is the tombstone dir `alfred profile delete` leaves behind, not a
+            # ``profiles/.deleted/`` is the tombstone dir `plushuman profile delete` leaves behind, not a
             # profile: feeding it to validate_roster failed plan_next_task on every cycle (#106847).
             # Marker-less dirs (cron/log side-effect shells) are not profiles either.
             profiles.update(

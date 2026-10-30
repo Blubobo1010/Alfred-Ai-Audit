@@ -29,8 +29,8 @@ def _h(name):
 
 
 def test_config_get_unset_subcommands_parse():
-    """`alfred config get/unset` parse key args (and --json for get)."""
-    parser = argparse.ArgumentParser(prog="alfred")
+    """`plushuman config get/unset` parse key args (and --json for get)."""
+    parser = argparse.ArgumentParser(prog="plushuman")
     sub = parser.add_subparsers(dest="command")
     handler = _h("config")
     build_config_parser(sub, cmd_config=handler)
@@ -49,11 +49,11 @@ def test_config_get_unset_subcommands_parse():
 
 
 
-# ── deprecated `alfred login` fails gracefully, not with argparse error ────
+# ── deprecated `plushuman login` fails gracefully, not with argparse error ────
 #
-# `alfred login` is a removed command; its handler (`login_command` in
-# `hermes_cli/auth.py`) prints a deprecation notice pointing at `alfred auth` /
-# `alfred model` and exits 0.  Two behavior contracts guard the UX:
+# `plushuman login` is a removed command; its handler (`login_command` in
+# `hermes_cli/auth.py`) prints a deprecation notice pointing at `plushuman auth` /
+# `plushuman model` and exits 0.  Two behavior contracts guard the UX:
 #   1. ANY `--provider <value>` (including ones the user actually wants, like
 #      `anthropic`) must parse and reach the handler — never crash in argparse
 #      with `invalid choice` before the friendly redirect is printed (#24756).
@@ -65,13 +65,13 @@ def test_config_get_unset_subcommands_parse():
 
 
 def test_login_subparser_help_is_suppressed():
-    """The deprecated `login` row must not appear in `alfred --help`.
+    """The deprecated `login` row must not appear in `plushuman --help`.
 
     Must hold without leaking argparse's literal `==SUPPRESS==` placeholder,
     which `help=argparse.SUPPRESS` emits for a top-level subparser on 3.12+.
     The fix omits the `help=` kwarg entirely instead.
     """
-    parser = argparse.ArgumentParser(prog="alfred")
+    parser = argparse.ArgumentParser(prog="plushuman")
     sub = parser.add_subparsers(dest="command")
     build_login_parser(sub, cmd_login=_h("login"))
     help_text = parser.format_help()

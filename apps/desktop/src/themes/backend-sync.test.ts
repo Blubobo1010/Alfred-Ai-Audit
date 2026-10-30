@@ -41,8 +41,8 @@ describe('ingestBackendSkin', () => {
     expect($pendingSkinApply.get()).toBeNull()
 
     // The activation event was missed (skin set while disconnected / backend
-    // restarted). Alfred re-affirms it — `alfred config set display.skin neon`
-    // or a `alfred skin set` recolor. That explicit event must repaint even
+    // restarted). +Human re-affirms it — `plushuman config set display.skin neon`
+    // or a `plushuman skin set` recolor. That explicit event must repaint even
     // though the name matches the seed.
     ingestBackendSkin(skin('neon'), { apply: true })
     expect($pendingSkinApply.get()).toBe('neon')
@@ -53,7 +53,7 @@ describe('ingestBackendSkin', () => {
     expect($pendingSkinApply.get()).toBeNull()
 
     // ...and a genuine switch still applies.
-    ingestBackendSkin(skin('forest'), { apply: true }) // Alfred authored a new skin
+    ingestBackendSkin(skin('forest'), { apply: true }) // +Human authored a new skin
     expect($pendingSkinApply.get()).toBe('forest')
   })
 
@@ -83,7 +83,7 @@ describe('ingestBackendSkin', () => {
 
   it('applies a runtime switch back to default (repaints the desktop to its own default)', () => {
     ingestBackendSkin(skin('neon'), { apply: false }) // gateway.ready seed on some skin
-    ingestBackendSkin(skin('default'), { apply: true }) // Alfred switched back to default
+    ingestBackendSkin(skin('default'), { apply: true }) // +Human switched back to default
 
     expect($pendingSkinApply.get()).toBe('default')
   })

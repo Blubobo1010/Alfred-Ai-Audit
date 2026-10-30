@@ -258,7 +258,7 @@ class GatewayKanbanWatchersMixin:
         """Embedded kanban dispatcher — one tick every `dispatch_interval_seconds`.
 
         Gated by `kanban.dispatch_in_gateway` (default True); when false the
-        loop exits and an external `alfred kanban daemon` is expected. Each
+        loop exits and an external `plushuman kanban daemon` is expected. Each
         tick runs :func:`kanban_db_dispatch.dispatch_once` in a thread; one tick's
         failure never stops the next. Shutdown: ``self._running`` is checked
         between ticks and the in-flight ``to_thread`` returns on its own.
@@ -294,7 +294,7 @@ class GatewayKanbanWatchersMixin:
                 logger.exception("kanban dispatcher: zombie reaper failed")
 
             try:
-                # Emergency stop (`alfred pause`): no auto-decompose or
+                # Emergency stop (`plushuman pause`): no auto-decompose or
                 # dispatch while paused; running workers finish naturally.
                 if not _kanban_dispatch_allowed():
                     bad_ticks = 0
@@ -316,7 +316,7 @@ class GatewayKanbanWatchersMixin:
                         "kanban dispatcher stuck: ready queue non-empty for "
                         "%d consecutive ticks but 0 workers spawned.%s Check "
                         "profile health (venv, PATH, credentials) and "
-                        "`alfred kanban list --status ready`.",
+                        "`plushuman kanban list --status ready`.",
                         bad_ticks, f" Last tick held back: {held}." if held else "",
                     )
                     last_warn_at = now

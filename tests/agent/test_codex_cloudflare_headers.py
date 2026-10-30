@@ -1,6 +1,6 @@
 """Regression coverage for required Codex identity and account headers.
 
-The official Codex endpoint must receive Alfred' own harness identity, rather
+The official Codex endpoint must receive +Human' own harness identity, rather
 than the historical first-party compatibility identity. Live endpoint
 acceptance is a separate smoke test; these tests verify request construction.
 
@@ -11,8 +11,8 @@ header set so the primary chat client (``run_agent.AIAgent.__init__`` +
 all emit the same headers.
 
 These tests pin:
-- the required Alfred originator
-- the versioned Alfred User-Agent
+- the required +Human originator
+- the versioned +Human User-Agent
 - ``ChatGPT-Account-ID`` extraction from the OAuth JWT (canonical casing,
   from codex-rs ``auth.rs``)
 - graceful handling of malformed tokens (drop the account-ID header, don't

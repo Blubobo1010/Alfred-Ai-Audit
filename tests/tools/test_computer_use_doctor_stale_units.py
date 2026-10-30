@@ -1,4 +1,4 @@
-"""`alfred computer-use doctor` names a daemon unit whose cua-driver Exec target was pruned, and a configured
+"""`plushuman computer-use doctor` names a daemon unit whose cua-driver Exec target was pruned, and a configured
 `cua-driver serve` unit whose daemon is not listening (#114748).
 
 Linux has no managed cua-driver autostart, so users hand-write systemd user units / XDG

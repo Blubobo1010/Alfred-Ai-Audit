@@ -121,7 +121,7 @@ export const INSTALL_STAMP: Readonly<InstallStamp> | null =
  *    installers, repair-reinstall escalation and update checkouts must
  *    never run; drift means rebuild, updates mean the steward.
  *  - 'checkout': a git tree with venv machinery, provisioner-on-demand
- *    and `alfred update`.
+ *    and `plushuman update`.
  *
  * Derived from the stamp CONSTANT, never from filesystem probes: a
  * payload/venv/marker probe answers "is this artifact intact?", not

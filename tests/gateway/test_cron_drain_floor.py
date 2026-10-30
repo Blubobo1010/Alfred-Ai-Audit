@@ -88,7 +88,7 @@ class TestDrainWaitsForCronOnDefaultConfig:
     @pytest.mark.asyncio
     async def test_cron_floor_is_bounded_not_indefinite(self):
         """A job that never finishes must still lose, or a cron-triggered
-        restart (the reporter's `alfred update` job) would deadlock: the job
+        restart (the reporter's `plushuman update` job) would deadlock: the job
         waits for the gateway to exit while the gateway waits for the job."""
         import cron.scheduler as sched
 

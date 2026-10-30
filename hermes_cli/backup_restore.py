@@ -2,7 +2,7 @@
 
 Owns the restore side of ``hermes_cli.backup``: the page-copy SQLite restore
 (``_safe_restore_db`` plus the foreign-holder scan) and the zip-member publish
-helpers used by ``alfred import`` and ``/snapshot restore``.  Backup
+helpers used by ``plushuman import`` and ``/snapshot restore``.  Backup
 *creation* (``run_backup``, full-zip writing) stays in ``hermes_cli.backup``,
 which composes these helpers.
 """
@@ -281,7 +281,7 @@ def _safe_restore_db(src: Path, dst: Path) -> bool:
         except LiveConnectionError as exc2:
             logger.error(
                 "Refusing unlink+move restore of %s: %s Close the in-process "
-                "database handles (or restart Alfred) and retry.",
+                "database handles (or restart +Human) and retry.",
                 dst, exc2,
             )
             return False
@@ -291,7 +291,7 @@ def _safe_restore_db(src: Path, dst: Path) -> bool:
 
 
 def _validate_backup_zip(zf: zipfile.ZipFile) -> tuple[bool, str]:
-    """Check that a zip looks like a Alfred backup.
+    """Check that a zip looks like a +Human backup.
 
     Returns (ok, reason).
     """
@@ -310,7 +310,7 @@ def _validate_backup_zip(zf: zipfile.ZipFile) -> tuple[bool, str]:
 
     if not found:
         return False, (
-            "zip does not appear to be a Alfred backup "
+            "zip does not appear to be a +Human backup "
             "(no config.yaml, .env, or state databases found)"
         )
 
@@ -373,7 +373,7 @@ def _extract_member_atomically(
     ``open(target, "wb")`` truncates the user's existing file to zero *before*
     any replacement bytes exist.  A Ctrl-C, an ENOSPC, a corrupt member, or a
     crash between the truncate and the write therefore leaves that file empty
-    with nothing behind it — during ``alfred import``, which is the
+    with nothing behind it — during ``plushuman import``, which is the
     disaster-recovery path a user reaches for *because* they already lost
     something.  Staging into the target's own directory and publishing with a
     rename means the target only ever moves from its old contents to the
@@ -392,7 +392,7 @@ def _extract_member_atomically(
     Permission bits *and* ownership are carried across the replace so routing
     through mkstemp does not change the file the caller would otherwise have
     produced.  ``os.replace`` swaps in a temp file owned by the *writing* user,
-    so without the chown a ``sudo alfred import`` would silently re-own every
+    so without the chown a ``sudo plushuman import`` would silently re-own every
     restored file to root — on the disaster-recovery path, and on exactly the
     Docker/NAS installs ``utils._restore_file_owner`` documents.  Both concerns
     delegate to the shared ``utils`` helpers rather than being re-derived here.
@@ -420,9 +420,9 @@ def _extract_member_atomically(
         # ``_preserve_file_mode`` returns ``stat.S_IMODE``, i.e. all twelve
         # bits, and the content replacing this file comes from the archive.
         # Carrying the elevated bits across would let archive-controlled bytes
-        # take over an existing setuid/setgid file, so ``alfred import`` would
+        # take over an existing setuid/setgid file, so ``plushuman import`` would
         # hand whoever produced the zip the identity that file runs as.  Nothing
-        # constrains that to Alfred' own state either: the ``_external/`` branch
+        # constrains that to +Human' own state either: the ``_external/`` branch
         # of ``run_import`` publishes members anywhere under ``$HOME``.  The
         # sticky bit is kept — it is inert on a regular file.
         mode &= ~(stat.S_ISUID | stat.S_ISGID)
@@ -467,7 +467,7 @@ def _count_session_rows(path: Path) -> Optional[tuple[int, int]]:
     """Return ``(sessions, messages)`` stored in the session database *path*.
 
     Read-only and best effort.  ``None`` means "unknown" — a missing file, a
-    database that is not a Alfred session store, or one that cannot be read.
+    database that is not a +Human session store, or one that cannot be read.
     Callers must never read ``None`` as "zero rows": acting on an unreadable
     database would mask the very loss this count exists to surface.  Same
     contract as :func:`_count_cron_jobs`.
@@ -505,7 +505,7 @@ def _import_db_member(
     describes the database that was just unlinked.  Nothing fails, so nothing
     is reported — the sessions simply are not there afterwards (issue #100960).
 
-    ``alfred import`` is the disaster-recovery path, so that failure mode lands
+    ``plushuman import`` is the disaster-recovery path, so that failure mode lands
     on users who have already lost something once.  Route the member through
     the same ``_safe_restore_db`` page copy that ``/snapshot restore`` has used
     since #65942: the live inode is preserved, every open connection converges

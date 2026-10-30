@@ -16,9 +16,9 @@ from hermes_cli import main_desktop
 
 def _packaged_exe_rel() -> Path:
     if sys.platform == "darwin":
-        return Path("mac-arm64") / "Alfred.app" / "Contents" / "MacOS" / "Alfred"
+        return Path("mac-arm64") / "+Human.app" / "Contents" / "MacOS" / "+Human"
     if sys.platform == "win32":
-        return Path("win-unpacked") / "Alfred.exe"
+        return Path("win-unpacked") / "+Human.exe"
     return Path("linux-unpacked") / "hermes"
 
 

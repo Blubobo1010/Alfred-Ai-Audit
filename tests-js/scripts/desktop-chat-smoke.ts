@@ -24,7 +24,7 @@ export interface ChatIdentity {
   commit: string | null
   hermesRoot: string
   platform: string
-  /** The resolved Alfred home (newer desktops report it; absent on older ones). */
+  /** The resolved +Human home (newer desktops report it; absent on older ones). */
   hermesHome?: string
 }
 

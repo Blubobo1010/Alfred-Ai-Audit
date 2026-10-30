@@ -137,7 +137,7 @@ class TurnExplainersMixin:
             if changed is not None:
                 changed.update(landed_paths)
             # Feed the checkpoint agent-write ledger so /rollback's safe mode can tell
-            # Alfred-authored content from later user hand-edits.
+            # +Human-authored content from later user hand-edits.
             mgr = getattr(self, "_checkpoint_mgr", None)
             if mgr is not None and getattr(mgr, "enabled", False):
                 from tools.file_tools_paths import container_backend_for_task
@@ -256,9 +256,9 @@ class TurnExplainersMixin:
             from hermes_constants import display_hermes_home, profile_cli_selector
             from hermes_state_errors import STORAGE_RECOVERY_DOCS_URL
 
-            # Copy-pasteable, so pin every `alfred` command to the profile whose store failed:
+            # Copy-pasteable, so pin every `plushuman` command to the profile whose store failed:
             # a multi-profile backend (Desktop serve) hosts sessions whose state.db is NOT the
-            # process default, and a bare `alfred` follows active_profile (#105887).
+            # process default, and a bare `plushuman` follows active_profile (#105887).
             fill: dict[str, str] = {
                 "home": display_hermes_home(), "profile_arg": profile_cli_selector(),
                 "recovery_docs": STORAGE_RECOVERY_DOCS_URL, "db_path": "", "backups_dir": "",

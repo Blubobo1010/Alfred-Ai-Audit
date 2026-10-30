@@ -1,4 +1,4 @@
-"""CLI subcommand: ``alfred send`` — pipe text from shell scripts to any configured messaging platform
+"""CLI subcommand: ``plushuman send`` — pipe text from shell scripts to any configured messaging platform
 (Telegram, Discord, Slack, Signal, SMS, etc.).
 """
 
@@ -36,17 +36,17 @@ def _read_message_body(positional: Optional[str], file_path: Optional[str]) -> O
             return Path(file_path).read_text(encoding="utf-8-sig")
         except UnicodeDecodeError:
             _fail(
-                f"alfred send: {file_path} is not a text file. --file reads the "
+                f"plushuman send: {file_path} is not a text file. --file reads the "
                 "message *body* (logs, reports, markdown).\n"
                 "To send an image/document/audio file as a native attachment, "
                 "reference it with MEDIA: in the message text instead:\n"
-                f'  alfred send --to telegram "MEDIA:{file_path}"\n'
-                f'  alfred send --to telegram "optional caption MEDIA:{file_path}"\n'
+                f'  plushuman send --to telegram "MEDIA:{file_path}"\n'
+                f'  plushuman send --to telegram "optional caption MEDIA:{file_path}"\n'
                 "Add [[as_document]] to deliver an image as an uncompressed file:\n"
-                f'  alfred send --to telegram "[[as_document]] MEDIA:{file_path}"',
+                f'  plushuman send --to telegram "[[as_document]] MEDIA:{file_path}"',
                 _USAGE_EXIT)
         except OSError as exc:
-            _fail(f"alfred send: cannot read {file_path}: {exc}", _USAGE_EXIT)
+            _fail(f"plushuman send: cannot read {file_path}: {exc}", _USAGE_EXIT)
 
     # Reading from a TTY would block the user in a half-broken "type your message" state.
     return (sys.stdin.read() or None) if not sys.stdin.isatty() else None
@@ -71,7 +71,7 @@ def _emit_result(result_json: str, *, json_mode: bool, quiet: bool) -> int:
         print(json.dumps(payload, indent=2))
     elif not quiet:
         if payload.get("error"):
-            print(f"alfred send: {payload['error']}", file=sys.stderr)
+            print(f"plushuman send: {payload['error']}", file=sys.stderr)
         elif payload.get("success"):
             print(payload.get("note") or "sent")
         else:
@@ -87,11 +87,11 @@ def _list_targets(platform_filter: Optional[str], *, json_mode: bool) -> int:
     try:
         from gateway.channel_directory import format_directory_for_display, load_directory
     except Exception as exc:
-        return _fail(f"alfred send: failed to load channel directory: {exc}")
+        return _fail(f"plushuman send: failed to load channel directory: {exc}")
     try:
         raw = load_directory()
     except Exception as exc:
-        return _fail(f"alfred send: failed to read channel directory: {exc}")
+        return _fail(f"plushuman send: failed to read channel directory: {exc}")
     platforms = dict(raw.get("platforms") or {})
 
     # Merge in configured-but-undiscovered platforms (e.g. a fresh SimpleX setup used only for
@@ -109,7 +109,7 @@ def _list_targets(platform_filter: Optional[str], *, json_mode: bool) -> int:
         filtered = {k: v for k, v in platforms.items() if k.lower() == key}
         if not filtered:
             return _fail(
-                f"alfred send: no targets found for platform '{platform_filter}'. "
+                f"plushuman send: no targets found for platform '{platform_filter}'. "
                 f"Configured: {', '.join(sorted(platforms)) or '(none)'}")
         platforms = filtered
     if json_mode:
@@ -117,7 +117,7 @@ def _list_targets(platform_filter: Optional[str], *, json_mode: bool) -> int:
         return _SUCCESS_EXIT
     if not platforms:
         print("No messaging platforms configured or no channels discovered yet.")
-        print("Set one up with `alfred gateway setup`, or run the gateway once so")
+        print("Set one up with `plushuman gateway setup`, or run the gateway once so")
         from hermes_constants import get_default_hermes_root, get_hermes_home, hermes_home_key
         home, root = get_hermes_home(), get_default_hermes_root()
         print(f"channel discovery can populate {home / 'channel_directory.json'}.")
@@ -195,31 +195,31 @@ def cmd_send(args: argparse.Namespace) -> None:
     """Entry point wired into the top-level argparse dispatcher."""
     _load_hermes_env()  # the downstream gateway config loader reads credentials from os.environ
     if getattr(args, "list_targets", False):  # --list short-circuits everything else
-        # `alfred send --list telegram` lands "telegram" in the `message` positional.
+        # `plushuman send --list telegram` lands "telegram" in the `message` positional.
         exit_code = _list_targets(getattr(args, "message", None), json_mode=getattr(args, "json", False))
         sys.exit(exit_code)
     target = (getattr(args, "to", None) or "").strip()
     if not target:
         _fail(
-            "alfred send: --to PLATFORM[:channel[:thread]] is required\n"
+            "plushuman send: --to PLATFORM[:channel[:thread]] is required\n"
             "Examples:\n"
-            "  alfred send --to telegram \"hello\"\n"
-            "  alfred send --to discord:#ops --file report.md\n"
-            "  alfred send --list      # list available targets",
+            "  plushuman send --to telegram \"hello\"\n"
+            "  plushuman send --to discord:#ops --file report.md\n"
+            "  plushuman send --list      # list available targets",
             _USAGE_EXIT)
     mentions = list(getattr(args, "mentions", None) or [])
     if mentions and target.split(":", 1)[0].strip().lower() != "whatsapp":
-        _fail("alfred send: --mention is only supported for WhatsApp targets.", _USAGE_EXIT)
+        _fail("plushuman send: --mention is only supported for WhatsApp targets.", _USAGE_EXIT)
     invalid_mentions = _invalid_whatsapp_mentions(mentions)
     if invalid_mentions:
         _fail(
-            "alfred send: invalid --mention value(s): "
+            "plushuman send: invalid --mention value(s): "
             f"{', '.join(invalid_mentions)}. Use a phone number or participant JID.",
             _USAGE_EXIT)
     message = _read_message_body(getattr(args, "message", None), getattr(args, "file", None))
     if message is None or not message.strip():
         _fail(
-            "alfred send: no message provided. Pass text as a positional "
+            "plushuman send: no message provided. Pass text as a positional "
             "argument, use --file PATH, or pipe data via stdin.",
             _USAGE_EXIT)
 
@@ -228,7 +228,7 @@ def cmd_send(args: argparse.Namespace) -> None:
     if subject:
         message = f"{subject}\n\n{message.lstrip()}"
 
-    # Lazy import keeps `alfred send --help` fast (no tool registry / gateway config stack).
+    # Lazy import keeps `plushuman send --help` fast (no tool registry / gateway config stack).
     from tools.send_message_tool import send_message_tool
 
     # Routes to the platform adapter (bot-token path for built-ins, live-adapter path for plugin
@@ -256,7 +256,7 @@ _SEND_ARGUMENTS = (
         "WhatsApp only: add a native participant mention. Repeat for multiple recipients; "
         "bare phone numbers are normalized to JIDs. Include each matching @<number> near the start of the message text."))),
     (("-l", "--list"), dict(dest="list_targets", action="store_true", default=False,
-                            help="List available targets. Optional positional filter: `alfred send --list telegram`.")),
+                            help="List available targets. Optional positional filter: `plushuman send --list telegram`.")),
     (("-q", "--quiet"), dict(action="store_true", default=False, help="Suppress stdout on success (exit code only).")),
     (("--json",), dict(action="store_true", default=False, help="Emit raw JSON result instead of human-readable output.")),
 )
@@ -270,7 +270,7 @@ def register_send_subparser(subparsers) -> argparse.ArgumentParser:
         "send",
         help="Send a message to a configured platform (scripts, cron jobs, CI).",
         description=(
-            "Pipe text from any shell script to any messaging platform Alfred "
+            "Pipe text from any shell script to any messaging platform +Human "
             "is already configured for. Reuses the gateway's platform "
             f"credentials ({hermes_home / '.env'} + "
             f"{hermes_home / 'config.yaml'}) — no LLM, "
@@ -279,14 +279,14 @@ def register_send_subparser(subparsers) -> argparse.ArgumentParser:
         ),
         epilog=(
             "Examples:\n"
-            "  alfred send --to telegram \"deploy finished\"\n"
-            "  echo \"RAM 92%\" | alfred send --to telegram:-1001234567890\n"
-            "  alfred send --to discord:#ops --file ./report.md\n"
-            "  alfred send --to slack:#eng --subject \"[CI]\" --file build.log\n"
-            "  alfred send --to whatsapp:GROUP@g.us --mention 15551234567 \"@15551234567 hello\"\n"
-            "  alfred send --to telegram \"MEDIA:./chart.png\"   # send a media attachment\n"
-            "  alfred send --list                  # all platforms\n"
-            "  alfred send --list telegram         # filter by platform\n"
+            "  plushuman send --to telegram \"deploy finished\"\n"
+            "  echo \"RAM 92%\" | plushuman send --to telegram:-1001234567890\n"
+            "  plushuman send --to discord:#ops --file ./report.md\n"
+            "  plushuman send --to slack:#eng --subject \"[CI]\" --file build.log\n"
+            "  plushuman send --to whatsapp:GROUP@g.us --mention 15551234567 \"@15551234567 hello\"\n"
+            "  plushuman send --to telegram \"MEDIA:./chart.png\"   # send a media attachment\n"
+            "  plushuman send --list                  # all platforms\n"
+            "  plushuman send --list telegram         # filter by platform\n"
             "\n"
             "Exit codes: 0 ok, 1 delivery/backend error, 2 usage error."
         ),

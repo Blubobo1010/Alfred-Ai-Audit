@@ -7,29 +7,29 @@ import { deliveryTargetFromCommand, replyTextFromResult } from './agent-delivery
 // (the canonical Bot Mode command shape) and the reply extraction.
 describe('delivery command detection', () => {
   it('matches the canonical delivery command', () => {
-    const cmd = 'alfred -p turqoise chat --in ~ -c "Bot Chat" -Q -q "Message from 🤖 Alfred (@hermes): hi there"'
+    const cmd = 'plushuman -p turqoise chat --in ~ -c "Bot Chat" -Q -q "Message from 🤖 +Human (@hermes): hi there"'
 
     expect(deliveryTargetFromCommand(cmd)).toBe('turqoise')
   })
 
   it('matches with a cd prefix and timeout wrapper', () => {
-    const cmd = 'cd ~ && timeout 240 alfred -p mr-tester chat --in "~" -Q -q "Message from 🤖 Alfred: hello"'
+    const cmd = 'cd ~ && timeout 240 plushuman -p mr-tester chat --in "~" -Q -q "Message from 🤖 +Human: hello"'
 
     expect(deliveryTargetFromCommand(cmd)).toBe('mr-tester')
   })
 
   it('ignores ordinary terminal commands', () => {
     expect(deliveryTargetFromCommand('ls -la')).toBeNull()
-    expect(deliveryTargetFromCommand('alfred -p turqoise chat -q "plain question"')).toBeNull()
-    expect(deliveryTargetFromCommand('alfred sessions list')).toBeNull()
+    expect(deliveryTargetFromCommand('plushuman -p turqoise chat -q "plain question"')).toBeNull()
+    expect(deliveryTargetFromCommand('plushuman sessions list')).toBeNull()
   })
 })
 
 describe('reply extraction', () => {
   it('strips session_id bookkeeping and keeps the reply', () => {
-    const output = 'session_id: 20260813_220347_f69ac6\nHi Alfred! Good to hear from you.'
+    const output = 'session_id: 20260813_220347_f69ac6\nHi +Human! Good to hear from you.'
 
-    expect(replyTextFromResult({ output })).toBe('Hi Alfred! Good to hear from you.')
+    expect(replyTextFromResult({ output })).toBe('Hi +Human! Good to hear from you.')
   })
 
   it('unwraps JSON-shaped terminal results', () => {

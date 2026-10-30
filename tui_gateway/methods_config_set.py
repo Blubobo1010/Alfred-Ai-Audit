@@ -157,7 +157,7 @@ def _set_model(rid, params, key, value, session):
         if parse_model_switch_args(str(value)).is_once:
             result = _apply_model_switch("", {"agent": None}, value, confirm_expensive_model=confirmed)
         else:
-            # One string for every client: the Ink TUI (dashboard /chat, `alfred --tui`) has no
+            # One string for every client: the Ink TUI (dashboard /chat, `plushuman --tui`) has no
             # Settings; the dashboard has a Models page; only the Desktop has Settings -> Models.
             return _err(rid, 4001, "config.set model requires a live session; to change the "
                         "profile default run /setup, or use the Models page (dashboard) / "

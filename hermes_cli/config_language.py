@@ -1,9 +1,9 @@
-"""``display.language`` validation for ``alfred config set`` — pluggable languages.
+"""``display.language`` validation for ``plushuman config set`` — pluggable languages.
 
 The accepted set is ``agent.i18n.supported_languages()``: bundled catalogs ∪ the profile's overlay dir
-∪ every loaded plugin language pack. Packs only exist after discovery, and ``alfred config`` never
+∪ every loaded plugin language pack. Packs only exist after discovery, and ``plushuman config`` never
 imports ``model_tools`` (the usual discovery trigger), so this runs ``discover_plugins()`` first —
-otherwise ``alfred config set display.language pl`` would refuse the very pack the user just installed.
+otherwise ``plushuman config set display.language pl`` would refuse the very pack the user just installed.
 """
 
 from __future__ import annotations
@@ -35,7 +35,7 @@ def display_language_error(value: str) -> Optional[str]:
     from agent.i18n import supported_languages
     return (f"✗ Unknown language {value!r} for {DISPLAY_LANGUAGE_KEY}. Available: "
             f"{', '.join(supported_languages())}.\n  Install a language pack plugin "
-            "(alfred plugins install <pack>) or drop <HERMES_HOME>/locales/<id>.yaml to add one.")
+            "(plushuman plugins install <pack>) or drop <HERMES_HOME>/locales/<id>.yaml to add one.")
 
 
 __all__ = ["DISPLAY_LANGUAGE_KEY", "display_language_error", "resolve_display_language"]

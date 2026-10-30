@@ -1,11 +1,11 @@
 """Shared harness for the MCP + plugin conformance suite.
 
-Every test drives a REAL Alfred process (``alfred chat -q`` or the ``tui_gateway``
+Every test drives a REAL +Human process (``plushuman chat -q`` or the ``tui_gateway``
 stdio host) against the recording fake LLM provider and one or more REAL MCP
 servers built with the installed ``mcp`` SDK (``mcp_fixture_server.py``), over
 stdio or streamable HTTP. Fakes sit only at boundaries we do not own (the LLM
 vendor, the MCP server); assertions read what the MCP server received, what the
-next provider request carried, or what the Alfred process printed/persisted.
+next provider request carried, or what the +Human process printed/persisted.
 """
 
 from __future__ import annotations

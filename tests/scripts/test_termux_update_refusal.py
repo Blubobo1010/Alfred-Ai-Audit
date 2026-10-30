@@ -65,7 +65,7 @@ def test_validator_accepts_real_cli_refusal_for_installed_identity(artifact, mon
     assert isinstance(status, int) and status == 2
     expected = COMMIT_BUILD_UPDATE_MESSAGE if source == "commit-build" else "pkg upgrade hermes-agent"
     assert expected in output.out + output.err
-    result = subprocess.CompletedProcess(["alfred", "update"], status, output.out, output.err)
+    result = subprocess.CompletedProcess(["plushuman", "update"], status, output.out, output.err)
     validate_update_refusal(root, result)
     marker = "COMMIT_BUILD_UPDATE_REFUSAL_OK" if source == "commit-build" else "APT_UPDATE_REFUSAL_OK"
     assert marker in capsys.readouterr().out
@@ -79,6 +79,6 @@ def test_validator_rejects_wrong_refusal_or_exit_status(artifact):
     expected = COMMIT_BUILD_UPDATE_MESSAGE if source == "commit-build" else "pkg upgrade hermes-agent"
     other = "pkg upgrade hermes-agent" if source == "commit-build" else COMMIT_BUILD_UPDATE_MESSAGE
     for status, message in ((0, expected), (1, expected), (2, other), (2, "unrelated startup failure")):
-        result = subprocess.CompletedProcess(["alfred", "update"], status, message, "")
+        result = subprocess.CompletedProcess(["plushuman", "update"], status, message, "")
         with pytest.raises(RuntimeError, match="wrong updater refusal"):
             validate_update_refusal(root, result)

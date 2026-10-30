@@ -1,6 +1,6 @@
 """kanban.dispatch_profiles: per-home claim allowlist for shared boards (#110995).
 
-On a board shared across Alfred homes (one kanban.db mounted in several
+On a board shared across +Human homes (one kanban.db mounted in several
 containers) every home's ``profile_exists("default")`` is True, so any home's
 dispatcher could claim cards assigned to ``default``. The allowlist wraps the
 same predicate consumed by the spawn gate and the spawnable telemetry, so a
@@ -121,7 +121,7 @@ def test_allowlist_config_read_failure_skips_all_cards(
     ("kanban:\n  dispatch_profiles: []\n", "none (fail-closed"),
 ], ids=["absent", "listed", "empty_list"])
 def test_diagnostics_reports_resolved_allowlist(kanban_home, capsys, config, expected):
-    """`alfred kanban diagnostics` (text and --json) shows what this home may claim."""
+    """`plushuman kanban diagnostics` (text and --json) shows what this home may claim."""
     import argparse
     import json
 

@@ -1,4 +1,4 @@
-"""Tests for Alfred-managed Camofox state helpers."""
+"""Tests for +Human-managed Camofox state helpers."""
 
 from unittest.mock import patch
 

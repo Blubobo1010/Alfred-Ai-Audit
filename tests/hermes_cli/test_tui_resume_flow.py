@@ -103,7 +103,7 @@ def _stub_plugin_discovery(monkeypatch):
 
 
 def test_oneshot_wires_session_db_for_recall(monkeypatch):
-    """alfred -z bypasses HermesCLI, but recall still needs SessionDB."""
+    """plushuman -z bypasses HermesCLI, but recall still needs SessionDB."""
     from hermes_cli.oneshot import _run_agent
 
     captured = {}
@@ -175,7 +175,7 @@ def test_oneshot_wires_session_db_for_recall(monkeypatch):
 
 @pytest.mark.parametrize("run_fails", [False, True], ids=["success", "failure"])
 def test_oneshot_closes_its_relay_root_before_agent_teardown(monkeypatch, run_fails):
-    """alfred -z hard-exits past atexit, so _run_agent itself must finalize the Relay root it opened:
+    """plushuman -z hard-exits past atexit, so _run_agent itself must finalize the Relay root it opened:
     keyed to the id at turn entry (compression may rotate it), on failure too, before agent.close()."""
     from hermes_cli import lifecycle
     from hermes_cli.oneshot import _run_agent
@@ -268,9 +268,9 @@ def test_launch_tui_exports_model_provider_and_toolsets(monkeypatch, main_mod):
 
 
 def test_launch_tui_prefers_launch_cwd_over_inherited_hermes_cwd(monkeypatch, main_mod, tmp_path):
-    """The directory `alfred --tui` was run from outranks an inherited HERMES_CWD.
+    """The directory `plushuman --tui` was run from outranks an inherited HERMES_CWD.
 
-    A shell export - or an outer `alfred --tui` - leaves HERMES_CWD naming a real but stale
+    A shell export - or an outer `plushuman --tui` - leaves HERMES_CWD naming a real but stale
     directory, and ui-tui/src/gatewayClient.ts:478 starts the gateway in whatever it names,
     so the session reads files and completions from the wrong project (#49637).
     """

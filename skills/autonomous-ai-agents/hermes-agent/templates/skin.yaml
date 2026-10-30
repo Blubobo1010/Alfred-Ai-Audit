@@ -1,4 +1,4 @@
-# Alfred skin template — themes the CLI, TUI, and desktop GUI from one file.
+# +Human skin template — themes the CLI, TUI, and desktop GUI from one file.
 # Copy to <hermes-home>/skins/<name>.yaml, edit the palette, then set
 # `display.skin: <name>` in config.yaml. Missing keys inherit the default skin.
 
@@ -42,7 +42,7 @@ colors:
 
 # Optional flavor — safe to delete.
 branding:
-  agent_name: Alfred
+  agent_name: +Human
   prompt_symbol: "❯"
   help_header: "(^_^)? Commands"
 

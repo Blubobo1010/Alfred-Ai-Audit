@@ -1,4 +1,4 @@
-"""``alfred plugins`` catalog surface: resolution, provenance sidecar, search/browse/info/validate,
+"""``plushuman plugins`` catalog surface: resolution, provenance sidecar, search/browse/info/validate,
 catalog-aware update, plus the dashboard/TUI-facing catalog payload helpers.
 
 Sibling of :mod:`hermes_cli.plugins_cmd` (the installer core, enable/disable state and console helpers
@@ -48,7 +48,7 @@ def raise_if_removed(*candidates: str) -> None:
             if removed.date:
                 detail += f" (removed {removed.date})"
             raise PluginOperationError(
-                f"Plugin '{removed.name}' was removed from the Alfred plugin catalog and is blocked from "
+                f"Plugin '{removed.name}' was removed from the +Human plugin catalog and is blocked from "
                 f"installation: {detail}", failure_class="removed_from_catalog")
 
 
@@ -58,8 +58,8 @@ def resolve_catalog_name(identifier: str, console) -> PluginCatalogEntry:
     entry = get_live_catalog_entry(identifier)
     if entry is None:
         _fail(console, (
-            f"[red]Error:[/red] '{identifier}' is not in the Alfred plugin catalog and is not a Git URL or "
-            "owner/repo shorthand. Browse entries with `alfred plugins search`."))
+            f"[red]Error:[/red] '{identifier}' is not in the +Human plugin catalog and is not a Git URL or "
+            "owner/repo shorthand. Browse entries with `plushuman plugins search`."))
         raise SystemExit(1)  # _fail exits; keeps type-checkers honest
     return entry
 
@@ -295,9 +295,9 @@ def refuse_if_installed_removed(name: str, plugin_dir) -> None:
     removed = installed_plugin_removal(name, plugin_dir)
     if removed is not None:
         raise PluginOperationError(
-            f"Plugin '{name}' was removed from the Alfred plugin catalog: "
-            f"{removed.reason or 'no reason recorded'}. Remove it with `alfred plugins remove {name}`, "
-            "or reinstall with `alfred plugins install <source> --force --allow-removed` if you trust it.")
+            f"Plugin '{name}' was removed from the +Human plugin catalog: "
+            f"{removed.reason or 'no reason recorded'}. Remove it with `plushuman plugins remove {name}`, "
+            "or reinstall with `plushuman plugins install <source> --force --allow-removed` if you trust it.")
 
 
 _PRESERVE_SKIP = ("__pycache__", ".git", CATALOG_SIDECAR)
@@ -575,7 +575,7 @@ def repin_catalog_plugin(
     if entry is None:
         raise PluginOperationError(
             f"Plugin '{catalog_name}' is no longer in the catalog — it may have been removed. "
-            "See `alfred plugins info` and the removed blocklist.")
+            "See `plushuman plugins info` and the removed blocklist.")
     refuse_if_installed_removed(catalog_name, target)
     if at_catalog_pin(sidecar, entry.sha):
         return RepinResult(entry.sha, False, target.name, [])
@@ -662,7 +662,7 @@ def cmd_update_catalog(name: str, target: Path, sidecar: dict, console, *, inter
             console.print(f"    {line}")
         if not interactive or not _is_tty():
             console.print("  [yellow]Non-interactive session: update NOT applied (fail closed). "
-                          "Re-run `alfred plugins update` in a terminal to review and confirm.[/yellow]")
+                          "Re-run `plushuman plugins update` in a terminal to review and confirm.[/yellow]")
             return False
         return _ask_yes("  Apply this update? [y/N]: ")
 
@@ -696,7 +696,7 @@ def cmd_update_catalog(name: str, target: Path, sidecar: dict, console, *, inter
                 else:
                     console.print(
                         f"[yellow]Plugin {result.installed_name} has new capabilities; review them with "
-                        f"`alfred plugins capabilities {result.installed_name}`.[/yellow]")
+                        f"`plushuman plugins capabilities {result.installed_name}`.[/yellow]")
 
 
 
@@ -720,7 +720,7 @@ def pin_label(entry: PluginCatalogEntry) -> str:
 def _render_entries(entries: list[PluginCatalogEntry], console) -> None:
     from hermes_cli.plugins_cmd import _table
     table = _table(((("Name", "bold")), ("Category", None), ("Tier", None), ("Description", None),
-                    ("Pinned", "dim"), ("Capabilities", "dim")), title="Alfred Plugin Catalog (curated)")
+                    ("Pinned", "dim"), ("Capabilities", "dim")), title="+Human Plugin Catalog (curated)")
     for e in sorted(entries, key=lambda e: (e.category, e.tier != "official", e.name)):
         tier = "[cyan]official[/cyan]" if e.tier == "official" else "[magenta]community[/magenta]"
         desc = e.description if len(e.description) <= 60 else e.description[:57] + "..."
@@ -728,7 +728,7 @@ def _render_entries(entries: list[PluginCatalogEntry], console) -> None:
     console.print()
     console.print(table)
     console.print()
-    console.print("[dim]Details:[/dim] alfred plugins info <name>    [dim]Install:[/dim] alfred plugins install <name>")
+    console.print("[dim]Details:[/dim] plushuman plugins info <name>    [dim]Install:[/dim] plushuman plugins install <name>")
 
 
 def cmd_search(term: str = "", *, json_output: bool = False) -> None:
@@ -777,7 +777,7 @@ def cmd_info(name: str) -> None:
         console.print(f"[red bold]✗ REMOVED from catalog: {removed.reason or 'no reason recorded'}"
                       f"{f' ({removed.date})' if removed.date else ''}[/red bold]")
         console.print()
-    console.print(f"[dim]Install:[/dim]     alfred plugins install {entry.name}")
+    console.print(f"[dim]Install:[/dim]     plushuman plugins install {entry.name}")
     console.print()
 
 

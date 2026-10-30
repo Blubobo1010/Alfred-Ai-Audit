@@ -1,4 +1,4 @@
-"""Post-restart fleet verification for ``alfred update`` (``update_cmd_fleet`` sibling).
+"""Post-restart fleet verification for ``plushuman update`` (``update_cmd_fleet`` sibling).
 
 After the restart phase: compare every live gateway's stamped code against the checkout, reconcile
 the pre-update plan against what the restart did, keep the restart owed (a ``gateway_restart``
@@ -30,7 +30,7 @@ def _print_legacy_units_warning() -> None:
     if not (supports_systemd_services() and has_legacy_hermes_units()):
         return
     print()
-    print("⚠ Legacy Alfred gateway unit(s) detected:")
+    print("⚠ Legacy +Human gateway unit(s) detected:")
     for name, path, is_sys in _find_legacy_hermes_units():
         scope = "system" if is_sys else "user"
         print(f"    {path}  ({scope} scope)")
@@ -39,7 +39,7 @@ def _print_legacy_units_warning() -> None:
     print("  hermes-gateway.service for the bot token and cause SIGTERM")
     print("  flap loops. Remove them with:")
     print()
-    print("    alfred gateway migrate-legacy")
+    print("    plushuman gateway migrate-legacy")
     print()
     print("  (add `sudo` if any are in system scope)")
 
@@ -207,12 +207,12 @@ def _verify_fleet_after_update(restart, *, _pre_update_plan, _windows_gateway_re
         restart.incomplete = True
 
     # Success-path twin of the abort-recovery probe: the restart phase only touches
-    # units, so a unit-less `alfred serve` keeps stale sys.modules. Runs AFTER
+    # units, so a unit-less `plushuman serve` keeps stale sys.modules. Runs AFTER
     # dashboard cleanup so a respawned manual dashboard isn't a survivor. Rows feed
     # reconciliation (survivor → owed restart); ``None`` = probe failed, stays fail-closed.
     # Check if any pre-update serve/dashboard runtimes survived on pre-update code generations (#100479).
     # This is the SUCCESS-path twin of the abort-recovery probe above: the restart phase only restarts
-    # units, so an sshd-spawned `serve --isolated` or a manual `alfred serve` (no unit) is left running its
+    # units, so an sshd-spawned `serve --isolated` or a manual `plushuman serve` (no unit) is left running its
     # pre-update sys.modules graph — and its cron ticker keeps firing agent jobs that ImportError on every
     # symbol added in the pulled range. The rows also feed the plan-vs-execution reconciliation below, so a
     # survivor is escalated (an owed gateway_restart follow-up) instead of merely printed.
@@ -224,7 +224,7 @@ def _verify_fleet_after_update(restart, *, _pre_update_plan, _windows_gateway_re
 
     print()
     print("Tip: You can now select a provider and model:")
-    print("  alfred model              # Select provider and model")
+    print("  plushuman model              # Select provider and model")
 
     # Compare every live gateway's stamped code_sha against the fresh checkout
     # instead of assuming the restart phase worked.
@@ -327,14 +327,14 @@ def _verify_fleet_after_update(restart, *, _pre_update_plan, _windows_gateway_re
     if restart.incomplete:
         # Code is committed (contract C3): a gateway that may still run stale modules is a
         # follow-up, never a failed update. The fleet obligation stays armed, every CLI start
-        # warns about it, and the next `alfred update` retries the restart.
+        # warns about it, and the next `plushuman update` retries the restart.
         from hermes_cli.update_receipt import record_followup
         stopped = sorted(getattr(restart, "stopped_unmapped_pids", None) or ())
         record_followup(
             "gateway_restart",
             "gateways may still run pre-update code or were stopped without a successor"
             + (f" (stopped PIDs {', '.join(map(str, stopped))})" if stopped else "")
-            + "; recover with `alfred gateway restart`",
+            + "; recover with `plushuman gateway restart`",
         )
         with _best_effort('Fleet restart inventory not recorded: %s'):
             _record_owed_gateway_inventory(_pre_update_plan, stopped)
@@ -360,4 +360,4 @@ def _verify_fleet_after_update(restart, *, _pre_update_plan, _windows_gateway_re
         maybe_auto_migrate_after_update()
     except (Exception, SystemExit) as exc:  # health: allow BLE001 -- a SystemExit here must not fail a committed update
         logger.warning('Multiplex auto-migration after update failed: %s', exc)
-        print(f"  ⚠ Gateway multiplex migration did not finish: {exc} (run `alfred gateway migrate` later)")
+        print(f"  ⚠ Gateway multiplex migration did not finish: {exc} (run `plushuman gateway migrate` later)")

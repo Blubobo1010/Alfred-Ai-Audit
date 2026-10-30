@@ -130,9 +130,9 @@ class UnscopedSecretError(RuntimeError):
             secret_name, developer_detail = "", secret_name
         what = f"this profile's {secret_name}" if secret_name else "this profile's API key"
         super().__init__(
-            f"Alfred could not read {what} (an internal profile-scoping bug on the multiplexed "
-            "gateway, not your configuration). Run `alfred gateway restart`; if it keeps happening, "
-            "report it with `alfred debug share`."
+            f"+Human could not read {what} (an internal profile-scoping bug on the multiplexed "
+            "gateway, not your configuration). Run `plushuman gateway restart`; if it keeps happening, "
+            "report it with `plushuman debug share`."
         )
         self.secret_name = secret_name
         self.developer_detail = developer_detail
@@ -172,7 +172,7 @@ def current_secret_scope_home() -> Optional[str]:
 # fail-closed path would wrongly crash). Keep this tight — when in doubt a
 # value is a profile secret. Membership is exact name OR prefix.
 _GLOBAL_ENV_EXACT = frozenset({
-    # Alfred runtime / deployment
+    # +Human runtime / deployment
     "HERMES_HOME", "HERMES_PROFILE", "HERMES_GATEWAY_LOCK_DIR",
     "HERMES_MAX_ITERATIONS", "HERMES_API_TIMEOUT",
     "HERMES_REDACT_SECRETS", "HERMES_NOUS_TIMEOUT_SECONDS",
@@ -278,7 +278,7 @@ def _strip_inline_comment(value: str) -> str:
 
 
 def _parse_env_value(raw_value: str) -> str:
-    """Parse the small .env value subset Alfred writes itself (bare, 'single', or "double" with
+    """Parse the small .env value subset +Human writes itself (bare, 'single', or "double" with
     ``\\"`` / ``\\\\`` escapes)."""
     value = raw_value.strip()
     if len(value) >= 2 and value[0] == value[-1] == '"':
@@ -306,7 +306,7 @@ def _parse_env_value(raw_value: str) -> str:
 # EACCES must not become "this profile has no secrets"), and the descriptor pins one inode so a
 # symlink repointed mid-read can't file one file's contents under another's identity.
 # ``invalidate_env_file_cache()`` is the explicit knob; ``hermes_cli.config.invalidate_env_cache()``
-# calls it for Alfred's own .env writers.
+# calls it for +Human's own .env writers.
 _ENV_FILE_CACHE: OrderedDict[str, tuple[tuple, dict[str, str]]] = OrderedDict()
 _ENV_FILE_CACHE_LOCK = threading.Lock()
 _ENV_FILE_CACHE_MAX = 64  # one entry per profile home in practice

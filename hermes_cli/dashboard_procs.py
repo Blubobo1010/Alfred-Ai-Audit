@@ -70,19 +70,19 @@ def _scan_dashboard_processes(*, exclude_pids: set[int] | None = None) -> list[t
     """``(pid, cmdline)`` of running ``dashboard``/``serve`` processes; empty on any scan error.
 
     A forgotten dashboard keeps the old Python backend against the new JS bundle after
-    ``alfred update`` (every API call 401s). *exclude_pids* (Desktop's HERMES_DESKTOP_CHILD_PID
+    ``plushuman update`` (every API call 401s). *exclude_pids* (Desktop's HERMES_DESKTOP_CHILD_PID
     backends) are never returned.
 
-    *exclude_pids* is an optional set of PIDs that must never be returned. This is used by the Alfred
-    Desktop Electron app to protect its own backend child process: when the desktop spawns ``alfred serve``
+    *exclude_pids* is an optional set of PIDs that must never be returned. This is used by the +Human
+    Desktop Electron app to protect its own backend child process: when the desktop spawns ``plushuman serve``
     as a backend and triggers an auto-update, the update must not kill the backend that the desktop itself
     manages. The desktop sets the environment variable ``HERMES_DESKTOP_CHILD_PID`` on the spawned backend
     process; ``_kill_stale_dashboard_processes`` reads it and passes it here. (#37532)
     """
     skip = {os.getpid(), *(exclude_pids or ())}
-    # Canonical token matcher, never argv substrings: ``alfred serve`` is a prefix of ``hermes
+    # Canonical token matcher, never argv substrings: ``plushuman serve`` is a prefix of ``hermes
     # server`` and this list decides a SIGTERM — ``herdr --session hermes server`` (a terminal
-    # multiplexer) was killed and its unit restarted by ``alfred update`` (#121156).
+    # multiplexer) was killed and its unit restarted by ``plushuman update`` (#121156).
     from hermes_cli.update_cmd_windows import _hermes_holder_subcommand
     try:
         found = [(pid, cmd) for pid, cmd in _iter_process_table()
@@ -164,11 +164,11 @@ def _pid_passwd_home(pid: int) -> str | None:
 
 
 def _hermes_home_for_pid(pid: int) -> str | None:
-    """The Alfred home *pid* runs on, tri-state: ``None`` ONLY when its environment is unreadable
+    """The +Human home *pid* runs on, tri-state: ``None`` ONLY when its environment is unreadable
     (another user, hardened ``/proc``) — callers spare those, never guess.
 
     A readable environment always resolves, replaying ``_apply_profile_override`` on the target's
-    exec-time env + argv (``alfred -p X serve`` rewrites ``HERMES_HOME`` in ``os.environ`` AFTER
+    exec-time env + argv (``plushuman -p X serve`` rewrites ``HERMES_HOME`` in ``os.environ`` AFTER
     startup, which ``/proc/<pid>/environ`` never reflects): a profile-shaped ``HERMES_HOME``
     without a flag is the home; otherwise the root is ``HERMES_HOME`` (its grandparent when
     profile-shaped) or the platform default of the process's own ``HOME`` / ``LOCALAPPDATA``
@@ -219,7 +219,7 @@ def _profile_flag_value(argv: list[str]) -> str | None:
 
 def _is_ephemeral_port_zero_backend(argv: list[str]) -> bool:
     """True for Desktop-style ``serve|dashboard --port 0`` backends — replaying them after
-    ``alfred update`` multiplies listening backends because ``--port 0`` binds a fresh port.
+    ``plushuman update`` multiplies listening backends because ``--port 0`` binds a fresh port.
 
     See #78821.
     """
@@ -265,10 +265,10 @@ def _normalized_home_for_compare(home: str) -> str:
 
 
 def _pids_owned_by_hermes_home(pids: list[int], home: str) -> list[int]:
-    """Return only *pids* whose resolved Alfred home (``_hermes_home_for_pid``) is ``home``.
+    """Return only *pids* whose resolved +Human home (``_hermes_home_for_pid``) is ``home``.
 
     Dashboard argv is discovery-only: it is not an ownership proof because
-    several Alfred installs and profiles can run the same command on one
+    several +Human installs and profiles can run the same command on one
     machine.  An unreadable process environment is deliberately not treated
     as a match, so a stop request fails closed rather than taking down an
     unrelated backend.
@@ -312,7 +312,7 @@ def _filter_dashboard_respawn_candidates(
     (``HERMES_DESKTOP_CHILD_PID``) owns their lifecycle. These are also the PPID-1 orphans that previously
     multiplied across updates because ``--port 0`` always binds a fresh free port. 2. A foreign install's
     backend is owned by that install's supervisor/user. 3. 4. See #78821, #94030.
-    Intentionally does **not** blanket-skip every PPID-1 process: a prior ``alfred update`` respawn detaches
+    Intentionally does **not** blanket-skip every PPID-1 process: a prior ``plushuman update`` respawn detaches
     with ``start_new_session=True``, so fixed-port manual backends are reparented to init and must still be
     eligible for the next update's #40449 restart.
     """
@@ -352,7 +352,7 @@ def _exclude_pids_from_env() -> set[int]:
 
 #: Executables that only *carry* a hermes command line. A process headed by one of these
 #: never serves traffic itself; when its argv matches the dashboard patterns it is a
-#: wrapper around the command (``bash -c 'alfred dashboard --stop'``), not a backend.
+#: wrapper around the command (``bash -c 'plushuman dashboard --stop'``), not a backend.
 _WRAPPER_HEAD_COMMANDS = frozenset({
     "ash", "bash", "csh", "dash", "fish", "ksh", "sh", "tcsh", "zsh",
     "env", "nohup", "nice", "stdbuf", "timeout", "watch", "xargs",
@@ -414,7 +414,7 @@ def _is_caller_wrapper_shell(pid: int, ancestors: set[int]) -> bool:
     """True when *pid* is a caller ancestor headed by a wrapper executable.
 
     Root selection is a substring match, so the shell a ``--stop`` was typed into (or a
-    ``bash -c 'alfred dashboard --stop'`` wrapper) matches on its own argv. Ancestor alone
+    ``bash -c 'plushuman dashboard --stop'`` wrapper) matches on its own argv. Ancestor alone
     is not a spare: the backend hosting a shell-escaped TUI is also the caller's ancestor
     and must stay stoppable — only a wrapper-headed ancestor is spared.
     """
@@ -470,7 +470,7 @@ def _is_detached_session_leader(pid: int, tty: str) -> bool:
 
     Messaging-gateway bots and profile actions started from ``/api/gateway/*`` are such processes:
     they are the user's, not the dashboard's, and must survive a dashboard stop. A hosted
-    ``alfred --tui`` child is a session leader too (``pty.fork``) but owns the pts whose master the
+    ``plushuman --tui`` child is a session leader too (``pty.fork``) but owns the pts whose master the
     dashboard held, so its tty column is set and it stays in the sweep.
 
     Known gap: the turn-isolation ``tui_gateway.compute_host`` and ``slash_worker`` children are
@@ -492,8 +492,8 @@ def _posix_descendants(roots: list[int]) -> dict[int, tuple[int, int | None]]:
     """``{pid: (root, start_time)}`` of every dashboard-owned descendant of *roots*, snapshotted
     BEFORE the kill: once the root dies its children are reparented and the PPID link is gone.
     Detached session leaders (see ``_is_detached_session_leader``) are pruned together with their own
-    subtrees. So is the calling process with its subtree and its ancestor chain: ``alfred dashboard
-    --stop`` / ``alfred update`` run from a shell escape inside the hosted Chat TUI are same-session
+    subtrees. So is the calling process with its subtree and its ancestor chain: ``plushuman dashboard
+    --stop`` / ``plushuman update`` run from a shell escape inside the hosted Chat TUI are same-session
     descendants of the backend, and sweeping them would SIGTERM the caller mid-run (POSIX twin of the
     Windows #98814 hazard). The start-time fingerprint is the PID-reuse guard (same one
     ``_kill_pids_windows`` uses). Empty on scan failure → root-only kill, the historical behaviour.
@@ -591,7 +591,7 @@ def _kill_stale_dashboard_processes(
     restart_managed: bool = False, already_restarted_units: set[str] | None = None,
     scope_home: str | None = None,
 ) -> dict[str, list]:
-    """Kill running ``alfred dashboard`` / ``alfred serve`` processes (update end, ``--stop``).
+    """Kill running ``plushuman dashboard`` / ``plushuman serve`` processes (update end, ``--stop``).
 
     With ``restart_managed`` (update only) systemd-owned PIDs get their unit restarted after the
     kill (systemd treats our SIGTERM as a clean stop, so ``Restart=on-failure`` never fires) and
@@ -605,7 +605,7 @@ def _kill_stale_dashboard_processes(
     Manually-started dashboards are not auto-restarted because we don't know the original launch args
     (--host, --port, --insecure, --tui, --no-open). See #68934.
     *already_restarted_units* names units (no ``.service`` suffix) the caller already restarted directly —
-    e.g. ``alfred update``'s systemd fleet-restart loop, which restarts ``hermes-serve*`` units before this
+    e.g. ``plushuman update``'s systemd fleet-restart loop, which restarts ``hermes-serve*`` units before this
     function runs. Without excluding them, a Serve-only install's freshly restarted process is found again
     here and restarted a second time for no benefit (review on #83595).
     """
@@ -685,7 +685,7 @@ def _kill_stale_dashboard_processes(
             print(f"  ⚠ PID(s) supervised by launchd job {target}: a KeepAlive job restarts itself.\n"
                   f"    To keep it down: launchctl bootout {target}")
         if any(p not in pid_launchd for p in killed):
-            print("  Restart the dashboard when you're ready:\n    alfred dashboard --port <port>")
+            print("  Restart the dashboard when you're ready:\n    plushuman dashboard --port <port>")
     return {"matched": list(pids), "killed": list(killed), "failed": list(failed),
             "unrecovered": list(unrecovered)}
 
@@ -697,7 +697,7 @@ def _restart_killed_backends(
     """Update path: restart systemd units, kickstart launchd jobs (macOS), respawn manual argv
     (detached, headless, logged to logs/dashboard-restart.log; one per profile, no ``--port 0``).
     Returns PIDs not brought back."""
-    # Two categories: Without this, a remote backend (alfred serve) under Restart=on-failure never comes
+    # Two categories: Without this, a remote backend (plushuman serve) under Restart=on-failure never comes
     # back after our clean SIGTERM, and the Desktop can't reconnect (#68934). Filtered so Desktop
     # ``serve|dashboard --port 0`` backends are not resurrected and duplicates collapse to one per profile
     # (#78821).
@@ -747,7 +747,7 @@ def _restart_killed_backends(
     if failed_cmds:
         unrecovered.extend(p for p in killed if pid_cmdline.get(p) in failed_cmds)
     if failed_restarts or unrecovered:
-        print("  Restart anything not auto-restarted when you're ready:\n    alfred dashboard --port <port>")
+        print("  Restart anything not auto-restarted when you're ready:\n    plushuman dashboard --port <port>")
     return unrecovered
 
 
@@ -771,14 +771,14 @@ def _detect_concurrent_hermes_instances(
 
 
 def _is_desktop_local_serve_cmdline(command: str) -> bool:
-    """True for the Desktop-local shape ``alfred serve [--isolated] --host 127.0.0.1 --port 0``.
+    """True for the Desktop-local shape ``plushuman serve [--isolated] --host 127.0.0.1 --port 0``.
 
     Long-lived headless serves (``--host <tailscale-ip> --port 9119``) must never match —
     those are operator-managed remote backends that legitimately run with ppid 1.
     """
     from hermes_cli.update_cmd_windows import _hermes_holder_subcommand
     # Canonical token matcher, never argv substrings: ``kanban --preserve-cache`` contains "serve" and
-    # ``vim notes about alfred serve`` contains both markers — this predicate decides a kill.
+    # ``vim notes about plushuman serve`` contains both markers — this predicate decides a kill.
     if _hermes_holder_subcommand(command) != "serve":
         return False
     tokens = command.lower().split()
@@ -823,7 +823,7 @@ def _process_ppid(pid: int) -> int | None:
 
 
 # SSH remote-backend lock ownership: ``backend.lock.json`` is written by the Desktop SSH runtime
-# (apps/desktop/electron/remote-lifecycle.ts) for every ``alfred serve`` it spawns. Such a backend
+# (apps/desktop/electron/remote-lifecycle.ts) for every ``plushuman serve`` it spawns. Such a backend
 # is legitimate even at ppid 1 (sshd exited); the reap must NEVER kill a PID a valid lock claims
 # — that once killed a production backend. Schema mirrors the writer; mismatches are ignored.
 _LOCKFILE_SCHEMA_VERSION = 2
@@ -834,7 +834,7 @@ _HEX32 = set("0123456789abcdef")
 
 
 def _hermes_home_dir() -> Path:
-    """The process's Alfred home: remote-backend locks are a process-level asset, so a request scoped
+    """The process's +Human home: remote-backend locks are a process-level asset, so a request scoped
     to another profile must still see the same lock dir."""
     from hermes_constants import get_process_hermes_home
     return get_process_hermes_home()
@@ -870,7 +870,7 @@ def _remote_lock_roots(base_dir: Path | None) -> list[Path]:
     """Every dir the Desktop may have written ``desktop-ssh/<ownershipId>/backend.lock.json`` under.
 
     The Desktop writes SSH locks beneath the ROOT home (``~/.hermes/desktop-ssh``), but a profile
-    backend (``alfred --profile X serve``) runs with ``HERMES_HOME=<root>/profiles/X`` — scanning only
+    backend (``plushuman --profile X serve``) runs with ``HERMES_HOME=<root>/profiles/X`` — scanning only
     the process home found no lock there and its reaper killed the sibling profile's live SSH
     backend on every profile switch (#89811)."""
     if base_dir is not None:
@@ -932,9 +932,9 @@ def _process_age_seconds(pid: int) -> float:
 
 
 def _reap_orphaned_desktop_local_serves(
-    *, reason: str = "orphaned desktop-local alfred serve", signal_term=None, signal_kill=None,
+    *, reason: str = "orphaned desktop-local plushuman serve", signal_term=None, signal_kill=None,
     sleep_fn=None, lock_owned_pids_fn=None, process_age_seconds_fn=None) -> dict[str, list]:
-    """Kill leftover Desktop-local ``alfred serve`` backends with no parent. Never raises.
+    """Kill leftover Desktop-local ``plushuman serve`` backends with no parent. Never raises.
 
     When Electron dies uncleanly its ``serve --host 127.0.0.1 --port 0`` children are
     reparented to pid 1 with their MCP trees alive; each Desktop boot then stacks a fresh

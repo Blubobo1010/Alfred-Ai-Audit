@@ -5,7 +5,7 @@
 // how the two halves drift.
 //
 // A .cjs module (not JSON) so the variant is decided at require time:
-// HERMES_DESKTOP_VARIANT=light builds "Alfred Light". The whole config
+// HERMES_DESKTOP_VARIANT=light builds "+Human Light". The whole config
 // derives from that one flag.
 // @ts-check
 'use strict'
@@ -206,7 +206,7 @@ module.exports = {
     // paste onto the stock removable-drive icon). It lives in packaging/ with
     // the background so the `files` whitelist keeps it out of the app bundle.
     icon: 'packaging/dmg-volume.icns',
-    title: 'Alfred Installer',
+    title: '+Human Installer',
     // A prebuilt .tiff on purpose, not a PNG plus a @2x sibling: dmg-builder's
     // PNG path runs `tiffutil -cathidpicheck`, which on macOS 26 rewrites both
     // frames to 72 dpi and silently drops the 2x representation. A .tiff is
@@ -273,7 +273,7 @@ module.exports = {
     customManifestPath: store ? 'build/store-msix-manifest.xml'
       : releaseBuild || channelRequest || appNamePascal !== artifactNamePascal
         ? 'build/msix-manifest.xml' : 'assets/msix-manifest.xml',
-    // Alfred state is deliberately shared with unpackaged CLI/gateway
+    // +Human state is deliberately shared with unpackaged CLI/gateway
     // processes. Pair the manifest's disabled virtualization properties with
     // the restricted capability that permits unvirtualized AppData/HKCU writes.
     capabilities: ['unvirtualizedResources'],
@@ -283,8 +283,8 @@ module.exports = {
     category: 'Development',
     maintainer: 'Ai-Audit <support@nousresearch.com>',
     synopsis: light
-      ? 'Remote-only desktop client for Alfred.'
-      : 'Native desktop shell for Alfred.',
+      ? 'Remote-only desktop client for +Human.'
+      : 'Native desktop shell for +Human.',
     target: ['AppImage']
   }
 }

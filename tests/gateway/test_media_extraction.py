@@ -55,8 +55,8 @@ class TestMediaExtraction:
         )
 
         capture_name = "computer_use_fedcba9876543210fedcba9876543210.jpg"
-        canonical = rf"D:\Alfred Data\cache\images\{capture_name}"
-        response = f'MEDIA:"/Users/Alice/Alfred Data/cache/images/{capture_name}"'
+        canonical = rf"D:\+Human Data\cache\images\{capture_name}"
+        response = f'MEDIA:"/Users/Alice/+Human Data/cache/images/{capture_name}"'
         messages = [
             {
                 "role": "tool",

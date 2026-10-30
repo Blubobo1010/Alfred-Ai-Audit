@@ -1,4 +1,4 @@
-"""A user who has already used Alfred must not get the first-run guide when the guest flag turns on.
+"""A user who has already used +Human must not get the first-run guide when the guest flag turns on.
 
 ``onboarding.state`` reports ``intro: unseen`` for any install without a setup profile, so a returning
 user looked brand new. ``settle_returning_user`` latches ``seen`` on first launch from real history.

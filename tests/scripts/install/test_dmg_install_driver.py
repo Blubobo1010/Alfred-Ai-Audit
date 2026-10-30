@@ -37,7 +37,7 @@ def test_dmg_driver_requires_complete_pm_source_install(tmp_path, missing, expec
         launcher.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
         launcher.chmod(0o755)
     if missing != "app":
-        (root / "apps/desktop/release/mac-arm64/Alfred.app").mkdir(parents=True)
+        (root / "apps/desktop/release/mac-arm64/+Human.app").mkdir(parents=True)
     if missing not in {"completion", "historical", "wrong-root-log"}:
         (root / ".hermes-bootstrap-complete").write_text("completed", encoding="utf-8")
     # The legacy file must not mask a missing PM publication.

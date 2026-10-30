@@ -7,7 +7,7 @@ Two additive capabilities, both designed so a failure inside them can never
 break an update (every public entry point is exception-swallowing):
 
 1. **Update receipt** — a machine-readable JSON record of what one
-   ``alfred update`` run discovered, did, skipped (and why), written to
+   ``plushuman update`` run discovered, did, skipped (and why), written to
    the ROOT home's ``logs/update_receipts/`` (``get_default_hermes_root()``,
    never a sticky profile's ``HERMES_HOME``). Silent-failure classes this
    makes visible: #88848 (helper died after "success" printed), #74973
@@ -52,7 +52,7 @@ _FINALIZED: dict[str, dict[str, Any]] = {}
 COMMAND_BOUNDARY_STOP_REASON = "completed at command boundary"
 
 # Receipt state is per-CONTEXT, not a module global: a nested
-# ``alfred update`` receipt (or one in another thread) must never clobber
+# ``plushuman update`` receipt (or one in another thread) must never clobber
 # the outer one, and the boundary finalize must see exactly its own
 # process's receipt. Same pattern as pm.receipt's ContextVars — no
 # manager object.
@@ -142,7 +142,7 @@ def _launcher_correlation_id() -> Optional[str]:
 
 
 class UpdateReceipt:
-    """Collects the observable facts of one ``alfred update`` run."""
+    """Collects the observable facts of one ``plushuman update`` run."""
 
     def __init__(self) -> None:
         self.data: dict[str, Any] = {
@@ -204,7 +204,7 @@ class UpdateReceipt:
             persisted["skipped"] = _str_records(
                 fresh_recovery.get("skipped", []), ("profile", "kind", "supervisor", "reason")
             )
-            # ``alfred serve`` hosts tui_gateway and is not a gateway profile, so neither the
+            # ``plushuman serve`` hosts tui_gateway and is not a gateway profile, so neither the
             # per-profile buckets above nor the fleet-version matrix can describe it. Persist its
             # unit outcomes and any process that survived on the pre-update generation, or the
             # receipt keeps claiming a clean recovery the operator's box contradicts.
@@ -239,7 +239,7 @@ def _receipt_dir() -> Path:
 def _receipt_dirs() -> list[Path]:
     """The root store, then the profile's own when a named profile makes them differ. ``pm/``
     writes its sync receipts to ``get_hermes_home()`` and receipts from before the root move live
-    there too, so readers take both and writers mirror ``latest.json`` into it (``alfred -p <name>
+    there too, so readers take both and writers mirror ``latest.json`` into it (``plushuman -p <name>
     pm status`` reads only that one)."""
     from hermes_constants import get_hermes_home
 
@@ -412,12 +412,12 @@ def record_build_stage(followups) -> None:
     record_stage("build", "failed" if any(step in BUILD_FOLLOWUPS for step, _ in followups) else "success")
 
 
-def record_followup(step: str, reason: str, *, retry: str = "the next launch or `alfred update` retries it") -> None:
+def record_followup(step: str, reason: str, *, retry: str = "the next launch or `plushuman update` retries it") -> None:
     """A post-commit step failed: print ⚠, keep the run a success, and say what is still owed.
 
     The code already committed, so the update does not fail; the step's own obligation (the
     source tail, the fleet restart, the launch-time bytecode sweep) stays armed and the next
-    launch or ``alfred update`` retries it. Never raises. The printed line is a protocol: the
+    launch or ``plushuman update`` retries it. Never raises. The printed line is a protocol: the
     Desktop hand-offs (scripts/desktop-update/posix.sh, windows.ps1) parse ``Update follow-up
     '<step>' did not finish:`` to report every owed step, so keep it one whole line.
     """
@@ -437,7 +437,7 @@ def record_user_action(step: str, reason: str) -> None:
 
     Unlike a follow-up nothing retries it (a stash whose restore conflicted stays parked until the
     user re-applies it), so the run can never be a plain success: it finalizes ``partial`` and
-    ``alfred update`` exits 1, as #122557 established for an unrestored autostash.
+    ``plushuman update`` exits 1, as #122557 established for an unrestored autostash.
     """
     _record("fact", f"update user action {step}", "user_action", {"step": step, "reason": " ".join(str(reason).split())[:500]})
     persist_running_receipt()
@@ -536,7 +536,7 @@ _GIT_FILE_PERMISSION = re.compile(r"Permission denied(?! *\()|\bEACCES\b")
 def git_error_stop_class(exc: BaseException) -> Optional[str]:
     """The closed stop token for a git ``CalledProcessError`` that is about to end the run, or None.
 
-    Reads only the failed argv and fixed git/Alfred phrases in its output, never stores either.
+    Reads only the failed argv and fixed git/+Human phrases in its output, never stores either.
     """
     if not isinstance(exc, subprocess.CalledProcessError):
         return None
@@ -732,7 +732,7 @@ def _collection_enabled_now() -> Optional[bool]:
 
 
 #: The leading label of a stop reason the parked copy may keep, exactly what the classifier reads:
-#: an exception type name (plus its errno token) or one of the fixed phrases Alfred writes
+#: an exception type name (plus its errno token) or one of the fixed phrases +Human writes
 #: (shared_metrics_update._STOP_REASON_PREFIX_CLASSES); never the message after it.
 _PARKED_REASON_LABEL = re.compile(
     r"(?:[A-Z][A-Za-z0-9_]{0,63}:(?: \[(?:Errno|WinError) \d+\])?"
@@ -815,7 +815,7 @@ def _bare_collection_enabled() -> Optional[bool]:
 
 
 def _park_metric_receipt(data: dict[str, Any], enabled: Optional[bool]) -> None:
-    """Keep the bounded fields for the next Alfred start (stdlib only): ``report_pending_updates``
+    """Keep the bounded fields for the next +Human start (stdlib only): ``report_pending_updates``
     records them when collection is on, ``begin_process`` purges them when it is off. Collection
     known off: park nothing and purge what an earlier run parked."""
     from hermes_constants import get_hermes_home
@@ -868,7 +868,7 @@ def finalized_receipt(update_id: str) -> Optional[dict[str, Any]]:
 def finalize_pending_update_receipt(exit_code: Optional[int] = None, stop_reason: str = "") -> Optional[Path]:
     """Command-boundary safety net: persist a still-open receipt, if any. Never raises.
 
-    ``alfred update`` has many early ``sys.exit`` paths (preflight refusals, venv-holder refusal,
+    ``plushuman update`` has many early ``sys.exit`` paths (preflight refusals, venv-holder refusal,
     fetch failure) predating the inner finalize calls; finalizing here means refused/failed runs —
     where a receipt matters most — leave a record. Exit 0/None → ``success``, exit 2 → ``refused``
     (preflight convention), else → ``failed`` (``partial`` when the run committed and only owes a
@@ -925,7 +925,7 @@ def finalize_interrupted_update_receipt(stop_reason: str, *, exit_code: int = 13
     along (the completion child persisted stages this process never saw).
     """
     print("⚠ Interrupted after the code was updated: the new code is in place; its remaining steps are owed "
-          "and the next launch or `alfred update` finishes them.", flush=True)
+          "and the next launch or `plushuman update` finishes them.", flush=True)
     if _current.get() is None:
         return None
     closed = resume_run_record()
@@ -951,8 +951,8 @@ def settle_latest_receipt_fleet(fleet: list[dict[str, Any]], *, discharges) -> b
     """Record on ``latest.json`` that the fleet it still reports as owed now serves the checkout.
 
     A failed receipt whose plan rows cannot be matched to a live gateway (unknown identity,
-    pre-pull SHAs) keeps ``alfred update`` exiting 1 and every CLI start warning about mixed
-    modules, long after the operator's ``alfred gateway restart`` fixed the fleet (#117051). The
+    pre-pull SHAs) keeps ``plushuman update`` exiting 1 and every CLI start warning about mixed
+    modules, long after the operator's ``plushuman gateway restart`` fixed the fleet (#117051). The
     caller has just verified every live row is current at the checkout SHA; persisting that
     matrix as the receipt's post-restart ``fleet`` (and un-flagging ``gateway_restart``) is what
     lets the stale-runtime readers see the recovery. ``discharges(settled_receipt)`` decides on
@@ -1051,7 +1051,7 @@ _CODE_ROOT_MAX_DEPTH = 8
 
 
 def _code_root_for_path(raw: Any) -> Optional[Path]:
-    """Return the Alfred checkout containing an absolute process path."""
+    """Return the +Human checkout containing an absolute process path."""
     if not isinstance(raw, str) or not raw:
         return None
     with suppress(Exception):
@@ -1256,7 +1256,7 @@ _FLEET_ROW_UNKNOWN = "  ? {profile} (pid {pid}) — version unknown (gateway pre
 # so the copy does not claim one.
 _FLEET_ROW_IDENTITY_PENDING = (
     "  ? {profile} (pid {pid}) — new pid since the update, code identity not published yet"
-    " — re-check with `alfred gateway status`"
+    " — re-check with `plushuman gateway status`"
 )
 
 
@@ -1293,7 +1293,7 @@ def print_fleet_version_matrix(fleet: list[dict[str, Any]]) -> bool:
     if RESTART_PENDING_STATE in states:
         print()
         print("  ℹ A restart-pending gateway has not yet been verified on the new code;")
-        print("    check after this update exits with `alfred gateway status`.")
+        print("    check after this update exits with `plushuman gateway status`.")
     stale_or_down = sum(1 for entry in fleet if entry.get("state") in ("stale", "down"))
     if stale_or_down:
         print()
@@ -1306,6 +1306,6 @@ def print_fleet_version_matrix(fleet: list[dict[str, Any]]) -> bool:
         print()
         print(
             f"⚠ Gateway restart still owed: {stale_or_down} gateway(s) still running the old code (or stopped).")
-        print("  Run `alfred gateway restart` (or `alfred -p <profile> gateway restart` for a named")
-        print("  profile), then `alfred gateway status` to confirm.")
+        print("  Run `plushuman gateway restart` (or `plushuman -p <profile> gateway restart` for a named")
+        print("  profile), then `plushuman gateway status` to confirm.")
     return stale_or_down > 0

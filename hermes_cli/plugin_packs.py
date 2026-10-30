@@ -296,7 +296,7 @@ def render_pack_review(console, pack: PluginPack, resolved: list[ResolvedPackPlu
     if pack.skills:
         console.print(
             "[yellow]Pack lists skills (NOT auto-installed yet):[/yellow] " + ", ".join(pack.skills))
-        console.print("[dim]Install them manually, e.g. `alfred skills install <id>`.[/dim]")
+        console.print("[dim]Install them manually, e.g. `plushuman skills install <id>`.[/dim]")
     console.print(
         "\n[dim]Installing a pack runs third-party code × "
         f"{len(resolved)} plugins. Each plugin's declared capabilities still "
@@ -484,7 +484,7 @@ def export_pack(*, enabled_only: bool = False, pack_name: str = "my-hermes-pack"
 
     doc: dict[str, Any] = {
         "name": pack_name,
-        "description": "Exported by `alfred plugins pack export`.",
+        "description": "Exported by `plushuman plugins pack export`.",
         "version": "1.0.0",
         "plugins": entries,
     }
@@ -512,7 +512,7 @@ def _load_and_review(console, source: str):
 
 
 def cmd_pack_show(source: str) -> None:
-    """``alfred plugins pack show <path-or-url>`` — dry-run review."""
+    """``plushuman plugins pack show <path-or-url>`` — dry-run review."""
     from hermes_cli.plugins_cmd import _console
     console = _console()
     _pack, resolved = _load_and_review(console, source)
@@ -521,11 +521,11 @@ def cmd_pack_show(source: str) -> None:
         console.print(
             f"\n[yellow]{len(unresolved)} entr{'y' if len(unresolved) == 1 else 'ies'} "
             "could not be resolved — install would skip them and exit non-zero.[/yellow]")
-    console.print("\n[dim]Dry run only. Install with `alfred plugins pack install ...`.[/dim]")
+    console.print("\n[dim]Dry run only. Install with `plushuman plugins pack install ...`.[/dim]")
 
 
 def cmd_pack_install(source: str, *, force: bool = False) -> None:
-    """``alfred plugins pack install <path-or-url>``: mandatory review screen -> one pack-level
+    """``plushuman plugins pack install <path-or-url>``: mandatory review screen -> one pack-level
     consent -> pinned fan-out installs -> per-plugin capability consent. Exit 1 if any failed."""
     from hermes_cli.plugins_cmd import _ask_yes, _console, _fail, _is_tty
     console = _console()
@@ -547,13 +547,13 @@ def cmd_pack_install(source: str, *, force: bool = False) -> None:
         console.print(f"  [red]✗[/red] {r.display}: {r.error}")
     if ok:
         console.print("[dim]Restart the gateway for the plugins to take effect:[/dim]")
-        console.print("[dim]  alfred gateway restart[/dim]")
+        console.print("[dim]  plushuman gateway restart[/dim]")
     if failed:
         sys.exit(1)
 
 
 def cmd_pack_export(*, enabled_only: bool = False, name: str = "my-hermes-pack") -> None:
-    """``alfred plugins pack export [--enabled-only]`` — pack YAML on stdout."""
+    """``plushuman plugins pack export [--enabled-only]`` — pack YAML on stdout."""
     from rich.console import Console
     console = Console(stderr=True)
     try:
@@ -567,11 +567,11 @@ def cmd_pack_export(*, enabled_only: bool = False, name: str = "my-hermes-pack")
 
 
 def pack_command(args) -> None:
-    """Dispatch ``alfred plugins pack <action>``."""
+    """Dispatch ``plushuman plugins pack <action>``."""
     handler = _PACK_ACTIONS.get(getattr(args, "pack_action", None))
     if handler is None:
         from hermes_cli.plugins_cmd import _console, _fail
-        _fail(_console(), "[red]Error:[/red] Usage: alfred plugins pack {install|export|show}")
+        _fail(_console(), "[red]Error:[/red] Usage: plushuman plugins pack {install|export|show}")
     handler(args)
 
 

@@ -1,4 +1,4 @@
-"""Contract for the headless ``alfred serve`` backend command.
+"""Contract for the headless ``plushuman serve`` backend command.
 
 ``serve`` is what the desktop app and remote backends launch — the same gateway
 as ``dashboard`` (shared handler) but always headless, and decoupled in name so

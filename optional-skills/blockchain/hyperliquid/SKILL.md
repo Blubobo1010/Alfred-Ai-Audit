@@ -2,7 +2,7 @@
 name: hyperliquid
 description: Hyperliquid market data, account history, trade review.
 version: 0.1.0
-author: Hugo Sequier (Hugo-SEQUIER), Alfred
+author: Hugo Sequier (Hugo-SEQUIER), +Human
 license: MIT
 platforms: [linux, macos, windows]
 metadata:

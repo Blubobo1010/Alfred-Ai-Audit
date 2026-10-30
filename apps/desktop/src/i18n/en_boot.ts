@@ -3,48 +3,48 @@ import type { Translations } from './types'
 // The boot screen's copy (including the update-hold screen), composed by en.ts.
 export const enBoot = {
   boot: {
-    ready: 'Alfred Desktop is ready',
+    ready: '+Human Desktop is ready',
     desktopBootFailedWithMessage: message => `Desktop boot failed: ${message}`,
     steps: {
       connectingGateway: 'Connecting live desktop gateway',
-      loadingSettings: 'Loading Alfred settings',
+      loadingSettings: 'Loading +Human settings',
       loadingSessions: 'Loading recent sessions',
-      retryingRemoteBackend: 'Reconnecting to the remote Alfred backend…',
+      retryingRemoteBackend: 'Reconnecting to the remote +Human backend…',
       startingDesktopConnection: 'Starting desktop connection',
-      startingHermesDesktop: 'Starting Alfred Desktop…'
+      startingHermesDesktop: 'Starting +Human Desktop…'
     },
     errors: {
       backgroundExited:
         'The service that runs your chats closed unexpectedly. Restart it to keep going — your chats and settings are safe.',
-      backgroundExitedDuringStartup: 'Alfred stopped right after it started.',
-      backendStopped: 'Alfred stopped working in the background',
-      restartHermes: 'Restart Alfred',
+      backgroundExitedDuringStartup: '+Human stopped right after it started.',
+      backendStopped: '+Human stopped working in the background',
+      restartHermes: 'Restart +Human',
       openLogs: 'Open logs',
-      desktopBootFailed: "Alfred couldn't start",
-      gatewayConnectionLost: 'Alfred lost its connection',
+      desktopBootFailed: "+Human couldn't start",
+      gatewayConnectionLost: '+Human lost its connection',
       gatewayConnectionLostDetail:
         'Still trying to reconnect. You can keep reading and drafting. If this keeps up, reconnect now or check your connection settings.',
       reconnectNow: 'Reconnect now',
       connectionSettings: 'Connection settings',
-      gatewaySignInRequired: 'Your remote Alfred signed you out',
+      gatewaySignInRequired: 'Your remote +Human signed you out',
       gatewaySignInRequiredDetail: 'Sign in again to reconnect. Your chats and settings are safe.',
       signInAgain: 'Sign in again',
-      ipcBridgeUnavailable: "Alfred Desktop couldn't talk to its own background layer. Restart the app."
+      ipcBridgeUnavailable: "+Human Desktop couldn't talk to its own background layer. Restart the app."
     },
     // Plain causes for a local backend boot failure (`classifyBootFailure`);
     // the raw output stays behind "Show recent logs".
     causes: {
-      exitedEarly: "Alfred' background service stopped right after starting.",
-      timedOut: "Alfred' background service didn't answer in time.",
-      permission: "Alfred couldn't write to its data folder (permission problem).",
-      diskFull: 'The disk is full, so Alfred could not start.',
-      portInUse: 'Another program is using the network port Alfred needs.',
-      installMissing: "Part of Alfred' installation is missing. Choose Repair install to put it back."
+      exitedEarly: "+Human' background service stopped right after starting.",
+      timedOut: "+Human' background service didn't answer in time.",
+      permission: "+Human couldn't write to its data folder (permission problem).",
+      diskFull: 'The disk is full, so +Human could not start.',
+      portInUse: 'Another program is using the network port +Human needs.',
+      installMissing: "Part of +Human' installation is missing. Choose Repair install to put it back."
     },
     failure: {
-      title: "Alfred couldn't start",
+      title: "+Human couldn't start",
       description:
-        "Alfred' background service didn't come up. Try one of the recovery steps below. Nothing here deletes your chats or settings.",
+        "+Human' background service didn't come up. Try one of the recovery steps below. Nothing here deletes your chats or settings.",
       details: 'Details',
       remoteTitle: 'Remote gateway sign-in required',
       remoteDescription:
@@ -82,28 +82,28 @@ export const enBoot = {
       identityProvider: 'your identity provider'
     },
     updateHold: {
-      title: 'An earlier update still holds Alfred',
-      titleUnverified: "Alfred can't confirm the last update finished",
+      title: 'An earlier update still holds +Human',
+      titleUnverified: "+Human can't confirm the last update finished",
       description:
-        "Alfred is holding off on starting so it can't load files an update may still be changing. It starts by itself as soon as the hold ends.",
+        "+Human is holding off on starting so it can't load files an update may still be changing. It starts by itself as soon as the hold ends.",
       heldByProcess: pid =>
-        `The update (process ${pid}) exited, but a process it started still holds the Alfred install.`,
-      heldUnknown: 'An update exited, but a process it started still holds the Alfred install.',
-      unverified: "The update helper couldn't check who owns the Alfred install right now. Alfred keeps checking.",
+        `The update (process ${pid}) exited, but a process it started still holds the +Human install.`,
+      heldUnknown: 'An update exited, but a process it started still holds the +Human install.',
+      unverified: "The update helper couldn't check who owns the +Human install right now. +Human keeps checking.",
       since: time => `Waiting since ${time}`,
       lastChecked: time => `Last checked ${time}`,
       recoveryHint:
-        'This usually clears in a few minutes. If it does not: quit Alfred, end leftover git or hermes processes (or restart the computer), then open Alfred again.',
+        'This usually clears in a few minutes. If it does not: quit +Human, end leftover git or hermes processes (or restart the computer), then open +Human again.',
       checkAgain: 'Check again',
-      quit: 'Quit Alfred',
+      quit: 'Quit +Human',
       openLogs: 'Open logs',
       startAnyway: 'Start anyway…',
-      confirmTitle: 'Start Alfred while the update still holds it?',
+      confirmTitle: 'Start +Human while the update still holds it?',
       confirmBody:
-        "The leftover update process may still be changing Alfred' files. Starting now can load a half-updated install, which may not work until you run the update again. Alfred records this choice in its log and leaves the update marker in place.",
+        "The leftover update process may still be changing +Human' files. Starting now can load a half-updated install, which may not work until you run the update again. +Human records this choice in its log and leaves the update marker in place.",
       confirmKeepWaiting: 'Keep waiting',
       confirmStart: 'Start anyway',
-      startAnywayRefused: 'What holds the install changed before Alfred could start. Review it and try again.'
+      startAnywayRefused: 'What holds the install changed before +Human could start. Review it and try again.'
     }
   }
 } satisfies Pick<Translations, 'boot'>

@@ -406,7 +406,7 @@ describe('checkBackendUpdates', () => {
       behind: 2,
       update_available: true,
       can_apply: true,
-      update_command: 'alfred update',
+      update_command: 'plushuman update',
       message: null,
       commits: [{ sha: 'abc1234', summary: 'feat: x', author: 'a', at: 1 }]
     })
@@ -470,7 +470,7 @@ describe('checkBackendUpdates', () => {
   })
 })
 
-// The ⌘K "Update Alfred" row. It used to call applyBackendUpdate() flat, which
+// The ⌘K "Update +Human" row. It used to call applyBackendUpdate() flat, which
 // in local mode aimed at the backend checkout instead of the client and, with
 // no overlay open, showed nothing at all.
 describe('requestActiveUpdate', () => {
@@ -572,7 +572,7 @@ describe('requestActiveUpdate', () => {
       ok: false,
       name: 'hermes-update',
       error: 'dashboard_update_managed_externally',
-      message: 'Alfred updates are managed outside this dashboard in containerized environments.',
+      message: '+Human updates are managed outside this dashboard in containerized environments.',
       update_command: ''
     })
 
@@ -585,13 +585,13 @@ describe('requestActiveUpdate', () => {
     expect($backendUpdateApply.get().message).toContain('managed outside this dashboard')
   })
 
-  it('falls back to `alfred update` only when an older backend omits update_command', async () => {
+  it('falls back to `plushuman update` only when an older backend omits update_command', async () => {
     setRemote(true)
     updateHermesSpy.mockResolvedValue({ ok: false, name: 'hermes-update', message: 'Run it yourself.' })
 
     await applyBackendUpdate()
 
-    expect($backendUpdateApply.get().command).toBe('alfred update')
+    expect($backendUpdateApply.get().command).toBe('plushuman update')
   })
 })
 
@@ -1036,12 +1036,12 @@ describe('applyUpdates terminal state', () => {
   })
 
   it('keeps the manual command state for CLI installs with no staged updater', async () => {
-    applyMock.mockResolvedValue({ ok: true, manual: true, command: 'alfred update' })
+    applyMock.mockResolvedValue({ ok: true, manual: true, command: 'plushuman update' })
 
     await applyUpdates()
 
     expect($updateApply.get().stage).toBe('manual')
-    expect($updateApply.get().command).toBe('alfred update')
+    expect($updateApply.get().command).toBe('plushuman update')
     expect($updateOverlayOpen.get()).toBe(true)
     expect(notifySpy).not.toHaveBeenCalled()
   })
@@ -1078,7 +1078,7 @@ describe('applyUpdates terminal state', () => {
       guiUpdated: false,
       manualRestart: true,
       sandboxBlocked: true,
-      message: 'Backend updated. Quit and reopen Alfred to finish.'
+      message: 'Backend updated. Quit and reopen +Human to finish.'
     })
 
     const result = await applyUpdates()
@@ -1319,7 +1319,7 @@ describe('applyBackendUpdate recovery', () => {
         install_method: 'git',
         message: 'offline',
         update_available: false,
-        update_command: 'alfred update'
+        update_command: 'plushuman update'
       })
       .mockResolvedValueOnce({
         behind: 1,
@@ -1329,7 +1329,7 @@ describe('applyBackendUpdate recovery', () => {
         install_method: 'git',
         message: null,
         update_available: true,
-        update_command: 'alfred update'
+        update_command: 'plushuman update'
       })
 
     const promise = applyBackendUpdate()
@@ -1364,7 +1364,7 @@ describe('applyBackendUpdate recovery', () => {
       install_method: 'pip',
       message: null,
       update_available: true,
-      update_command: 'alfred update'
+      update_command: 'plushuman update'
     })
 
     const promise = applyBackendUpdate()
@@ -1539,10 +1539,10 @@ describe('applyBackendUpdate recovery', () => {
     await vi.advanceTimersByTimeAsync(1500)
     const result = await own
 
-    // exit 1 stays a failed apply, but the committed run's debt is named, never as "re-run alfred update".
+    // exit 1 stays a failed apply, but the committed run's debt is named, never as "re-run plushuman update".
     expect(result).toMatchObject({ ok: false, error: 'apply-failed' })
     expect(result.message).toContain(`local_changes: ${instruction}`)
-    expect(result.message).not.toMatch(/Re-run `alfred update`/)
+    expect(result.message).not.toMatch(/Re-run `plushuman update`/)
     expect($backendUpdateApply.get()).toMatchObject({ stage: 'error', message: result.message })
 
     // The status route attaches the latest receipt when this action has none: another run's debt is not ours.
@@ -1673,7 +1673,7 @@ describe('startUpdatePoller', () => {
       behind: 1,
       update_available: true,
       can_apply: true,
-      update_command: 'alfred update',
+      update_command: 'plushuman update',
       message: null
     })
 
@@ -1719,7 +1719,7 @@ describe('startUpdatePoller', () => {
       behind: 1,
       update_available: true,
       can_apply: true,
-      update_command: 'alfred update',
+      update_command: 'plushuman update',
       message: null
     })
 
@@ -1766,7 +1766,7 @@ describe('startUpdatePoller', () => {
       behind: 4,
       update_available: true,
       can_apply: true,
-      update_command: 'alfred update',
+      update_command: 'plushuman update',
       message: null
     })
 
@@ -1803,7 +1803,7 @@ describe('startUpdatePoller', () => {
       behind: 1,
       update_available: true,
       can_apply: true,
-      update_command: 'alfred update',
+      update_command: 'plushuman update',
       message: null
     })
     await vi.advanceTimersByTimeAsync(0)

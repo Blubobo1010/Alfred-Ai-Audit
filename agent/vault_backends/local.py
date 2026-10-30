@@ -17,7 +17,7 @@ def _store():
 
 class LocalLoginBackend(LoginBackend):
     name = "local"
-    display_name = "Alfred vault"
+    display_name = "+Human vault"
     prefix = "vault_"
 
     def list_items(self) -> list[VaultItemMeta]:

@@ -685,7 +685,7 @@ class TestDeregisterAuthorization:
 
 
     def test_core_code_deregister_always_allowed(self):
-        """Non-plugin callers (core Alfred code) are never gated."""
+        """Non-plugin callers (core +Human code) are never gated."""
         reg = self._reg()
         with patch.object(ToolRegistry, "_caller_module", return_value="tools.mcp_tool"):
             reg.deregister("protected")

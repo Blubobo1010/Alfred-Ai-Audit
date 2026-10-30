@@ -2,9 +2,9 @@
 
 Port of earendil-works/pi#7493: entry points advertise the agent harness to
 child processes via the cross-agent ``AI_AGENT`` standard plus a
-Alfred-specific marker, without clobbering an outer harness.
++Human-specific marker, without clobbering an outer harness.
 
-The AI_AGENT value must equal Alfred' id in the public agent-harness
+The AI_AGENT value must equal +Human' id in the public agent-harness
 registry (``hermes-agent`` in huggingface.js ``agent-harnesses.ts``) —
 standard-var matching there is exact, so any other value is attributed to
 "unknown".
@@ -12,7 +12,7 @@ standard-var matching there is exact, so any other value is attributed to
 The terminal backends additionally export both vars inside every wrapped
 shell command (``BaseEnvironment._wrap_command``) so the marker reaches
 REMOTE backends (Docker/SSH/Modal/Daytona/Singularity/Vercel) whose exec
-environment does not inherit the Alfred process env, and survives the
+environment does not inherit the +Human process env, and survives the
 cross-session leak guard that strips ``HERMES_SESSION_*`` from subprocess
 envs in engaged multi-session hosts.
 """
@@ -61,7 +61,7 @@ class TestWrapCommandAdvertisesHarness:
 
     def test_shell_sets_default_and_preserves_outer(self):
         """Run the wrapped script through real bash both ways."""
-        wrapped = self._wrap('echo "AI=$AI_AGENT ALFRED=$HERMES_AGENT"')
+        wrapped = self._wrap('echo "AI=$AI_AGENT PLUSHUMAN=$HERMES_AGENT"')
 
         clean_env = {k: v for k, v in os.environ.items()
                      if k not in ("AI_AGENT", "HERMES_AGENT")}
@@ -70,7 +70,7 @@ class TestWrapCommandAdvertisesHarness:
             env=clean_env, timeout=30,
             check=False,
         )
-        assert f"AI={HARNESS_ID} ALFRED=true" in out.stdout
+        assert f"AI={HARNESS_ID} PLUSHUMAN=true" in out.stdout
 
         outer_env = dict(clean_env, AI_AGENT="pi", HERMES_AGENT="false")
         out = subprocess.run(
@@ -78,4 +78,4 @@ class TestWrapCommandAdvertisesHarness:
             env=outer_env, timeout=30,
             check=False,
         )
-        assert "AI=pi ALFRED=false" in out.stdout
+        assert "AI=pi PLUSHUMAN=false" in out.stdout

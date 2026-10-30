@@ -34,7 +34,7 @@ class _DM:
 class _Text:
     def __init__(self, channel_id: int, name: str = "ops", topic: str | None = "Incident triage") -> None:
         self.id, self.name, self.topic = channel_id, name, topic
-        self.guild = SimpleNamespace(id=1, name="Alfred Server")
+        self.guild = SimpleNamespace(id=1, name="+Human Server")
 
 
 class _Thread:

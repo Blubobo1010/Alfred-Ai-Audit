@@ -2,10 +2,10 @@
  * Renderer-bundle skew detection.
  *
  * The desktop UI (including bundled plugins like Bot Mode) is compiled into
- * the app binary at build time, while `alfred update` only moves the source
+ * the app binary at build time, while `plushuman update` only moves the source
  * tree. A user who updates from the terminal — or whose in-app update failed
  * on the bundle-swap leg — ends up running a NEW runtime under an OLD
- * renderer: About proudly reports the new Alfred version while the sidebar
+ * renderer: About proudly reports the new +Human version while the sidebar
  * is missing the features that version shipped (the "no Bots tab after the
  * Bot Mode update" reports).
  *

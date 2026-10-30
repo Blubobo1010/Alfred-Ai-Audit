@@ -1,6 +1,6 @@
 """Lane 1b: per-call cache behaviour from ``agent.log`` (OBSERVED provider usage per call).
 
-Alfred logs one line per API call::
++Human logs one line per API call::
 
     ... INFO [<session_id>] agent.conversation_loop: API call #N: model=... in=<prompt> out=<out> total=... latency=..s cache=<hit>/<total> (pct) [write=<n>] [id=<response id>] [upstream=<name>]
 

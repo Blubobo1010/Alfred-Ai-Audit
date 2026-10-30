@@ -78,7 +78,7 @@ def test_terminal_child_observes_declared_policy(child_env, monkeypatch):
     blocked.update(name for name, meta in OPTIONAL_ENV_VARS.items()
                    if meta.get("category") in {"tool", "messaging"}
                    or (meta.get("category") == "setting" and meta.get("password")))
-    blocked.discard("CLAUDE_CODE_OAUTH_TOKEN")  # operator's subscription, not Alfred inference
+    blocked.discard("CLAUDE_CODE_OAUTH_TOKEN")  # operator's subscription, not +Human inference
     for name in blocked | set(OPERATOR_ALLOWED):
         monkeypatch.setenv(name, "fake-" + name)
     before = dict(os.environ)
@@ -102,7 +102,7 @@ YUANBAO_APP_SECRET FEISHU_ENCRYPT_KEY FEISHU_VERIFICATION_TOKEN TELEGRAM_WEBHOOK
 PHOTON_SIDECAR_TOKEN A2A_PUSH_SECRET TEAMS_GRAPH_ACCESS_TOKEN QQ_STT_API_KEY
 MSGRAPH_WEBHOOK_CLIENT_STATE MSGRAPH_CLIENT_SECRET
 """.split()
-# The user's own credentials that merely start with a platform name. Alfred never reads them, so
+# The user's own credentials that merely start with a platform name. +Human never reads them, so
 # they reach the terminal like any other variable, and passthrough can forward them.
 OPERATOR_SECRETS = ["MY_APP_KEY", "DEPLOY_WEBHOOK_SECRET", "SLACK_USER_TOKEN", "LOCAL_LLM_API_KEY",
                     "GATEWAY_API_KEY"]
@@ -115,7 +115,7 @@ def test_adapter_and_provider_profile_secrets_never_reach_children(child_env, mo
     secrets = set(ADAPTER_SECRETS)
     # child_env's HERMES_HOME has no provider plugins, so these are the bundled profiles.
     secrets.update(name for profile in list_providers() for name in (profile.env_vars or ()))
-    secrets.discard("CLAUDE_CODE_OAUTH_TOKEN")  # operator's subscription, not Alfred inference
+    secrets.discard("CLAUDE_CODE_OAUTH_TOKEN")  # operator's subscription, not +Human inference
     for name in [*secrets, *OPERATOR_SECRETS]:
         monkeypatch.setenv(name, "fake-" + name)
     factories = {
@@ -723,8 +723,8 @@ class TestNativeEnvironmentContracts:
 
     @pytest.mark.platforms("windows")
     def test_windows_hermes_owned_paths_stripped(self):
-        """On Windows, a Alfred venv site-packages entry written with
-        backslashes is stripped by the same Alfred-owned check, while a
+        """On Windows, a +Human venv site-packages entry written with
+        backslashes is stripped by the same +Human-owned check, while a
         user Windows path is preserved.  Windows-only: POSIX ``Path`` does
         not split on backslashes, so this cannot be meaningfully simulated
         on a POSIX host."""
@@ -784,9 +784,9 @@ class TestNativeEnvironmentContracts:
     def test_base_python_sanitizer_uses_validated_separate_runtime_venv(self, tmp_path, monkeypatch):
         """A base interpreter strips the exact Windows runtime site-packages.
 
-        This deliberately uses a synthetic Alfred venv separate from the test
+        This deliberately uses a synthetic +Human venv separate from the test
         runner: sys.prefix represents base Python, while validated VIRTUAL_ENV
-        identifies ``<repo>/venv`` as the Alfred runtime producer contract.
+        identifies ``<repo>/venv`` as the +Human runtime producer contract.
         """
         from tools.environments import local
         from tools.environments import local_pythonpath
@@ -856,7 +856,7 @@ class TestNativeEnvironmentContracts:
     ])
     def test_builders_strip_hermes_venv_pythonpath(self, builder):
         """Every subprocess env builder applies the same sanitation contract:
-        Alfred venv site-packages is stripped, user entries survive.
+        +Human venv site-packages is stripped, user entries survive.
         """
         from tools.environments import local as local_mod
 
@@ -879,7 +879,7 @@ class TestNativeEnvironmentContracts:
         assert "/home/user/my-lib" in entries
 
     def test_scrub_child_env_strips_hermes_venv_pythonpath(self):
-        """execute_code's _scrub_child_env path: after scrubbing, Alfred venv
+        """execute_code's _scrub_child_env path: after scrubbing, +Human venv
         site-packages entries should be stripped when
         _strip_hermes_owned_pythonpath is applied (as the spawn path does),
         while user entries (even for another Python version) are preserved.
@@ -909,12 +909,12 @@ class TestNativeEnvironmentContracts:
     def test_execute_code_composition_strips_inherited_hermes_entries(self, same_env):
         """Integration: execute_code's real spawn path composes a clean PYTHONPATH.
 
-        Seeds a contaminated inherited PYTHONPATH (Alfred repo root + Alfred
+        Seeds a contaminated inherited PYTHONPATH (+Human repo root + +Human
         venv site-packages + user entries) through os.environ and drives
         execute_code all the way to Popen.  Proves the #84500 conditional
         composition and the #82581 selective strip compose correctly:
 
-        * inherited Alfred venv site-packages never survive into the sandbox;
+        * inherited +Human venv site-packages never survive into the sandbox;
         * the staging tmpdir stays the first entry;
         * the repo root is deliberately re-added exactly once for a same-env
           child (the single occurrence proves the inherited copy was stripped
@@ -980,7 +980,7 @@ class TestNativeEnvironmentContracts:
         assert norm_parts[0] == norm_staging, \
             "staging tmpdir must be the first PYTHONPATH entry"
         assert norm_venv not in norm_parts, \
-            "inherited Alfred venv site-packages must be stripped"
+            "inherited +Human venv site-packages must be stripped"
         assert norm_user_a in norm_parts and norm_user_b in norm_parts, \
             "user PYTHONPATH entries must survive"
         assert norm_parts.index(norm_user_a) > norm_parts.index(norm_staging), \
@@ -1262,11 +1262,11 @@ class TestNativeEnvironmentContracts:
 
 
 class TestPythonhomeSanitized:
-    """PYTHONHOME must not leak from the Alfred runtime into subprocesses.
+    """PYTHONHOME must not leak from the +Human runtime into subprocesses.
 
     The gateway inherits/sets PYTHONHOME in its process environment; a child
     interpreter (system Python, another venv, cron no_agent scripts) that
-    inherits it redirects its stdlib search to the Alfred venv and crashes
+    inherits it redirects its stdlib search to the +Human venv and crashes
     with version-mismatch errors before importing anything (#75018).
     """
 
@@ -1374,7 +1374,7 @@ class TestBlocklistCoverage:
         must appear in the blocklist — ensures no drift.
 
         CLAUDE_CODE_OAUTH_TOKEN is the one deliberate exemption: it is owned
-        by the user's Claude Code install, not Alfred (#55878).
+        by the user's Claude Code install, not +Human (#55878).
         """
         from hermes_cli.auth import PROVIDER_REGISTRY
 
@@ -1396,7 +1396,7 @@ class TestBlocklistCoverage:
     def test_general_aws_chain_not_in_blocklist(self):
         """The general AWS credential chain must NOT be in the blocklist —
         no-regression guard for #32314. These belong to the user's trusted
-        operator shell (SECURITY.md §3.2), not to Alfred, and blocklisting
+        operator shell (SECURITY.md §3.2), not to +Human, and blocklisting
         them would be unrecoverable via env_passthrough (GHSA-rhgp-j443-p4rf).
         """
         general_chain = {
@@ -1420,7 +1420,7 @@ class TestBlocklistCoverage:
 
     def test_claude_code_oauth_token_is_inheritable(self):
         """CLAUDE_CODE_OAUTH_TOKEN is owned by the user's Claude Code install
-        (subscription OAuth), not a Alfred inference credential. Stripping it
+        (subscription OAuth), not a +Human inference credential. Stripping it
         made agent-spawned ``claude`` fall through to the shared Keychain /
         ~/.claude credential store and clobber the user's interactive login
         on auth failure (#55878). It must stay inheritable."""
@@ -1510,7 +1510,7 @@ class TestSanePathIncludesHomebrew:
     def _disable_hermes_bin_injection(self):
         """These tests assert the sane-path merge in isolation. Disable the
         hermes-install-dir prepend (a separate concern, covered by
-        TestHermesBinDirOnPath) so a real ``alfred`` on the test runner's PATH
+        TestHermesBinDirOnPath) so a real ``plushuman`` on the test runner's PATH
         doesn't shift the asserted PATH layout."""
         from tools.environments import local as local_mod
         saved = local_mod._HERMES_BIN_DIR

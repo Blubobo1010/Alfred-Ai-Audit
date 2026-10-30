@@ -179,7 +179,7 @@ function Invoke-MarkerClaim {
 }
 
 function Add-MarkerDelegate([int[]]$Candidates) {
-    # Name a running updater process (the `alfred update` child BEFORE it is
+    # Name a running updater process (the `plushuman update` child BEFORE it is
     # resumed, or a member of a tree that could not be quiesced) as the
     # delegate so every reader keeps the marker LIVE exactly as long as that
     # process lives. Only while line 1 is still our exact incarnation.
@@ -287,7 +287,7 @@ function Update-MarkerHeartbeat {
 function Start-MarkerCustodian {
     # An old packaged Desktop judges the marker by lines 1 and 2 alone (never
     # the delegate or the marker lock), and we can be killed outright
-    # (taskkill /F runs no finally) while the resumed `alfred update` or a
+    # (taskkill /F runs no finally) while the resumed `plushuman update` or a
     # completion survivor still mutates the checkout. A takeover after our
     # death would leave an instant in which line 1 names a dead pid. So, before
     # any update work starts, a hidden watcher process that outlives us is

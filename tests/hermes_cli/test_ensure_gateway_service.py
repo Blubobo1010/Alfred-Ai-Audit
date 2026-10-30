@@ -1,5 +1,5 @@
 """Tests for hermes_cli.gateway.ensure_gateway_service — the zero-prompt
-service install/start path used by `alfred setup` and `alfred import`.
+service install/start path used by `plushuman setup` and `plushuman import`.
 
 The helper's contract:
   * never prompts, never raises (returns False on any failure)
@@ -35,7 +35,7 @@ class TestEnsureGatewayService:
         _patch_host(monkeypatch, systemd=False)
         assert gateway_mod.ensure_gateway_service() is False
         out = capsys.readouterr().out
-        assert "alfred gateway" in out
+        assert "plushuman gateway" in out
 
     def test_already_running_short_circuits(self, monkeypatch):
         _patch_host(monkeypatch)
@@ -109,7 +109,7 @@ class TestEnsureGatewayService:
 
         assert gateway_mod.ensure_gateway_service() is False
         out = capsys.readouterr().out
-        assert "alfred gateway install" in out
+        assert "plushuman gateway install" in out
 
     def test_never_raises_on_sys_exit(self, monkeypatch, capsys):
         """Install paths that sys.exit() must not abort setup/import."""
@@ -125,7 +125,7 @@ class TestEnsureGatewayService:
 
         assert gateway_mod.ensure_gateway_service() is False
         out = capsys.readouterr().out
-        assert "alfred gateway install" in out
+        assert "plushuman gateway install" in out
 
     def test_user_systemd_unreachable_reports_remediation(self, monkeypatch, capsys):
         _patch_host(monkeypatch)

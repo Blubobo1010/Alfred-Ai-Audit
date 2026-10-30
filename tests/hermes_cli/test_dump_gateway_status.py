@@ -1,4 +1,4 @@
-"""``alfred dump`` gateway line for a supervised gateway with no scannable PID (#125390)."""
+"""``plushuman dump`` gateway line for a supervised gateway with no scannable PID (#125390)."""
 
 from __future__ import annotations
 

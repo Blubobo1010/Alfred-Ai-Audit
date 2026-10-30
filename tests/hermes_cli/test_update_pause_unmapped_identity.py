@@ -5,7 +5,7 @@ replays. Two homes can run identical selectorless argv, their environment pickin
 readiness predicate must also match the home the paused runtime ran on: otherwise home B's gateway,
 already back after a partial recovery, retires home A's debt while A stays down.
 
-Real processes (argv shaped like ``alfred gateway run``, each under its own ``HERMES_HOME``) and the
+Real processes (argv shaped like ``plushuman gateway run``, each under its own ``HERMES_HOME``) and the
 real predicate; the fleet discovery that hands it candidate PIDs is the only thing bypassed. The
 replay restores that home too: the respawn's ``HERMES_HOME`` is the paused runtime's, not the updater's.
 """
@@ -25,7 +25,7 @@ from hermes_cli.update_cmd_windows import _unmapped_ready_filter
 
 @pytest.fixture
 def spawn(tmp_path):
-    entry = tmp_path / "bin" / "hermes"  # a ``alfred`` entry token: the cmdline reads as a gateway
+    entry = tmp_path / "bin" / "hermes"  # a ``plushuman`` entry token: the cmdline reads as a gateway
     entry.parent.mkdir()
     entry.write_text("import time\ntime.sleep(60)\n", encoding="utf-8")
     argv = [sys.executable, str(entry), "gateway", "run"]

@@ -1,12 +1,12 @@
 """Instance-scoping of the uninspectable-holder fallback.
 
 Field-verified 2026-09-07 on a production host running TWO independent
-Alfred instances: a main gateway (user ``ubuntu``,
++Human instances: a main gateway (user ``ubuntu``,
 HERMES_HOME=/home/ubuntu/.hermes) and a demo gateway (user ``demo``,
 HERMES_HOME=/home/demo/.hermes).  The demo gateway runs as another user, so
 its ``/proc/<pid>/fd`` table is unreadable from the main instance and the
 holder scan falls back to ``/proc/<pid>/cmdline`` + ``_looks_like_hermes``.
-The demo process's argv matches the Alfred patterns exactly, so the fallback
+The demo process's argv matches the +Human patterns exactly, so the fallback
 flagged it as an uninspectable holder of the MAIN instance's state.db even
 though ``lsof`` proved zero open handles on it.  Consequence: the stale-FTS
 rebuild in ``hermes_state_schema._recover_stale_fts`` was deferred 42 times
@@ -18,7 +18,7 @@ hermes); a genuine second instance with a DIFFERENT HERMES_HOME is still
 misjudged on current main (issue #92401).
 
 Behavior contract: an uninspectable holder identified only by argv must be
-counted unless its own argv proves it is scoped to a *different* Alfred
+counted unless its own argv proves it is scoped to a *different* +Human
 home / state.db and never references ours.  Ambiguous argv (no absolute
 paths at all) must remain fail-closed, exactly as before — the conservative
 intent of the fallback is preserved.
@@ -38,7 +38,7 @@ _REAL_READLINK = os.readlink
 
 
 # Representative demo-gateway argv on the two-instance host: every absolute
-# token lives under /home/demo/.hermes, the binary name matches the Alfred
+# token lives under /home/demo/.hermes, the binary name matches the +Human
 # patterns, and nothing references the main instance's home or state.db.
 DEMO_HOME_ARGV = [
     "/home/demo/.hermes/hermes-agent/hermes",
@@ -53,9 +53,9 @@ DEMO_VENV_ARGV = [
     "gateway",
 ]
 
-# A Alfred-shaped argv with no absolute paths: cannot disprove that this
+# A +Human-shaped argv with no absolute paths: cannot disprove that this
 # process touches our state.db, so it must stay fail-closed.
-AMBIGUOUS_ARGV = ["alfred", "gateway", "run"]
+AMBIGUOUS_ARGV = ["plushuman", "gateway", "run"]
 
 
 def _install_fake_proc(monkeypatch, tmp_path, unreadable_pids=(), fd_pids=()):
@@ -111,7 +111,7 @@ def _install_fake_argv(monkeypatch, argv_by_pid):
 class TestUninspectableHolderInstanceScope:
     def test_other_instance_argv_is_not_a_holder_of_our_db(self, tmp_path, monkeypatch):
         """RED: fd dir unreadable + argv proves the process belongs to a
-        DIFFERENT Alfred home → not a holder of our state.db."""
+        DIFFERENT +Human home → not a holder of our state.db."""
         # A real ``.hermes`` home, as on the field host this test is drawn from: the install
         # location can only identify a home that is itself part of an install layout.
         db_path = tmp_path / ".hermes" / "state.db"
@@ -130,7 +130,7 @@ class TestUninspectableHolderInstanceScope:
         for argv in (
             ["hermes", f"--db={db_path}", "gateway"],
             ["hermes", "checkpoint", f"{db_path}-wal"],
-            ["alfred", "--home", our_home, "gateway"],
+            ["plushuman", "--home", our_home, "gateway"],
         ):
             assert hermes_state_holders._looks_like_hermes(argv) or argv[0] == "hermes"
             _install_fake_proc(monkeypatch, tmp_path, unreadable_pids=(222,))
@@ -147,8 +147,8 @@ class TestUninspectableHolderInstanceScope:
         root = tmp_path / ".hermes"
         db_path = root / "profiles" / "b" / "state.db"
         db_path.parent.mkdir(parents=True)
-        multiplexer = ["alfred", "--home", str(root), "gateway", "run"]
-        other_install = ["alfred", "--home", "/home/demo/.hermes", "gateway", "run"]
+        multiplexer = ["plushuman", "--home", str(root), "gateway", "run"]
+        other_install = ["plushuman", "--home", "/home/demo/.hermes", "gateway", "run"]
 
         _install_fake_proc(monkeypatch, db_path.parent, unreadable_pids=(222,))
         _install_fake_argv(monkeypatch, {222: multiplexer})
@@ -162,7 +162,7 @@ class TestUninspectableHolderInstanceScope:
         """argv[0] is the SHARED install binary, so it cannot prove a hold of profile b's store.
 
         Every hermes process on a normal host runs ``<root>/venv/bin/hermes``; counting that token
-        as proof made ``alfred -p other chat -q`` an uninspectable holder of every OTHER profile's
+        as proof made ``plushuman -p other chat -q`` an uninspectable holder of every OTHER profile's
         state.db, deferring its FTS rebuild and auto-VACUUM for as long as the sibling lived
         (#92401, inside a single install). The process's own ``-p``/``--profile`` selection decides.
         """
@@ -209,9 +209,9 @@ class TestUninspectableHolderInstanceScope:
         """``<X>/profiles/<n>/state.db`` does not make all of ``<X>`` ours.
 
         A raw ``basename == "profiles"`` test promoted any such parent to the install root, so an
-        unrelated Alfred install living under it was counted as a holder — the literal two-instance
+        unrelated +Human install living under it was counted as a holder — the literal two-instance
         shape #92401 was filed about. The canonical ``named_profile_home`` predicate requires the
-        parent to be a real Alfred home.
+        parent to be a real +Human home.
         """
         work = tmp_path / "work"
         db_path = work / "profiles" / "b" / "state.db"

@@ -173,7 +173,7 @@ _ATTRIBUTION_HEADERS = {
     "Content-Type": "application/json",
     # OpenRouter attribution headers (harmless against Nous Portal).
     "HTTP-Referer": "https://github.com/Blubobo1010/Alfred-Ai-Audit",
-    "X-Title": "Alfred",
+    "X-Title": "+Human",
 }
 
 
@@ -761,7 +761,7 @@ class OpenRouterCompatImageProvider(ImageGenProvider):
         if not api_key or not base_url:
             return fail(
                 f"No {self._display} credentials found. "
-                f"Configure {self._display} in `alfred tools` → Image Generation.",
+                f"Configure {self._display} in `plushuman tools` → Image Generation.",
                 "missing_api_key")
 
         model_chain = self._resolve_model_chain(kwargs.get("model"))

@@ -8,7 +8,7 @@ export const SHARED_METRICS_DOCS_URL = 'https://hermes-agent.nousresearch.com/do
 
 export type SharedMetricsConsent = SharedMetricsConsentResult
 
-/** The first-run answers, as the two config opt-ins `alfred setup` writes. */
+/** The first-run answers, as the two config opt-ins `plushuman setup` writes. */
 export type SharedMetricsChoice = 'local' | 'off' | 'share'
 
 export const SHARED_METRICS_CHOICES: Record<SharedMetricsChoice, { enabled: boolean; send: boolean }> = {
@@ -40,7 +40,7 @@ function isConsent(value: unknown): value is SharedMetricsConsent {
 /**
  * The profile's opt-ins, straight from its config.yaml (the backend is the
  * only authority; nothing is latched in the renderer, so an answer given in
- * `alfred setup` and one given here are the same answer). `null` when the
+ * `plushuman setup` and one given here are the same answer). `null` when the
  * backend could not say — an older backend without the method, or a flap —
  * which every caller treats as "don't ask".
  */

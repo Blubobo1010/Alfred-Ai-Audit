@@ -193,7 +193,7 @@ def _hand_off_primary_routed_run(job: dict[str, Any], extra_prompt: Optional[str
         # than an honest refusal (nothing would ever pick it up).
         cause = ("Start the gateway — its ticker will deliver the job on schedule." if alive is False
                  else "Could not determine whether a gateway serves this profile; check "
-                      "`alfred cron status` and re-run.")
+                      "`plushuman cron status` and re-run.")
         return _dumps({
             "success": False,
             "error": (
@@ -470,12 +470,12 @@ def _latest_job_output_excerpt(job_id: str, max_chars: int = 2000) -> Optional[s
 
 def _reap_stale_executions(job_name: str) -> None:
     """Reap execution rows left 'claimed'/'running' by a provably-dead owner (e.g. a prior
-    one-shot `alfred cron run` that died mid-run). The ticker does this at startup; one-shot
+    one-shot `plushuman cron run` that died mid-run). The ticker does this at startup; one-shot
     invocations have no such moment, so a stale claim would block every later manual run.
     Best-effort self-heal: must not block dispatch."""
     try:
         # Reap any execution row this job (or any job) left stranded 'claimed'/ 'running' by a dead owner
-        # process -- e.g. a PRIOR one-shot `alfred cron run` invocation whose dispatched runner died with
+        # process -- e.g. a PRIOR one-shot `plushuman cron run` invocation whose dispatched runner died with
         # the exiting process before writing a terminal status (issue #86721). Safe and cheap: provably-dead
         # owners (PID gone, or PID reused by a different process per its start time) are reaped, as is a
         # live owner whose claim is older than the derived stale bound (the process itself is not killed).
@@ -537,7 +537,7 @@ def _try_dispatch_background_run(
     ``{"claimed": True, "dispatched": False, ...}`` when the pool was full and it ran inline."""
     job_id = job["id"]
     job_name = str(job.get("name") or job_id)
-    # Reap BEFORE the async/sync branch: the one-shot `alfred cron run` path returns early
+    # Reap BEFORE the async/sync branch: the one-shot `plushuman cron run` path returns early
     # below, and this is the only moment it heals a stale claim left by a killed prior run (#113923).
     _reap_stale_executions(job_name)
 
@@ -550,7 +550,7 @@ def _try_dispatch_background_run(
         pass
 
     # Routing capture BEFORE the claim: no routable session = no durable consumer for a detached
-    # completion, so don't claim-and-dispatch (direct callers like `alfred cron run` exit right after).
+    # completion, so don't claim-and-dispatch (direct callers like `plushuman cron run` exit right after).
     session_key = _background_session_key(session_id)
     # CLI path: the approval contextvar is only bound during gateway/TUI turns. The CLI drain filters
     # completions by the durable agent session id (#64240), so stamp it as the key — an empty key would fail
@@ -1057,9 +1057,9 @@ CRONJOB_SCHEMA = {
     "name": "cronjob_manage",
     "description": """Manage scheduled cron jobs: action='create' schedules a job from a prompt and/or skills; 'list' inspects jobs; 'update'/'pause'/'resume'/'remove' manage one by job_id (always list first — never guess job IDs); 'run' fires a job immediately in the BACKGROUND (returns a handle at once, outcome re-enters the conversation when done — do not wait or poll; optional 'prompt' adds transient context for that fire only).
 
-Jobs run on the main agent model (whatever `alfred model` is set to when they fire) unless pinned.
+Jobs run on the main agent model (whatever `plushuman model` is set to when they fire) unless pinned.
 
-Jobs run in a fresh session with no current-chat context, so prompts must be self-contained, and the agent's FINAL RESPONSE is what gets delivered — cron runs are autonomous and cannot ask questions. Jobs run on the main agent model (whatever `alfred model` is set to when they fire) unless the user pins one. Prefer updating an existing job over creating near-duplicates.""",
+Jobs run in a fresh session with no current-chat context, so prompts must be self-contained, and the agent's FINAL RESPONSE is what gets delivered — cron runs are autonomous and cannot ask questions. Jobs run on the main agent model (whatever `plushuman model` is set to when they fire) unless the user pins one. Prefer updating an existing job over creating near-duplicates.""",
     "parameters": {
         "type": "object",
         "properties": {
@@ -1075,7 +1075,7 @@ Jobs run in a fresh session with no current-chat context, so prompts must be sel
             },
             "pinned": {
                 "type": "boolean",
-                "description": "For create/update. ONLY set when the user explicitly asks to pin (or unpin) a job's model. pinned=true locks the CURRENT main agent model (and its provider) onto the job so later `alfred model` / `/model` changes never touch it; pinned=false releases the lock so the job follows the main agent model again. Never set it on your own initiative: by default jobs follow the main model."
+                "description": "For create/update. ONLY set when the user explicitly asks to pin (or unpin) a job's model. pinned=true locks the CURRENT main agent model (and its provider) onto the job so later `plushuman model` / `/model` changes never touch it; pinned=false releases the lock so the job follows the main agent model again. Never set it on your own initiative: by default jobs follow the main model."
             },
             "prompt": {
                 "type": "string",
@@ -1164,7 +1164,7 @@ def check_cronjob_requirements() -> bool:
 
 
 # Agent-facing arguments forwarded verbatim to cronjob(). model / provider / base_url are
-# intentionally NOT here: per-job inference pins are user-owned (dashboard, `alfred cron
+# intentionally NOT here: per-job inference pins are user-owned (dashboard, `plushuman cron
 # create/edit --model`, hand-edited jobs) — the agent must not point unattended spend at a
 # different model. Programmatic callers of cronjob() itself retain the parameters.
 _HANDLER_FORWARDED_ARGS = (

@@ -3,7 +3,7 @@
 ``collect_fleet_versions()`` swallows every probe failure via
 ``logger.debug()`` and ``print_fleet_version_matrix([])`` early-returns
 ``False``, so an empty fleet snapshot used to read as "healthy fleet" and
-``alfred update`` exited 0 with zero rows — even when a gateway was
+``plushuman update`` exited 0 with zero rows — even when a gateway was
 verifiably live before the update.
 
 The first guard (PR #93410) keyed on ``(restarted_services or killed_pids)``,
@@ -171,7 +171,7 @@ def test_unmapped_stop_debt_survives_startup_until_a_current_gateway_runs(monkey
     assert fleet._pending_fleet_restart_needed(receipt={}, pending_manual=[]) is True  # already-current update
     assert fleet._fleet_restart_obligation_armed()
 
-    fleet_rows.append({"profile": "default", "state": "current", "code_sha": "head"})  # `alfred gateway run`
+    fleet_rows.append({"profile": "default", "state": "current", "code_sha": "head"})  # `plushuman gateway run`
     assert fleet._update_owes_fleet_restart(receipt={}, pending_manual=[]) is False
     assert not fleet._fleet_restart_obligation_armed()
 

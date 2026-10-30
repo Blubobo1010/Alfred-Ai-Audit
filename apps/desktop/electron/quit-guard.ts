@@ -4,7 +4,7 @@
 // that go. The decision + copy live here (pure, testable) so main.ts only owns
 // the IPC and the dialog call.
 //
-// That's only true for a backend the app owns. A remote URL or Alfred Cloud
+// That's only true for a backend the app owns. A remote URL or +Human Cloud
 // backend is supervised elsewhere and finishes the turn after the app quits,
 // so its prompt says so instead of warning about lost work (#79579).
 
@@ -118,12 +118,12 @@ export function quitPromptFor(
       lines.length > 0 ? '' : null,
       backendOwned
         ? 'Quitting stops the agent mid-turn. Any work it has not finished writing is lost.'
-        : 'The agent keeps running on the remote backend. Quitting only closes Alfred on this computer; reconnect later to see the results.'
+        : 'The agent keeps running on the remote backend. Quitting only closes +Human on this computer; reconnect later to see the results.'
     ]
       .filter(line => line !== null)
       .join('\n')
       .trim(),
-    message: work.count === 1 ? 'Alfred is still working on 1 chat.' : `Alfred is still working on ${work.count} chats.`
+    message: work.count === 1 ? '+Human is still working on 1 chat.' : `+Human is still working on ${work.count} chats.`
   }
 }
 

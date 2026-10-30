@@ -1,4 +1,4 @@
-"""`alfred chat -Q` must not leak presentation output into stdout (#93220)."""
+"""`plushuman chat -Q` must not leak presentation output into stdout (#93220)."""
 
 from __future__ import annotations
 

@@ -13,7 +13,7 @@ const generated = new Set(['node_modules', 'dist', 'build', 'release', '.cache',
 // tree (source, output or a prepared dir) the moment the checkout is opened in
 // Finder or Explorer mid-build — .DS_Store, AppleDouble ._* sidecars and
 // .localized on macOS, Thumbs.db and Desktop.ini on Windows. Skip it everywhere
-// so it can't flip a freshness hash and abort `alfred update` (#122632, #122803).
+// so it can't flip a freshness hash and abort `plushuman update` (#122632, #122803).
 const osMetadata = name => {
   const base = name.split('/').pop()
   return base === '.DS_Store' || base === '.localized'

@@ -1,7 +1,7 @@
 # Kanban Setup — Project Bootstrap & Profile Configuration
 
 Once the brief is locked and the team is designed, the next step is producing
-the actual `setup.sh` that creates the project workspace, configures Alfred
+the actual `setup.sh` that creates the project workspace, configures +Human
 profiles, and fires the initial kanban task.
 
 This file documents the patterns. The companion script
@@ -60,20 +60,20 @@ Example: `q3-product-teaser`, `ascii-mood-loop`, `interview-cut-2026-q1`.
 The setup script does six things in order:
 
 1. **Create workspace tree** — all directories above
-2. **Create profiles** — `alfred profile create <name> --clone`
+2. **Create profiles** — `plushuman profile create <name> --clone`
 3. **Configure profiles** — patch each profile's
    `~/.hermes/profiles/<name>/config.yaml` to set toolsets, always_load skills,
    and `cwd`
 4. **Write SOUL.md per profile** — the personality + role definition
 5. **Copy any provided assets + write `brief.md`, `TEAM.md`, and `taste/`**
-6. **Fire the initial kanban task** — `alfred kanban create` assigned to the director
+6. **Fire the initial kanban task** — `plushuman kanban create` assigned to the director
 
 See `assets/setup.sh.tmpl` for the skeleton.
 
 ### Profile creation pattern
 
 ```bash
-alfred profile create director --clone 2>/dev/null || true
+plushuman profile create director --clone 2>/dev/null || true
 ```
 
 The `--clone` flag clones from the active profile (preserving model, base
@@ -121,7 +121,7 @@ PY
 }
 ```
 
-ruamel.yaml must be installed in the user's Python (it ships with Alfred).
+ruamel.yaml must be installed in the user's Python (it ships with +Human).
 If absent: `pip install ruamel.yaml==0.18.17`.
 
 The setup script should also **validate** the patch by re-reading the file
@@ -154,7 +154,7 @@ system prompt, so no profile needs to load a kanban skill.
 The final action of setup.sh is firing the kanban:
 
 ```bash
-alfred kanban create "Direct production of <video title>" \
+plushuman kanban create "Direct production of <video title>" \
     --assignee director \
     --workspace dir:"$HOME/projects/video-pipeline/${PROJECT_SLUG}" \
     --tenant ${PROJECT_SLUG} \
@@ -223,7 +223,7 @@ The director turns this into actual `kanban_create` calls.
 ## API-key prerequisites check
 
 Before firing the kanban, verify required keys are available. Check both
-the Alfred `.env` (`${HERMES_HOME:-$HOME/.hermes}/.env`) and macOS Keychain
+the +Human `.env` (`${HERMES_HOME:-$HOME/.hermes}/.env`) and macOS Keychain
 (if on macOS):
 
 ```bash

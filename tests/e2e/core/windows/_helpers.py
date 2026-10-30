@@ -1,15 +1,15 @@
 """Shared harness for the native-Windows end-to-end suite.
 
-Every test drives REAL Alfred processes (the source launcher / ``python -m
+Every test drives REAL +Human processes (the source launcher / ``python -m
 hermes_cli.main``) on a real Windows host against the recording loopback
-provider (``tests/fakes/fake_llm_provider.py``). Nothing in Alfred is mocked;
+provider (``tests/fakes/fake_llm_provider.py``). Nothing in +Human is mocked;
 verdicts come from what reached the provider wire, what landed in ``state.db``
 / on disk, and the live process table (psutil).
 
 Each test gets a fresh fake user profile under ``tmp_path``: ``USERPROFILE`` /
 ``HOME`` / ``LOCALAPPDATA`` / ``APPDATA`` all point inside it and
 ``HERMES_HOME`` is ``<profile>/.hermes``, so no child can read or write the
-runner's real Alfred state.
+runner's real +Human state.
 """
 
 from __future__ import annotations
@@ -46,7 +46,7 @@ _SECRET_SUFFIXES = ("_API_KEY", "_TOKEN", "_SECRET", "_ACCESS_KEY")
 
 @dataclass
 class WinHome:
-    """One hermetic fake Windows user profile with a Alfred home inside it."""
+    """One hermetic fake Windows user profile with a +Human home inside it."""
 
     root: Path
     profile: Path
@@ -182,7 +182,7 @@ def last_user(body: dict[str, Any]) -> str:
 
 
 def tool_results(srv: FakeLLMServer) -> list[str]:
-    """Tool-result messages Alfred sent back to the model, in order, deduped across requests."""
+    """Tool-result messages +Human sent back to the model, in order, deduped across requests."""
     seen: dict[str, str] = {}
     for body in srv.main_requests():
         for m in body.get("messages") or []:

@@ -1,8 +1,8 @@
 /**
- * Alfred desktop plugin template. Save as:
+ * +Human desktop plugin template. Save as:
  *   <hermes home>/desktop-plugins/<id>/plugin.js   (folder name == id)
  * where <hermes home> is ~/.hermes by default, or ~/.hermes/profiles/<name>
- * when running a named profile (`alfred -p <name>`). Run `alfred doctor` (or
+ * when running a named profile (`plushuman -p <name>`). Run `plushuman doctor` (or
  * check the app's Settings → Plugins folder path) if unsure which is active.
  * Then run "Reload desktop plugins" from ⌘K in the desktop app.
  *

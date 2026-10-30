@@ -2,7 +2,7 @@
 name: songwriting-and-ai-music
 description: "Songwriting craft and Suno AI music prompts."
 version: 1.0.0
-author: Teknium (teknium1), Alfred
+author: Teknium (teknium1), +Human
 license: MIT
 tags: [songwriting, music, suno, parody, lyrics, creative]
 platforms: [linux, macos, windows]

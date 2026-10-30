@@ -32,7 +32,7 @@ if TYPE_CHECKING:  # annotation-only; the runtime import would be a cycle
 # Log-record parity with the origin module (caplog tests pin "hermes_cli.auth").
 logger = logging.getLogger("hermes_cli.auth")
 
-_UNUSABLE_JWT_RELOGIN = "Re-authenticate with: alfred auth add nous"
+_UNUSABLE_JWT_RELOGIN = "Re-authenticate with: plushuman auth add nous"
 
 
 def _unusable_invoke_jwt_error(reason: str, *, no_refresh_token: bool = False) -> AuthError:
@@ -349,7 +349,7 @@ _nous_shared_lock_holder = threading.local()
 def _nous_shared_auth_dir() -> Path:
     """Directory of the shared Nous token store: ``HERMES_SHARED_AUTH_DIR`` or ``<root>/shared/``.
 
-    Outside any named profile so all profiles share it (``alfred --profile X auth add nous --type
+    Outside any named profile so all profiles share it (``plushuman --profile X auth add nous --type
     oauth`` one-tap imports it). Written on login AND every runtime refresh so the refresh_token
     stays current across profiles; a stale token just falls back to device-code.
     """
@@ -363,7 +363,7 @@ def _nous_shared_auth_dir() -> Path:
 def _nous_shared_store_path() -> Path:
     path = _nous_shared_auth_dir() / NOUS_SHARED_STORE_FILENAME
     # Seat belt (mirrors the _auth_file_path() guard): under pytest, refuse a path under the real
-    # user's Alfred root so a test that forgot HERMES_SHARED_AUTH_DIR fails loudly instead of
+    # user's +Human root so a test that forgot HERMES_SHARED_AUTH_DIR fails loudly instead of
     # corrupting cross-profile state.
     if os.environ.get("PYTEST_CURRENT_TEST"):
         from hermes_constants import get_default_hermes_root
@@ -662,19 +662,19 @@ def _refresh_access_token(
     description = str(error_payload.get("error_description") or "Refresh token exchange failed")
     relogin = code in _OAUTH_GRANT_DEAD_CODES
     # OAuth 2.1 "refresh token reuse": an external process (health check, monitoring tool, custom
-    # self-heal hook) redeemed Alfred's refresh_token without persisting the rotated token, so the
+    # self-heal hook) redeemed +Human's refresh_token without persisting the rotated token, so the
     # server retired the original and revoked the whole session chain as a token-theft signal.
     if code == "refresh_token_reused" or "reuse" in description.lower():
         description = (
             "Nous Portal detected refresh-token reuse and revoked this session.\n"
             "This usually means an external process (monitoring script, "
-            "custom self-heal hook, or another Alfred install sharing "
-            "~/.hermes/auth.json) called POST /api/oauth/token with Alfred's "
+            "custom self-heal hook, or another +Human install sharing "
+            "~/.hermes/auth.json) called POST /api/oauth/token with +Human's "
             "refresh token without persisting the rotated token back.\n"
-            "Nous refresh tokens are single-use — only Alfred may call the "
-            "refresh endpoint. For health checks, use `alfred auth status` "
+            "Nous refresh tokens are single-use — only +Human may call the "
+            "refresh endpoint. For health checks, use `plushuman auth status` "
             "instead.\n"
-            "Re-authenticate with: alfred auth add nous")
+            "Re-authenticate with: plushuman auth add nous")
         relogin = True
     raise _nous_err(description, code, relogin=relogin)
 
@@ -767,7 +767,7 @@ def fetch_nous_models(
     model_ids: list[str] = []
     for item in data:
         model_id = item.get("id") if isinstance(item, dict) else None
-        # Alfred models aren't reliable for agentic tool-calling
+        # +Human models aren't reliable for agentic tool-calling
         if _nonempty_str(model_id) and "hermes" not in model_id.lower():
             model_ids.append(model_id.strip())
     model_ids.sort(key=_model_priority)
@@ -1110,7 +1110,7 @@ def _resolve_nous_runtime_credentials(
         _tls_state_from_verify)
     with _provider_state_transaction("nous") as (auth_store, state, state_source_path):
         if not state:
-            raise _nous_err("Alfred is not logged into Nous Portal.", "nous_auth_missing", relogin=True)
+            raise _nous_err("+Human is not logged into Nous Portal.", "nous_auth_missing", relogin=True)
         run = _NousRuntimeResolve(
             auth_store, state, state_source_path, force_refresh=force_refresh,
             stale_access_token=stale_access_token, timeout_seconds=timeout_seconds)
@@ -1329,7 +1329,7 @@ def _pool_first_oauth_status(
     on_pool_miss: Optional[Callable[[], Optional[dict[str, Any]]]] = None) -> dict[str, Any]:
     """Status snapshot for a store-backed OAuth provider (Codex, xAI).
 
-    Pool first (where `alfred auth` / `alfred model` store device_code tokens), then
+    Pool first (where `plushuman auth` / `plushuman model` store device_code tokens), then
     *on_pool_miss* for a pool-derived degraded status, then the legacy state via *resolve*.
 
     The pool read is an observation (``peek``), not a lease: ``select()`` refreshes an expiring
@@ -1394,7 +1394,7 @@ def _nous_device_code_login(
     verify: bool | str = False if insecure else (ca_bundle if ca_bundle else True)
     if _is_remote_session():
         open_browser = False
-    print(f"Starting Alfred login via {pconfig.name}...")
+    print(f"Starting +Human login via {pconfig.name}...")
     print(f"Portal: {portal_base_url}")
     if insecure:
         print("TLS verification: disabled (--insecure)")
@@ -1445,7 +1445,7 @@ def _nous_device_code_login(
             print(format_auth_error(exc))
             print(f"  Subscribe here: {portal_url}/billing")
             print()
-            print("After subscribing, run `alfred model` again to finish setup.")
+            print("After subscribing, run `plushuman model` again to finish setup.")
             raise SystemExit(1)
         raise
 
@@ -1536,7 +1536,7 @@ def _pick_nous_model_after_login(
             else union_with_portal_paid_recommendations)
         model_ids, pricing = union(model_ids, pricing, _portal)
         if not free_tier:
-            # Paid users also see every model on sale right now (same rule as `alfred model`).
+            # Paid users also see every model on sale right now (same rule as `plushuman model`).
             model_ids = union_with_nous_on_sale_models(model_ids, pricing)
         _before_policy = model_ids
         model_ids = restrict_to_nous_policy(model_ids, _policy_allowed, rescue_empty=True)
@@ -1653,7 +1653,7 @@ def _login_nous(args, pconfig: ProviderConfig) -> None:
             _restore_active_provider(prior_active_provider)
             print()
             print("No provider change. Nous credentials saved for future use.")
-            print("  Run `alfred model` again to switch to Nous Portal.")
+            print("  Run `plushuman model` again to switch to Nous Portal.")
             return
         config_path = _update_config_for_provider(
             "nous", inference_base_url, default_model=selected_model)

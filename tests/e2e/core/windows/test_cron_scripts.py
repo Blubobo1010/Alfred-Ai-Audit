@@ -1,10 +1,10 @@
-"""Cron script jobs on native Windows (``alfred cron create --script`` + ``alfred cron run``).
+"""Cron script jobs on native Windows (``plushuman cron create --script`` + ``plushuman cron run``).
 
 A no-agent script job runs its script through an interpreter picked by extension and
-delivers stdout as the job result. ``alfred cron run <id>`` executes it synchronously
+delivers stdout as the job result. ``plushuman cron run <id>`` executes it synchronously
 through ``cron.scheduler.run_job`` (the ticker's code path) when no gateway owns the store.
 
-The ``.sh`` case launches Alfred with the PATH a NATIVE Windows process has (Start menu,
+The ``.sh`` case launches +Human with the PATH a NATIVE Windows process has (Start menu,
 Scheduled Task, Desktop): Git's ``cmd`` dir only, no ``Git\\bin`` / ``Git\\usr\\bin``, so
 the only ``bash`` a bare PATH lookup finds is the WSL stub in System32 (or none). Git for
 Windows is installed at its standard location the whole time, which is exactly the host

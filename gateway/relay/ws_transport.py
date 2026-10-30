@@ -198,7 +198,7 @@ def _event_from_wire(raw: dict[str, Any]) -> MessageEvent:
         scope_id=src.get("scope_id"),
         parent_chat_id=src.get("parent_chat_id"),
         message_id=src.get("message_id"),
-        # Multiplex mode: the connector stamps the target Alfred profile; None on
+        # Multiplex mode: the connector stamps the target +Human profile; None on
         # a single-profile gateway keeps the legacy ``agent:main`` namespace.
         profile=src.get("profile"),
         # Connector-stamped auto-thread markers light the same semantic-rename
@@ -222,7 +222,7 @@ def _event_from_wire(raw: dict[str, Any]) -> MessageEvent:
     if platform_enum == Platform.SLACK:
         # Slack slash text arrives over the relay bypassing the native command
         # callback; normalize at the wire boundary so adapter gates see the real
-        # gateway command rather than the legacy `alfred` parent name.
+        # gateway command rather than the legacy `plushuman` parent name.
         text, msg_type = _normalize_slack_parent_command(text, msg_type)
 
     reply_to = raw.get("reply_to") or {}

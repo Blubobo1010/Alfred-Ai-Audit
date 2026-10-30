@@ -1,4 +1,4 @@
-"""`alfred update` lockfile-churn cleanup must respect npm workspace ownership (#112378).
+"""`plushuman update` lockfile-churn cleanup must respect npm workspace ownership (#112378).
 
 The single root ``package-lock.json`` spans every workspace declared in the root ``package.json``
 ``workspaces`` globs, so a dirty workspace manifest (``apps/desktop/package.json``) protects it;

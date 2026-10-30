@@ -1,4 +1,4 @@
-"""Tests for the ``alfred prompt-size`` diagnostic (issue #34667)."""
+"""Tests for the ``plushuman prompt-size`` diagnostic (issue #34667)."""
 
 import json
 import sys

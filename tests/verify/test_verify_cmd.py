@@ -1,4 +1,4 @@
-"""Tests for the ``alfred verify`` CLI command implementation."""
+"""Tests for the ``plushuman verify`` CLI command implementation."""
 
 import argparse
 import json

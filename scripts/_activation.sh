@@ -1,4 +1,4 @@
-# Sourced, never executed: how a POSIX shell gets the Alfred dev environment.
+# Sourced, never executed: how a POSIX shell gets the +Human dev environment.
 # `activate` (interactive, reversible) and `scripts/run-in-hermes-env` (a child
 # process, one-way) both build on it; neither owns any of it.
 #

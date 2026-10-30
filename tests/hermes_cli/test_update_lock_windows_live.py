@@ -463,7 +463,7 @@ def test_a_completion_child_runs_only_after_its_bind_and_a_refusal_is_receipted(
     assert steps and steps[0]["ok"] is False and "completion child" in steps[0]["detail"], result["receipt"]
 
 
-# --- R8 m2: a refusal a reader swallows is what `alfred update` reports -----------------------
+# --- R8 m2: a refusal a reader swallows is what `plushuman update` reports -----------------------
 
 _SWALLOWING_OWNER = r"""
 import sys
@@ -505,8 +505,8 @@ def test_a_refusal_the_readers_swallow_is_what_the_update_reports(tmp_path):
                          env={**os.environ, "HERMES_HOME": str(home), "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"}, check=False)
     text = out.stdout + out.stderr
     assert out.returncode == 1, text
-    assert "`alfred update` stopped: Windows would not put `git` in this update's process job" in text, text
-    assert "Nothing was changed" in text and "Run `alfred update` again from a regular terminal" in text, text
+    assert "`plushuman update` stopped: Windows would not put `git` in this update's process job" in text, text
+    assert "Nothing was changed" in text and "Run `plushuman update` again from a regular terminal" in text, text
 
 
 # --- F03/N11: both historical takeover hops are bound to the job (or leased and receipted) -----
@@ -570,7 +570,7 @@ def test_the_old_updater_runs_its_takeover_in_the_job(tmp_path, monkeypatch, cap
 # --- C3: a normal release never frees the checkout under a build descendant ------------------
 
 # The launcher's own argv says "hermes: update custody", which the live-system guard reads as
-# `alfred update`; this test runs it in-process against a tmp_path checkout, never a real one.
+# `plushuman update`; this test runs it in-process against a tmp_path checkout, never a real one.
 @pytest.mark.live_system_guard_bypass
 def test_a_build_descendant_left_by_its_leader_never_writes_after_a_normal_release(tmp_path):
     """C3: npm exits while a builder grandchild it started keeps running. The launcher returns

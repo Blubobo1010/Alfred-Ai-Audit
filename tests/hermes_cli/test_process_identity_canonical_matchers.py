@@ -14,19 +14,19 @@ LOOPBACK = "--host 127.0.0.1 --port 0"
 # (cmdline, holder subcommand, desktop-local reap?, Windows updater "Desktop backend"?). Substring
 # scanners get every "trap" row wrong: "serve" appears inside --preserve-cache / observer.py / a flag
 # value. The updater's kill set additionally requires the Desktop's `-m hermes_cli.main` spawn shape —
-# a user-launched `alfred serve` / `alfred dashboard` is refused on, never tree-killed.
+# a user-launched `plushuman serve` / `plushuman dashboard` is refused on, never tree-killed.
 CMDLINES = [
     ("python -m hermes_cli.main serve " + LOOPBACK, "serve", True, True),
     ("python -m hermes_cli.main dashboard", "dashboard", False, True),
     ("/venv/bin/hermes serve --isolated --host=127.0.0.1 --port=0 --ssh-owner-nonce abc", "serve", True, False),
     (r"C:\hermes\.venv\Scripts\hermes.exe serve --host 100.106.105.2 --port 9119", "serve", False, False),
     ("hermes.exe dashboard", "dashboard", False, False),
-    ("alfred --profile ops serve " + LOOPBACK, "serve", True, False),
-    ("alfred -m serve kanban --preserve-cache " + LOOPBACK, "kanban", False, False),
+    ("plushuman --profile ops serve " + LOOPBACK, "serve", True, False),
+    ("plushuman -m serve kanban --preserve-cache " + LOOPBACK, "kanban", False, False),
     ("python -m hermes_cli.main kanban --preserve-cache " + LOOPBACK, "kanban", False, False),
-    ("alfred --reasoning high dashboard " + LOOPBACK, "dashboard", False, False),
-    ("alfred gateway run --replace", "gateway", False, False),
-    ("alfred chat --model serve", "chat", False, False),
+    ("plushuman --reasoning high dashboard " + LOOPBACK, "dashboard", False, False),
+    ("plushuman gateway run --replace", "gateway", False, False),
+    ("plushuman chat --model serve", "chat", False, False),
     ("python observer.py serve " + LOOPBACK, None, False, False),
 ]
 
@@ -42,9 +42,9 @@ def test_kill_and_relaunch_predicates_agree_with_the_canonical_holder_matcher(
 
 
 def test_desktop_local_serve_spares_fixed_port_and_remote_hosts():
-    assert not _is_desktop_local_serve_cmdline("alfred serve --host 100.106.105.2 --port 9119 --skip-build")
-    assert not _is_desktop_local_serve_cmdline("alfred serve --host 127.0.0.1 --port 9119")
-    assert _is_desktop_local_serve_cmdline("alfred serve --host localhost --port 0")
+    assert not _is_desktop_local_serve_cmdline("plushuman serve --host 100.106.105.2 --port 9119 --skip-build")
+    assert not _is_desktop_local_serve_cmdline("plushuman serve --host 127.0.0.1 --port 9119")
+    assert _is_desktop_local_serve_cmdline("plushuman serve --host localhost --port 0")
 
 
 def test_profile_liveness_is_the_shared_ladder(tmp_path, monkeypatch):
@@ -69,8 +69,8 @@ def test_profile_liveness_is_the_shared_ladder(tmp_path, monkeypatch):
     assert calls == [(tmp_path / "gateway.pid", False)]
 
 
-# ``alfred serve`` is a substring of ``hermes server``: a terminal multiplexer started as
-# ``herdr --session hermes server`` was SIGTERMed by ``alfred update`` and its unit restarted (#121156).
+# ``plushuman serve`` is a substring of ``hermes server``: a terminal multiplexer started as
+# ``herdr --session hermes server`` was SIGTERMed by ``plushuman update`` and its unit restarted (#121156).
 DECOY = "tool --name hermes server 30"
 BACKENDS = [
     "/opt/hermes/venv/bin/python -m hermes_cli.main serve --port 0",

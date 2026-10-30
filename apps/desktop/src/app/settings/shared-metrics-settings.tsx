@@ -21,7 +21,7 @@ import { ToggleRow } from './primitives'
 
 /**
  * Settings › Safety › Privacy: the same two opt-ins the first-run dialog and
- * `alfred setup` write, for the profile this page applies to. Collection off
+ * `plushuman setup` write, for the profile this page applies to. Collection off
  * turns sending off with it (the backend enforces it too), so the send switch
  * is disabled until collection is on. Optimistic, rolled back on failure.
  */

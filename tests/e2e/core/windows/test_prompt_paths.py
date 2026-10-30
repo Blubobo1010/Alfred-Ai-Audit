@@ -1,9 +1,9 @@
-"""Prompt assembly with native Windows paths, through real Alfred processes.
+"""Prompt assembly with native Windows paths, through real +Human processes.
 
 * Subdirectory hints: after a terminal command touches ``backend\\src``, the tool result the
   model receives carries ``backend/AGENTS.md`` — for the forward-slash spelling AND the
   native backslash spelling a model emits on Windows (#121150).
-* AGENTS.md chain: ``alfred chat -q`` launched in ``pkg\\inner`` of a git repo loads all
+* AGENTS.md chain: ``plushuman chat -q`` launched in ``pkg\\inner`` of a git repo loads all
   three AGENTS.md files and labels them ``../../AGENTS.md`` / ``../AGENTS.md`` / ``AGENTS.md``
   — one spelling on every OS (#121015).
 * ``@folder:`` references through the TUI gateway (the Ink TUI's process): the listing

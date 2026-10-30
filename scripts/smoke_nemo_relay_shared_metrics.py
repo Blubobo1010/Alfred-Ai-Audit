@@ -1,4 +1,4 @@
-"""Run a real Alfred CLI turn and validate the Relay shared-metrics output."""
+"""Run a real +Human CLI turn and validate the Relay shared-metrics output."""
 
 from __future__ import annotations
 
@@ -39,7 +39,7 @@ def _resolve_hermes_executable(hermes_repo: Path) -> Path:
     if discovered:
         return Path(discovered)
     raise SystemExit(
-        "Alfred executable not found in the repository virtual environment "
+        "+Human executable not found in the repository virtual environment "
         "or on PATH"
     )
 
@@ -238,7 +238,7 @@ def _arguments() -> argparse.Namespace:
         "--hermes-repo",
         type=Path,
         default=Path.cwd(),
-        help="Alfred source checkout containing .venv/bin/hermes",
+        help="+Human source checkout containing .venv/bin/hermes",
     )
     parser.add_argument(
         "--relay-python",
@@ -303,7 +303,7 @@ def _validate_failure_rows(rows: dict[str, list[dict[str, Any]]]) -> None:
 
 # One interactive turn (2 model calls, 1 read_file) on the canary custom model: the v5 per-turn,
 # per-conversation rows it must produce, identical in SQLite and in the export. The agent-created
-# skill is Alfred' own work, so it records no feature_adoption row (the exact name sets assert that).
+# skill is +Human' own work, so it records no feature_adoption row (the exact name sets assert that).
 V5_EXPECTED_DIMENSIONS = {
     "hermes.task_cost.count": {
         "api_calls_bucket": "2", "model": "custom", "outcome": "completed", "provider": "custom",
@@ -544,7 +544,7 @@ def _validate_packages(
         import jsonschema
     except ImportError as exc:
         raise RuntimeError(
-            "The Alfred development environment requires jsonschema"
+            "The +Human development environment requires jsonschema"
         ) from exc
     schema = json.loads(schema_path.read_text(encoding="utf-8-sig"))
     packages = [
@@ -775,7 +775,7 @@ def main() -> int:
     (root / "hermes.stderr.txt").write_text(result.stderr, encoding="utf-8")
     if result.returncode != 0:
         raise AssertionError(
-            f"Alfred exited with {result.returncode}\n"
+            f"+Human exited with {result.returncode}\n"
             f"stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
         )
     if len(_ModelHandler.requests) != 2:
@@ -786,12 +786,12 @@ def main() -> int:
     if request.get("model") != MODEL_CANARY:
         raise AssertionError(f"Unexpected model request: {request.get('model')!r}")
     if PROMPT_CANARY not in json.dumps(request.get("messages", [])):
-        raise AssertionError("Alfred model request did not contain the prompt canary")
+        raise AssertionError("+Human model request did not contain the prompt canary")
     follow_up = json.dumps(_ModelHandler.requests[1].get("messages", []))
     if TOOL_CALL_CANARY not in follow_up or TOOL_RESULT_CANARY not in follow_up:
-        raise AssertionError("Alfred did not return the tool result to the model")
+        raise AssertionError("+Human did not return the tool result to the model")
     if RESPONSE_CANARY not in result.stdout:
-        raise AssertionError("Alfred did not print the mock model response")
+        raise AssertionError("+Human did not print the mock model response")
 
     skill_result = subprocess.run(
         [
@@ -876,7 +876,7 @@ def main() -> int:
         / "hermes.shared_metrics.v4.schema.json",
     )
 
-    print("Alfred -> NeMo Relay shared-metrics smoke test passed")
+    print("+Human -> NeMo Relay shared-metrics smoke test passed")
     print(f"Artifact directory: {root}")
     print(f"Model requests: {len(_ModelHandler.requests)}")
     print(f"SQLite counters: {json.dumps(counters, indent=2)}")

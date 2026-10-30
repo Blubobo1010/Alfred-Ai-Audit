@@ -1,4 +1,4 @@
-"""Alfred skin/theme engine — the theme SDK for every surface."""
+"""+Human skin/theme engine — the theme SDK for every surface."""
 
 import logging
 from dataclasses import dataclass, field
@@ -56,13 +56,13 @@ def _wings(*glyphs) -> list[list[str]]:
             for g in glyphs]
 
 
-# Branding shared by every Alfred-named built-in (mono/daylight override help_header).
+# Branding shared by every +Human-named built-in (mono/daylight override help_header).
 _HERMES_BRANDING: dict[str, str] = _branding(
-    "Alfred", "🎩", "Goodbye! 🎩", prompt="❯", help_header="(^_^)? Available Commands")
+    "+Human", "✚", "Goodbye! ✚", prompt="❯", help_header="(^_^)? Available Commands")
 
 _BUILTIN_SKINS: dict[str, dict[str, Any]] = {
     "default": {
-        "name": "default", "description": "Classic Alfred — gold and kawaii",
+        "name": "default", "description": "Classic +Human — gold and kawaii",
         # Dark-authored; values match the TUI's DARK_THEME so both render the same gold.
         "colors": {
             "banner_border": "#CD7F32", "banner_title": "#FFD700", "banner_accent": "#FFBF00",
@@ -401,7 +401,7 @@ def _build_skin_config(data: dict[str, Any]) -> SkinConfig:
     return SkinConfig(
         name=skin_name, description=data.get("description", ""), colors=merged("colors"),
         light_colors=section("light_colors"), dark_colors=section("dark_colors"),
-        spinner=merged("spinner"), branding=merged("branding"),
+        spinner=merged("spinner"), branding=_assistant_branding(merged("branding")),
         tool_prefix=data.get("tool_prefix", default.get("tool_prefix", "┊")),
         tool_emojis=section("tool_emojis"), banner_logo=data.get("banner_logo", ""),
         banner_hero=data.get("banner_hero", ""),
@@ -419,6 +419,12 @@ def list_skins() -> list[dict[str, str]]:
             result.append({"name": data.get("name", f.stem), "description": data.get("description", ""),
                            "source": "user"})
     return result
+
+
+def _assistant_branding(branding: dict[str, str]) -> dict[str, str]:
+    """The default skin speaks with the assistant's own name (display.assistant_name)."""  # alfred:keep
+    from hermes_cli.assistant_name import personalize_branding
+    return personalize_branding(branding)
 
 
 def load_skin(name: str) -> SkinConfig:
@@ -491,7 +497,7 @@ def get_active_help_header(fallback: str = "(^_^)? Available Commands") -> str:
     return _active_branding("help_header", fallback)
 
 
-def get_active_goodbye(fallback: str = "Goodbye! 🎩") -> str:
+def get_active_goodbye(fallback: str = "Goodbye! ✚") -> str:
     return _active_branding("goodbye", fallback)
 
 

@@ -18,10 +18,10 @@ def _is_windows() -> bool:
 
 
 #: Launcher command names install.ps1's Set-PathVariable exposes from the
-#: managed binary dir (the default Alfred root's ``bin``, next to uv.exe)
+#: managed binary dir (the default +Human root's ``bin``, next to uv.exe)
 #: on the user PATH. Keep in lockstep with WINDOWS_BIN_LAUNCHERS in
 #: hermes_cli/_launchers.py and scripts/install.ps1.
-_WINDOWS_BIN_LAUNCHERS = ("hermes", "alfred", "hermes-acp")
+_WINDOWS_BIN_LAUNCHERS = ("hermes", "plushuman", "alfred", "hermes-acp")
 
 
 def _normalize_windows_path(value) -> str:
@@ -59,27 +59,27 @@ def ensure_windows_bin_launchers(
     windows: bool | None = None,
     user_path_entries: list[str] | None = None,
 ) -> list[str]:
-    """Re-stage the Windows ``alfred`` launchers when they vanish or when
+    """Re-stage the Windows ``plushuman`` launchers when they vanish or when
     they still boot through the venv.
 
-    On Windows, ``alfred`` resolves through staged launchers — never
+    On Windows, ``plushuman`` resolves through staged launchers — never
     ``venv\\Scripts`` itself on PATH, which would shadow the user's
     ``python`` (#83797) — and under pm the launchers boot the pm STORE
     python with ``PYTHONPATH=<repo>;<venv>/site-packages``, never the venv
     interpreter (no-boot-through-venv; ``pyvenv.cfg`` is inert dead
     config). The canonical launcher home is
-    the managed binary dir — the default Alfred root's ``bin``
+    the managed binary dir — the default +Human root's ``bin``
     (``%LOCALAPPDATA%\\hermes\\bin``, next to the managed uv) — which lives
     OUTSIDE the git checkout so no git operation can ever touch it. It is
     a per-machine dir shared by every profile: ``get_hermes_home()`` would
-    point inside ``profiles\\<name>`` under ``alfred -p``, so the anchor
+    point inside ``profiles\\<name>`` under ``plushuman -p``, so the anchor
     here is :func:`hermes_constants.get_default_hermes_root`.
 
     Earlier installer versions staged them at ``<checkout>\\bin`` instead —
-    inside the git working tree — where ``alfred update``'s pre-update
+    inside the git working tree — where ``plushuman update``'s pre-update
     autostash (``git stash push --include-untracked``) swept them off disk;
     once the desktop updater stopped re-applying stashes (``--keep-stash``)
-    nothing restored them and ``alfred`` stopped resolving in every new
+    nothing restored them and ``plushuman`` stopped resolving in every new
     terminal. That legacy location is re-staged too, during the transition,
     for installs whose user PATH still resolves through it.
 
@@ -110,8 +110,8 @@ def ensure_windows_bin_launchers(
 
     root = Path(root)
 
-    # Per-machine anchor: the DEFAULT Alfred root, not get_hermes_home() —
-    # under ``alfred -p <name>`` that returns ``profiles\\<name>``, which
+    # Per-machine anchor: the DEFAULT +Human root, not get_hermes_home() —
+    # under ``plushuman -p <name>`` that returns ``profiles\\<name>``, which
     # would fail the managed-clone gate below and silently skip the heal
     # for profile users. The launcher dir serves the whole machine.
     from hermes_constants import get_default_hermes_root
@@ -248,7 +248,7 @@ def migrate_windows_bin_path(
 ) -> bool:
     """One-time PATH migration to the ``HERMES_HOME\\bin`` launcher layout.
 
-    Runs from the ``alfred update`` tail (and mirrors what install.ps1's
+    Runs from the ``plushuman update`` tail (and mirrors what install.ps1's
     Set-PathVariable does on fresh installs/repairs, which never reach
     existing installs — updates don't run install.ps1):
 

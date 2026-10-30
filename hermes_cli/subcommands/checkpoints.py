@@ -1,4 +1,4 @@
-"""``alfred checkpoints`` subcommand parser."""
+"""``plushuman checkpoints`` subcommand parser."""
 
 from __future__ import annotations
 

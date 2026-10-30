@@ -1,6 +1,6 @@
-"""Wire translation for Alfred' extended reasoning-effort vocabulary (#89503).
+"""Wire translation for +Human' extended reasoning-effort vocabulary (#89503).
 
-Alfred' internal effort set extends the wire vocabulary with ``ultra`` (the
++Human' internal effort set extends the wire vocabulary with ``ultra`` (the
 /reasoning command documents none..xhigh|max|ultra). OpenAI-compatible wires —
 OpenRouter chief among them — accept exactly max|xhigh|high|medium|low|minimal|
 none and reject the extension with HTTP 400:

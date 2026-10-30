@@ -1,4 +1,4 @@
-"""Steps of ``alfred update --check``: debris cleanup, channel target, scoped fetch, verdict.
+"""Steps of ``plushuman update --check``: debris cleanup, channel target, scoped fetch, verdict.
 
 ``update_cmd._cmd_update_check`` (a frozen updater surface, see ``tests/compat``) orchestrates
 these. Facade helpers are read through ``_uc()`` at call time and origin helpers are imported
@@ -90,7 +90,7 @@ def channel_compare_branch(selected_channel: str, git_cmd: list[str], root: Path
         print(f"✓ Up to date with the latest release ({target.label}).")
     else:
         print(f"→ Selected release available: {target.label}")
-        print("  Run `alfred update` to install it.")
+        print("  Run `plushuman update` to install it.")
     return None
 
 

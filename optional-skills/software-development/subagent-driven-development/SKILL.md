@@ -2,7 +2,7 @@
 name: subagent-driven-development
 description: "Execute plans via delegate_task subagents (2-stage review)."
 version: 1.1.0
-author: Alfred (adapted from obra/superpowers)
+author: +Human (adapted from obra/superpowers)
 license: MIT
 platforms: [linux, macos, windows]
 metadata:

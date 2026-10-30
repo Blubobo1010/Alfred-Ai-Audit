@@ -568,7 +568,7 @@ def test_infrastructure_spawn_refusal_never_charges_the_card(
     monkeypatch.setenv("HERMES_KANBAN_RATE_LIMIT_COOLDOWN_SECONDS", "0")
 
     def spawn_via_real_boundary(task, workspace, board=None):
-        kbd._restart_safe_worker_argv(task, ["alfred", "chat"])  # raises: real probe verdict, real _degrade()
+        kbd._restart_safe_worker_argv(task, ["plushuman", "chat"])  # raises: real probe verdict, real _degrade()
         raise AssertionError("unreachable")
 
     with kbc.connect() as conn:
@@ -945,13 +945,13 @@ def test_dir_child_completion_unblocks_deferred_scratch_parent(kanban_home, tmp_
 
 
 def test_is_managed_scratch_path_rejects_kanban_metadata_subtrees(kanban_home):
-    """Alfred' own DB/metadata/log subtrees under ``<kanban_home>/kanban`` are NOT managed.
+    """+Human' own DB/metadata/log subtrees under ``<kanban_home>/kanban`` are NOT managed.
 
     Regression guard for the Copilot finding on #28819: a scratch task whose
     ``workspace_path`` was mis-set to the kanban home, the logs dir, or a
     board's metadata dir (i.e. the board root itself, not its ``workspaces/``
     child) must be refused. Without this, the containment check would happily
-    ``shutil.rmtree`` Alfred' DB/metadata/logs on task completion.
+    ``shutil.rmtree`` +Human' DB/metadata/logs on task completion.
     """
     kanban_root = kanban_home / "kanban"
     kanban_root.mkdir(parents=True, exist_ok=True)
@@ -1034,7 +1034,7 @@ def test_symlinked_workspaces_root_does_not_widen_scratch_cleanup(kanban_home, t
 # Shared-board path resolution (issue #19348)
 #
 # The kanban board is a cross-profile coordination primitive: a worker
-# spawned with `alfred -p <profile>` must read/write the same kanban.db
+# spawned with `plushuman -p <profile>` must read/write the same kanban.db
 # as the dispatcher that claimed the task. These tests exercise the
 # path-resolution layer directly and would have caught the regression
 # where `kanban_db_path()` resolved to the active profile's HERMES_HOME.
@@ -1449,7 +1449,7 @@ def test_unlink_tasks_triggers_recompute_ready(kanban_home):
     complete_task and unblock_task.
 
     Before the fix, child stayed 'todo' indefinitely after unlink; only the
-    next dispatcher tick or a manual 'alfred kanban recompute' would promote it.
+    next dispatcher tick or a manual 'plushuman kanban recompute' would promote it.
     """
     with kbc.connect() as conn:
         # A is done.
@@ -1564,7 +1564,7 @@ def test_connect_heals_reduced_tasks_schema_seeded_by_external_harness(kanban_ho
 # ---------------------------------------------------------------------------
 # Dispatcher spawn invocation — _resolve_hermes_argv()
 #
-# Workers spawned by the dispatcher must use a `alfred` invocation that does
+# Workers spawned by the dispatcher must use a `plushuman` invocation that does
 # not depend on PATH being set up correctly. cron jobs, systemd User= services,
 # launchd jobs, and other detached processes routinely run with a stripped
 # $PATH that doesn't include the venv's bin/, so a bare `["hermes", ...]`
@@ -1576,7 +1576,7 @@ def test_connect_heals_reduced_tasks_schema_seeded_by_external_harness(kanban_ho
 
 
 def test_resolve_hermes_argv_prefers_module_form_over_path_shim(monkeypatch):
-    """A `alfred` on PATH must not shadow the running install (#111569):
+    """A `plushuman` on PATH must not shadow the running install (#111569):
     the module argv wins whenever ``hermes_cli`` is importable; only an
     explicit ``$HERMES_BIN`` overrides it."""
     import shutil
@@ -1624,7 +1624,7 @@ def test_default_spawn_pins_repo_root_on_module_worker_pythonpath(tmp_path, monk
 
     ``_resolve_hermes_argv`` proves ``hermes_cli`` importable in the gateway,
     where a store-python shim has the repo root on ``sys.path`` in-process;
-    the worker env scrub strips Alfred-owned PYTHONPATH entries, so the bare
+    the worker env scrub strips +Human-owned PYTHONPATH entries, so the bare
     ``sys.executable -m hermes_cli.main`` child died on import and the board
     auto-blocked (#122299, #122487, #122500). The spawned env must put the
     running install's root first on PYTHONPATH — and never for a resolved shim

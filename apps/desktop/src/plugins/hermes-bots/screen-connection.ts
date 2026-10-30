@@ -51,7 +51,7 @@ export function leaseHeldBy(lease: DisplayLease | null | undefined, viewer: Scre
   return lease.viewer_hash === viewer.hash
 }
 
-/** JSON-RPC method-not-found: the bot's Alfred predates the `display.*` surface. */
+/** JSON-RPC method-not-found: the bot's +Human predates the `display.*` surface. */
 export function isDisplayUnavailable(error: unknown): boolean {
   const record = typeof error === 'object' && error !== null ? (error as { code?: unknown; message?: unknown }) : null
 
@@ -64,8 +64,8 @@ export function isDisplayUnavailable(error: unknown): boolean {
   return message.includes('method not found') || message.includes('method-not-found')
 }
 
-/** The bot's backend is a Portal-managed runtime (Alfred Cloud): its Alfred is updated by the
- *  platform, never by the user, so "update the bot's Alfred" is not an instruction the user
+/** The bot's backend is a Portal-managed runtime (+Human Cloud): its +Human is updated by the
+ *  platform, never by the user, so "update the bot's +Human" is not an instruction the user
  *  can follow. A `display.*` method-not-found from a managed release simply means Screen has
  *  not reached that release yet (#120852). */
 export function isManagedBackend(bot: RosterRow): boolean {

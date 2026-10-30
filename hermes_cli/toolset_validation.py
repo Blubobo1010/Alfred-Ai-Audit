@@ -6,16 +6,16 @@ from typing import Callable, List, Optional
 from hermes_cli.platforms import PLATFORMS
 from hermes_cli.toolset_scope import toolset_allowed_for_platform
 
-_NO_TOOLS = "the agent will have no tools on this platform. Run `alfred tools` to reconfigure."
+_NO_TOOLS = "the agent will have no tools on this platform. Run `plushuman tools` to reconfigure."
 
 
 def parse_platform_toolsets_value(value: object) -> Optional[list[str]]:
     """The toolset list a saved ``platform_toolsets.<platform>`` value encodes, or None.
 
-    Older ``alfred config set`` builds stored a bare ``[...]`` argument as a plain string, so an
+    Older ``plushuman config set`` builds stored a bare ``[...]`` argument as a plain string, so an
     explicit selection like ``'["browser", "terminal"]'`` parses as str, not list (#115866).
     Every reader and writer of the section goes through this one parser so the runtime,
-    ``alfred doctor`` and ``alfred plugins enable`` agree on what the user configured. Any other
+    ``plushuman doctor`` and ``plushuman plugins enable`` agree on what the user configured. Any other
     shape (null, scalar, unparseable string) is None: the caller decides how to report it.
     """
     if isinstance(value, list):
@@ -115,7 +115,7 @@ def validate_platform_toolsets(
                 value_detail = f"invalid {type(raw).__name__} toolset value"
             warnings.append(
                 f"platform '{platform}' has {value_detail} — "
-                f"{fallback_detail}. Run `alfred tools` to configure explicitly.")
+                f"{fallback_detail}. Run `plushuman tools` to configure explicitly.")
             if platform_valid_count == 0:
                 warnings.append(f"platform '{platform}' has no valid toolsets configured — {_NO_TOOLS}")
             continue
@@ -141,5 +141,5 @@ def validate_platform_toolsets(
     if valid_count == 0:
         warnings.append(
             "platform_toolsets resolves to zero valid toolsets — the agent will "
-            "have no tools. Run `alfred tools` to reconfigure.")
+            "have no tools. Run `plushuman tools` to reconfigure.")
     return warnings

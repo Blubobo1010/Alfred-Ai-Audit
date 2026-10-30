@@ -45,7 +45,7 @@ def _layer_hex(palette: dict[str, Any], key: str, default: str) -> str:
 
 def _render_active_theme_bootstrap_css() -> str:
     """Critical-CSS ``<style>`` shim for the active *user* theme, so the first paint uses the
-    target palette instead of flashing the bundle's default Alfred Teal until
+    target palette instead of flashing the bundle's default +Human Teal until
     ``ThemeProvider.applyTheme()`` runs. Built-in themes return "" (the bundle owns them).
 
     Variable names MUST match what the bundle consumes (``layerVars()`` /
@@ -95,8 +95,8 @@ def _render_active_theme_bootstrap_css() -> str:
 _IMMUTABLE_ASSET_CACHE_CONTROL = "public, max-age=31536000, immutable"
 _NO_STORE = {"Cache-Control": "no-store, no-cache, must-revalidate"}
 _HEADLESS_MSG = (
-    "Headless backend (alfred serve): web UI disabled — use "
-    "`alfred dashboard` for the browser UI."
+    "Headless backend (plushuman serve): web UI disabled — use "
+    "`plushuman dashboard` for the browser UI."
 )
 
 
@@ -115,7 +115,7 @@ def mount_spa(application: FastAPI):
     from hermes_cli.web_server import WEB_DIST, _DASHBOARD_EMBEDDED_CHAT_ENABLED, app
     from hermes_cli.web_deps import _server
 
-    # `alfred serve` is the headless backend: it must NEVER serve the browser SPA, even if a
+    # `plushuman serve` is the headless backend: it must NEVER serve the browser SPA, even if a
     # dist is lying around, so only the JSON-RPC/WS/API surface is reachable.
     if os.environ.get("HERMES_SERVE_HEADLESS") == "1":
 
@@ -123,7 +123,7 @@ def mount_spa(application: FastAPI):
         async def no_frontend(full_path: str):
             # Desktop token handshake: the Electron shell boots by fetching `/` and reading
             # ``window.__HERMES_SESSION_TOKEN__`` for /api/ws auth. When headless 404'd every
-            # path, a renderer whose spawn token no longer matched (e.g. after `alfred update`)
+            # path, a renderer whose spawn token no longer matched (e.g. after `plushuman update`)
             # white-screened. Serve a token-only page at the exact root, but ONLY when the auth
             # gate is off: on a gated serve the token must never be readable without auth.
             # See #94227, #95575.
@@ -249,8 +249,8 @@ def mount_spa(application: FastAPI):
 
 # Built-in themes — label + description only; colors live in web/src/themes/presets.ts.
 _BUILTIN_DASHBOARD_THEMES = [
-    {"name": "default",       "label": "Alfred Teal",         "description": "Classic dark teal — the canonical Alfred look"},
-    {"name": "default-large", "label": "Alfred Teal (Large)", "description": "Alfred Teal with bigger fonts and roomier spacing"},
+    {"name": "default",       "label": "+Human Teal",         "description": "Classic dark teal — the canonical +Human look"},
+    {"name": "default-large", "label": "+Human Teal (Large)", "description": "+Human Teal with bigger fonts and roomier spacing"},
     {"name": "nous-blue",     "label": "Nous Blue",           "description": "Light mode — vivid Nous-blue accents on cream canvas"},
     {"name": "midnight",      "label": "Midnight",            "description": "Deep blue-violet with cool accents"},
     {"name": "ember",     "label": "Ember",          "description": "Warm crimson and bronze — forge vibes"},
@@ -640,9 +640,9 @@ def _schedule_check_fn_probe(fn) -> Optional[threading.Thread]:
 
 
 def _plugin_login_command(name: str) -> str:
-    """A plugin that left core with its own login command (``alfred spotify login``), else ``alfred auth <name>``."""
+    """A plugin that left core with its own login command (``plushuman spotify login``), else ``plushuman auth <name>``."""
     from hermes_cli.left_core_migration import LEFT_CORE
-    return next((f"alfred {f.cli} login" for f in LEFT_CORE if f.plugin == name and f.cli), f"alfred auth {name}")
+    return next((f"plushuman {f.cli} login" for f in LEFT_CORE if f.plugin == name and f.cli), f"plushuman auth {name}")
 
 
 def _plugin_auth_hint(name: str, provides_tools: list) -> tuple:
@@ -722,7 +722,7 @@ def _merged_plugins_hub(force_refresh: bool = False) -> dict[str, Any]:
     active = _category_active_names()
 
     for name, version, description, source, dir_str, key in _discover_all_plugins():
-        # Same verdict as `alfred plugins list` / the TUI hub: name+key aliases for the lists, bundled
+        # Same verdict as `plushuman plugins list` / the TUI hub: name+key aliases for the lists, bundled
         # backends/platforms/providers and the live memory provider count as enabled without a list
         # entry (#73131, #82898).
         runtime_status = _plugin_status(

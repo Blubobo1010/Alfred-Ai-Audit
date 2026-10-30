@@ -464,10 +464,10 @@ def record_terminal_result(
 
 
 def record_verify_run(
-    *, root: str | Path, session_id: str | None = None, ok: bool, command: str = "alfred verify",
+    *, root: str | Path, session_id: str | None = None, ok: bool, command: str = "plushuman verify",
     scope: str = "full", output: str = "",
 ) -> Optional[dict[str, Any]]:
-    """Record a completed ``alfred verify`` run as verification evidence.
+    """Record a completed ``plushuman verify`` run as verification evidence.
 
     A pass marks the workspace ``passed`` for the verify-on-stop guard like a
     canonical test command would. ``root`` is re-resolved through project facts
@@ -477,7 +477,7 @@ def record_verify_run(
         return None
     resolved = str(Path(root).resolve())
     return _insert_evidence(VerificationEvidence(
-        command=command, canonical_command="alfred verify", kind="verify",
+        command=command, canonical_command="plushuman verify", kind="verify",
         scope=scope if scope in {"full", "targeted"} else "full",
         status="passed" if ok else "failed", exit_code=0 if ok else 1, cwd=resolved,
         root=str((_project_facts(root) or {}).get("root") or resolved),
@@ -511,7 +511,7 @@ def _insert_evidence(evidence: VerificationEvidence) -> dict[str, Any]:
             " changed_paths_json = '[]'",
             (e.session_id, e.root, event_id),
         )
-        # A full passing ``alfred verify`` proves the workspace. Partial or
+        # A full passing ``plushuman verify`` proves the workspace. Partial or
         # failed runs must not wipe another session's edit record (#103650).
         if e.kind == "verify" and e.status == "passed" and e.scope == "full":
             conn.execute(
@@ -566,7 +566,7 @@ def mark_workspace_edited(
 def _newest_workspace_verify(
     conn: sqlite3.Connection, *, root: str, since: str | None
 ) -> Optional[sqlite3.Row]:
-    """Latest full passing ``alfred verify`` for ``root``, optionally not older than ``since``."""
+    """Latest full passing ``plushuman verify`` for ``root``, optionally not older than ``since``."""
     if since:
         return conn.execute(
             "SELECT * FROM verification_events"
@@ -587,7 +587,7 @@ def verification_status(*, session_id: str | None, cwd: str | Path | None) -> di
     """Return the best known verification state for a session/workspace.
 
     Evidence recorded before the latest edit is reported as ``stale``. A
-    ``alfred verify`` event for the same ``root`` that is at least as new as
+    ``plushuman verify`` event for the same ``root`` that is at least as new as
     that edit satisfies the guard even if another session recorded it.
     """
     if not _ledger_enabled():

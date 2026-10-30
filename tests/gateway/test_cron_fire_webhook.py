@@ -376,8 +376,8 @@ async def test_fire_passes_live_adapters_to_provider(adapter, monkeypatch):
 
 @pytest.mark.asyncio
 async def test_estop_refuses_fire_before_admission_and_lifts_on_resume(adapter, monkeypatch, tmp_path):
-    """`alfred pause` must stop the NAS-driven door too: 503 + Retry-After (NAS redelivers
-    after `alfred resume`) and no ``claim_fire`` — a claim followed by a 503 would leave a
+    """`plushuman pause` must stop the NAS-driven door too: 503 + Retry-After (NAS redelivers
+    after `plushuman resume`) and no ``claim_fire`` — a claim followed by a 503 would leave a
     claimed job that the retry and the misfire backstop both race for."""
     from agent import estop
 

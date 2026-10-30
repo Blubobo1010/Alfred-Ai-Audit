@@ -99,8 +99,8 @@ class DeepInfraImageGenProvider(StaticImageGenProvider):
         api_key = (get_secret("DEEPINFRA_API_KEY", "") or "").strip()
         if not api_key:
             return fail(
-                "DEEPINFRA_API_KEY not set. Run `alfred tools` → Image "
-                "Generation → DeepInfra to configure, or `alfred setup` "
+                "DEEPINFRA_API_KEY not set. Run `plushuman tools` → Image "
+                "Generation → DeepInfra to configure, or `plushuman setup` "
                 "to add the key.",
                 "auth_required")
         di_cfg = load_image_gen_config("deepinfra")

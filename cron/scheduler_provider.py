@@ -56,7 +56,7 @@ def _guarded_store_write(action, description, *args, **kwargs):
 
     The gateway runs the provider on an unsupervised daemon thread: one escaping exception
     there stops cron silently while the gateway keeps serving (#111010). Heartbeat/error
-    markers are diagnostics for ``alfred cron status`` — losing one write to a broken store
+    markers are diagnostics for ``plushuman cron status`` — losing one write to a broken store
     must degrade to a logged warning, not thread death.
     """
     try:
@@ -77,7 +77,7 @@ def _existing_profile_homes(profile_homes: list) -> list:
 
     Ticking or heartbeating a deleted home recreates its ``cron/`` workspace (``record_ticker_heartbeat`` ->
     ``ensure_dirs`` -> ``mkdir(parents=True)``) on every 60s cycle, so the "deleted" profile silently comes
-    back on disk and in ``alfred profile list`` (#47368). Filtering on directory existence leaves a deleted
+    back on disk and in ``plushuman profile list`` (#47368). Filtering on directory existence leaves a deleted
     profile's home untouched, which is the correct invariant: a home that does not exist cannot hold jobs to
     fire.
     """
@@ -299,8 +299,8 @@ def fire_overdue_jobs(
     concurrent late external retry is de-duplicated by the store CAS; waits out
     ``cron.misfire_grace_minutes`` so the external retry gets first right. Returns jobs dispatched.
     """
-    # `alfred pause` ESTOP: skip the sweep entirely. No state to unwind — the
-    # next housekeeping pass after `alfred resume` catches overdue work up
+    # `plushuman pause` ESTOP: skip the sweep entirely. No state to unwind — the
+    # next housekeeping pass after `plushuman resume` catches overdue work up
     # through the existing claim_fire path. Distinct component name from the
     # ticker's "cron" so the log-once mechanism fires independently.
     with contextlib.suppress(ImportError):
@@ -452,7 +452,7 @@ class InProcessCronScheduler(CronScheduler):
         # (multiplex_profiles on), tick EACH profile's cron store on every tick cycle so secondary-profile
         # jobs actually fire instead of languishing in a store no ticker owns (#69377). Without this, only
         # the process-global HERMES_HOME (the default profile) is ticked. Heartbeats and recovery are also
-        # scoped per profile so `alfred cron status` reflects liveness for every profile independently.
+        # scoped per profile so `plushuman cron status` reflects liveness for every profile independently.
         if profile_homes is not None and (callable(profile_homes) or profile_homes):
             self._start_multiplex(
                 stop_event, profile_homes=profile_homes, adapters=adapters, loop=loop,
@@ -473,7 +473,7 @@ class InProcessCronScheduler(CronScheduler):
                 logger.warning(
                     "Marked %d interrupted cron execution(s) unknown after restart", recovered
                 )
-            # Heartbeat before the first sleep so `alfred cron status` sees a live ticker
+            # Heartbeat before the first sleep so `plushuman cron status` sees a live ticker
             # immediately.
             record_ticker_heartbeat()
         except BaseException as e:
@@ -508,7 +508,7 @@ class InProcessCronScheduler(CronScheduler):
                     logger.info("Cron tick yielded: %s", e)
                 else:
                     logger.error("Cron tick error: %s", e, exc_info=True)
-                # Persist the reason so `alfred cron status` (separate process) shows WHY.
+                # Persist the reason so `plushuman cron status` (separate process) shows WHY.
                 _guarded_store_write(
                     record_ticker_error, "tick error", f"{type(e).__name__}: {e}"
                 )

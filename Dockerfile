@@ -161,7 +161,7 @@ RUN set -eu; \
 
 # #34192 / #66679: backward-compat shim for orchestration templates that
 # still reference the legacy /usr/bin/tini entrypoint (Hostinger's
-# 'Alfred WebUI' catalog, NAS compose projects that preserve an old
+# '+Human WebUI' catalog, NAS compose projects that preserve an old
 # entrypoint on image update, etc.). A plain symlink to /init made the
 # path exist, but forwarded tini flags like `-g` into s6-overlay's
 # rc.init as the container CMD (`rc.init: 91: -g: not found`) and
@@ -255,9 +255,9 @@ FROM runtime_base AS python_deps
 # so Docker users can use these providers without requiring runtime
 # lazy-install access to PyPI (often blocked in containerized envs).
 #
-# The [otlp] extra contains the SDK/exporter imported by Alfred when Gateway
+# The [otlp] extra contains the SDK/exporter imported by +Human when Gateway
 # Health export is enabled. Collector and observability-backend dependencies
-# remain external and are not part of the Alfred production image.
+# remain external and are not part of the +Human production image.
 #
 # The Matrix gateway's deps ([matrix] extra) are baked in because
 # python-olm (transitive via mautrix[encryption]) builds from source on
@@ -374,7 +374,7 @@ RUN mkdir -p /opt/hermes/bin && \
 # tree), NOT into $HERMES_HOME. $HERMES_HOME (/opt/data) is a shared data
 # volume that is commonly bind-mounted from the host and even shared with a
 # host-side Desktop/CLI install; stamping it at boot used to clobber that
-# host install's marker and wrongly block its ``alfred update``. A code-scoped
+# host install's marker and wrongly block its ``plushuman update``. A code-scoped
 # stamp is read first by detect_install_method() and is immune to the share.
 # Start as root so the s6-overlay stage2 hook can usermod/groupmod and chown
 # the data volume. Each supervised service then drops to the hermes user via
@@ -387,7 +387,7 @@ RUN mkdir -p /opt/hermes/bin && \
 # full-provenance /opt/hermes/install-stamp.json next to the code.
 # .dockerignore excludes .git, so the stamp is the only commit channel the
 # image carries: hermes_cli/version_info.py reads it at runtime (stamp
-# first, live git second, unknown third), and both `alfred dump` and
+# first, live git second, unknown third), and both `plushuman dump` and
 # banner.get_git_banner_state() consume it through version_info.
 #
 # A local `docker build` without CI gets the minimal all-zero fallback

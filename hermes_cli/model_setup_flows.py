@@ -1,4 +1,4 @@
-"""Per-provider model-selection wizard flows for ``alfred setup`` / ``alfred model``.
+"""Per-provider model-selection wizard flows for ``plushuman setup`` / ``plushuman model``.
 
 main / config / auth / models helpers are imported lazily inside bodies: avoids the main.py import
 cycle and lets tests patch ``hermes_cli.config.load_config`` etc. at call time. The shared skeleton
@@ -108,7 +108,7 @@ def _model_flow_moa(config, current_model=""):
     moa = normalize_moa_config(config.get("moa") if isinstance(config, dict) else {})
     presets = moa.get("presets") or {}
     if not presets:
-        print("No MoA presets configured. Run `alfred moa configure <name>` first.")
+        print("No MoA presets configured. Run `plushuman moa configure <name>` first.")
         return
 
     names = list(presets.keys())
@@ -304,7 +304,7 @@ def _model_flow_nous(config, current_model="", args=None):
     from hermes_cli.model_switch_providers import _free_tier_nous_row
     tier_row = _free_tier_nous_row({"name": "Nous Portal", "models": []})
     if tier_row is None:
-        print("The Nous free tier is off for this install; sign in with `alfred auth upgrade` to use Nous models.")
+        print("The Nous free tier is off for this install; sign in with `plushuman auth upgrade` to use Nous models.")
         return
     if tier_row["models"]:
         # Free-tier identity: the welcome host serves the single pinned model; no Portal catalog,
@@ -377,7 +377,7 @@ def _model_flow_openai_codex(config, current_model=""):
         PROVIDER_REGISTRY["openai-codex"], recheck=lambda: get_codex_auth_status().get("logged_in")):
         return
 
-    # Prefer the credential pool (where `alfred auth` stores device_code tokens),
+    # Prefer the credential pool (where `plushuman auth` stores device_code tokens),
     # fall back to legacy provider state.
     # Token and route base travel together (#121486): a pooled gateway key must never be sent to
     # the chatgpt.com default by the catalog probe.
@@ -413,7 +413,7 @@ def _model_flow_xai_oauth(_config, current_model="", *, args=None):
         return
 
     # ``resolve_xai_oauth_runtime_credentials`` only reads the auth.json singleton, but
-    # credentials may live only in the pool (``alfred auth add xai-oauth``) — fall back to
+    # credentials may live only in the pool (``plushuman auth add xai-oauth``) — fall back to
     # the default base URL so the picker still completes.
     base_url = DEFAULT_XAI_OAUTH_BASE_URL
     with contextlib.suppress(Exception):
@@ -607,9 +607,9 @@ def _model_flow_copilot_acp(config, current_model=""):
     resolved_command = status.get("resolved_command") or status.get("command") or "copilot"
     effective_base = status.get("base_url") or pconfig.inference_base_url
 
-    _say("  GitHub Copilot ACP delegates Alfred turns to `copilot --acp`.",
-         "  Alfred currently starts its own ACP subprocess for each request.",
-         "  Alfred uses your selected model as a hint for the Copilot ACP session.",
+    _say("  GitHub Copilot ACP delegates +Human turns to `copilot --acp`.",
+         "  +Human currently starts its own ACP subprocess for each request.",
+         "  +Human uses your selected model as a hint for the Copilot ACP session.",
          f"  Command: {resolved_command}", f"  Backend marker: {effective_base}", "")
     try:
         creds = resolve_external_process_provider_credentials(provider_id)
@@ -806,10 +806,10 @@ def _select_zai_endpoint(current_base: str) -> str:
 
 _GEMINI_FREE_TIER_NOTICE = (
     "", "❌ This Google API key is on the free tier (<= 250 requests/day for gemini-2.5-flash).",
-    "   Alfred typically makes 3-10 API calls per user turn (tool iterations + auxiliary tasks),",
+    "   +Human typically makes 3-10 API calls per user turn (tool iterations + auxiliary tasks),",
     "   so the free tier is exhausted after a handful of messages and cannot sustain",
     "   an agent session.", "",
-    "   To use Gemini with Alfred, enable billing on your Google Cloud project and regenerate",
+    "   To use Gemini with +Human, enable billing on your Google Cloud project and regenerate",
     "   the key in a billing-enabled project: https://aistudio.google.com/apikey", "",
     "   Alternatives with workable free usage: DeepSeek, OpenRouter (free models), Groq, Nous.", "",
     "Not saving Gemini as the default provider.")
@@ -1111,7 +1111,7 @@ def _external_process_login_gate(profile, status) -> bool:
 def _plugin_flow_external_process(provider_id: str, profile) -> tuple[str, str] | None:
     from hermes_cli.auth import get_external_process_provider_status, resolve_external_process_provider_credentials
     status = get_external_process_provider_status(provider_id)
-    _say(f"  {profile.display_name or provider_id} delegates Alfred turns to a local `{status.get('command') or profile.process_command}` process.",
+    _say(f"  {profile.display_name or provider_id} delegates +Human turns to a local `{status.get('command') or profile.process_command}` process.",
          f"  Command: {status.get('resolved_command') or status.get('command') or '(not found)'}",
          f"  Backend marker: {status.get('base_url') or profile.base_url}", "")
     try:
@@ -1137,7 +1137,7 @@ def _plugin_flow_oauth(provider_id: str, profile) -> tuple[str, str] | None:
     if not status.get("logged_in"):
         missing = plugin_missing_auth_handler_error(provider_id, "add")
         _say(f"  ⚠ Not signed in to {profile.display_name or provider_id}.",
-             f"  {missing.code if missing else status.get('hint') or f'Run `alfred auth add {provider_id}` to sign in.'}")
+             f"  {missing.code if missing else status.get('hint') or f'Run `plushuman auth add {provider_id}` to sign in.'}")
         return None
     from agent.credential_pool import load_pool
     entry = load_pool(provider_id).select()
@@ -1174,7 +1174,7 @@ def _plugin_flow_live_rows(profile, api_key: str, base_url: str) -> tuple[list[s
 
 
 def _model_flow_plugin_provider(config, provider_id, current_model=""):
-    """Generic ``alfred model`` flow for a registered plugin profile: credential step by auth_type,
+    """Generic ``plushuman model`` flow for a registered plugin profile: credential step by auth_type,
     catalog via ``merge_profile_catalog`` (live ``fetch_models()`` ⊕ ``fallback_models``), persist."""
     from hermes_cli.auth_plugin_providers import plugin_profile
     from hermes_cli.models import merge_profile_catalog

@@ -21,9 +21,9 @@ _ALLOWED_PATHS: frozenset[str] = frozenset(
 
 
 class XAIGrokAdapter(UpstreamAdapter):
-    """Proxy upstream for xAI Grok via Alfred-managed OAuth credentials."""
+    """Proxy upstream for xAI Grok via +Human-managed OAuth credentials."""
 
-    auth_hint = "alfred auth add xai-oauth --type oauth"
+    auth_hint = "plushuman auth add xai-oauth --type oauth"
 
     def __init__(self) -> None:
         self._lock = threading.Lock()
@@ -50,13 +50,13 @@ class XAIGrokAdapter(UpstreamAdapter):
             pool = self._load_pool()
             if pool is None or not pool.has_credentials():
                 raise RuntimeError(
-                    "No xAI OAuth credentials found. Run `alfred auth add xai-oauth --type oauth` first."
+                    "No xAI OAuth credentials found. Run `plushuman auth add xai-oauth --type oauth` first."
                 )
             entry = pool.select()
             if entry is None:
                 raise RuntimeError(
                     "No available xAI OAuth credentials found. Run "
-                    "`alfred auth reset xai-oauth` or re-authenticate with `alfred auth add xai-oauth --type oauth`."
+                    "`plushuman auth reset xai-oauth` or re-authenticate with `plushuman auth add xai-oauth --type oauth`."
                 )
             self._pool = pool
             return self._credential_from_entry(entry)
@@ -95,7 +95,7 @@ class XAIGrokAdapter(UpstreamAdapter):
         if not bearer:
             raise RuntimeError(
                 "xAI OAuth credential pool entry did not contain an access token. "
-                "Re-authenticate with `alfred auth add xai-oauth --type oauth`."
+                "Re-authenticate with `plushuman auth add xai-oauth --type oauth`."
             )
         base_url = str(
             getattr(entry, "runtime_base_url", None) or entry.base_url or DEFAULT_XAI_OAUTH_BASE_URL

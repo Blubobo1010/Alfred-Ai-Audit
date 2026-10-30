@@ -366,7 +366,7 @@ def test_desktop_dependency_failure_still_builds_the_tui_and_web_ui(source_produ
     assert not (root / "node_modules/apps-desktop").exists()
     out = capsys.readouterr().out
     assert "Desktop app build owed: desktop dependencies failed" in out
-    assert "alfred uninstall --gui" in out
+    assert "plushuman uninstall --gui" in out
 
 
 @pytest.mark.platforms("linux")
@@ -396,7 +396,7 @@ def test_packaged_desktop_is_reused_only_while_it_names_head(tmp_path, monkeypat
     subprocess.run([*git[:3], "init", "-q"], check=True)
     subprocess.run([*git, "commit", "-q", "--allow-empty", "-m", "one"], check=True)
     desktop_dir = root / "apps/desktop"
-    exe = desktop_dir / "release/app/Alfred"
+    exe = desktop_dir / "release/app/+Human"
     monkeypatch.setattr(main_desktop, "_desktop_packaged_executable", lambda _d: exe)
     resources = main_desktop._packaged_resources_dir(desktop_dir)
     (resources / "app.asar.unpacked/dist").mkdir(parents=True)

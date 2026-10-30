@@ -168,9 +168,9 @@ class TestMentionTokenMatching:
     @pytest.mark.asyncio
     async def test_longest_name_wins_and_consumes_span(self):
         result = await self._resolve(
-            "@Alfred Matt please review",
+            "@+Human Matt please review",
             members=[FIZZ_PUBKEY, BUZZ_PUBKEY],
-            profiles={FIZZ_PUBKEY: "Alfred Matt", BUZZ_PUBKEY: "Alfred"},
+            profiles={FIZZ_PUBKEY: "+Human Matt", BUZZ_PUBKEY: "+Human"},
         )
         assert result == [FIZZ_PUBKEY]
 

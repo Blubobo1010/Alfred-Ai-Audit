@@ -21,9 +21,9 @@ _ITEM_KEYS = frozenset({"kind", "id"})
 SEARCH_LIMIT = 10
 
 NOT_HERE = (
-    "manage_catalog is available only in the Alfred desktop app, where the approval card can be drawn. "
-    "Tell the user to install from a terminal instead: `alfred plugins install <id>` for a plugin, "
-    "`alfred skills install <id>` for a skill."
+    "manage_catalog is available only in the +Human desktop app, where the approval card can be drawn. "
+    "Tell the user to install from a terminal instead: `plushuman plugins install <id>` for a plugin, "
+    "`plushuman skills install <id>` for a skill."
 )
 
 NOTE = (
@@ -36,7 +36,7 @@ NOTE = (
 MANAGE_CATALOG_SCHEMA = {
     "name": "manage_catalog",
     "description": (
-        "Find and install Alfred catalog plugins and hub skills for the user. 'search' lists matches "
+        "Find and install +Human catalog plugins and hub skills for the user. 'search' lists matches "
         "(id, kind, display, tier, platforms, installed) and changes nothing. 'install' shows the user "
         "one approval card with a row per item and blocks until every row is installed, skipped or "
         "failed, or the card is closed; the host installs each approved row into this chat's profile at "

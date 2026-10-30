@@ -1,7 +1,7 @@
-"""Chat-completions provider faults through REAL ``alfred -z`` processes.
+"""Chat-completions provider faults through REAL ``plushuman -z`` processes.
 
 The vendor boundary is ``FakeChatVariantServer`` (a plain ``provider: custom``
-chat-completions endpoint); everything between the CLI and that socket is real Alfred.
+chat-completions endpoint); everything between the CLI and that socket is real +Human.
 
 Proven here:
 

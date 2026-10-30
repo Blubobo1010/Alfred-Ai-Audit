@@ -1,7 +1,7 @@
 /**
  * C20 core: blocking interactive prompts round-trip through the real chain.
  *
- * Real Electron + real `alfred serve`, approvals in manual mode; only the LLM
+ * Real Electron + real `plushuman serve`, approvals in manual mode; only the LLM
  * is faked. For each prompt kind the invariant is end to end, not "a card
  * rendered":
  *  - clarify: exactly one card; the choice the user clicks is exactly what

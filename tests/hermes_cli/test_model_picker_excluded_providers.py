@@ -1,5 +1,5 @@
 """Tests that ``model_catalog.excluded_providers`` hides providers from the
-interactive ``alfred model`` CLI picker.
+interactive ``plushuman model`` CLI picker.
 
 The CLI picker (``hermes_cli.main.select_provider_and_model``) builds its
 provider menu from ``CANONICAL_PROVIDERS`` via ``group_providers`` — a
@@ -131,7 +131,7 @@ def test_cli_picker_empty_excluded_is_noop(config_home):
 # The TUI picker calls ``build_models_payload(include_unconfigured=True)``, which
 # appends ``CANONICAL_PROVIDERS`` skeleton rows via ``_append_unconfigured_rows``.
 # That loop must honor ``excluded_providers`` too, or excluded providers reappear
-# in the TUI ``/model`` picker even though ``alfred model`` hides them (#68816).
+# in the TUI ``/model`` picker even though ``plushuman model`` hides them (#68816).
 
 
 def _picker_ctx(excluded=None, *, current_provider="", current_model=""):
@@ -173,7 +173,7 @@ def test_unconfigured_rows_exclusion_is_case_insensitive():
 
 def test_unconfigured_rows_hide_excluded_provider_by_alias():
     """Excluding by an *alias* (not the canonical slug) must also drop the
-    canonical skeleton row, matching ``alfred model`` and
+    canonical skeleton row, matching ``plushuman model`` and
     ``list_authenticated_providers``. Comparing the raw exclusion strings
     against ``entry.slug`` alone would leak the canonical row back in."""
     from hermes_cli.inventory import _append_unconfigured_rows

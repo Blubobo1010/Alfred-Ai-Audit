@@ -8,15 +8,15 @@ from typing import Any, Optional
 
 from gateway.session_context import get_session_env
 
-# Sources that label the human conversation an interactive UI transport hosts. A finite ``alfred chat -q`` /
+# Sources that label the human conversation an interactive UI transport hosts. A finite ``plushuman chat -q`` /
 # one-shot child spawned from such a session inherits HERMES_SESSION_SOURCE (the terminal tool bridges the
 # session env into child processes) but is NOT that conversation: labelling it ``tui``/``desktop`` lists it
-# in the TUI/WebUI pickers as a resumable chat and lets ``alfred -c`` in the TUI continue it (#112550).
+# in the TUI/WebUI pickers as a resumable chat and lets ``plushuman -c`` in the TUI continue it (#112550).
 # Automation sources (kanban, tool, cron, a2a, ...) are inherited on purpose.
 UI_TRANSPORT_SOURCES = frozenset({"tui", "desktop"})
 
-# Finite non-interactive CLI runs (``alfred chat -q``/``--oneshot``, ``alfred -z``) get their own source so human
-# pickers hide them without title/cwd heuristics; ``alfred -c`` still treats them as CLI history.
+# Finite non-interactive CLI runs (``plushuman chat -q``/``--oneshot``, ``plushuman -z``) get their own source so human
+# pickers hide them without title/cwd heuristics; ``plushuman -c`` still treats them as CLI history.
 ONESHOT_SOURCE = "oneshot"
 CLI_FAMILY_SOURCES = frozenset({"cli", ONESHOT_SOURCE})
 

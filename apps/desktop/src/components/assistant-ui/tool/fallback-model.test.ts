@@ -211,16 +211,16 @@ describe('buildToolView web-search query', () => {
   it('keeps the query separate from structured search results', () => {
     const view = buildToolView(
       part({
-        args: { query: 'Alfred Desktop tool calls' },
-        result: { web: [{ snippet: 'Desktop docs', title: 'Alfred docs', url: 'https://example.com/docs' }] },
+        args: { query: '+Human Desktop tool calls' },
+        result: { web: [{ snippet: 'Desktop docs', title: '+Human docs', url: 'https://example.com/docs' }] },
         toolName: 'web_search'
       }),
       ''
     )
 
-    expect(view.searchQuery).toBe('Alfred Desktop tool calls')
+    expect(view.searchQuery).toBe('+Human Desktop tool calls')
     expect(view.searchHits).toEqual([
-      { snippet: 'Desktop docs', title: 'Alfred docs', url: 'https://example.com/docs' }
+      { snippet: 'Desktop docs', title: '+Human docs', url: 'https://example.com/docs' }
     ])
   })
 })

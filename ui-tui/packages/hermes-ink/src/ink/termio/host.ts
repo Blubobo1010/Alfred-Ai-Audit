@@ -1,7 +1,7 @@
 /**
  * Which emulator is hosting this TUI, when the host tells us.
  *
- * `alfred dashboard` spawns the TUI behind a PTY and mirrors it into xterm.js
+ * `plushuman dashboard` spawns the TUI behind a PTY and mirrors it into xterm.js
  * in the browser; the bridge sets HERMES_PTY_HOST=dashboard on the child
  * (hermes_cli/pty_bridge.py — keep the two constants in sync). Native
  * terminals never set it.

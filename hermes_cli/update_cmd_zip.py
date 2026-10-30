@@ -1,4 +1,4 @@
-"""ZIP-download fallback for ``alfred update`` (Windows with broken git): two-phase stage/commit swap, dirty-tree guard.
+"""ZIP-download fallback for ``plushuman update`` (Windows with broken git): two-phase stage/commit swap, dirty-tree guard.
 
 Split out of ``update_cmd.py``; every name is re-imported there so ``hermes_cli.update_cmd.<name>`` keeps
 resolving/monkeypatching. Origin helpers are imported lazily per function (no cycle; test patches stay effective).
@@ -23,13 +23,13 @@ from hermes_cli.update_cmd_common import _record_stop
 logger = logging.getLogger("hermes_cli.update_cmd")
 
 _ZIP_STAGING_ARTIFACT_SUFFIXES = ".hermes-update-staging", ".hermes-update-old"
-# Alfred' own root breadcrumbs: the swap journal + its owner lock, and the update/refresh markers.
+# +Human' own root breadcrumbs: the swap journal + its owner lock, and the update/refresh markers.
 # They are never user work, so the dirty-tree guard must not refuse (and wedge) on them.
 _ZIP_HERMES_ROOT_ARTIFACTS = frozenset({
     ".hermes-update-zip-swap", ".hermes-update-zip-swap.lock", ".update-incomplete", ".lazy-refresh-incomplete"})
 # A journal temp a killed writer left (``write_durable_text``'s unpredictable name). The swap never
 # touches it (no ZIP ships it) and nothing deletes it, so admitting it risks no user bytes. A file at
-# the old fixed ``.hermes-update-zip-swap.tmp`` name is no longer Alfred': it blocks (review Z5).
+# the old fixed ``.hermes-update-zip-swap.tmp`` name is no longer +Human': it blocks (review Z5).
 _ZIP_JOURNAL_TEMP = re.compile(r"\.hermes-update-zip-swap\.[0-9a-f]{12}\.tmp")
 
 # Single source of truth for entries the ZIP swap preserves — used by the dirty-tree filter and the swap loop.
@@ -47,7 +47,7 @@ _ZIP_PRESERVED_NESTED = {
     "web": ("node_modules",),
 }
 
-_STASH_HINT = "  Stash or commit your changes, then rerun `alfred update`."
+_STASH_HINT = "  Stash or commit your changes, then rerun `plushuman update`."
 
 
 def _remove_path(path: str, *, ignore_errors: bool = False) -> None:
@@ -319,7 +319,7 @@ def _is_zip_preserved_entry_status_line(line: str, shipped: Optional[Collection[
 
 
 def _is_zip_staging_artifact_status_line(line: str, staged: Collection[str] = ()) -> bool:
-    """True when a porcelain status line is Alfred' own: a root breadcrumb, or the staging copy of an
+    """True when a porcelain status line is +Human' own: a root breadcrumb, or the staging copy of an
     entry this run staged. Any other ``*.hermes-update-staging``/``-old`` may be a user's file (a manual
     ``cp -r tools tools.hermes-update-old``) that staging would delete, so it blocks."""
     top = _status_top_level(line[3:] if len(line) >= 3 else line)
@@ -410,7 +410,7 @@ def _require_staging_space(extracted: str, entries: list[str], project_root: str
 
 def _link_or_copy_artifact(source: str, destination: str) -> None:
     """Hardlink where the filesystem allows (apps/desktop/node_modules is hundreds of MB, and a link stays
-    valid after the swap unlinks the old tree; on Windows a link also succeeds on a locked Alfred.exe
+    valid after the swap unlinks the old tree; on Windows a link also succeeds on a locked +Human.exe
     where copy2 raises); byte copy otherwise."""
     try:
         os.link(source, destination)
@@ -459,7 +459,7 @@ def _drop_journal_if_clean(root: Path, entries: list[str], suffixes=(".hermes-up
     every one of them is gone, else the next launch's recovery could not tell them from a user's file."""
     left = [item for item in entries if any(os.path.lexists(os.path.join(root, item + x)) for x in suffixes)]
     if left:
-        print(f"  ⚠ Could not remove the update's own copies of {', '.join(left)}; the next `alfred` launch "
+        print(f"  ⚠ Could not remove the update's own copies of {', '.join(left)}; the next `plushuman` launch "
               "removes them.")
         return
     (root / ZIP_SWAP_JOURNAL).unlink(missing_ok=True)
@@ -478,7 +478,7 @@ def _journaled_stage_and_swap(extracted: str, entries: list[str], root: Path, ta
         raise RuntimeError("an interrupted ZIP update could not be settled; see the warning above")
     with zip_swap_owner_lock(root, wait=10.0) as owned:
         if not owned:
-            raise RuntimeError("another `alfred update` is swapping this install right now"
+            raise RuntimeError("another `plushuman update` is swapping this install right now"
                                if owned.reason == "busy" else f"no ZIP swap lock, no swap ({owned.reason})")
         # A leftover backup counts: _stage_replacement puts it back as the entry before the swap.
         # Each entry also carries the identities recovery needs before it may delete anything (review
@@ -605,7 +605,7 @@ def _download_and_swap_zip(branch: str, zip_url: str, target_sha: str | None = N
         print(f"✗ ZIP update failed: {e}")
         # Two-phase replace commits all or rolls all back, so no mixed tree here — don't push a needless reinstall.
         print("  Your existing install was left in place.")
-        print("  Re-run `alfred update` to retry; if the agent won't start, reinstall from https://github.com/Blubobo1010/Alfred-Ai-Audit")
+        print("  Re-run `plushuman update` to retry; if the agent won't start, reinstall from https://github.com/Blubobo1010/Alfred-Ai-Audit")
         _record_stop(_zip_stop_class(e, downloaded=downloaded))
         _m().sys.exit(1)
     finally:
@@ -629,8 +629,8 @@ def _update_via_zip(args, *, had_desktop_app_before_update: bool = False,
         print(
             "  This path runs when git file I/O is broken on the system. "
             "Either resolve the git-side breakage (typically an antivirus "
-            "or NTFS filter holding files open) and rerun `alfred update "
-            f"--branch {branch}`, or update against main with `alfred update`."
+            "or NTFS filter holding files open) and rerun `plushuman update "
+            f"--branch {branch}`, or update against main with `plushuman update`."
         )
         _record_stop("branch_unsupported")
         _m().sys.exit(1)

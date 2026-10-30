@@ -5,7 +5,7 @@ Two invariants, both host-independent (the platform enters as DATA, never by fak
 1. The detached restart watcher ``hermes_cli.gateway._spawn_gateway_restart_watcher`` actually
    spawns must not be classified as a running gateway. Its argv carries the gateway command it
    will spawn LATER, so an argv-substring identity read vouches for the watcher itself.
-2. ``alfred update``'s post-relaunch liveness poll must not expire before the watchers it is
+2. ``plushuman update``'s post-relaunch liveness poll must not expire before the watchers it is
    verifying are even scheduled to respawn.
 """
 
@@ -42,7 +42,7 @@ def test_spawned_restart_watcher_is_not_identified_as_a_gateway(monkeypatch):
     cmdline = _spawned_watcher_cmdline(monkeypatch)
     # The watcher really does carry the gateway argv — that is what made this bite.
     assert "hermes_cli.main gateway run" in cmdline
-    # No Alfred subcommand at all may be read off it — not even a wrong one (the watcher source
+    # No +Human subcommand at all may be read off it — not even a wrong one (the watcher source
     # text tokenizes into whatever words it happens to contain).
     assert _gateway_command_subcommand(cmdline) is None
     assert looks_like_gateway_command_line(cmdline) is False

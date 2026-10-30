@@ -175,8 +175,8 @@ export const hubsEn = {
       loading: 'loading plugins…',
       updating: 'updating…',
       empty: 'no plugins installed',
-      // `alfred plugins install owner/repo` is a CLI command: keep it verbatim.
-      installHint: 'install: alfred plugins install owner/repo',
+      // `plushuman plugins install owner/repo` is a CLI command: keep it verbatim.
+      installHint: 'install: plushuman plugins install owner/repo',
       status: {
         disabled: 'disabled',
         notEnabled: 'not enabled'

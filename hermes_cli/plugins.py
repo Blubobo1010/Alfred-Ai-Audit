@@ -1,4 +1,4 @@
-"""Alfred Plugin System — discovers, loads, and manages plugins.
+"""+Human Plugin System — discovers, loads, and manages plugins.
 
 Sources, later overriding earlier on key collision: bundled ``<repo>/plugins/<name>/`` (``memory/``
 and ``context_engine/`` have their own discovery), user ``~/.hermes/plugins/<name>/``, project
@@ -577,7 +577,7 @@ class PluginContext:
         choice, not privilege escalation); others need ``tools.override`` via
         :func:`plugin_capability_granted` (granted_capabilities OR legacy ``allow_tool_override: true``).
 
-        Bundled plugins (shipped with Alfred core) are trusted by default — an override there is a
+        Bundled plugins (shipped with +Human core) are trusted by default — an override there is a
         deliberate maintainer choice, not a third-party plugin trying to elevate privilege. For every other
         source, the canonical check is :func:`plugin_capability_granted` with the ``tools.override``
         capability — satisfied by EITHER the consent-flow grant
@@ -634,7 +634,7 @@ class PluginContext:
         self, name: str, help: str, setup_fn: Callable, handler_fn: Callable | None = None,
         description: str = "",
     ) -> PluginRegistration:
-        """Register a CLI subcommand (``alfred <name> ...``). *setup_fn* receives the argparse
+        """Register a CLI subcommand (``plushuman <name> ...``). *setup_fn* receives the argparse
         subparser; *handler_fn* becomes ``set_defaults(func=...)``."""
         entry = {
             "name": name, "help": help, "description": description, "setup_fn": setup_fn,
@@ -1234,7 +1234,7 @@ class PluginManager(PluginLoaderMixin, PluginDispatchMixin, PluginLedgerMixin):
         self._persistent_carryover: list[PluginRegistration] = []
         # Deferred platforms whose client tools registered at discovery (see
         # _register_deferred_platform_tools): imported package (don't re-execute on materialize)
-        # and contributed tool names (so `alfred plugins list` still attributes them).
+        # and contributed tool names (so `plushuman plugins list` still attributes them).
         self._predeclared_modules: dict[str, types.ModuleType] = {}
         self._predeclared_tools: dict[str, list[str]] = {}
 
@@ -1410,7 +1410,7 @@ class PluginManager(PluginLoaderMixin, PluginDispatchMixin, PluginLedgerMixin):
         enabled = _get_enabled_plugins()  # None = opt-in default (nothing enabled)
         stale_relay_keys = legacy_relay_plugin_keys(enabled)
         if stale_relay_keys:
-            logger.warning("Removed Alfred plugin %s is still listed in plugins.enabled; "
+            logger.warning("Removed +Human plugin %s is still listed in plugins.enabled; "
                            "remove it and configure a standard user or system Relay plugins.toml, or use %s "
                            "for an explicit user-file override",
                            ", ".join(stale_relay_keys), RELAY_PLUGINS_CONFIG_ENV)
@@ -1586,7 +1586,7 @@ class PluginManager(PluginLoaderMixin, PluginDispatchMixin, PluginLedgerMixin):
 # working — ``get_plugin_manager()`` still reads/writes this name.
 _plugin_manager: Optional[PluginManager] = None
 
-# Resolved Alfred home -> PluginManager. A process can switch profiles via
+# Resolved +Human home -> PluginManager. A process can switch profiles via
 # ``set_hermes_home_override()``; a single slot would leak one profile's plugin/context-engine state
 # into another, and keying by resolved home lets a re-entered profile reuse its imported modules.
 _plugin_managers_by_home: dict[Path, PluginManager] = {}
@@ -1605,7 +1605,7 @@ _published_tui_host_lock = threading.Lock()
 
 
 def _plugin_home_key() -> Path:
-    """Resolved active Alfred home — the key for per-profile plugin managers (plugins capture the
+    """Resolved active +Human home — the key for per-profile plugin managers (plugins capture the
     home at registration, so a process serving several profiles cannot share one manager)."""
     try:
         return get_hermes_home().expanduser().resolve()
@@ -1699,7 +1699,7 @@ def _attach_published_tui_host(manager: PluginManager) -> None:
 
 
 def get_plugin_manager() -> PluginManager:
-    """Return the plugin manager for the active Alfred profile/home (cached per resolved home; a
+    """Return the plugin manager for the active +Human profile/home (cached per resolved home; a
     profile switch gets its own manager and plugin submodules)."""
     global _plugin_manager
     current_home = _plugin_home_key()
@@ -2235,7 +2235,7 @@ def get_plugin_auxiliary_tasks() -> list[dict[str, Any]]:
 
 
 def get_plugin_toolsets() -> list[tuple]:
-    """Plugin toolsets as ``(key, label, description)`` tuples for the ``alfred tools`` TUI."""
+    """Plugin toolsets as ``(key, label, description)`` tuples for the ``plushuman tools`` TUI."""
     manager = get_plugin_manager()
     if not manager._plugin_tool_names:
         return []

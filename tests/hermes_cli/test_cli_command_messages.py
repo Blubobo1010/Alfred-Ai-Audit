@@ -1,4 +1,4 @@
-"""User-facing message contracts for `alfred skills/plugins/mcp/cron/doctor` failure paths.
+"""User-facing message contracts for `plushuman skills/plugins/mcp/cron/doctor` failure paths.
 
 Every failure line must say what happened and name an existing command to type next; none may
 lead with a raw exception, a status literal, or a hardcoded ``~/.hermes`` path (UX message audit,

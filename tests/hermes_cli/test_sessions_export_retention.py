@@ -29,7 +29,7 @@ def store(tmp_path, monkeypatch):
 
 
 def _run(monkeypatch, *args):
-    monkeypatch.setattr(sys, "argv", ["alfred", "sessions", *args])
+    monkeypatch.setattr(sys, "argv", ["plushuman", "sessions", *args])
     return main.main()
 
 

@@ -180,17 +180,17 @@ _BUILTIN_DISPATCH: dict[str, tuple] = {
     "xai": (None, "xAI TTS", "_generate_xai_tts", None),
     "mistral": (lambda: _importable(_import_mistral_client), "Mistral Voxtral TTS", "_generate_mistral_tts",
                 "Mistral provider selected but 'mistralai' package not installed. "
-                "Run `alfred setup` to install Mistral support."),
+                "Run `plushuman setup` to install Mistral support."),
     "gemini": (None, "Google Gemini TTS", "_generate_gemini_tts", None),
     "neutts": (lambda: _check_neutts_available(), "NeuTTS (local)", "_generate_neutts",
                "NeuTTS provider selected but neutts is not installed. "
-               "Run alfred setup tts and choose NeuTTS; espeak-ng is also required."),
+               "Run plushuman setup tts and choose NeuTTS; espeak-ng is also required."),
     "kittentts": (lambda: _importable(_import_kittentts), "KittenTTS (local, ~25MB)", "_generate_kittentts",
                   "KittenTTS provider selected but 'kittentts' package not installed. "
-                  "Run 'alfred setup tts' and choose KittenTTS."),
+                  "Run 'plushuman setup tts' and choose KittenTTS."),
     "piper": (lambda: _importable(_import_piper), "Piper (local)", "_generate_piper_tts",
               "Piper provider selected but 'piper-tts' package not installed. "
-              "Run 'alfred tools' and select Piper under TTS.")}
+              "Run 'plushuman tools' and select Piper under TTS.")}
 
 
 def _error_json(message: str) -> str:
@@ -223,7 +223,7 @@ def _select_builtin_engine(provider: str) -> tuple:
     return provider, _error_json(
         "No TTS provider available. Enable Edge TTS with: "
         f"{install_hint('edge-tts')} "
-        "or run 'alfred setup tts' and choose NeuTTS for local synthesis.")
+        "or run 'plushuman setup tts' and choose NeuTTS for local synthesis.")
 
 
 def _synthesize_builtin(engine: str, text: str, file_str: str, tts_config: dict[str, Any], instructions: Optional[str]) -> None:

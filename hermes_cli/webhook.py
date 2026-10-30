@@ -1,4 +1,4 @@
-"""alfred webhook — manage dynamic webhook subscriptions from the CLI."""
+"""plushuman webhook — manage dynamic webhook subscriptions from the CLI."""
 
 import hashlib
 import hmac
@@ -141,7 +141,7 @@ def _setup_hint() -> str:
   Webhook platform is not enabled. To set it up:
 
   1. Run the gateway setup wizard:
-     alfred gateway setup
+     plushuman gateway setup
 
   2. Or manually add to {_dhh}/config.yaml:
      platforms:
@@ -156,16 +156,16 @@ def _setup_hint() -> str:
      WEBHOOK_PORT=8644
      WEBHOOK_SECRET=your-global-secret
 
-  Then start the gateway: alfred gateway run
+  Then start the gateway: plushuman gateway run
 """
 
 
 def webhook_command(args):
-    """Entry point for 'alfred webhook' subcommand."""
+    """Entry point for 'plushuman webhook' subcommand."""
     sub = getattr(args, "webhook_action", None)
     if not sub:
-        print("Usage: alfred webhook {subscribe|list|remove|test}")
-        print("Run 'alfred webhook --help' for details.")
+        print("Usage: plushuman webhook {subscribe|list|remove|test}")
+        print("Run 'plushuman webhook --help' for details.")
         return
     if not _is_webhook_enabled():
         print(_setup_hint())
@@ -246,7 +246,7 @@ def _cmd_subscribe(args):
             print(f"Error: {e}")
             return
         if job is None:
-            print(f"Error: no cron job matches '{cron_job}'. List jobs with: alfred cron list")
+            print(f"Error: no cron job matches '{cron_job}'. List jobs with: plushuman cron list")
             return
         route["cron_job"] = job["id"]
     script = (getattr(args, "script", "") or "").strip()
@@ -279,14 +279,14 @@ def _cmd_subscribe(args):
         print(f"  Script: {route['script']}")
     print("\n  Configure your service to POST to the URL above.")
     print("  Use the secret for HMAC-SHA256 signature validation.")
-    print("  The gateway must be running to receive events (alfred gateway run).\n")
+    print("  The gateway must be running to receive events (plushuman gateway run).\n")
 
 
 def _cmd_list(args):
     subs = _load_subscriptions()
     if not subs:
         print("  No dynamic webhook subscriptions.")
-        print("  Create one with: alfred webhook subscribe <name>")
+        print("  Create one with: plushuman webhook subscribe <name>")
         return
 
     print(f"\n  {len(subs)} webhook subscription(s):\n")
@@ -337,7 +337,7 @@ def _cmd_test(args):
         return
     secret = subs[name].get("secret", "")
     url = _route_url(name, subs[name])
-    payload = args.payload or '{"test": true, "event_type": "test", "message": "Hello from alfred webhook test"}'
+    payload = args.payload or '{"test": true, "event_type": "test", "message": "Hello from plushuman webhook test"}'
     sig = "sha256=" + hmac.new(secret.encode(), payload.encode(), hashlib.sha256).hexdigest()
     print(f"  Sending test POST to {url}")
     try:
@@ -351,7 +351,7 @@ def _cmd_test(args):
             print(f"  Response ({resp.status}): {body}")
     except Exception as e:
         print(f"  Error: {e}")
-        print("  Is the gateway running? (alfred gateway run)")
+        print("  Is the gateway running? (plushuman gateway run)")
 
 
 _ACTIONS = {

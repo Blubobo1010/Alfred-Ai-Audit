@@ -1,8 +1,8 @@
 """Runtime inventory + update plan for the fleet-update pipeline.
 
-One read-only pass answering, BEFORE any mutation: which Alfred runtimes run on this machine, how
+One read-only pass answering, BEFORE any mutation: which +Human runtimes run on this machine, how
 each is deployed, which ones this update touches, and how each restarts. Every collector is a
-side-effect-free probe, so ``alfred update --plan`` is safe on a live fleet.
+side-effect-free probe, so ``plushuman update --plan`` is safe on a live fleet.
 """
 
 from __future__ import annotations
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class RuntimeRecord:
-    """One running (or expected) Alfred runtime on this machine."""
+    """One running (or expected) +Human runtime on this machine."""
 
     kind: str                     # gateway | dashboard | serve
     profile: str
@@ -38,7 +38,7 @@ class UpdatePlan:
 
     install_method: str = "unknown"       # git | docker | nix | apt | ...
     updatable_in_place: bool = True
-    update_mechanism: str = "alfred update"
+    update_mechanism: str = "plushuman update"
     expected_sha: Optional[str] = None    # current checkout HEAD (pre-pull)
     expected_version: Optional[str] = None
     profiles: list = field(default_factory=list)
@@ -118,7 +118,7 @@ def _restart_mechanism(supervisor: str, profile: str) -> str:
 def describe_restart_mechanism(mechanism: str, profile: str) -> str:
     """Human-readable description of a restart mechanism id."""
     return _MECHANISM_DESCRIPTIONS.get(mechanism) or (
-        f"alfred -p {profile} gateway restart" if profile != "default" else "alfred gateway restart"
+        f"plushuman -p {profile} gateway restart" if profile != "default" else "plushuman gateway restart"
     )
 
 
@@ -207,7 +207,7 @@ def _collect_gateway_runtimes(plan: UpdatePlan, profile_homes: list, seen: set[i
             else:
                 # Verified identity, not bare PID existence: a ``stopped`` record whose PID was recycled
                 # by an unrelated process fabricated a phantom gateway the restart phase could never
-                # touch, so `alfred update` exited partial (#109680).
+                # touch, so `plushuman update` exited partial (#109680).
                 pid = live_gateway_pid_for_home(home)
                 if pid is None or pid in seen:
                     continue
@@ -270,7 +270,7 @@ def _is_desktop_ssh_ledger_entry(entry: dict) -> bool:
 
 def _collect_ledger_runtimes(plan: UpdatePlan, seen: set[int]) -> None:
     """Serve/dashboard backends from the spawn ledger — runtimes the gateway collectors can never see
-    (a manual `alfred serve --host <ip>` for a remote Desktop, a long-lived `alfred dashboard`).
+    (a manual `plushuman serve --host <ip>` for a remote Desktop, a long-lived `plushuman dashboard`).
     ledger_entries() live-verifies (pid, create_time) so PID reuse never fabricates a row. Desktop-
     supervised backends (spawner still alive) restart via the Desktop's own respawn, not ours.
     A backend owned by a loaded launchd job is classified ``launchd`` (kickstart restart, never a
@@ -341,7 +341,7 @@ def print_update_plan(plan: UpdatePlan) -> None:
         print(f"    Update via: {plan.update_mechanism}")
     print(f"  Profiles: {', '.join(plan.profiles) if plan.profiles else '(none found)'}")
     if not plan.runtimes:
-        print("  Running Alfred services: none detected — code swap only.")
+        print("  Running +Human services: none detected — code swap only.")
         return
     print(f"  Running services to restart ({len(plan.runtimes)}):")
     for runtime in plan.runtimes:
@@ -550,7 +550,7 @@ def report_unaccounted_runtimes(outcomes: list[dict[str, Any]]) -> bool:
         print()
         print("  ⚠ Manual serve restarts deferred to their owner (reminders retained until the old processes exit):")
         for o in manual:
-            print(f"    • {o['kind']} [{o['profile']}] pid {o['pid']}: relaunch `alfred serve` / `alfred dashboard`, or reconnect Desktop for an SSH backend")
+            print(f"    • {o['kind']} [{o['profile']}] pid {o['pid']}: relaunch `plushuman serve` / `plushuman dashboard`, or reconnect Desktop for an SSH backend")
     deferred = [o for o in outcomes if o.get("outcome") == "deferred" and o.get("mechanism") != "respawn-argv"]
     if deferred:
         # Surfaced but not escalated: the updater has no authority over these, so holding
@@ -577,14 +577,14 @@ def report_unaccounted_runtimes(outcomes: list[dict[str, Any]]) -> bool:
         print(f"    ✗ {o['kind']} [{o['profile']}] pid {o['pid']} — planned mechanism: {o['mechanism']}")
     print("    Restart them manually, then verify:")
     if any(o.get("kind") not in _SERVE_KINDS for o in missed):
-        print("      alfred gateway restart                # active profile")
-        print("      alfred -p <profile> gateway restart   # named profile")
+        print("      plushuman gateway restart                # active profile")
+        print("      plushuman -p <profile> gateway restart   # named profile")
     if any(o.get("kind") in _SERVE_KINDS for o in missed):
         # A serve/dashboard is not reachable by any `gateway restart` command: name the process, not the wrong verb.
         # See #100479.
         if sys.platform == "linux":
             print("      systemctl --user restart hermes-serve.service   # unit-managed serve")
-        print("      relaunch `alfred serve` / `alfred dashboard`")
+        print("      relaunch `plushuman serve` / `plushuman dashboard`")
     return True
 
 

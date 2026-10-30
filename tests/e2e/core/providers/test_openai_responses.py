@@ -1,8 +1,8 @@
-"""OpenAI Responses (Codex) wire conformance through REAL Alfred processes.
+"""OpenAI Responses (Codex) wire conformance through REAL +Human processes.
 
 The fake (``tests/fakes/providers/openai_responses.py``) speaks the streamed Responses
 dialect built from the installed ``openai`` SDK's own models and validates every
-request Alfred sends against the SDK's request schema. The provider is a config-defined
+request +Human sends against the SDK's request schema. The provider is a config-defined
 Responses relay (``providers.<name>.transport: codex_responses``) — the same transport
 the ChatGPT Codex and api.openai.com routes use.
 

@@ -1,8 +1,8 @@
 ---
 name: honcho
-description: Configure and troubleshoot Honcho memory for Alfred.
+description: Configure and troubleshoot Honcho memory for +Human.
 version: 2.0.0
-author: Alfred
+author: +Human
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -14,9 +14,9 @@ prerequisites:
   pip: [honcho-ai]
 ---
 
-# Honcho Memory for Alfred
+# Honcho Memory for +Human
 
-Honcho provides AI-native cross-session user modeling. It learns who the user is across conversations and gives every Alfred profile its own peer identity while sharing a unified view of the user.
+Honcho provides AI-native cross-session user modeling. It learns who the user is across conversations and gives every +Human profile its own peer identity while sharing a unified view of the user.
 
 ## When to Use
 
@@ -32,20 +32,20 @@ Honcho provides AI-native cross-session user modeling. It learns who the user is
 Honcho is a plugin-catalog memory provider maintained by Plastic Labs. Install it once per machine (homes upgraded from a release that bundled Honcho get it automatically):
 
 ```bash
-alfred plugins install honcho
+plushuman plugins install honcho
 ```
 
 ### Cloud (app.honcho.dev)
 
 ```bash
-alfred memory setup honcho
+plushuman memory setup honcho
 # select "cloud", paste API key from https://app.honcho.dev
 ```
 
 ### Self-hosted
 
 ```bash
-alfred memory setup honcho
+plushuman memory setup honcho
 # select "local", enter base URL (e.g. http://localhost:8000)
 ```
 
@@ -54,7 +54,7 @@ See: https://docs.honcho.dev/v3/guides/integrations/hermes#running-honcho-locall
 ### Verify
 
 ```bash
-alfred honcho status    # shows resolved config, connection test, peer info
+plushuman honcho status    # shows resolved config, connection test, peer info
 ```
 
 ## Architecture
@@ -65,7 +65,7 @@ When Honcho injects context into the system prompt (in `hybrid` or `context` rec
 
 1. **Session summary** -- a short digest of the current session so far (placed first so the model has immediate conversational continuity)
 2. **User representation** -- Honcho's accumulated model of the user (preferences, facts, patterns)
-3. **AI peer card** -- the identity card for this Alfred profile's AI peer
+3. **AI peer card** -- the identity card for this +Human profile's AI peer
 
 The session summary is generated automatically by Honcho at the start of each turn (when a prior session exists). It gives the model a warm start without replaying full history.
 
@@ -82,10 +82,10 @@ You do not need to configure this -- it is automatic based on session state.
 
 ### Peers
 
-Honcho models conversations as interactions between **peers**. Alfred creates two peers per session:
+Honcho models conversations as interactions between **peers**. +Human creates two peers per session:
 
 - **User peer** (`peerName`): represents the human. Honcho builds a user representation from observed messages.
-- **AI peer** (`aiPeer`): represents this Alfred instance. Each profile gets its own AI peer so agents develop independent views.
+- **AI peer** (`aiPeer`): represents this +Human instance. Each profile gets its own AI peer so agents develop independent views.
 
 ### Observation
 
@@ -126,10 +126,10 @@ Honcho sessions scope where messages and observations land. Strategy options:
 |----------|----------|
 | `per-directory` (default) | One session per working directory |
 | `per-repo` | One session per git repository root |
-| `per-session` | New Honcho session each Alfred run |
+| `per-session` | New Honcho session each +Human run |
 | `global` | Single session across all directories |
 
-Manual override: `alfred honcho map my-project-name`
+Manual override: `plushuman honcho map my-project-name`
 
 ### Recall Modes
 
@@ -202,7 +202,7 @@ Higher levels produce richer synthesis but cost more tokens on Honcho's backend.
 
 ## Multi-Profile Setup
 
-Each Alfred profile gets its own Honcho AI peer while sharing the same workspace (user context). This means:
+Each +Human profile gets its own Honcho AI peer while sharing the same workspace (user context). This means:
 
 - All profiles see the same user representation
 - Each profile builds its own AI identity and observations
@@ -211,7 +211,7 @@ Each Alfred profile gets its own Honcho AI peer while sharing the same workspace
 ### Create a profile with Honcho peer
 
 ```bash
-alfred profile create coder --clone
+plushuman profile create coder --clone
 # creates host block hermes.coder, AI peer "coder", inherits config from default
 ```
 
@@ -224,7 +224,7 @@ What `--clone` does for Honcho:
 ### Backfill existing profiles
 
 ```bash
-alfred honcho sync    # creates host blocks for all profiles that don't have one yet
+plushuman honcho sync    # creates host blocks for all profiles that don't have one yet
 ```
 
 ### Per-profile config
@@ -294,7 +294,7 @@ honcho_conclude delete_id="abc123"    # PII removal
 
 ## Agent Usage Patterns
 
-Guidelines for Alfred when Honcho memory is active.
+Guidelines for +Human when Honcho memory is active.
 
 ### On conversation start
 
@@ -395,13 +395,13 @@ This fix addresses edge cases where raw user conclusions containing markup or sp
 ## Troubleshooting
 
 ### "Honcho not configured"
-Run `alfred honcho setup`. Ensure `memory.provider: honcho` is in `~/.hermes/config.yaml`.
+Run `plushuman honcho setup`. Ensure `memory.provider: honcho` is in `~/.hermes/config.yaml`.
 
 ### Memory not persisting across sessions
-Check `alfred honcho status` -- verify `saveMessages: true` and `writeFrequency` isn't `session` (which only writes on exit).
+Check `plushuman honcho status` -- verify `saveMessages: true` and `writeFrequency` isn't `session` (which only writes on exit).
 
 ### Profile not getting its own peer
-Use `--clone` when creating: `alfred profile create <name> --clone`. For existing profiles: `alfred honcho sync`.
+Use `--clone` when creating: `plushuman profile create <name> --clone`. For existing profiles: `plushuman honcho sync`.
 
 ### Observation changes in dashboard not reflected
 Observation config is synced from the server on each session init. Start a new session after changing settings in the Honcho UI.
@@ -419,19 +419,19 @@ Session summary requires at least one prior turn in the current Honcho session. 
 
 | Command | Description |
 |---------|-------------|
-| `alfred honcho setup` | Interactive setup wizard (cloud/local, identity, observation, recall, sessions) |
-| `alfred honcho status` | Show resolved config, connection test, peer info for active profile |
-| `alfred honcho enable` | Enable Honcho for the active profile (creates host block if needed) |
-| `alfred honcho disable` | Disable Honcho for the active profile |
-| `alfred honcho peer` | Show or update peer names (`--user <name>`, `--ai <name>`, `--reasoning <level>`) |
-| `alfred honcho peers` | Show peer identities across all profiles |
-| `alfred honcho mode` | Show or set recall mode (`hybrid`, `context`, `tools`) |
-| `alfred honcho tokens` | Show or set token budgets (`--context <N>`, `--dialectic <N>`) |
-| `alfred honcho sessions` | List known directory-to-session-name mappings |
-| `alfred honcho map <name>` | Map current working directory to a Honcho session name |
-| `alfred honcho identity` | Seed AI peer identity or show both peer representations |
-| `alfred honcho sync` | Create host blocks for all Alfred profiles that don't have one yet |
-| `alfred honcho migrate` | Step-by-step migration guide from OpenClaw native memory to Alfred + Honcho |
-| `alfred memory setup` | Generic memory provider picker (selecting "honcho" runs the same wizard) |
-| `alfred memory status` | Show active memory provider and config |
-| `alfred memory off` | Disable external memory provider |
+| `plushuman honcho setup` | Interactive setup wizard (cloud/local, identity, observation, recall, sessions) |
+| `plushuman honcho status` | Show resolved config, connection test, peer info for active profile |
+| `plushuman honcho enable` | Enable Honcho for the active profile (creates host block if needed) |
+| `plushuman honcho disable` | Disable Honcho for the active profile |
+| `plushuman honcho peer` | Show or update peer names (`--user <name>`, `--ai <name>`, `--reasoning <level>`) |
+| `plushuman honcho peers` | Show peer identities across all profiles |
+| `plushuman honcho mode` | Show or set recall mode (`hybrid`, `context`, `tools`) |
+| `plushuman honcho tokens` | Show or set token budgets (`--context <N>`, `--dialectic <N>`) |
+| `plushuman honcho sessions` | List known directory-to-session-name mappings |
+| `plushuman honcho map <name>` | Map current working directory to a Honcho session name |
+| `plushuman honcho identity` | Seed AI peer identity or show both peer representations |
+| `plushuman honcho sync` | Create host blocks for all +Human profiles that don't have one yet |
+| `plushuman honcho migrate` | Step-by-step migration guide from OpenClaw native memory to +Human + Honcho |
+| `plushuman memory setup` | Generic memory provider picker (selecting "honcho" runs the same wizard) |
+| `plushuman memory status` | Show active memory provider and config |
+| `plushuman memory off` | Disable external memory provider |

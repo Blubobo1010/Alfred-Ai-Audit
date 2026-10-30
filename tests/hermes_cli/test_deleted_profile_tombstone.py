@@ -1,8 +1,8 @@
 """Deleted named profiles must stay gone until explicitly recreated.
 
 A live serve/logging process can mkdir ``profiles/<name>/logs`` after
-``alfred profile delete`` removes the tree. That empty shell then
-reappears in ``alfred profile list`` and Desktop Bot Mode. These tests
+``plushuman profile delete`` removes the tree. That empty shell then
+reappears in ``plushuman profile list`` and Desktop Bot Mode. These tests
 lock the tombstone + no-mkdir contract without depending on Desktop.
 """
 
@@ -198,7 +198,7 @@ class TestDeletedProfileTombstone:
     def test_marker_less_shell_is_not_a_profile(self, profile_env):
         """A ``profiles/<name>`` dir with no identity file (a pre-tombstone ghost shell left by a
         cron ticker, or a stray infrastructure dir) is not listed, served, or seeded with the
-        default install's ``.env`` — that seeding is what legitimised ghosts on ``alfred update``
+        default install's ``.env`` — that seeding is what legitimised ghosts on ``plushuman update``
         (#95188 path D, #94823, #99392). ``profile create`` may take the name back."""
         default_env = profile_env / ".hermes" / ".env"
         default_env.write_text("OPENAI_API_KEY=sk-real\n", encoding="utf-8")
@@ -213,7 +213,7 @@ class TestDeletedProfileTombstone:
         assert not (shell / ".env").exists()
         assert _named_homes(profile_env) == ["legacy"]
         assert [name for name, _ in profiles_to_serve(True)] == ["default", "legacy"]
-        # ``alfred --profile ghost serve`` (a stale Desktop boot target) must not start a backend
+        # ``plushuman --profile ghost serve`` (a stale Desktop boot target) must not start a backend
         # in the shell — its ensure_hermes_home() would rebuild the full profile tree.
         assert not profile_exists("ghost")
         with pytest.raises(FileNotFoundError):
@@ -267,7 +267,7 @@ class TestDeletedProfileTombstone:
 
 class TestNamedProfileHome:
     def test_logs_under_named_profile_resolve_to_profile_home(self, tmp_path):
-        # tmp_path acts as a real Alfred home (Docker/custom layout): it
+        # tmp_path acts as a real +Human home (Docker/custom layout): it
         # carries a home marker file, so profiles/ under it is canonical.
         (tmp_path / "config.yaml").write_text("{}\n", encoding="utf-8")
         worker = tmp_path / "profiles" / "worker"
@@ -287,7 +287,7 @@ class TestNamedProfileHome:
     def test_unrelated_profiles_dir_is_not_named(self, tmp_path):
         # Review point 1 regression: a custom home like
         # /srv/profiles/buildcache must NOT be treated as a named profile —
-        # its parent is not a Alfred home, so logging must keep mkdir-ing.
+        # its parent is not a +Human home, so logging must keep mkdir-ing.
         custom_home = tmp_path / "srv" / "profiles" / "buildcache"
         assert named_profile_home(custom_home) is None
         assert named_profile_home(custom_home / "logs") is None
@@ -311,7 +311,7 @@ class TestNamedProfileHome:
 
     def test_tombstone_dir_marks_profiles_root(self, tmp_path):
         # A profiles/.deleted directory is only ever created by
-        # `alfred profile delete` — its presence alone anchors recognition,
+        # `plushuman profile delete` — its presence alone anchors recognition,
         # so tombstones are honored even when root markers are missing.
         profiles_dir = tmp_path / "opt" / "profiles"
         (profiles_dir / ".deleted").mkdir(parents=True)

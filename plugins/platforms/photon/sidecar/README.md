@@ -1,7 +1,7 @@
 # Photon sidecar
 
-Small Node helper that bridges Alfred to Photon's Spectrum SDK
-(`spectrum-ts`).  Alfred is Python; Photon has no public HTTP
+Small Node helper that bridges +Human to Photon's Spectrum SDK
+(`spectrum-ts`).  +Human is Python; Photon has no public HTTP
 send-message endpoint today; replies therefore go through this sidecar.
 
 The sidecar:
@@ -10,7 +10,7 @@ The sidecar:
 - exposes a loopback-only HTTP control channel for the Python adapter
   to push send/typing requests (auth via `X-Hermes-Sidecar-Token`)
 - drains the inbound message stream so `spectrum-ts` keeps its
-  reconnect/heartbeat machinery alive and Alfred can receive inbound messages
+  reconnect/heartbeat machinery alive and +Human can receive inbound messages
   over the adapter's loopback `GET /inbound` stream
 
 ## Install
@@ -20,7 +20,7 @@ cd plugins/platforms/photon/sidecar
 npm install
 ```
 
-The Alfred plugin's `hermes photon setup` command runs `npm install`
+The +Human plugin's `hermes photon setup` command runs `npm install`
 here automatically.
 
 ## Run standalone
@@ -40,7 +40,7 @@ it by hand.
 ## Why a sidecar at all?
 
 Photon's Spectrum send path is exposed through the TypeScript SDK's
-`Space.send(...)` API. Alfred is Python, so replies go through this sidecar
+`Space.send(...)` API. +Human is Python, so replies go through this sidecar
 until Photon ships a public HTTP send endpoint.
 
 When Photon ships an HTTP send endpoint, the plan is to retire this

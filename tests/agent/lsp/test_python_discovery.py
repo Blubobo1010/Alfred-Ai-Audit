@@ -1,4 +1,4 @@
-"""Pyright uses the project environment before the Alfred runtime fallback."""
+"""Pyright uses the project environment before the +Human runtime fallback."""
 
 import os
 import subprocess

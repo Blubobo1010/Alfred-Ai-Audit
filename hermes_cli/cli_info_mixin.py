@@ -209,7 +209,7 @@ class CLIInfoMixin:
             self._console_print(f"[dim]   {t('cli.banner.hermes_models_switch_hint')}[/]")
 
         # Project-local skills one-liner: trusted → count; untrusted-with-skills → point at
-        # `alfred skills trust`. Never raises.
+        # `plushuman skills trust`. Never raises.
         try:
             from agent.skill_utils import (
                 get_project_skills_dirs, get_untrusted_project_skills_root, iter_skill_index_files)

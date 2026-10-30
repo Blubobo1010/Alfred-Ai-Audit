@@ -1,4 +1,4 @@
-"""CLI handlers for the ``alfred proxy`` subcommand."""
+"""CLI handlers for the ``plushuman proxy`` subcommand."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ def _err(msg: str) -> None:
 def cmd_proxy_start(args: Any) -> int:
     """Run the proxy server in the foreground."""
     if not AIOHTTP_AVAILABLE:
-        _err("alfred proxy requires aiohttp. Run `alfred setup` to install it.")
+        _err("plushuman proxy requires aiohttp. Run `plushuman setup` to install it.")
         return 1
     provider = getattr(args, "provider", None) or "nous"
     try:
@@ -31,7 +31,7 @@ def cmd_proxy_start(args: Any) -> int:
         _err(f"Error: {exc}")
         return 2
     if not adapter.is_authenticated():
-        auth_hint = getattr(adapter, "auth_hint", f"alfred auth add {adapter.name}")
+        auth_hint = getattr(adapter, "auth_hint", f"plushuman auth add {adapter.name}")
         _err(f"Not logged into {adapter.display_name}. Run `{auth_hint}` first.")
         return 2
     from hermes_cli.url_utils import format_url_host
@@ -39,7 +39,7 @@ def cmd_proxy_start(args: Any) -> int:
     host = getattr(args, "host", None) or DEFAULT_HOST
     port = getattr(args, "port", None) or DEFAULT_PORT
     _err(
-        f"Starting Alfred proxy for {adapter.display_name}\n"
+        f"Starting +Human proxy for {adapter.display_name}\n"
         f"  Listening on:  http://{format_url_host(host)}:{port}/v1\n"
         f"  Forwarding to: (resolved per-request from your subscription)\n"
         f"  Use any bearer token in the client — the proxy attaches your real credential.\n"
@@ -58,7 +58,7 @@ def cmd_proxy_start(args: Any) -> int:
 
 def cmd_proxy_status(args: Any) -> int:
     """Print the status of each configured upstream adapter."""
-    print("Alfred proxy upstream adapters\n")
+    print("+Human proxy upstream adapters\n")
     for name in sorted(ADAPTERS):
         adapter = get_adapter(name)
         if not adapter.is_authenticated():
@@ -71,7 +71,7 @@ def cmd_proxy_status(args: Any) -> int:
             continue
         expires = f" (bearer expires {cred.expires_at})" if cred.expires_at else ""
         print(f"  [{name:8s}] {adapter.display_name} — ready{expires}")
-    print("\nStart the proxy with: alfred proxy start [--provider <name>]")
+    print("\nStart the proxy with: plushuman proxy start [--provider <name>]")
     return 0
 
 
@@ -93,20 +93,20 @@ _SUBCOMMANDS = {
 
 
 def cmd_proxy(args: Any) -> int:
-    """Dispatch ``alfred proxy <subcommand>``; no/unknown subcommand prints the short help."""
+    """Dispatch ``plushuman proxy <subcommand>``; no/unknown subcommand prints the short help."""
     handler = _SUBCOMMANDS.get(getattr(args, "proxy_command", None))
     if handler is not None:
         return handler(args)
     _err(
-        "alfred proxy — local OpenAI-compatible proxy that attaches your\n"
+        "plushuman proxy — local OpenAI-compatible proxy that attaches your\n"
         "OAuth-authenticated provider credentials to outbound requests.\n"
         "\n"
         "Subcommands:\n"
-        "  alfred proxy start [--provider nous|xai] [--host 127.0.0.1] [--port 8645]\n"
+        "  plushuman proxy start [--provider nous|xai] [--host 127.0.0.1] [--port 8645]\n"
         "      Run the proxy in the foreground.\n"
-        "  alfred proxy status\n"
+        "  plushuman proxy status\n"
         "      Show which upstream adapters are ready.\n"
-        "  alfred proxy providers\n"
+        "  plushuman proxy providers\n"
         "      List available upstream providers.\n"
     )
     return 0

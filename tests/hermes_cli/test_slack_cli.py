@@ -14,7 +14,7 @@ from hermes_cli import main_platform_setup
 
 
 def _parse_slack_args(argv):
-    """Build the real `alfred slack` parser and parse argv against it."""
+    """Build the real `plushuman slack` parser and parse argv against it."""
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="command")
     build_slack_parser(subparsers, cmd_slack=lambda _args: 0)
@@ -115,7 +115,7 @@ class TestSlackManifestArgparse:
 
 
 class TestSlackFullManifest:
-    """Generated full Slack app manifest used by `alfred slack manifest`."""
+    """Generated full Slack app manifest used by `plushuman slack manifest`."""
 
 
 
@@ -123,7 +123,7 @@ class TestSlackFullManifest:
 
 
     def test_assistant_features_remain_enabled(self):
-        manifest = _build_full_manifest("Alfred", "Your Alfred agent on Slack")
+        manifest = _build_full_manifest("+Human", "Your +Human agent on Slack")
 
         assert "assistant_view" in manifest["features"]
         assert "agent_view" not in manifest["features"]
@@ -137,7 +137,7 @@ class TestSlackFullManifest:
     def test_no_assistant_preserves_core_surface(self):
         """Dropping assistant mode must NOT strip the regular messaging surface."""
         manifest = _build_full_manifest(
-            "Alfred", "Your Alfred agent on Slack", include_assistant=False
+            "+Human", "Your +Human agent on Slack", include_assistant=False
         )
 
         # Flat DM still needs the Messages tab writable.

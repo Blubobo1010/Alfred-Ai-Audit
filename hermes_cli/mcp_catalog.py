@@ -322,7 +322,7 @@ def _parse_manifest(path: Path) -> CatalogEntry:
     if mv != _MANIFEST_VERSION:
         raise CatalogError(
             f"{path}: manifest_version {mv!r} unsupported "
-            f"(this Alfred understands version {_MANIFEST_VERSION})"
+            f"(this +Human understands version {_MANIFEST_VERSION})"
         )
     name = data.get("name") or ""
     if not name or not re.match(r"^[A-Za-z0-9_-]+$", name):
@@ -354,7 +354,7 @@ def list_catalog() -> list[CatalogEntry]:
     """Return all valid catalog entries, sorted by name.
 
     Invalid manifests are skipped silently (CI catches them); future ``manifest_version`` ones are
-    skipped too but surfaced via :func:`catalog_diagnostics` so UIs can say "update Alfred".
+    skipped too but surfaced via :func:`catalog_diagnostics` so UIs can say "update +Human".
     """
     root = _catalog_root()
     if not root.exists():
@@ -376,7 +376,7 @@ def list_catalog() -> list[CatalogEntry]:
 
 def catalog_diagnostics() -> list[tuple]:
     """``(entry_name, kind, message)`` tuples from the most recent :func:`list_catalog` call;
-    ``kind`` is ``future_manifest`` (newer than this Alfred) or ``invalid`` (malformed)."""
+    ``kind`` is ``future_manifest`` (newer than this +Human) or ``invalid`` (malformed)."""
     return list(_CATALOG_DIAGNOSTICS)
 
 
@@ -621,11 +621,11 @@ def _apply_tool_selection(
 
     Probe-success: curses checklist; pre-check priority *prior_selection* (reinstall) > manifest
     ``tools.default_enabled`` > all; all-on clears any filter. Probe-fail: keep the prior filter,
-    else apply ``default_enabled``, else no filter; point the user at ``alfred mcp configure``.
+    else apply ``default_enabled``, else no filter; point the user at ``plushuman mcp configure``.
     """
     print()
     name = entry.name
-    configure_hint = f"`alfred mcp configure {name}`"
+    configure_hint = f"`plushuman mcp configure {name}`"
 
     # Exclude-mode manifests never probe: the curated exclude list (names or globs) is written as-is
     # and everything else stays enabled, including tools the server adds later. A prior include
@@ -708,7 +708,7 @@ def _apply_tool_selection(
         return
     if len(chosen_indices) == len(probed):
         # Clear the filter: tools the server adds later are auto-enabled too. To pin the current set,
-        # re-run `alfred mcp configure <name>` and unselect a tool (switches to include-mode).
+        # re-run `plushuman mcp configure <name>` and unselect a tool (switches to include-mode).
         _write_tools_filter(name, "include", None)
         _say(
             f"  ✓ All {len(probed)} tools enabled (no filter — new tools "
@@ -800,11 +800,11 @@ def _install_entry(entry: CatalogEntry, *, enable: bool, preloaded_env: Optional
         _say("  Configure credentials:", Colors.CYAN)
         env_values = _prompt_env_vars(entry.auth.env, preloaded_env or {})
     if entry.auth.type == "oauth" and entry.auth.provider:
-        # Provider-mediated OAuth relies on the existing `alfred auth <provider>` flow; surface
+        # Provider-mediated OAuth relies on the existing `plushuman auth <provider>` flow; surface
         # guidance rather than auto-running it to keep install decoupled from provider-auth lifecycle.
         _say(
             f"  This MCP uses {entry.auth.provider} OAuth. Run "
-            f"`alfred auth {entry.auth.provider}` if you have not "
+            f"`plushuman auth {entry.auth.provider}` if you have not "
             "already authenticated.",
             Colors.YELLOW)
     elif entry.auth.type == "oauth":
@@ -838,7 +838,7 @@ def _install_entry(entry: CatalogEntry, *, enable: bool, preloaded_env: Optional
     _say(
         f"  ✓ Installed '{entry.name}' "
         f"({'enabled' if enable else 'disabled'}). "
-        f"Start a new Alfred session to load its tools."
+        f"Start a new +Human session to load its tools."
     )
     if entry.post_install:
         print()

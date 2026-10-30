@@ -36,7 +36,7 @@ import { createControlMasterHolders } from './ssh-control-master-holders'
 const execFileAsync = promisify(execFile)
 
 test('redactSecrets scrubs the spawn-time session token env var', () => {
-  const line = 'setsid env HERMES_DASHBOARD_SESSION_TOKEN=abc123deadbeef HERMES_DESKTOP=1 alfred dashboard'
+  const line = 'setsid env HERMES_DASHBOARD_SESSION_TOKEN=abc123deadbeef HERMES_DESKTOP=1 plushuman dashboard'
   const out = redactSecrets(line)
   assert.ok(!out.includes('abc123deadbeef'))
   assert.match(out, /HERMES_DASHBOARD_SESSION_TOKEN=<redacted>/)
@@ -1394,7 +1394,7 @@ test('withRemoteTimeout kills a hung probe remotely instead of orphaning it (#11
   }
 
   // Shape: POSIX watchdog — macOS remotes have no GNU `timeout`.
-  const wrapped = withRemoteTimeout('alfred --version 2>&1', 15)
+  const wrapped = withRemoteTimeout('plushuman --version 2>&1', 15)
 
   assert.ok(!/(^|[ ;(])timeout[ ;]/.test(wrapped), 'no GNU timeout dependency')
   assert.ok(

@@ -1,8 +1,8 @@
-"""Tests for --ignore-user-config and --ignore-rules flags on `alfred chat`.
+"""Tests for --ignore-user-config and --ignore-rules flags on `plushuman chat`.
 
 Ported from openai/codex#18646 (`feat: add --ignore-user-config and --ignore-rules`).
 Codex's flags fully isolate a run from user-level config and exec-policy .rules
-files. In Alfred the equivalent isolation is:
+files. In +Human the equivalent isolation is:
 
 * ``--ignore-user-config`` → skip ``~/.hermes/config.yaml`` in ``load_cli_config()``
   (credentials in ``.env`` are still loaded).

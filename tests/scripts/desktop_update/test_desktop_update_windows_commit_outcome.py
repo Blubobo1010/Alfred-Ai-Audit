@@ -1,7 +1,7 @@
 """Post-commit outcomes (contract C3) on the real Windows hand-off script.
 
-A real ``windows.ps1`` drives a real published launcher whose ``alfred``
-application is a scripted stand-in: once ``alfred update`` exits 0 the install
+A real ``windows.ps1`` drives a real published launcher whose ``plushuman``
+application is a scripted stand-in: once ``plushuman update`` exits 0 the install
 is on the new version, so nothing afterwards may report "still on the previous
 version", and the hand-off's own supervision (watchdog, probes, marker
 release) must not turn healthy work into a failure.
@@ -107,7 +107,7 @@ def test_verify_failure_after_a_committed_update_is_ok_with_warnings(tmp_path: P
     assert code == 0, out
     assert (result['ok'], result['exit_code'], result['manual']) == (True, 0, True), result
     assert [w.split(':')[0] for w in result['warnings']] == ['verify'], result
-    assert result['message'].startswith('Alfred was updated, but'), result
+    assert result['message'].startswith('+Human was updated, but'), result
     assert 'previous version' not in result['message']
     # The fleet the Desktop stopped is still brought back.
     assert argv[-1] == ['gateway', 'start', '--all'], argv
@@ -137,14 +137,14 @@ def test_a_result_that_cannot_be_published_leaves_no_tmp_file(tmp_path: Path) ->
 @pytest.mark.parametrize(('receipt', 'ok'), [('interrupted', True), ('partial', True), ('interrupted,another-run', False),
                                              ('failed', False)])
 def test_nonzero_exit_after_the_commit_point_is_installed_with_a_followup(tmp_path: Path, receipt: str, ok: bool) -> None:
-    # Contract C3: `alfred update` exits 130 / 1 AFTER its commit point (Ctrl-C after the code
+    # Contract C3: `plushuman update` exits 130 / 1 AFTER its commit point (Ctrl-C after the code
     # moved, a parked autostash). Its own receipt (matched by the correlation id) says so: the
     # result must report the update installed with an owed follow-up, never "update failed".
     code, out, argv, result, _ = _handoff(tmp_path, HANDOFF_RECEIPT=receipt, HANDOFF_EXIT='130')
     if ok:
         assert code == 0, out
         assert (result['ok'], result['exit_code'], result['manual']) == (True, 0, True), result
-        assert result['message'].startswith('Alfred was updated, but'), result
+        assert result['message'].startswith('+Human was updated, but'), result
         assert [w.split(':')[0] for w in result['warnings']] == ['update'], result
         assert argv[-1] == ['gateway', 'start', '--all'], argv   # the post-commit steps still run
     else:

@@ -92,7 +92,7 @@ def _scan_context_content(content: str, filename: str, *, user_authored: bool = 
     supply it — so a user who *documents* "ignore previous instructions" in their security guidance
     must not lose their whole identity file to a one-line log entry (#112570). Project-dir files
     (repo AGENTS.md / .cursorrules / .hermes.md) arrive with the checkout and keep blocking, and so does
-    a SOUL.md owned by a profile distribution (``alfred profile install <git-url>`` copies it in unscanned;
+    a SOUL.md owned by a profile distribution (``plushuman profile install <git-url>`` copies it in unscanned;
     ``load_soul_md`` passes ``user_authored=False`` when ``distribution.yaml`` owns the file).
     """
     # A leading UTF-8 BOM is a Windows-editor artifact, not an injection.
@@ -138,12 +138,12 @@ def _is_dir_or_denied(path: Path) -> bool:
 
 
 def _find_hermes_md(cwd: Path) -> Optional[Path]:
-    """Nearest ``.hermes.md`` / ``ALFRED.md`` from *cwd* up to the git root, else None."""
+    """Nearest ``.hermes.md`` / ``PLUSHUMAN.md`` from *cwd* up to the git root, else None."""
     stop_at = _find_git_root(cwd)
     current = cwd.resolve()
     # No git root: cwd only — walking parents could pick up a file planted in /tmp, /home, etc.
     for directory in [current, *current.parents] if stop_at else [current]:
-        found = next((directory / n for n in (".hermes.md", "ALFRED.md") if _is_file_or_denied(directory / n)), None)
+        found = next((directory / n for n in (".hermes.md", "PLUSHUMAN.md") if _is_file_or_denied(directory / n)), None)
         if found or directory == stop_at:
             return found
     return None
@@ -159,7 +159,7 @@ def _strip_yaml_frontmatter(content: str) -> str:
 DEFAULT_AGENT_IDENTITY = (
     # A behavior spec (sizing rule, named prohibitions, earned-depth escape hatch), not a trait list — trait
     # lists change nothing. Maintainer rule: models UNDER-explore by default; never re-add an exploration-thrift line.
-    "You are Alfred, built by Ai-Audit. Be direct: match the length of your reply to the weight of the ask "
+    "You are +Human, an AI assistant built by Ai-Audit. Be direct: match the length of your reply to the weight of the ask "
     "— a one-line question gets a one-line answer, and finished work gets a short report of what changed, what's "
     "verified, and what's left, never a replay of the process. No filler (\"Great question,\" \"I'd be happy to\"), no "
     "restating the request back, no re-summarizing what you already said, no narrating tool calls the user can see. "
@@ -170,19 +170,19 @@ DEFAULT_AGENT_IDENTITY = (
 HERMES_AGENT_HELP_GUIDANCE = (
     # Injected only when skill_view exists AND the hermes-agent skill is installed (system_prompt.py slot
     # resolution). No "when the two differ" clause: docs-are-authoritative already carries the precedence.
-    "You run on Alfred (by Ai-Audit). When the user needs help with Alfred itself — configuring, "
-    "Alfred is a white-label build of Hermes Agent by Nous Research: the Hermes documentation and the `hermes-agent` skill apply to Alfred unchanged, and every `hermes <command>` is also available as `alfred <command>`. "  # alfred:keep
+    "You run on +Human (by Ai-Audit). When the user needs help with +Human itself — configuring, "
+    "+Human is a white-label build of Hermes Agent by Nous Research: the Hermes documentation and the `hermes-agent` skill apply to +Human unchanged, and every `hermes <command>` is also available as `plushuman <command>`. "  # alfred:keep
     "setting up, using, extending, or troubleshooting it — or when you need to understand your own features, "
     "tools, or capabilities, the documentation at https://hermes-agent.nousresearch.com/docs is your "
     "authoritative reference and always holds the latest, most up-to-date information. The `hermes-agent` "
     "skill has the actual commands and proven workflows — load it with skill_view(name='hermes-agent') "
-    "before configuring, modifying, or troubleshooting Alfred so you don't guess or invent workarounds."
+    "before configuring, modifying, or troubleshooting +Human so you don't guess or invent workarounds."
 )
 
 # Variant for sessions without the skills toolset (e.g. Blank Slate): naming skill_view() there would dangle.
 HERMES_AGENT_HELP_GUIDANCE_NO_SKILLS = (
-    "You run on Alfred (by Ai-Audit). When the user needs help with Alfred itself — configuring, "
-    "Alfred is a white-label build of Hermes Agent by Nous Research: the Hermes documentation and the `hermes-agent` skill apply to Alfred unchanged, and every `hermes <command>` is also available as `alfred <command>`. "  # alfred:keep
+    "You run on +Human (by Ai-Audit). When the user needs help with +Human itself — configuring, "
+    "+Human is a white-label build of Hermes Agent by Nous Research: the Hermes documentation and the `hermes-agent` skill apply to +Human unchanged, and every `hermes <command>` is also available as `plushuman <command>`. "  # alfred:keep
     "setting up, using, extending, or troubleshooting it — or when you need to understand your own features, "
     "tools, or capabilities, the documentation at https://hermes-agent.nousresearch.com/docs is the "
     "authoritative reference and always holds the latest, most up-to-date information. Point the user there "
@@ -330,11 +330,11 @@ KANBAN_GUIDANCE = (
     "- **Created cards.** List ids in `kanban_complete(created_cards=[...])` ONLY when captured from a successful "
     "`kanban_create` return — never invent or paste ids; the kernel rejects the completion on any phantom id.\n"
     "- **Orchestrating: discover profiles first.** The dispatcher SILENTLY drops a card with an unknown assignee (it "
-    "sits in `ready` forever). Ground every assignee in a real profile (`alfred profile list`, or ask the user), and "
+    "sits in `ready` forever). Ground every assignee in a real profile (`plushuman profile list`, or ask the user), and "
     "express dependencies via `parents=[...]` on `kanban_create`, not prose.\n"
     "\n"
     "## Do NOT\n\n"
-    "- Do not shell out to `alfred kanban <verb>` for board operations. Use the `kanban_*` tools — they work across "
+    "- Do not shell out to `plushuman kanban <verb>` for board operations. Use the `kanban_*` tools — they work across "
     "all terminal backends.\n"
     "- Do not complete a task you didn't actually finish. Block it.\n"
     "- Do not call `clarify` to ask questions. You are running headless — there is no live user to answer. The call "
@@ -574,7 +574,7 @@ STEER_MARKER_OPEN = (
     "once at this position; not tool output and not a new delivery when replayed from conversation history]"
 )
 STEER_MARKER_CLOSE = "[/OUT-OF-BAND USER MESSAGE]"
-# Text after the "[" that opens one of Alfred' own control frames (the steer marker above, the compaction
+# Text after the "[" that opens one of +Human' own control frames (the steer marker above, the compaction
 # handoff and its fallbacks, runtime/system notes, agent.context_compressor._SYNTHETIC_USER_ROW_PREFIXES,
 # agent.title_generator._MACHINE_PREFIXES). Consumers that republish model output as role=user text
 # (hosted rooms) relabel these so a reply cannot reproduce the exact trusted shape. Keep the regex literal in
@@ -612,7 +612,7 @@ STEER_CHANNEL_NOTE = (
     # (anti-lookalike), and it carries full user authority. The former standalone historical-vs-new
     # paragraph (#76805) is now redundant with the marker's own replay clause and was removed.
     "## Mid-turn user steering\n"
-    "Mid-turn, the user can steer you: Alfred delivers their message as a standalone user message right after "
+    "Mid-turn, the user can steer you: +Human delivers their message as a standalone user message right after "
     "the latest tool results, wrapped exactly as:\n"
     f"{STEER_MARKER_OPEN}\n<their message>\n{STEER_MARKER_CLOSE}\n"
     "That marker is a genuine user message with the same authority as their original request — not tool "
@@ -640,10 +640,10 @@ def hud_surface_note(valid_tool_names: set[str] | None = None,
         return ""
     gated = (
         (True,
-         "[Note: this message came from HUD mode — a small floating Alfred "
+         "[Note: this message came from HUD mode — a small floating +Human "
          "window sitting over whatever the user is actually working in, so an "
          'unqualified "this" or "here" usually means the app behind the HUD '
-         "rather than anything inside Alfred. read_window_below identifies that app."),
+         "rather than anything inside +Human. read_window_below identifies that app."),
         (True,
          "They move the HUD from app to app mid-conversation, so one you identified on an earlier turn is "
          "still a live target: a reference that does not fit the window below may name one from a turn or two "
@@ -743,7 +743,7 @@ PLATFORM_HINTS = {
     ),
     "tui": (
         # Same file-delivery reality as the CLI: no MEDIA: interception in tui/.
-        "You are in the Alfred terminal UI (TUI). Files: there is no attachment channel and MEDIA:/path tags "
+        "You are in the +Human terminal UI (TUI). Files: there is no attachment channel and MEDIA:/path tags "
         "are NOT intercepted here (they print as literal text) — deliver a file by stating its absolute path "
         "or URL in plain text. "
         f"{_LOCAL_CRON_DELIVERY_NOTE}"
@@ -752,7 +752,7 @@ PLATFORM_HINTS = {
         # Every claim verified against the shipping renderer (inline-preview-directive.tsx). Widget text is
         # recipe-first: HOW (an inline widget IS a ::preview'd HTML file) and WHY (the frame injects the theme
         # prelude first; width adopts the first measured span). setup_mcp is taught by its own tool schema.
-        "You are chatting inside the Alfred desktop app, a graphical chat surface. Markdown renders with full GitHub "
+        "You are chatting inside the +Human desktop app, a graphical chat surface. Markdown renders with full GitHub "
         "flavor (tables, syntax-highlighted code, math via $...$, task lists, callouts). Deliver files by writing "
         "MEDIA:/absolute/path/to/file — any file type: images/audio/video render inline, everything else becomes a "
         "card with Download and preview buttons. Remote image URLs render via ![alt](url); local files ONLY via MEDIA: "
@@ -933,7 +933,7 @@ _WINDOWS_BASH_SHELL_HINT = (
     "path conversion is disabled here, so `git -C /c/Users/x` or `node /tmp/a.js` fails with 'cannot change to'/'not "
     "found' even though `cd /c/Users/x` (a bash builtin) works. Pass `C:/Users/x`-style forward-slash native paths to "
     # no-tmp: ok — tells the model what NOT to use
-    "native tools, and prefer `$LOCALAPPDATA/Temp` (or `$TMPDIR`, which Alfred points at its own scratch dir) for scratch files a native tool must read — never a bare `/tmp`. When "
+    "native tools, and prefer `$LOCALAPPDATA/Temp` (or `$TMPDIR`, which +Human points at its own scratch dir) for scratch files a native tool must read — never a bare `/tmp`. When "
     "answering prompts in a pty background process, use process(submit) — never process(write) with a bare trailing "
     "newline: Enter on a Windows PTY is a carriage return, and a lone `\\n"
     "` is not delivered as a line terminator, so the child's prompt silently never returns. When a CLI offers a "
@@ -1048,7 +1048,7 @@ def _local_host_hints() -> list[str]:
     except OSError:
         pass
     # The model reaches for the system temp dir by reflex (tmpfs on most Linux hosts, fills RAM);
-    # naming Alfred' scratch dir here is what makes the TMPDIR export a habit rather than a hidden default.
+    # naming +Human' scratch dir here is what makes the TMPDIR export a habit rather than a hidden default.
     try:
         host_lines.append(f"Scratch directory: {get_scratch_dir()} (TMPDIR points here; write temporary files "
                           "and probes there, never under the system temp dir; entries idle for 24h are pruned)")
@@ -1107,8 +1107,8 @@ def _remote_backend_hint(backend: str) -> str:
     probe = _probe_remote_backend(backend)
     if probe:
         return lead + (
-            f"this {backend} environment — NOT on the machine where Alfred itself is running. The host OS, "
-            f"home, and cwd of the Alfred process are irrelevant; only the following backend state matters:\n{probe}\n"
+            f"this {backend} environment — NOT on the machine where +Human itself is running. The host OS, "
+            f"home, and cwd of the +Human process are irrelevant; only the following backend state matters:\n{probe}\n"
             f"  The sandbox's current user, $HOME, and working directory are not listed here; if you need them, "
             f"probe directly with a terminal call like `whoami && pwd`."
         )
@@ -1118,7 +1118,7 @@ def _remote_backend_hint(backend: str) -> str:
         or f"a {backend} environment (likely Linux)"
     )
     return lead + (
-        f"{description} — NOT on the machine where Alfred itself runs. The backend probe didn't respond at "
+        f"{description} — NOT on the machine where +Human itself runs. The backend probe didn't respond at "
         f"prompt-build time, so the sandbox's OS, current user, $HOME, and working directory are unknown from here. "
         f"If you need them, probe directly with a terminal call like `uname -a && whoami && pwd`."
     )
@@ -1157,8 +1157,8 @@ def build_environment_hints() -> str:
 
 
 # Marks the runtime block after project prose for persisted-prompt cwd validation.
-RUNTIME_ENVIRONMENT_HEADING = "# Alfred runtime environment"
-RUNTIME_ENVIRONMENT_END = "<!-- End Alfred runtime environment -->"
+RUNTIME_ENVIRONMENT_HEADING = "# +Human runtime environment"
+RUNTIME_ENVIRONMENT_END = "<!-- End +Human runtime environment -->"
 
 CONTEXT_FILE_MAX_CHARS = 20_000
 CONTEXT_TRUNCATE_HEAD_RATIO = 0.7
@@ -1680,7 +1680,7 @@ def load_soul_md(context_length: Optional[int] = None, home_override: Path | Non
             content = strip_legacy_protocol(content).strip()
         if not content:
             return None
-        # `alfred profile install <git-url>` / `profile update` plant a third-party SOUL.md into a
+        # `plushuman profile install <git-url>` / `profile update` plant a third-party SOUL.md into a
         # distribution profile (hermes_cli/profile_distribution.py, DEFAULT_DIST_OWNED) with no scan and no
         # approval gate, so it is NOT the user's own file: when distribution.yaml owns SOUL.md (a manifest
         # with no `distribution_owned` list owns the whole payload) a scanner hit keeps BLOCKING.
@@ -1717,7 +1717,7 @@ def _context_section(content: str, label: str, warn_name: str, path: Path, conte
 
 
 def _hermes_md_candidates(cwd_path: Path) -> list[tuple[str, Path, str]]:
-    """.hermes.md / ALFRED.md — nearest match walking up to the git root."""
+    """.hermes.md / PLUSHUMAN.md — nearest match walking up to the git root."""
     path = _find_hermes_md(cwd_path)
     if path is None:
         return []
@@ -1795,17 +1795,17 @@ def discover_context_files(cwd_path: Path) -> list[tuple[str, str, Path, str]]:
 
 
 def _project_context_suppressed(cwd: Optional[str], cwd_path: Path, allow_install_tree_fallback: bool) -> bool:
-    """A FALLBACK-picked cwd inside the Alfred install tree must not gain system-prompt authority (the desktop
+    """A FALLBACK-picked cwd inside the +Human install tree must not gain system-prompt authority (the desktop
     default would load this repo's contributor AGENTS.md). An explicitly configured cwd is honored verbatim —
-    the Alfred tree is a legitimate workspace when the user deliberately points a session at it — and
+    the +Human tree is a legitimate workspace when the user deliberately points a session at it — and
     CLI-style surfaces pass allow_install_tree_fallback=True because their launch dir IS the user's shell cwd
-    (developing Alfred in-tree). See #64590."""
+    (developing +Human in-tree). See #64590."""
     from agent.runtime_cwd import _is_install_tree
     return cwd is None and not allow_install_tree_fallback and _is_install_tree(cwd_path)
 
 
 def _load_hermes_md(cwd_path: Path, context_length: Optional[int] = None) -> str:
-    """.hermes.md / ALFRED.md — nearest match walking up to the git root."""
+    """.hermes.md / PLUSHUMAN.md — nearest match walking up to the git root."""
     for label, path, content in _hermes_md_candidates(cwd_path):
         if content:
             return _context_section(_strip_yaml_frontmatter(content), label, ".hermes.md", path, context_length)
@@ -1862,14 +1862,14 @@ def build_context_files_prompt(
 ) -> str:
     """Discover and load context files for the system prompt (each capped, see ``_get_context_file_max_chars``).
 
-    Only ONE project context type loads, first found wins: .hermes.md/ALFRED.md (walk to git root) →
+    Only ONE project context type loads, first found wins: .hermes.md/PLUSHUMAN.md (walk to git root) →
     AGENTS.md chain (git root → cwd) → CLAUDE.md (cwd) → .cursorrules + .cursor/rules/*.mdc (cwd). SOUL.md
     from HERMES_HOME is independent and always included unless *skip_soul* (already the identity slot).
     """
     cwd_path = Path(cwd if cwd is not None else os.getcwd()).resolve()
     if _project_context_suppressed(cwd, cwd_path, allow_install_tree_fallback):
         logger.warning(
-            "skipping project-context discovery: working-directory resolution fell back to the Alfred "
+            "skipping project-context discovery: working-directory resolution fell back to the +Human "
             "install tree (%s) — set terminal.cwd to your project directory", cwd_path,
         )
         sections = []

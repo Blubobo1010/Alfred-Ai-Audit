@@ -1,4 +1,4 @@
-"""#81209: ``alfred -z`` must consult the fallback chain at *resolution* time.
+"""#81209: ``plushuman -z`` must consult the fallback chain at *resolution* time.
 
 A quota-exhausted / expired primary raises ``AuthError`` from ``resolve_runtime_provider`` before
 ``AIAgent`` exists, so the mid-session ``fallback_model`` wiring never gets a chance. The shared
@@ -107,8 +107,8 @@ def test_run_agent_falls_back_when_primary_resolution_raises_auth_error(monkeypa
 
 
 def test_run_agent_forwards_resolved_request_overrides(monkeypatch):
-    """#103738: ``alfred -z`` hands the resolver's ``request_overrides`` (a custom entry's ``extra_body``) to
-    AIAgent like ``alfred chat``, or a proxy that requires a body field 400s on one-shot runs."""
+    """#103738: ``plushuman -z`` hands the resolver's ``request_overrides`` (a custom entry's ``extra_body``) to
+    AIAgent like ``plushuman chat``, or a proxy that requires a body field 400s on one-shot runs."""
     import hermes_cli.oneshot as oneshot_mod
 
     captured = {}

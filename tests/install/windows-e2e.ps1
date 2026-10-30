@@ -1,20 +1,20 @@
 # ============================================================================
 # Windows Desktop GUI install + update E2E driver (the REAL user flow)
 # ============================================================================
-# Proves, on a real Windows machine, that a user who installs Alfred the way
+# Proves, on a real Windows machine, that a user who installs +Human the way
 # the website tells them to can then update to the commit under test through
 # a real update surface -- with every leg driven through the GUI a user
 # actually touches:
 #
 #   INSTALL   - downloads the production Hermes-Setup.exe from the website,
 #               launches it HEADED, and AutoHotkey clicks Install, waits,
-#               then clicks Launch. The real Electron Alfred.exe must appear.
+#               then clicks Launch. The real Electron +Human.exe must appear.
 #               The exe runs EXACTLY as shipped against serve.git, whose
 #               `main` is parked at OLD (-InstallRef, default: the newest
 #               release tag) -- so the install lands on OLD the same way a
 #               user's install landed on whatever main served that day.
 #   UPDATE    - OLD -> HEAD through the route selected by -Route:
-#                 desktop    (implemented) launch the installed Alfred.exe
+#                 desktop    (implemented) launch the installed +Human.exe
 #                            under Playwright's Electron driver and CLICK
 #                            Settings -> About -> "Update now". The
 #                            production hand-off chain runs untouched:
@@ -23,7 +23,7 @@
 #                            target sha, marker cleanup, result JSON (when
 #                            the script path wrote one), working hermes,
 #                            and the relaunched app window.
-#                 update     run `alfred update` from the installed command
+#                 update     run `plushuman update` from the installed command
 #                            (the CLI route a GUI user might take).
 #                 installer  re-run the bootstrap installer over the
 #                            existing install (download Hermes-Setup.exe
@@ -35,7 +35,7 @@
 #   canonical repo URLs, via a driver-owned gitconfig selected with
 #   GIT_CONFIG_GLOBAL. (NOT GIT_CONFIG_COUNT/KEY_n/VALUE_n env config --
 #   install.ps1 sets those itself and silently clobbers them.) The
-#   installer's `git clone` and `alfred update`'s `git fetch origin`
+#   installer's `git clone` and `plushuman update`'s `git fetch origin`
 #   transparently hit OUR bare repo. Its `main` serves OLD for the install
 #   phase; the update phase advances it to HEAD -- an update becomes
 #   available exactly the way it does for a real user. Installer and
@@ -127,7 +127,7 @@ $OutputEncoding = [Console]::OutputEncoding
 # store) and HERMES_PYTHON for this job's tooling. A user's machine has one
 # store, <HERMES_HOME>\tools, and the desktop smoke already launches the app
 # that way (smoke-env.mjs drops every HERMES_* override). When install.ps1
-# and `alfred update` saw the job's store while the smoke did not, a leg
+# and `plushuman update` saw the job's store while the smoke did not, a leg
 # settled onto two stores and the update rewrote its own running launcher
 # ("source launcher publication failed"). No product step (installer, app,
 # update, chat) sees the job's variables; the driver keeps setup-pm only
@@ -357,8 +357,8 @@ function Get-InstalledHead {
 
 function Get-DesktopExe {
     foreach ($c in @(
-        (Join-Path $InstallDir "apps\desktop\release\win-unpacked\Alfred.exe"),
-        (Join-Path $InstallDir "apps\desktop\release\win-arm64-unpacked\Alfred.exe")
+        (Join-Path $InstallDir "apps\desktop\release\win-unpacked\+Human.exe"),
+        (Join-Path $InstallDir "apps\desktop\release\win-arm64-unpacked\+Human.exe")
     )) {
         if (Test-Path -LiteralPath $c) { return $c }
     }
@@ -400,7 +400,7 @@ function Test-HermesRuns([string]$Label) {
     try {
         $hermesExe = Get-SourceHermes $InstallDir
     } catch {
-        # A pre-handoff release cannot complete inside `alfred update`: its
+        # A pre-handoff release cannot complete inside `plushuman update`: its
         # update path reaches no retired-hook seam, so the update ends with the
         # tree at HEAD and no published launcher. The NEXT ordinary startup
         # completes it (hermes_bootstrap -> prepare_launch -> sync PM, publish
@@ -436,14 +436,14 @@ function Test-HermesRuns([string]$Label) {
         $env:HERMES_DISABLE_LAZY_INSTALLS = '1'
         $env:PYTHONDONTWRITEBYTECODE = '1'
         $ErrorActionPreference = 'Continue'
-        & $hermesExe --version 2>&1 | ForEach-Object { Write-Host "    alfred --version| $_" }
+        & $hermesExe --version 2>&1 | ForEach-Object { Write-Host "    plushuman --version| $_" }
         $versionExit = $LASTEXITCODE
     } finally {
         $env:HERMES_DISABLE_LAZY_INSTALLS = $prevLazy
         $env:PYTHONDONTWRITEBYTECODE = $prevBytecode
         $ErrorActionPreference = $prevEap
     }
-    Assert-True ($versionExit -eq 0) "$Label -- alfred --version exits 0"
+    Assert-True ($versionExit -eq 0) "$Label -- plushuman --version exits 0"
 }
 
 # ----------------------------------------------------------------------------
@@ -538,15 +538,15 @@ function Invoke-HermesUpdate {
         $ErrorActionPreference = $prevEap
         Stop-HangWatchdog $watchdog
     }
-    Write-LogGroup "alfred update transcript" $log
+    Write-LogGroup "plushuman update transcript" $log
     if (Test-Path -LiteralPath $hangLog) {
-        Write-LogGroup "alfred update hang evidence (process table, Python stacks)" $hangLog
-        throw "E2E ASSERTION FAILED: alfred update was still running after $UpdateDeadlineMinutes minutes (its output pipe never closed); the process table above shows which process held it"
+        Write-LogGroup "plushuman update hang evidence (process table, Python stacks)" $hangLog
+        throw "E2E ASSERTION FAILED: plushuman update was still running after $UpdateDeadlineMinutes minutes (its output pipe never closed); the process table above shows which process held it"
     }
-    Assert-True ($updateExit -eq 0) "alfred update exited $updateExit (expected 0)"
+    Assert-True ($updateExit -eq 0) "plushuman update exited $updateExit (expected 0)"
 }
 
-# install.ps1 (with -IncludeDesktop) and `alfred update` normally finish in
+# install.ps1 (with -IncludeDesktop) and `plushuman update` normally finish in
 # under 25 minutes. Past these deadlines the watchdog records every process
 # (pid, parent, start time, command line) plus a py-spy stack of each Python
 # process, then stops this leg's processes, so a hang fails with evidence --
@@ -609,11 +609,11 @@ function Stop-HangWatchdog($Job) {
 function Invoke-ManualCardUpdate([string]$ReceiptPath, [string]$TargetSha) {
     Assert-True (Test-Path -LiteralPath $ReceiptPath) "manual update card produced a receipt"
     $manual = Get-Content -LiteralPath $ReceiptPath -Raw | ConvertFrom-Json
-    Assert-True ($manual.command -match '^alfred update(?:\s|$)') "manual update card instructed alfred update"
+    Assert-True ($manual.command -match '^plushuman update(?:\s|$)') "manual update card instructed plushuman update"
     Invoke-HermesUpdate
     Assert-True ((Get-InstalledHead) -eq $TargetSha) "manual update landed on target commit"
     Test-HermesRuns "post-manual-update"
-    Assert-True ($null -ne (Get-DesktopExe)) "Alfred.exe still present after manual update"
+    Assert-True ($null -ne (Get-DesktopExe)) "+Human.exe still present after manual update"
 }
 
 function Clear-HistoricalInstallerChurn {
@@ -668,7 +668,7 @@ function Clear-HistoricalInstallerChurn {
 }
 
 function Invoke-HermesDesktopAppUpdate([string]$TargetSha) {
-    # The hermes-desktop launch surface: `alfred desktop` runs its whole
+    # The hermes-desktop launch surface: `plushuman desktop` runs its whole
     # real pipeline; the driver intercepts the product's final spawn
     # (argv/cwd/env captured by e2e-assets/launch-capture/sitecustomize.py)
     # and re-executes it under Playwright, which clicks Update now.
@@ -701,8 +701,8 @@ function Invoke-HermesDesktopAppUpdate([string]$TargetSha) {
         $env:PYTHONPATH = $prevPy
         $env:HERMES_E2E_CAPTURE_LAUNCH = $prevCap
     }
-    Write-LogGroup "alfred desktop (launch capture) transcript" $log
-    Assert-True ($capExit -eq 0) "alfred desktop exited 0 during launch capture"
+    Write-LogGroup "plushuman desktop (launch capture) transcript" $log
+    Assert-True ($capExit -eq 0) "plushuman desktop exited 0 during launch capture"
     Assert-True (Test-Path -LiteralPath "$spec.captured") "a launch was actually captured (exit 0 without a launch must not pass)"
     Clear-HistoricalInstallerChurn
 
@@ -732,9 +732,9 @@ function Invoke-HermesDesktopAppUpdate([string]$TargetSha) {
         Invoke-ManualCardUpdate $manualReceipt $TargetSha
         return
     }
-    Assert-True ($driveExit -eq 0) "app driven via captured alfred desktop spec; update completed"
+    Assert-True ($driveExit -eq 0) "app driven via captured plushuman desktop spec; update completed"
 
-    # The production updater relaunches Alfred. Close that verified window
+    # The production updater relaunches +Human. Close that verified window
     # normally so the test-owned checkpoint starts and owns its own backend.
     $desktopExe = Get-DesktopExe
     $deadline = (Get-Date).AddMinutes(5)
@@ -749,8 +749,8 @@ function Invoke-HermesDesktopAppUpdate([string]$TargetSha) {
     Close-VerifiedDesktop $desktopExe $windows[0].Id
 }
 
-# Evidence for a GUI-driver failure, taken while the installer is still alive: which Alfred
-# processes exist (was Alfred.exe ever started, and by whom), the installer's thread states,
+# Evidence for a GUI-driver failure, taken while the installer is still alive: which +Human
+# processes exist (was +Human.exe ever started, and by whom), the installer's thread states,
 # and a full memory dump of the installer. The installer's tracing log is buffered and never
 # reaches disk when the job kills it; the dump still holds it. A Launch that left the
 # installer on LAUNCHING had no other trace (tests/install/e2e-assets/install-and-launch.ahk).
@@ -845,13 +845,13 @@ function Stop-DesktopRecorder($proc, [string]$OutDir) {
 
 function Stop-HermesAppProcesses([string]$Label) {
     # Close the desktop app the blunt way between phases (a user quitting).
-    # Only Alfred.exe (Electron) -- never hermes.exe (the venv CLI shim).
-    $procs = @(Get-Process -Name "Alfred" -ErrorAction SilentlyContinue)
+    # Only +Human.exe (Electron) -- never hermes.exe (the venv CLI shim).
+    $procs = @(Get-Process -Name "+Human" -ErrorAction SilentlyContinue)
     foreach ($p in $procs) {
         try { Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue } catch {}
     }
     if ($procs.Count -gt 0) {
-        Write-Host "  [$Label] stopped $($procs.Count) Alfred.exe process(es)"
+        Write-Host "  [$Label] stopped $($procs.Count) +Human.exe process(es)"
         Start-Sleep -Seconds 3
     }
 }
@@ -872,8 +872,8 @@ function New-NextCommit([string]$Repo, [string]$Parent) {
     $saved = @{}
     $vars = @{
         GIT_INDEX_FILE = (Join-Path $WorkRoot "next.index")
-        GIT_AUTHOR_NAME = "Alfred E2E"; GIT_AUTHOR_EMAIL = "e2e@hermes.invalid"
-        GIT_COMMITTER_NAME = "Alfred E2E"; GIT_COMMITTER_EMAIL = "e2e@hermes.invalid"
+        GIT_AUTHOR_NAME = "+Human E2E"; GIT_AUTHOR_EMAIL = "e2e@hermes.invalid"
+        GIT_COMMITTER_NAME = "+Human E2E"; GIT_COMMITTER_EMAIL = "e2e@hermes.invalid"
     }
     foreach ($k in $vars.Keys) { $saved[$k] = [Environment]::GetEnvironmentVariable($k); [Environment]::SetEnvironmentVariable($k, $vars[$k]) }
     try {
@@ -1029,7 +1029,7 @@ function Invoke-PhaseInstallGui {
         }
         Write-Host "  Hermes-Setup.exe launched (pid $($installer.Id))"
 
-        # Drive it: Install click -> wait -> Launch click -> Alfred.exe window.
+        # Drive it: Install click -> wait -> Launch click -> +Human.exe window.
         # Arg 3 lets the AHK script use the installer's own log as the
         # install-finished fallback signal.
         $ahk = Start-Process -FilePath $ahkExe `
@@ -1055,7 +1055,7 @@ function Invoke-PhaseInstallGui {
 
         # The Launch hand-off under test: the app the installer spawned must
         # actually be running.
-        Assert-True ($null -ne (Get-Process -Name "Alfred" -ErrorAction SilentlyContinue)) "Alfred.exe process is running (installer Launch hand-off worked)"
+        Assert-True ($null -ne (Get-Process -Name "+Human" -ErrorAction SilentlyContinue)) "+Human.exe process is running (installer Launch hand-off worked)"
 
         # Installer should have exited after Launch.
         if (-not $installer.HasExited) {
@@ -1084,7 +1084,7 @@ function Invoke-PhaseInstallGui {
         Assert-True ($installedSha -ne $state.current) "installed checkout differs from HEAD (an update is genuinely available)"
     }
     Test-HermesRuns "post-$Mode-gui"
-    Assert-True ($null -ne (Get-DesktopExe)) "packaged Desktop Alfred.exe exists"
+    Assert-True ($null -ne (Get-DesktopExe)) "packaged Desktop +Human.exe exists"
 
     # The installer Launch proof above must pass before a test-owned launch.
     $script:ChatFailure = $true
@@ -1120,7 +1120,7 @@ function Invoke-GuiUpdateDesktopRoute([string]$TargetSha) {
     Write-Host "  serve.git main advanced to $TargetSha"
 
     $desktopExe = Get-DesktopExe
-    Assert-True ($null -ne $desktopExe) "packaged Alfred.exe present before update"
+    Assert-True ($null -ne $desktopExe) "packaged +Human.exe present before update"
 
     $resultPath = Join-Path $HermesHome ".hermes-update-result.json"
     $markerPath = Join-Path $HermesHome ".hermes-update-in-progress"
@@ -1156,7 +1156,7 @@ function Invoke-GuiUpdateDesktopRoute([string]$TargetSha) {
         Assert-True ($driveExit -eq 0) "GUI driver clicked Update now and the app quit for hand-off"
 
         # The detached updater (spawned by the app, NOT by us) now runs
-        # `alfred update` + desktop rebuild + relaunch. Which updater depends
+        # `plushuman update` + desktop rebuild + relaunch. Which updater depends
         # on the installed checkout, and BOTH are production paths:
         #   * checkouts shipping scripts/desktop-update.ps1 -> that script,
         #     which writes .hermes-update-result.json on every exit;
@@ -1211,26 +1211,26 @@ function Invoke-GuiUpdateDesktopRoute([string]$TargetSha) {
 
         Assert-True ((Get-InstalledHead) -eq $TargetSha) "checkout landed on target commit"
         Test-HermesRuns "post-update"
-        Assert-True ($null -ne (Get-DesktopExe)) "Alfred.exe still present after update"
+        Assert-True ($null -ne (Get-DesktopExe)) "+Human.exe still present after update"
 
         # The production hand-off relaunches the desktop (RelaunchExe).
         # A relaunched window is the user-visible proof the update loop closed.
-        Write-Host "  waiting for the relaunched Alfred.exe ..."
+        Write-Host "  waiting for the relaunched +Human.exe ..."
         $rDeadline = (Get-Date).AddMinutes(5)
         $relaunched = $null
         while ((Get-Date) -lt $rDeadline) {
-            $relaunched = Get-Process -Name "Alfred" -ErrorAction SilentlyContinue
+            $relaunched = Get-Process -Name "+Human" -ErrorAction SilentlyContinue
             if ($relaunched) { break }
             Start-Sleep -Seconds 5
         }
         Assert-True ($null -ne $relaunched) "updater relaunched the desktop app"
         Start-Sleep -Seconds 12   # let the window paint for the screenshot
-        # Foreground the relaunched Alfred window so the proof screenshot
+        # Foreground the relaunched +Human window so the proof screenshot
         # captures IT, not whatever else is on top (the full-desktop grab is
         # otherwise at the mercy of z-order -- an earlier run caught VS Code).
         $mainProc = $null
         try {
-            $mainProc = Get-Process -Name "Alfred" -ErrorAction SilentlyContinue |
+            $mainProc = Get-Process -Name "+Human" -ErrorAction SilentlyContinue |
                 Where-Object { $_.MainWindowHandle -ne 0 } | Select-Object -First 1
             if ($mainProc) {
                 Add-Type -Namespace HdE2E -Name Win -MemberDefinition @'
@@ -1380,7 +1380,7 @@ function Invoke-UserStateActions {
             # limitation, not a preservation failure.
             & $hermes auth add --help *> $null
             if ($LASTEXITCODE -ne 0) {
-                Write-Host '  SKIP alfred auth add does not exist on this ref; auth.json is not covered by this leg'
+                Write-Host '  SKIP plushuman auth add does not exist on this ref; auth.json is not covered by this leg'
             }
             else {
             # The provider id and the flags are vintage surfaces, so probe them
@@ -1396,7 +1396,7 @@ function Invoke-UserStateActions {
             }
             $added = $false
             foreach ($provider in @('openrouter', 'anthropic')) {
-                Add-Content -LiteralPath $authLog -Value "=== alfred auth add $provider ==="
+                Add-Content -LiteralPath $authLog -Value "=== plushuman auth add $provider ==="
                 & $hermes auth add $provider --type api-key `
                     --api-key 'e2e-preservation-not-a-real-key' @labelFlags 2>&1 |
                     Out-File -Encoding UTF8 -Append $authLog
@@ -1406,7 +1406,7 @@ function Invoke-UserStateActions {
                 }
             }
             if (-not $added) {
-                throw "alfred auth add failed for openrouter and anthropic; see $authLog"
+                throw "plushuman auth add failed for openrouter and anthropic; see $authLog"
             }
             Write-Host '  a pooled credential exists (auth.json)'
             }
@@ -1418,14 +1418,14 @@ function Invoke-UserStateActions {
             # not a preservation failure.
             & $hermes profile create --help *> $null
             if ($LASTEXITCODE -ne 0) {
-                Write-Host '  SKIP alfred profile create does not exist on this ref; profiles/e2e-second is not covered by this leg'
+                Write-Host '  SKIP plushuman profile create does not exist on this ref; profiles/e2e-second is not covered by this leg'
             }
             else {
             & $hermes profile create e2e-second 2>&1 |
                 Out-File -Encoding UTF8 (Join-Path $WorkRoot 'logs\user-state-profile.log')
-            if ($LASTEXITCODE -ne 0) { throw 'alfred profile create failed' }
+            if ($LASTEXITCODE -ne 0) { throw 'plushuman profile create failed' }
             if (-not (Test-Path -LiteralPath (Join-Path $HermesHome 'profiles\e2e-second'))) {
-                throw 'alfred profile create produced no profile dir'
+                throw 'plushuman profile create produced no profile dir'
             }
             # Factory templates migrate intentionally; preserve an authored profile instead.
             Add-Content -LiteralPath (Join-Path $HermesHome 'profiles\e2e-second\SOUL.md') `
@@ -1468,7 +1468,7 @@ function Invoke-UserStateVerify {
 }
 
 function Assert-RedirectIsTransportOnly {
-    # The redirect must stay at TRANSPORT level: `alfred update` resolves its
+    # The redirect must stay at TRANSPORT level: `plushuman update` resolves its
     # channel from the release archive and validates the record against
     # `git config --get remote.origin.url`. If the configured URL ever looked
     # like the rehearsal source, channel resolution would fail and this leg
@@ -1684,7 +1684,7 @@ function Invoke-PhaseVerifyStamp {
     # (epoch seconds) instead of "completedAt", and a null pinnedCommit when git
     # is not on PATH. #125053 fixed the writer, but the installer .exe is not
     # rebuilt, so every Desktop-installer machine carries this receipt until the
-    # next `alfred update` rewrites it (hermes_cli/source_stamp.py). No reader
+    # next `plushuman update` rewrites it (hermes_cli/source_stamp.py). No reader
     # depends on those two fields: Desktop's launch gate is runtime usability,
     # and the receipt's other readers check only that it exists. So the contract
     # for that shape is: exactly those two FAIL lines, an integer

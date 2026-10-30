@@ -1,6 +1,6 @@
-"""Tests for ``alfred approvals suggest`` (hermes_cli/approvals_suggest.py).
+"""Tests for ``plushuman approvals suggest`` (hermes_cli/approvals_suggest.py).
 
-Approval history in Alfred is implied, not ledgered: the session DB
+Approval history in +Human is implied, not ledgered: the session DB
 (state.db) stores every assistant ``terminal`` tool call plus its paired
 ``role='tool'`` result. A dangerous-classified command whose result is not a
 BLOCKED/denied/pending marker ran with user consent. These tests build

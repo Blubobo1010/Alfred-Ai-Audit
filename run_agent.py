@@ -9,13 +9,13 @@
 # hermes_bootstrap must be the very first import (UTF-8 stdio on Windows; no-op on POSIX).
 try:
     import hermes_bootstrap
-except ModuleNotFoundError as exc:  # partial `alfred update` left the bootstrap unregistered
+except ModuleNotFoundError as exc:  # partial `plushuman update` left the bootstrap unregistered
     if exc.name != "hermes_bootstrap":
         raise  # the bootstrap exists but cannot load: skipping it would skip PM activation
 
 import sys
 
-# `hermes-agent` runs this module without hermes_cli.main, which repairs a `alfred update` killed
+# `hermes-agent` runs this module without hermes_cli.main, which repairs a `plushuman update` killed
 # while git wrote the new tree; do it here, before importing anything else from the checkout.
 if "hermes_cli.main" not in sys.modules:
     from hermes_cli import _early_recovery
@@ -41,7 +41,7 @@ from hermes_constants import get_hermes_home
 
 
 def _launch_cwd_for_session(source: str) -> Optional[str]:
-    """cwd to stamp on a new session row (``alfred -c`` / ``--resume``), or None.
+    """cwd to stamp on a new session row (``plushuman -c`` / ``--resume``), or None.
 
     Only local CLI sessions record one: gateway/cron/remote backends (non-"local" ``TERMINAL_ENV``) have no
     stable host cwd for the agent's tools.
@@ -306,7 +306,7 @@ class AIAgent(
 
     def _session_row_model_config(self) -> Any:
         """``model_config`` for the lazily created session row: the init config plus a live /yolo toggled
-        before the first turn (``alfred --resume`` restores it)."""
+        before the first turn (``plushuman --resume`` restores it)."""
         from tools.approval_yolo import with_session_yolo
         return with_session_yolo(self._session_init_model_config, self.session_id)
 
@@ -1505,7 +1505,7 @@ def main(
 
     # One TLS authority: trust the OS store before any outbound call (bare
     # requests/urllib included) resolves a CA bundle — see agent/ssl_verify.py.
-    # The `alfred` CLI does this in hermes_cli.main; this console script
+    # The `plushuman` CLI does this in hermes_cli.main; this console script
     # bypasses it. Never raises.
     from agent.ssl_verify import install_truststore
 

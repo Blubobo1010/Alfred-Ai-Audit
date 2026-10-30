@@ -1,4 +1,4 @@
-"""`alfred status` provider label honors config.yaml model.base_url (#3296)."""
+"""`plushuman status` provider label honors config.yaml model.base_url (#3296)."""
 
 from unittest.mock import patch
 

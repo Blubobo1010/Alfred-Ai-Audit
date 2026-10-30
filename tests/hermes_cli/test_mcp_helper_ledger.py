@@ -1,7 +1,7 @@
 """Tests for stdio MCP helper children in the spawn ledger (#61514).
 
 Covers ``register_child`` (the ledger mirror of ``register_self`` for
-subprocesses that never import Alfred code), the live-spawner protection
+subprocesses that never import +Human code), the live-spawner protection
 contract, dead-spawner reap eligibility through the startup
 ``reap_orphaned_mcp_helpers`` sweep, and prune-on-write of exited children.
 

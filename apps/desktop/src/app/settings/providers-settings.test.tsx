@@ -48,7 +48,7 @@ const { $activeGatewayProfile, $profiles } = await import('@/store/profile')
 
 function provider(id: string, loggedIn: boolean, patch: Partial<OAuthProvider> = {}): OAuthProvider {
   return {
-    cli_command: `alfred auth add ${id}`,
+    cli_command: `plushuman auth add ${id}`,
     disconnectable: true,
     docs_url: '',
     flow: 'device_code',
@@ -208,8 +208,8 @@ describe('ProvidersSettings', () => {
     listOAuthProviders.mockResolvedValue({
       providers: [
         provider('qwen-oauth', true, {
-          cli_command: 'alfred auth add qwen-oauth',
-          disconnect_hint: "Use `alfred auth add qwen-oauth` or that provider's CLI to remove it.",
+          cli_command: 'plushuman auth add qwen-oauth',
+          disconnect_hint: "Use `plushuman auth add qwen-oauth` or that provider's CLI to remove it.",
           disconnectable: false,
           flow: 'external',
           name: 'Qwen (via Qwen CLI)'

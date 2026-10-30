@@ -38,7 +38,7 @@ async function run() {
   controller.registerWindow(peer)
 
   const html =
-    'data:text/html,<title>Alfred tray lifecycle probe</title><p>Isolated tray lifecycle probe</p><script>window.draft="preserved"</script>'
+    'data:text/html,<title>+Human tray lifecycle probe</title><p>Isolated tray lifecycle probe</p><script>window.draft="preserved"</script>'
 
   await Promise.all([primary.loadURL(html), peer.loadURL(html)])
   primary.show()

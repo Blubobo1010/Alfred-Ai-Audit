@@ -615,7 +615,7 @@ class TestAliasCacheIsProfileScoped:
 
 
 class TestOneShotUsesTheSameHostInvariant:
-    """`alfred chat -m <alias>` must not trust the alias's provider label.
+    """`plushuman chat -m <alias>` must not trust the alias's provider label.
 
     These exercise the REAL resolver — the leak lives inside
     resolve_runtime_provider's provider-specific branches, so stubbing it
@@ -718,12 +718,12 @@ class TestDirectAliasHostGating:
 
 
 # ---------------------------------------------------------------------------
-# alfred chat -m <alias> — the oneshot path
+# plushuman chat -m <alias> — the oneshot path
 # ---------------------------------------------------------------------------
 
 class TestOneshotPassesAliasCredential:
     def test_alias_api_key_is_passed_to_the_resolver(self, monkeypatch):
-        """``alfred chat -m theta`` must hand the alias's key to
+        """``plushuman chat -m theta`` must hand the alias's key to
         resolve_runtime_provider, not leave it to env fallbacks."""
         from hermes_cli.model_switch import DirectAlias
         import hermes_cli.model_switch as ms

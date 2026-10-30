@@ -107,7 +107,7 @@ def _capture_update(monkeypatch, results) -> tuple[str, list[tuple[str, str, boo
 
 
 def test_do_list_platform_env_is_ignored(three_source_env, monkeypatch):
-    """`alfred skills list` reads the active profile's config via
+    """`plushuman skills list` reads the active profile's config via
     HERMES_HOME (swapped by -p), so it must NOT pass a platform arg to
     ``get_disabled_skill_names`` — otherwise per-platform overrides
     would silently leak in from HERMES_PLATFORM env."""
@@ -321,7 +321,7 @@ def test_inspect_reuses_one_ssrf_safe_client_for_metadata_and_bundle(monkeypatch
 
         def inspect(self, _identifier):
             hub._guarded_http_get("https://example.com/metadata")
-            # The Alfred-index fetch must ride the same pool (no cache → real GET).
+            # The +Human-index fetch must ride the same pool (no cache → real GET).
             assert search._load_hermes_index() == {"skills": []}
             return SkillMeta("example", "metadata", "test", "example/id", "community")
 
@@ -447,7 +447,7 @@ def _install_mocks(monkeypatch, tmp_path, source_factory, category_hint=""):
 
 
 # ---------------------------------------------------------------------------
-# Regression: full identifier must be recoverable from `alfred skills search`
+# Regression: full identifier must be recoverable from `plushuman skills search`
 # even when the slug is too long to fit the terminal width (issue #33674).
 # ---------------------------------------------------------------------------
 
@@ -683,7 +683,7 @@ def _stub_search(monkeypatch, results):
     "computer-use", "Blubobo1010/Alfred-Ai-Audit/skills/productivity/pdf",
     "skills-sh/nousresearch/hermes-agent/google-workspace", "blender-bpy-enhanced"])
 def test_install_by_name_resolves_to_the_skill_it_names(monkeypatch, tmp_path, identifier):
-    """`alfred skills install <bundled skill>` failed every time: the name resolved to a stranger's
+    """`plushuman skills install <bundled skill>` failed every time: the name resolved to a stranger's
     same-named hub skill or an ambiguity table, and this repo's own copy was rescanned as community
     content and refused. It now makes the shipped skill active and fetches nothing. A hub slug behind
     a prettified catalog title ("Blender Bpy Enhanced") resolves too, where it answered "No exact match"
@@ -741,7 +741,7 @@ def test_install_by_name_resolves_to_the_skill_it_names(monkeypatch, tmp_path, i
     assert cli_hub.do_install(identifier, console=console, skip_confirm=True) is False
     # One line, subject and remedy together: the Desktop toast shows only a failed action's last 3 lines.
     error = next(line for line in sink.getvalue().splitlines() if line.startswith("Error:"))
-    assert f"'{name}' is a built-in skill" in error and f"`alfred skills uninstall {name}`" in error
+    assert f"'{name}' is a built-in skill" in error and f"`plushuman skills uninstall {name}`" in error
     assert "already available" not in sink.getvalue()
     assert (stranger / "SKILL.md").read_text().endswith("stranger\n")
 

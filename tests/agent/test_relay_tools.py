@@ -1,4 +1,4 @@
-"""Tests for the core Relay-managed Alfred tool adapter."""
+"""Tests for the core Relay-managed +Human tool adapter."""
 
 from __future__ import annotations
 

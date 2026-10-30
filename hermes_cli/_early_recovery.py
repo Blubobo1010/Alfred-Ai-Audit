@@ -68,7 +68,7 @@ _UPDATE_RETRY_RECOVERED = False
 
 
 def _should_skip_external_secret_sources() -> bool:
-    """True inside any ``alfred update`` process (and its import probes).
+    """True inside any ``plushuman update`` process (and its import probes).
 
     Every dotenv load in the process — ``hermes_cli.main``, ``run_agent``, ``cli`` — consults
     this, so the updater never resolves external secret sources: on Windows they map
@@ -207,10 +207,10 @@ def _marker_owner_is_live(marker: Path) -> bool:
     return False
 
 
-# ``alfred update`` writes this into the git dir right before git moves the checkout and removes it
+# ``plushuman update`` writes this into the git dir right before git moves the checkout and removes it
 # once git has exited (a kill is the only exit that keeps it). Git rewrites the tree file by file and
 # moves HEAD last, so an update killed in between leaves HEAD on the old commit with a prefix of the
-# files already new; that mixed tree fails at import in every entry point, ``alfred update`` included.
+# files already new; that mixed tree fails at import in every entry point, ``plushuman update`` included.
 INTERRUPTED_PULL_MARKER = "hermes-update-pull"
 # A fast-forward takes seconds; past this a "live" owner pid is a recycled one.
 _INTERRUPTED_PULL_MAX_AGE_SECONDS = 10 * 60
@@ -297,7 +297,7 @@ def recovery_closure_verified(closure: Path, pre: str) -> bool:
 
 
 def _git_executable(recorded_by_updater: str = "") -> str:
-    """The git ``alfred update`` runs (``_subprocess_compat.expose_pm_git``), without installing it.
+    """The git ``plushuman update`` runs (``_subprocess_compat.expose_pm_git``), without installing it.
 
     The absolute git the killed updater recorded in its marker first: finding PM's copy needs
     ``pm``, which imports ``hermes_constants``, and a merge killed while writing that module (or
@@ -918,7 +918,7 @@ def write_durable_text(path: Path, text: str) -> None:
 
 
 def restore_interrupted_pull(project_root: Path | None = None, *, after_failure: bool = False) -> bool:
-    """Put back the files a killed ``alfred update`` had half-moved to the new commit.
+    """Put back the files a killed ``plushuman update`` had half-moved to the new commit.
 
     ``after_failure``: the updater itself calls this when git exited non-zero mid-move (a locked or
     read-only file): same restore, and the marker stays whenever the tree is not verified whole.
@@ -929,7 +929,7 @@ def restore_interrupted_pull(project_root: Path | None = None, *, after_failure:
     Fast path (no marker) is one or two ``stat`` calls. Acts only when the marker's owner is gone,
     HEAD is still the pre-pull commit and no merge/rebase is in progress; then every path git wrote
     (the target's content, or torn on the way there) returns to HEAD (the commit the venv was built
-    for), so the install is whole again and ``alfred update`` redoes the update from the start. Local
+    for), so the install is whole again and ``plushuman update`` redoes the update from the start. Local
     edits are never touched; the updater's autostash (if any) stays in ``git stash list``. Concurrent
     launches take turns (``_restore_claim``); a launch that waited out another's restore relaunches.
 
@@ -948,7 +948,7 @@ def restore_interrupted_pull(project_root: Path | None = None, *, after_failure:
             return False  # fast path: nothing to repair, no lock taken
         if _pytest_owns_live_checkout(root):
             return False
-        # A live `alfred update` (or its build/completion/git, after its updater died) owns the
+        # A live `plushuman update` (or its build/completion/git, after its updater died) owns the
         # checkout: its own transaction settles the tree, and repairing under it races its git.
         busy_note = "⚠ Not repairing the checkout now: {}. Launch again once it finishes."
         if (Path(root) / ZIP_SWAP_JOURNAL).is_file():
@@ -969,7 +969,7 @@ def restore_interrupted_pull(project_root: Path | None = None, *, after_failure:
                 # The tree is still torn (the marker is there): importing checkout code now would run
                 # the half-written files. Fail closed like unprovable custody does, as one line and
                 # exit 1 (SystemExit's message), never a traceback (F20).
-                raise SystemExit("hermes: another Alfred launch is finishing an interrupted `alfred update`; "
+                raise SystemExit("hermes: another +Human launch is finishing an interrupted `plushuman update`; "
                                  "launch again in a moment.")
             if not marker.is_file():
                 return True  # another launch finished while this one started: rerun from its tree
@@ -982,7 +982,7 @@ def restore_interrupted_pull(project_root: Path | None = None, *, after_failure:
                 return _restore_holding_claim(root, marker, after_failure=after_failure)
     except (OSError, subprocess.SubprocessError, ValueError) as exc:
         # Never block launch: the import that follows surfaces any real breakage.
-        print(f"⚠ Could not check for an interrupted `alfred update`: {exc}", file=sys.stderr)
+        print(f"⚠ Could not check for an interrupted `plushuman update`: {exc}", file=sys.stderr)
     return False
 
 
@@ -1006,7 +1006,7 @@ def _checkout_custody(root: Path):
             "Cannot safely repair the interrupted update: checkout custody is unavailable "
             f"({type(exc).__name__}: {exc}). The recovery marker was kept. "
             "Wait for any running update to finish; if this persists, repair the checkout "
-            "before launching Alfred again."
+            "before launching +Human again."
         ) from exc
     holder = update_lock._acquire_checkout(Path(root))
     if holder is not None and not update_lock.checkout_lock_held(Path(root)):
@@ -1051,8 +1051,8 @@ def _resume_killed_rollback(git, fields: dict[str, str], git_dir: Path, root: Pa
         ref = fields.get("ref", "").strip().removeprefix("refs/heads/")
         back = (f"`git -C {root} checkout {ref}`" if ref
                 else f"`git -C {root} checkout --detach {fields.get('target', '').strip()[:10] or pre[:10]}`")
-        print(f"⚠ An interrupted `alfred update` rollback to {pre[:10]} was not resumed: HEAD now names "
-              f"another branch. Switch back with {back}, then launch `alfred` again to finish it.",
+        print(f"⚠ An interrupted `plushuman update` rollback to {pre[:10]} was not resumed: HEAD now names "
+              f"another branch. Switch back with {back}, then launch `plushuman` again to finish it.",
               file=sys.stderr)
         return None
     # A syntax rollback killed before it moved HEAD back: redo that step (HEAD and index, no file),
@@ -1061,7 +1061,7 @@ def _resume_killed_rollback(git, fields: dict[str, str], git_dir: Path, root: Pa
     # proven gone: until HEAD is on ``pre`` this marker is the rollback's only record.
     reason = _redo_rollback_head(git, git_dir, root, pre, rollback, after_failure=after_failure)
     if reason is not None:
-        print(f"⚠ An interrupted `alfred update` rollback to {pre[:10]} cannot resume yet ({reason}); "
+        print(f"⚠ An interrupted `plushuman update` rollback to {pre[:10]} cannot resume yet ({reason}); "
               "the next launch retries.", file=sys.stderr)
         return None
     return _read_head(git)
@@ -1075,7 +1075,7 @@ def _advise_killed_merge(git_dir: Path, root: Path, target: str, stash: str) -> 
             and merge_head.read_text(encoding="utf-8-sig").strip() == target):
         # The killed updater's own merge: its conflict markers may sit in startup modules.
         _merge_advice_shown = True
-        print(f"⚠ A killed `alfred update` left its merge unfinished. Run `git -C {root} merge --abort`, "
+        print(f"⚠ A killed `plushuman update` left its merge unfinished. Run `git -C {root} merge --abort`, "
               "then launch again." + (f" Your local changes are in its stash ({stash})." if stash else ""),
               file=sys.stderr)
 
@@ -1089,7 +1089,7 @@ def _custody_git(root: Path, recorded: str):
         raise RuntimeError(
             "Cannot safely repair the interrupted update: child custody is unavailable "
             f"({type(exc).__name__}: {exc}). The recovery marker was kept. "
-            "Repair the checkout before launching Alfred again."
+            "Repair the checkout before launching +Human again."
         ) from exc
 
     def git(*args: str, stdin: str | None = None, text: bool = True) -> subprocess.CompletedProcess:
@@ -1132,7 +1132,7 @@ def _read_head(git) -> str | None:
     if _OID.fullmatch(oid):
         return oid
     detail = head.stderr.strip() or f"git printed {oid!r}, exit {head.returncode}"
-    print(f"⚠ Could not read HEAD to repair an interrupted `alfred update` ({detail}); "
+    print(f"⚠ Could not read HEAD to repair an interrupted `plushuman update` ({detail}); "
           "the next launch retries.", file=sys.stderr)
     return None
 
@@ -1143,7 +1143,7 @@ def _retire_unattributable(git, git_dir: Path, root: Path, marker: Path, pre: st
     Unattributable bytes are not proof of a whole tree: only a clean tracked tree at ``pre`` retires
     the record, rollback or not (review G2)."""
     if not _rollback_verified(git, git_dir, pre):
-        print(f"⚠ An interrupted `alfred update` left tracked files that differ from {pre[:10]} and commit "
+        print(f"⚠ An interrupted `plushuman update` left tracked files that differ from {pre[:10]} and commit "
               f"{target[:10]} is gone; the marker was kept. Inspect `git -C {root} status`, then "
               f"`git -C {root} checkout {pre[:10]} -- <file>` for each file the update wrote.", file=sys.stderr)
         return
@@ -1181,7 +1181,7 @@ def _restore_holding_claim(root: Path, marker: Path, *, after_failure: bool = Fa
     # After a git that EXITED (``after_failure``) no git of ours is left: a lock now is another git's
     # (often the very reason ours failed), never ours to drop. The scan below only reads.
     if not index_free:
-        print(f"⚠ {_index_lock_holder(git_dir, root)} holds the index after an interrupted `alfred update`; "
+        print(f"⚠ {_index_lock_holder(git_dir, root)} holds the index after an interrupted `plushuman update`; "
               "the next launch finishes the restore.", file=sys.stderr)
         return False
     written = _paths_git_wrote(git, root, pre, target)
@@ -1202,7 +1202,7 @@ def _put_back_written(git, root: Path, marker: Path, written, pre: str, stash: s
         return False
     if restore or added:
         print(("⚠ git stopped partway through writing the new code — " if after_failure else
-               "⚠ A previous `alfred update` was killed while git was writing the new code — ")
+               "⚠ A previous `plushuman update` was killed while git was writing the new code — ")
               + f"restoring the checkout to {pre[:10]}...", file=sys.stderr)
         failed = _put_back_paths(git, root, restore, added, kept)
         if failed:
@@ -1225,7 +1225,7 @@ def _put_back_written(git, root: Path, marker: Path, written, pre: str, stash: s
     marker.unlink()
     if not restore and not added:
         return False  # the killed git never reached the tree: nothing to put back
-    print("  ✓ Checkout restored; `alfred update` updates it again.", file=sys.stderr)
+    print("  ✓ Checkout restored; `plushuman update` updates it again.", file=sys.stderr)
     if stash:
         print(f"  Your local changes are still in the update's stash ({stash}).", file=sys.stderr)
     return True

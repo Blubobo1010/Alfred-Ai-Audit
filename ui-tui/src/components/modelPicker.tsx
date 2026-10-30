@@ -467,7 +467,7 @@ export function ModelPicker({
             setFilter('')
           }
 
-          // Other auth types: no-op (warning shown tells them to run alfred model)
+          // Other auth types: no-op (warning shown tells them to run plushuman model)
           return
         }
 

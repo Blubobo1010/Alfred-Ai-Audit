@@ -1,11 +1,11 @@
-"""``alfred egress`` subcommand parser."""
+"""``plushuman egress`` subcommand parser."""
 
 from __future__ import annotations
 
 
 def build_egress_parser(subparsers) -> None:
     """Attach the ``egress`` subcommand to ``subparsers``."""
-    # OUTBOUND egress firewall (iron-proxy); `alfred proxy` is the separate INBOUND
+    # OUTBOUND egress firewall (iron-proxy); `plushuman proxy` is the separate INBOUND
     # OAuth-aggregator reverse proxy.
     egress_parser = subparsers.add_parser(
         "egress", help="Manage the iron-proxy egress credential-injection firewall",
@@ -18,7 +18,7 @@ def build_egress_parser(subparsers) -> None:
     _proxy_cli.register_cli(egress_parser)
 
     def _dispatch_egress(args):
-        # dest='egress_command' stays disjoint from ``alfred proxy`` (dest='proxy_command').
+        # dest='egress_command' stays disjoint from ``plushuman proxy`` (dest='proxy_command').
         sub = getattr(args, "egress_command", None)
         if sub is not None and hasattr(args, "func") and args.func is not _dispatch_egress:
             return args.func(args)

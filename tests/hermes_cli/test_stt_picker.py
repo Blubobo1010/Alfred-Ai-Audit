@@ -1,4 +1,4 @@
-"""Tests for the Speech-to-Text category in `alfred tools` (tools_config).
+"""Tests for the Speech-to-Text category in `plushuman tools` (tools_config).
 
 Covers the STT provider picker rows, config writes (stt.provider /
 use_gateway), the model picker catalog, config-only checklist exclusion,

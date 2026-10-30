@@ -6,7 +6,7 @@ import { resolveDesktopHermesHome } from './data-paths'
 
 // macOS apps launched from Finder/Dock inherit only /usr/bin:/bin:/usr/sbin:/sbin,
 // which misses Homebrew and user-installed CLI tools (codex, git credential
-// helpers). Alfred' own managed tools need no PATH help — the backend composes
+// helpers). +Human' own managed tools need no PATH help — the backend composes
 // their environment in-process via pm — but user tools on PATH do.
 const POSIX_SANE_PATH_ENTRIES = Object.freeze([
   '/opt/homebrew/bin',
@@ -128,9 +128,9 @@ function readTextOrEmpty(fsModule, file) {
 }
 
 /**
- * Parent env for a local `alfred serve` child of `profile` (#68367).
+ * Parent env for a local `plushuman serve` child of `profile` (#68367).
  *
- * `alfred desktop` loads its launch profile's `.env`/`.op.env` into os.environ
+ * `plushuman desktop` loads its launch profile's `.env`/`.op.env` into os.environ
  * before exec'ing Electron, so `process.env` carries that profile's platform
  * credentials. A child for ANOTHER profile would inherit them ahead of its own
  * dotenv (`.op.env` is even skipped once OP_SERVICE_ACCOUNT_TOKEN is set) and,
@@ -141,7 +141,7 @@ function readTextOrEmpty(fsModule, file) {
  * declared pass through everywhere.
  *
  * `profile` null/empty means no `--profile` flag: the child follows the sticky
- * `active_profile` like a bare `alfred serve` (`_apply_profile_override`).
+ * `active_profile` like a bare `plushuman serve` (`_apply_profile_override`).
  */
 function profileBackendParentEnv({
   hermesHome,
@@ -186,10 +186,10 @@ function profileBackendParentEnv({
 /**
  * PATH with the entries under the PM store (HERMES_RUNTIME_DIR, else
  * <hermes home>/tools, as pm.environments.store_root resolves it) moved to the
- * front, every other entry kept in order. Alfred's own children must run the
+ * front, every other entry kept in order. +Human's own children must run the
  * store's uv/node/npm, but shell-path.ts puts the user's login-shell entries
  * (nvm, Homebrew, ~/.local/bin) ahead of the inherited PATH, which is where
- * `alfred desktop` put the store dirs.
+ * `plushuman desktop` put the store dirs.
  */
 function storeFirstPath(
   pathValue: string,
@@ -253,7 +253,7 @@ function buildDesktopBackendEnv({
  * (or another) profile's workspace (#87584). Drop TERMINAL_CWD from the
  * inherited env AND from any runtime-provided mapping (case-insensitively on
  * Windows); the `--profile` child re-resolves its own cwd from its profile
- * config, the same way a standalone `alfred -p X serve` would. The launch
+ * config, the same way a standalone `plushuman -p X serve` would. The launch
  * profile's own (primary) backend keeps the pin in main.ts.
  */
 function pooledProfileBackendEnv({

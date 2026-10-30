@@ -637,7 +637,7 @@ async def test_close_orphaned_sessions_finds_the_lease_holder_without_a_resume_k
 
 @pytest.mark.asyncio
 async def test_close_orphaned_sessions_leaves_a_holder_outside_every_pty(process_tree):
-    """A lease held by a plain terminal (`alfred` in a shell, pid 9000, no PTY ancestor) is a
+    """A lease held by a plain terminal (`plushuman` in a shell, pid 9000, no PTY ancestor) is a
     real other window: nothing is closed and the single-writer refusal stands."""
     from hermes_cli.pty_session import PtySession
 

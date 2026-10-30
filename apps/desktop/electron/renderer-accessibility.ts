@@ -14,7 +14,7 @@
  * the point of the bug fix; the tree's rendering cost is the price. A
  * perf-sensitive setup can opt out with `desktop.renderer_accessibility:
  * false` in config.yaml, which becomes HERMES_DESKTOP_RENDERER_ACCESSIBILITY=0
- * — bridged by the `alfred desktop` launcher and, for packaged launches, by
+ * — bridged by the `plushuman desktop` launcher and, for packaged launches, by
  * main.ts's pre-ready config read (readDesktopLaunchConfig). Setting the
  * variable directly works too.
  *

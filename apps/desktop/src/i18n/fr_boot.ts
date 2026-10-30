@@ -3,21 +3,21 @@ import type { TranslationOverrides } from './define-locale'
 // The boot screen's copy (including the update-hold screen), composed by fr.ts.
 export const frBoot = {
   boot: {
-    ready: 'Alfred Desktop est prêt',
+    ready: '+Human Desktop est prêt',
     desktopBootFailedWithMessage: message => `Échec du démarrage : ${message}`,
     steps: {
       connectingGateway: 'Connexion au gateway desktop',
-      loadingSettings: 'Chargement des paramètres Alfred',
+      loadingSettings: 'Chargement des paramètres +Human',
       loadingSessions: 'Chargement des sessions récentes',
-      retryingRemoteBackend: 'Reconnexion au backend Alfred distant…',
+      retryingRemoteBackend: 'Reconnexion au backend +Human distant…',
       startingDesktopConnection: 'Démarrage de la connexion desktop',
-      startingHermesDesktop: 'Démarrage de Alfred Desktop…'
+      startingHermesDesktop: 'Démarrage de +Human Desktop…'
     },
     errors: {
-      backgroundExited: "Le processus en arrière-plan de Alfred s'est arrêté.",
-      backgroundExitedDuringStartup: "Le processus en arrière-plan de Alfred s'est arrêté pendant le démarrage.",
+      backgroundExited: "Le processus en arrière-plan de +Human s'est arrêté.",
+      backgroundExitedDuringStartup: "Le processus en arrière-plan de +Human s'est arrêté pendant le démarrage.",
       backendStopped: 'Backend arrêté',
-      restartHermes: 'Redémarrer Alfred',
+      restartHermes: 'Redémarrer +Human',
       openLogs: 'Ouvrir les journaux',
       desktopBootFailed: 'Échec du démarrage',
       gatewayConnectionLost: 'Connexion au gateway perdue',
@@ -32,16 +32,16 @@ export const frBoot = {
       ipcBridgeUnavailable: 'Le pont IPC du desktop est indisponible.'
     },
     causes: {
-      exitedEarly: "Le service en arrière-plan de Alfred s'est arrêté juste après son démarrage.",
-      timedOut: "Le service en arrière-plan de Alfred n'a pas répondu à temps.",
-      permission: "Alfred n'a pas pu écrire dans son dossier de données (problème d'autorisation).",
-      diskFull: "Le disque est plein ; Alfred n'a donc pas pu démarrer.",
-      portInUse: 'Un autre programme utilise le port réseau nécessaire à Alfred.',
+      exitedEarly: "Le service en arrière-plan de +Human s'est arrêté juste après son démarrage.",
+      timedOut: "Le service en arrière-plan de +Human n'a pas répondu à temps.",
+      permission: "+Human n'a pas pu écrire dans son dossier de données (problème d'autorisation).",
+      diskFull: "Le disque est plein ; +Human n'a donc pas pu démarrer.",
+      portInUse: 'Un autre programme utilise le port réseau nécessaire à +Human.',
       installMissing:
-        "Une partie de l'installation de Alfred est manquante. Choisissez Réparer l'installation pour la restaurer."
+        "Une partie de l'installation de +Human est manquante. Choisissez Réparer l'installation pour la restaurer."
     },
     failure: {
-      title: "Alfred n'a pas pu démarrer",
+      title: "+Human n'a pas pu démarrer",
       description:
         "Le gateway en arrière-plan n'a pas pu se lancer. Essayez l'une des étapes de récupération ci-dessous. Rien ici ne supprime vos conversations ou paramètres.",
       details: 'Détails',
@@ -79,31 +79,31 @@ export const frBoot = {
       identityProvider: "votre fournisseur d'identité"
     },
     updateHold: {
-      title: 'Une mise à jour précédente bloque encore Alfred',
-      titleUnverified: 'Alfred ne peut pas confirmer la fin de la dernière mise à jour',
+      title: 'Une mise à jour précédente bloque encore +Human',
+      titleUnverified: '+Human ne peut pas confirmer la fin de la dernière mise à jour',
       description:
-        "Alfred attend avant de démarrer pour ne pas charger des fichiers qu'une mise à jour modifie peut-être encore. Il démarre tout seul dès que le blocage cesse.",
+        "+Human attend avant de démarrer pour ne pas charger des fichiers qu'une mise à jour modifie peut-être encore. Il démarre tout seul dès que le blocage cesse.",
       heldByProcess: pid =>
-        `La mise à jour (processus ${pid}) s'est terminée, mais un processus qu'elle a lancé bloque encore l'installation de Alfred.`,
+        `La mise à jour (processus ${pid}) s'est terminée, mais un processus qu'elle a lancé bloque encore l'installation de +Human.`,
       heldUnknown:
-        "Une mise à jour s'est terminée, mais un processus qu'elle a lancé bloque encore l'installation de Alfred.",
+        "Une mise à jour s'est terminée, mais un processus qu'elle a lancé bloque encore l'installation de +Human.",
       unverified:
-        "L'assistant de mise à jour n'a pas pu vérifier qui détient l'installation de Alfred. Alfred continue de vérifier.",
+        "L'assistant de mise à jour n'a pas pu vérifier qui détient l'installation de +Human. +Human continue de vérifier.",
       since: time => `En attente depuis ${time}`,
       lastChecked: time => `Dernière vérification ${time}`,
       recoveryHint:
-        "Cela se règle généralement en quelques minutes. Sinon : quittez Alfred, arrêtez les processus git ou hermes restants (ou redémarrez l'ordinateur), puis rouvrez Alfred.",
+        "Cela se règle généralement en quelques minutes. Sinon : quittez +Human, arrêtez les processus git ou hermes restants (ou redémarrez l'ordinateur), puis rouvrez +Human.",
       checkAgain: 'Vérifier à nouveau',
-      quit: 'Quitter Alfred',
+      quit: 'Quitter +Human',
       openLogs: 'Ouvrir les journaux',
       startAnyway: 'Démarrer quand même…',
-      confirmTitle: 'Démarrer Alfred alors que la mise à jour le bloque encore ?',
+      confirmTitle: 'Démarrer +Human alors que la mise à jour le bloque encore ?',
       confirmBody:
-        'Le processus de mise à jour restant modifie peut-être encore les fichiers de Alfred. Démarrer maintenant peut charger une installation à moitié mise à jour, qui risque de ne pas fonctionner avant une nouvelle mise à jour. Alfred consigne ce choix dans son journal et laisse le marqueur de mise à jour en place.',
+        'Le processus de mise à jour restant modifie peut-être encore les fichiers de +Human. Démarrer maintenant peut charger une installation à moitié mise à jour, qui risque de ne pas fonctionner avant une nouvelle mise à jour. +Human consigne ce choix dans son journal et laisse le marqueur de mise à jour en place.',
       confirmKeepWaiting: 'Continuer à attendre',
       confirmStart: 'Démarrer quand même',
       startAnywayRefused:
-        "Ce qui bloque l'installation a changé avant que Alfred puisse démarrer. Vérifiez et réessayez."
+        "Ce qui bloque l'installation a changé avant que +Human puisse démarrer. Vérifiez et réessayez."
     }
   }
 } satisfies Pick<TranslationOverrides, 'boot'>

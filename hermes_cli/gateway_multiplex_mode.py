@@ -4,7 +4,7 @@
 ``GATEWAY_MULTIPLEX_PROFILES`` set it. Turning the default on must not make a default gateway
 double-bind a fleet that still runs per-profile gateways (two pollers on one bot token, port
 fights), so the implicit default is a *request*: the gateway runs the same preflight
-``alfred gateway migrate --multiplex`` runs and multiplexes only when the fold would have been
+``plushuman gateway migrate --multiplex`` runs and multiplexes only when the fold would have been
 safe. An explicit ``true`` is never second-guessed.
 
 An explicit ``false`` is RETIRED (multiplex-only ruling): it parses, it is logged, and it is then
@@ -13,7 +13,7 @@ mode flag every scoped code path reads (``config.multiplex_profiles``) — what 
 is pin a second gateway process onto this host.
 
 The refusal is logged, never fatal: the gateway comes up standalone exactly as before the
-default flipped, and the log names the blocker plus ``alfred gateway migrate --multiplex``.
+default flipped, and the log names the blocker plus ``plushuman gateway migrate --multiplex``.
 """
 
 from __future__ import annotations
@@ -35,7 +35,7 @@ STANDALONE_PROFILE_REASON = "this profile is standalone (gateway.standalone: tru
 #: prints this so nobody builds on it.
 STANDALONE_DEPRECATION_NOTICE = (
     "gateway.standalone is a temporary compatibility shim while multiplexing gaps are fixed; "
-    "it will be removed once they are — plan to fold this profile with `alfred gateway migrate --multiplex`."
+    "it will be removed once they are — plan to fold this profile with `plushuman gateway migrate --multiplex`."
 )
 
 #: ``gateway.multiplex_profiles: false`` is no longer an opt-out from the one-gateway-per-host
@@ -45,7 +45,7 @@ RETIRED_OPT_OUT_REASON = (
     "serves every profile. A per-profile gateway is `gateway.standalone: true` in that profile's "
     "config (temporary shim) or `--force`.")
 
-#: One-time marker the gateway leaves after rewriting a retired ``false``; ``alfred update``'s summary
+#: One-time marker the gateway leaves after rewriting a retired ``false``; ``plushuman update``'s summary
 #: prints the notice from it and clears it, so the flip is never silent on either surface.
 REWRITTEN_MARKER_NAME = ".multiplex_opt_out_rewritten"
 
@@ -54,7 +54,7 @@ def explicit_multiplex_flag(default_home: Path) -> Optional[bool]:
     """The operator's explicit choice for the DEFAULT profile's gateway: a recognized
     ``GATEWAY_MULTIPLEX_PROFILES``, else ``gateway.multiplex_profiles`` (or the top-level alias) as
     written in its config.yaml; ``None`` when neither is set. Raw read on purpose: the callers are
-    other processes (``alfred -p X ...`` has X's config loaded) asking about the default's file."""
+    other processes (``plushuman -p X ...`` has X's config loaded) asking about the default's file."""
     from gateway.config import _bool_token, _env_multiplex_profiles_override
     env = _env_multiplex_profiles_override()
     if env is not None:
@@ -124,7 +124,7 @@ def standalone_launcher_decision(config) -> Optional[MultiplexDecision]:
 def implicit_multiplex_blocker() -> Optional[str]:
     """Why THIS process must not multiplex right now, or None when it may.
 
-    Mirrors what makes ``alfred gateway migrate --multiplex`` refuse or leave a per-profile gateway
+    Mirrors what makes ``plushuman gateway migrate --multiplex`` refuse or leave a per-profile gateway
     in place: hosts whose per-profile gateways the preflight cannot see (s6 slots) stay standalone;
     a secondary that still runs its own gateway (live process or installed service) or a preflight
     blocker (duplicate bot credential, port binder without a ``/p/<profile>/`` ingress) keeps this
@@ -206,7 +206,7 @@ def retired_opt_out_notice_lines() -> list[str]:
 
 
 def consume_rewritten_notice(default_home: Optional[Path] = None) -> list[str]:
-    """``alfred update``'s summary: print the rewrite notice ONCE more, then clear the marker."""
+    """``plushuman update``'s summary: print the rewrite notice ONCE more, then clear the marker."""
     default_home = Path(default_home) if default_home is not None else _default_profile_home()
     marker = default_home / REWRITTEN_MARKER_NAME
     if not marker.exists():
@@ -234,7 +234,7 @@ def resolve_multiplex_mode(config) -> MultiplexDecision:
     like an unset key. That is safe because the unset path is not optimistic — it refuses to
     multiplex while any real blocker holds (an s6 container, a secondary that still owns a gateway,
     a duplicate bot credential), so a host that genuinely cannot fold still comes up standalone and
-    says why, and it converges by itself once ``alfred gateway migrate --multiplex`` has run.
+    says why, and it converges by itself once ``plushuman gateway migrate --multiplex`` has run.
     """
     current = getattr(config, "multiplex_profiles", None)
     standalone = standalone_launcher_decision(config)
@@ -259,7 +259,7 @@ def resolve_multiplex_mode(config) -> MultiplexDecision:
 
 
 def record_multiplex_decision(decision: MultiplexDecision) -> None:
-    """Persist a guard refusal into ``gateway_state.json`` so `alfred gateway status` can show why this
+    """Persist a guard refusal into ``gateway_state.json`` so `plushuman gateway status` can show why this
     gateway serves one profile while the default says multiplex; any other verdict clears the field."""
     try:
         from gateway.status import write_runtime_status
@@ -301,7 +301,7 @@ def standalone_warning_lines(decision: MultiplexDecision, unserved: Optional[lis
 
     Empty for anything but a guard refusal on a host with other profiles to serve: a single-profile
     install has nothing unserved, so there is nothing to shout about. The same box appears at
-    gateway start, in the ``alfred update`` summary and (as text) in the dashboard banner.
+    gateway start, in the ``plushuman update`` summary and (as text) in the dashboard banner.
     """
     if decision.source != "guard" or decision.reason == SINGLE_PROFILE_REASON:
         return []
@@ -324,7 +324,7 @@ def standalone_warning_lines(decision: MultiplexDecision, unserved: Optional[lis
 
 def recorded_standalone_warning_lines() -> list[str]:
     """Same box, rebuilt from the live gateway's ``gateway_state.json`` for processes that did not
-    make the decision (``alfred update``'s summary, ``alfred gateway status``)."""
+    make the decision (``plushuman update``'s summary, ``plushuman gateway status``)."""
     try:
         from gateway.status import read_runtime_status, runtime_status_pid_is_live
         record = read_runtime_status() or {}

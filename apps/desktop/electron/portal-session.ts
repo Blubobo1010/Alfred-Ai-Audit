@@ -25,7 +25,7 @@ type CookieWindowOutcome = 'landed' | 'closed' | 'timeout' | Error
 
 // Canonical Nous portal base URL, overridable for staging/dev. Mirrors the CLI
 // convention (hermes_cli/auth.py DEFAULT_NOUS_PORTAL_URL + the same env names)
-// so a single override flips every Alfred surface to the same portal.
+// so a single override flips every +Human surface to the same portal.
 const DEFAULT_NOUS_PORTAL_URL = 'https://portal.nousresearch.com'
 
 export function resolvePortalBaseUrl() {
@@ -233,7 +233,7 @@ export function createPortalSession({
       // hang the discovery call behind an invisible window.
       const outcome = await driveCookieWindow(sess, previous, {
         kind: 'portal-renew',
-        title: 'Renewing Alfred Cloud session…',
+        title: 'Renewing +Human Cloud session…',
         show: false,
         pollMs: 500,
         deadlineMs: 12_000
@@ -259,7 +259,7 @@ export function createPortalSession({
   // must not close the window before the portal can replace it.
   async function openPortalLoginWindow(): Promise<void> {
     if (!isReady()) {
-      throw new Error('Desktop is not ready to start a Alfred Cloud sign-in.')
+      throw new Error('Desktop is not ready to start a +Human Cloud sign-in.')
     }
 
     const sess = getOauthSession()
@@ -270,7 +270,7 @@ export function createPortalSession({
 
     const outcome = await driveCookieWindow(sess, await readAccessCookies(), {
       kind: 'portal',
-      title: 'Sign in to Alfred Cloud',
+      title: 'Sign in to +Human Cloud',
       show: true,
       pollMs: 750
     })

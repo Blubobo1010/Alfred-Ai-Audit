@@ -420,7 +420,7 @@ class TestMentionPatterns:
             monkeypatch, extra={"mention_patterns": ["^hermes"]}
         )
         assert adapter._message_matches_mention_patterns("hermes please help") is True
-        assert adapter._message_matches_mention_patterns("please alfred help") is False
+        assert adapter._message_matches_mention_patterns("please plushuman help") is False
 
     def test_env_var_json_populates_patterns(self, monkeypatch):
         adapter = _make_gating_adapter(

@@ -215,7 +215,7 @@ class TestReclaim:
         assert probe.returncode != 0, "branch should be gone with its tree"
 
     def test_untracked_files_archived_under_the_active_profile_home(self, repo, tmp_path, monkeypatch):
-        """The archive follows the active Alfred home (a named profile here), never ~/.hermes."""
+        """The archive follows the active +Human home (a named profile here), never ~/.hermes."""
         native_home = tmp_path / "native"
         profile_home = tmp_path / "root" / "profiles" / "work"
         profile_home.mkdir(parents=True)

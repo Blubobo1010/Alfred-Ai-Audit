@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Google Workspace API CLI for Alfred.
+"""Google Workspace API CLI for +Human.
 
 Uses the Google Workspace CLI (`gws`) when available, but preserves the
-existing Alfred-facing JSON contract and falls back to the Python client
+existing +Human-facing JSON contract and falls back to the Python client
 libraries if `gws` is not installed.
 
 Usage:
@@ -1146,7 +1146,7 @@ def _docs_insert_text(doc_id: str, text: str, index: int, tab_id: str | None = N
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Google Workspace API for Alfred")
+    parser = argparse.ArgumentParser(description="Google Workspace API for +Human")
     sub = parser.add_subparsers(dest="service", required=True)
 
     # --- Gmail ---

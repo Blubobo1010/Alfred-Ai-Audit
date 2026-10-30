@@ -1,7 +1,7 @@
 """Solstice provider profile: a user's own per-user-quota Gemini subscription, signed in with OAuth.
 
 Pre-release (``hidden=True``): no picker, setup list or accounts tab offers it until the user signs in
-by name (``alfred auth add solstice``); after that it lists like any signed-in provider. Login and
+by name (``plushuman auth add solstice``); after that it lists like any signed-in provider. Login and
 token refresh go through the generic PKCE plugin flow with a Nous-portal broker as the token endpoint
 (``auth.py``); inference goes straight to Google on the per-user-quota methods (``transport.py``).
 """
@@ -52,7 +52,7 @@ class SolsticeProfile(ProviderProfile):
         return SolsticeClient(**{k: v for k, v in client_kwargs.items() if k in allowed})
 
     def get_max_tokens(self, model: str | None) -> int | None:
-        return None  # output caps are the backend's; a Alfred default would truncate long answers
+        return None  # output caps are the backend's; a +Human default would truncate long answers
 
 
 register_provider(SolsticeProfile(

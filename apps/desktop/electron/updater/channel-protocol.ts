@@ -245,12 +245,12 @@ export function buildPrefix(buildId: string): string {
 function identity(fields: Fields): ChannelIdentity {
   return {
     token: fields.text('token', /^[a-f0-9]{16}$/),
-    displayName: fields.text('displayName', /^[A-Za-z0-9][A-Za-z0-9 ._-]{0,79}$/),
+    displayName: fields.text('displayName', /^[A-Za-z0-9+][A-Za-z0-9 ._+-]{0,79}$/),  // alfred:keep — +Human
     appId: fields.text('appId', /^[a-z][a-z0-9.-]{2,127}$/),
     appNamePascal: fields.text('appNamePascal', /^[A-Za-z][A-Za-z0-9]{0,63}$/),
     artifactNamePascal: fields.text('artifactNamePascal', /^[A-Za-z][A-Za-z0-9]{0,63}$/),
     cliName: fields.text('cliName', /^[a-z][a-z0-9-]{0,63}$/),
-    windowsExecutableName: fields.text('windowsExecutableName', /^[A-Za-z][A-Za-z0-9 ._-]{0,79}$/),
+    windowsExecutableName: fields.text('windowsExecutableName', /^[A-Za-z+][A-Za-z0-9 ._+-]{0,79}$/),  // alfred:keep
     msixAppIdWithOrg: fields.text('msixAppIdWithOrg', /^[A-Za-z][A-Za-z0-9.-]{2,49}$/)
   }
 }

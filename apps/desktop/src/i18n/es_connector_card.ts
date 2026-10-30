@@ -24,13 +24,13 @@ export const esConnectorCard: TranslationOverrides['connectors'] = {
   ownerMissing: 'Vuelve a abrir esta conversación para gestionar sus conexiones.',
   search: 'Buscar una app',
   empty: 'No hay apps que coincidan',
-  disclaimer: 'Conectar es opcional. Autoriza solo las apps que quieras que use Alfred.',
+  disclaimer: 'Conectar es opcional. Autoriza solo las apps que quieras que use +Human.',
   execution: 'Herramientas de conectores',
   setup: server => `Configurar ${server}`,
   openInBrowser: 'Abrir en el navegador',
   setupCancel: 'Cancelar',
   authorizedToolsUnavailable: 'Autorizado. Herramientas no disponibles.',
   required: 'Obligatorio',
-  namedAccount: (app: string, alias: string) => `Alfred llamó ${alias} a esta cuenta de ${app}.`,
+  namedAccount: (app: string, alias: string) => `+Human llamó ${alias} a esta cuenta de ${app}.`,
   renameAccount: 'Cambiar nombre'
 }

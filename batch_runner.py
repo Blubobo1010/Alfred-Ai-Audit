@@ -10,7 +10,7 @@ statistics aggregated across all batches. See ``main`` (fire CLI) for usage.
 try:
     import hermes_bootstrap
 except ModuleNotFoundError as exc:
-    # Partial ``alfred update`` (git reset landed, ``uv pip install -e .`` did not).
+    # Partial ``plushuman update`` (git reset landed, ``uv pip install -e .`` did not).
     if exc.name != "hermes_bootstrap":
         raise  # the bootstrap exists but cannot load: skipping it would skip PM activation
 

@@ -73,7 +73,7 @@ def _env_on_all_adapters_down_override() -> str | None:
 
     ``None`` when unset, blank, or unrecognized so the caller keeps the config.yaml value
     (env > config > default). Launchers without a supervising service manager (the desktop app
-    spawns ``alfred serve`` directly) set ``stay_alive``: a failure exit there only severs the
+    spawns ``plushuman serve`` directly) set ``stay_alive``: a failure exit there only severs the
     UI's websocket connections and drops in-flight assistant messages (#118080).
     """
     raw = os.getenv("GATEWAY_ON_ALL_ADAPTERS_DOWN")
@@ -446,7 +446,7 @@ class PlatformConfig:
         data = _coerce_dict(data)
         home = data.get("home_channel")
         # Adapters read their settings from ``extra`` (``config.extra.get("port")``), but users
-        # write them where the docs and ``alfred config set platforms.webhook.port`` put them:
+        # write them where the docs and ``plushuman config set platforms.webhook.port`` put them:
         # directly under the platform block. Promote every non-typed top-level key so neither
         # spelling is silently dropped (#10206); an explicit ``extra:`` value wins on a clash.
         extra = {**{k: v for k, v in data.items() if k not in cls._TYPED_KEYS}, **_coerce_dict(data.get("extra", {}))}
@@ -631,7 +631,7 @@ class GatewayConfig:
     # What happens when the LAST messaging adapter goes down. ``exit`` (default) shuts the gateway
     # down with the failure verdict so a supervising service manager (systemd/launchd) restarts it;
     # ``stay_alive`` keeps the process running and leaves recovery to the reconnect watcher — for
-    # launchers with no supervisor (the desktop app spawns ``alfred serve`` directly), where a
+    # launchers with no supervisor (the desktop app spawns ``plushuman serve`` directly), where a
     # failure exit only severs the UI's websockets and drops in-flight assistant messages (#118080).
     # Retryable failures are recoverable in both modes; non-retryable adapter loss always exits.
     on_all_adapters_down: str = "exit"  # "exit" | "stay_alive"; GATEWAY_ON_ALL_ADAPTERS_DOWN overrides

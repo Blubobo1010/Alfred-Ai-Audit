@@ -223,7 +223,7 @@ def test_gateway_start_outcome_waits_for_the_first_agent(tmp_path, monkeypatch):
 
 
 def test_the_migration_installs_once_so_a_removal_sticks(tmp_path, monkeypatch):
-    """At most one automatic install per home: after `alfred plugins remove`, neither `alfred update`
+    """At most one automatic install per home: after `plushuman plugins remove`, neither `plushuman update`
     nor startup reinstalls it. Until an install succeeds (catalog miss, failed install) it retries."""
     import hermes_cli.memory_provider_migration as mpm
     import pm.install
@@ -244,7 +244,7 @@ def test_the_migration_installs_once_so_a_removal_sticks(tmp_path, monkeypatch):
     assert lcm.migrate_home(home, install=install, say=quiet) == ["homeassistant"]
 
     import shutil
-    shutil.rmtree(plugin)  # `alfred plugins remove homeassistant`
+    shutil.rmtree(plugin)  # `plushuman plugins remove homeassistant`
     assert lcm.migrate_home(home, install=install, say=quiet) == []
     monkeypatch.setenv("HERMES_HOME", str(home))
     monkeypatch.setattr(pm.install, "lazy_installs_allowed", lambda: True)
@@ -255,7 +255,7 @@ def test_the_migration_installs_once_so_a_removal_sticks(tmp_path, monkeypatch):
 
 def test_a_failed_startup_install_backs_off_and_reports_one_line(tmp_path, monkeypatch):
     """With the catalog or git unreachable, only the first agent start in a while pays the network
-    round trip, and its notice is one line naming the cause; `alfred update` always retries."""
+    round trip, and its notice is one line naming the cause; `plushuman update` always retries."""
     import hermes_cli.memory_provider_migration as mpm
     import pm.install
     home = _home(tmp_path, env="HASS_TOKEN=abc\n")
@@ -273,7 +273,7 @@ def test_a_failed_startup_install_backs_off_and_reports_one_line(tmp_path, monke
     assert len(said) == 1 and "\n" not in said[0] and "Could not resolve host: github.com" in said[0]
     assert "plugins install homeassistant" in said[0]
 
-    lcm._attempted.clear()  # the next `alfred chat` process
+    lcm._attempted.clear()  # the next `plushuman chat` process
     assert lcm.recover_at_startup(say=said.append) == []
     assert lookups == ["homeassistant"] and len(said) == 1
     assert lcm.migrate_home(home, install=failing, say=said.append) == []
@@ -297,13 +297,13 @@ def test_spotify_in_use_is_a_stored_login_or_the_toolset(tmp_path, auth_json, co
 
 
 def test_old_spotify_commands_point_at_the_plugin(tmp_path, monkeypatch):
-    """`alfred auth spotify` / `alfred spotify` name the new command and how to get it for this home."""
+    """`plushuman auth spotify` / `plushuman spotify` name the new command and how to get it for this home."""
     home = _home(tmp_path)
     monkeypatch.setenv("HERMES_HOME", str(home))
-    hint = lcm.moved_command_hint("alfred auth", "spotify", "status")
-    assert "`alfred auth status spotify` is now `alfred spotify status`" in hint
+    hint = lcm.moved_command_hint("plushuman auth", "spotify", "status")
+    assert "`plushuman auth status spotify` is now `plushuman spotify status`" in hint
     assert "plugins install spotify" in hint
-    assert "plugins install spotify" in lcm.moved_command_hint("alfred", "spotify")
+    assert "plugins install spotify" in lcm.moved_command_hint("plushuman", "spotify")
     (home / "plugins" / "spotify").mkdir(parents=True)  # installed but disabled
-    assert "plugins enable spotify" in lcm.moved_command_hint("alfred", "spotify")
-    assert lcm.moved_command_hint("alfred", "honcho") == ""
+    assert "plugins enable spotify" in lcm.moved_command_hint("plushuman", "spotify")
+    assert lcm.moved_command_hint("plushuman", "honcho") == ""

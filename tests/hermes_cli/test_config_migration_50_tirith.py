@@ -1,4 +1,4 @@
-"""Config v50: the bundled tirith scanner left Alfred."""
+"""Config v50: the bundled tirith scanner left +Human."""
 
 import hermes_yaml as yaml
 

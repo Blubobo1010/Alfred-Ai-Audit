@@ -167,16 +167,16 @@ describe.skipIf(process.platform === 'win32')('macOS update preflight', () => {
   })
 })
 
-function signedApp(dir: string, version: string, identifier: string): string {
-  const app = path.join(dir, 'Alfred.app')
+function signedApp(dir: string, version: string, identifier: string, name: string = 'Alfred'): string {
+  const app = path.join(dir, `${name}.app`)
   fs.mkdirSync(path.join(app, 'Contents/MacOS'), { recursive: true })
-  fs.copyFileSync('/usr/bin/true', path.join(app, 'Contents/MacOS/Alfred'))
+  fs.copyFileSync('/usr/bin/true', path.join(app, 'Contents/MacOS', name))
   const plist = path.join(app, 'Contents/Info.plist')
   execFileSync('/usr/bin/plutil', ['-create', 'xml1', plist])
 
   for (const [key, value] of [
     ['CFBundleIdentifier', identifier],
-    ['CFBundleExecutable', 'Alfred'],
+    ['CFBundleExecutable', name],
     ['CFBundleShortVersionString', version]
   ]) {
     execFileSync('/usr/bin/plutil', ['-insert', key, '-string', value, plist])
@@ -227,7 +227,7 @@ async function waitForLog(file: string, text: string, timeoutMs: number = 15_000
   }
 }
 
-function swapWorld(stagedVersion: string = '2.0', stagedIdentifier: string = 'com.test.swap') {
+function swapWorld(stagedVersion: string = '2.0', stagedIdentifier: string = 'com.test.swap', stagedName: string = 'Alfred') {
   const root = tempRoot()
   const applications = path.join(root, 'Applications')
   const build = path.join(root, 'build')
@@ -235,7 +235,7 @@ function swapWorld(stagedVersion: string = '2.0', stagedIdentifier: string = 'co
   fs.mkdirSync(build)
   const app = signedApp(applications, '1.0', 'com.test.swap')
   const zip = path.join(root, 'Alfred-2.0-arm64-mac.zip')
-  execFileSync('/usr/bin/ditto', ['-c', '-k', '--keepParent', signedApp(build, stagedVersion, stagedIdentifier), zip])
+  execFileSync('/usr/bin/ditto', ['-c', '-k', '--keepParent', signedApp(build, stagedVersion, stagedIdentifier, stagedName), zip])
   const parent = fakeApp()
   const logFile = path.join(root, 'Logs', SWAP_LOG_FILENAME)
   const envFile = path.join(root, 'relaunch-env.txt')
@@ -290,6 +290,19 @@ describe.skipIf(process.platform !== 'darwin')('macOS bundle swap', { timeout: 6
     expect(bundleVersion(world.app)).toBe('1.0')
     expect(fs.existsSync(`${world.app}.old`)).toBe(false)
     expect(fs.existsSync(world.envFile)).toBe(true)
+  })
+
+  it('puts a renamed build at the running app path (an Alfred.app install now holding +Human)', async (): Promise<void> => {
+    const world = swapWorld('2.0', 'com.test.swap', '+Human')
+    const install = world.swap()
+    await install.stage([world.zip], '2.0')
+    await install.startSwap()
+    world.parent.kill()
+    await waitForLog(world.logFile, 'done (0)')
+    expect(path.basename(world.app)).toBe('Alfred.app')
+    expect(bundleVersion(world.app)).toBe('2.0')
+    expect(fs.existsSync(path.join(world.app, 'Contents/MacOS/+Human'))).toBe(true)
+    expect(fs.existsSync(`${world.app}.old`)).toBe(false)
   })
 
   it('refuses an update signed by someone else', async (): Promise<void> => {

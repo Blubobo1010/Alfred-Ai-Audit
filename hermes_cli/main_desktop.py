@@ -1,4 +1,4 @@
-"""Desktop (Electron) app: build/stamp, stage-and-swap pack, exe integrity gate, macOS signing, Linux sandbox, launch (alfred gui/desktop).
+"""Desktop (Electron) app: build/stamp, stage-and-swap pack, exe integrity gate, macOS signing, Linux sandbox, launch (plushuman gui/desktop).
 
 Split out of ``hermes_cli/main.py``. Names that still live in main (``PROJECT_ROOT``, ...)
 are imported lazily inside the functions that use them (avoids an import cycle).
@@ -50,7 +50,7 @@ def _packaged_resources_dir(desktop_dir: Path) -> Optional[Path]:
     executable = _desktop_packaged_executable(desktop_dir)
     if executable is None:
         return None
-    # macOS: …/Alfred.app/Contents/MacOS/Alfred → …/Contents/Resources
+    # macOS: …/+Human.app/Contents/MacOS/+Human → …/Contents/Resources
     return executable.parent.parent / "Resources" if sys.platform == "darwin" else executable.parent / "resources"
 
 
@@ -159,14 +159,14 @@ def _desktop_packaged_executable_in(release_dir: Path) -> Optional[Path]:
     stage-and-swap staging dir (#86443).
     """
     if sys.platform == "darwin":
-        candidates = list(release_dir.glob("mac*/Alfred.app/Contents/MacOS/Alfred"))
+        candidates = list(release_dir.glob("mac*/+Human.app/Contents/MacOS/+Human"))
     elif sys.platform == "win32":
         candidates = [
-            release_dir / d / "Alfred.exe" for d in ("win-unpacked", "win-ia32-unpacked", "win-arm64-unpacked")
+            release_dir / d / "+Human.exe" for d in ("win-unpacked", "win-ia32-unpacked", "win-arm64-unpacked")
         ]
     else:
         candidates = [
-            release_dir / d / n for d in ("linux-unpacked", "linux-arm64-unpacked") for n in ("hermes", "Alfred")
+            release_dir / d / n for d in ("linux-unpacked", "linux-arm64-unpacked") for n in ("hermes", "+Human")
         ]
 
     existing = [p for p in candidates if p.exists()]
@@ -174,11 +174,11 @@ def _desktop_packaged_executable_in(release_dir: Path) -> Optional[Path]:
         return None
     if sys.platform == "win32" and len(existing) > 1:
         # A stale win-arm64-unpacked next to the real win-unpacked: picking by
-        # mtime can hand a wrong-architecture Alfred.exe to the launcher. Prefer
+        # mtime can hand a wrong-architecture +Human.exe to the launcher. Prefer
         # candidates whose PE machine matches the host; mtime when none parse.
         # Multiple unpacked trees can coexist (e.g. a stale win-arm64-unpacked left behind by a cross-arch
         # experiment next to the real win-unpacked). Picking purely by mtime can then hand a
-        # wrong-architecture Alfred.exe to the launcher, which Windows rejects with "This app can't run on
+        # wrong-architecture +Human.exe to the launcher, which Windows rejects with "This app can't run on
         # your computer" (#69179).
         expected = _expected_windows_pe_machines()
         matching = [p for p in existing if _pe_machine_or_none(p) in expected]
@@ -188,9 +188,9 @@ def _desktop_packaged_executable_in(release_dir: Path) -> Optional[Path]:
 
 
 # ─── Desktop stage-and-swap pack (#86443) ─────────────────────────────────── electron-builder packs IN
-# PLACE: before-pack.mjs wipes ``release/<platform>- unpacked`` (or the mac ``Alfred.app``) and the Electron
+# PLACE: before-pack.mjs wipes ``release/<platform>- unpacked`` (or the mac ``+Human.app``) and the Electron
 # unpack + asar + rename then rebuild it. Any failure after that wipe — corrupt cached zip, blocked
-# download, missing dep, disk full — leaves the user with NO app, and ``alfred update`` used to report
+# download, missing dep, disk full — leaves the user with NO app, and ``plushuman update`` used to report
 # "partially complete" over an empty release/. Fix the class, not the predicate: build into a STAGING output
 # dir next to release/, verify the staged result, and only then swap it over the live tree with renames. On
 # any failure the live app is untouched.
@@ -271,7 +271,7 @@ def _swap_staged_desktop_app(desktop_dir: Path, staging_dir: Path) -> Optional[P
         moved_aside = live_root.exists()
         if moved_aside:
             # A Desktop may have reopened during the long packaging step (Windows lock) or
-            # never exited at all (a manual `alfred update`/`alfred desktop` run does not
+            # never exited at all (a manual `plushuman update`/`plushuman desktop` run does not
             # wait for it — only the update hand-offs do). Either way a renderer alive
             # past the rename below keeps fetching its old hashed chunks from disk and
             # dies on the next lazy import, so stop it on every platform (#109643).
@@ -300,13 +300,13 @@ def _discard_desktop_staging(staging_dir: Path) -> None:
 
 
 # ─── Desktop exe integrity gate (#69179) ──────────────────────────────────── The desktop self-update chain
-# (Desktop → hermes-setup --update → `alfred update` → `alfred desktop --build-only` → relaunch) rebuilds
-# Alfred.exe on the end user's machine and used to verify only that the file EXISTS before declaring
+# (Desktop → hermes-setup --update → `plushuman update` → `plushuman desktop --build-only` → relaunch) rebuilds
+# +Human.exe on the end user's machine and used to verify only that the file EXISTS before declaring
 # success. A corrupt cached Electron zip whose extraction produced a truncated electron.exe, an interrupted
 # rcedit resource rewrite, a disk-full pack, or a wrong-arch unpacked tree therefore shipped a broken binary
 # that Windows refuses to load ("This app can't run on your computer" / 此应用无法在你的电脑上运行). These helpers parse
 # the PE header — no signature infrastructure required — so a structurally broken or wrong-architecture
-# Alfred.exe is caught BEFORE the updater replaces the working app, and the previous build can be restored
+# +Human.exe is caught BEFORE the updater replaces the working app, and the previous build can be restored
 # from the .bak tree that apps/desktop/scripts/before-pack.mjs now preserves.
 _PE_MACHINE_I386 = 0x014C
 _PE_MACHINE_AMD64 = 0x8664
@@ -460,7 +460,7 @@ def _desktop_ancestor_in(desktop_dir: Path) -> Optional[int]:
     """PID of a Desktop from this build's ``release`` tree that is one of OUR ancestors, else None.
 
     That Desktop is running this process (its backend's launch-time update tail, or a
-    `alfred update` it spawned). On Windows it holds the exe lock the promotion rename
+    `plushuman update` it spawned). On Windows it holds the exe lock the promotion rename
     needs, and it cannot be stopped without killing this process first. Never raises."""
     try:
         import psutil
@@ -495,7 +495,7 @@ def _stop_desktop_processes_locking_build(desktop_dir: Path, *, also_posix: bool
     me = os.getpid()
     # Never stop a Desktop that is one of OUR ancestors, on any platform: this
     # process lives in its tree. A historical Desktop (v2026.7.1 Linux in-app
-    # update) runs `alfred update` as a child with piped stdout/stderr and owns
+    # update) runs `plushuman update` as a child with piped stdout/stderr and owns
     # the post-update rebuild and relaunch. Killing it breaks those pipes (EPIPE
     # fails the update) and leaves nobody to relaunch. On Windows the same holds
     # for the launch-time tail a Desktop's own backend runs
@@ -726,7 +726,7 @@ def _desktop_macos_local_codesign(app: Path, *, desktop_dir: Path, identity: str
 
     # 1) Standalone Mach-O files (native modules, dylibs, crashpad handler),
     #    compared relative to the app root — the absolute path always contains
-    #    the outer Alfred.app component.
+    #    the outer +Human.app component.
     contents = app / "Contents"
     standalone: list[Path] = []
     for root, _dirs, files in os.walk(contents):
@@ -793,7 +793,7 @@ def _desktop_macos_relaunchable_fixup(
     """Re-sign a locally-built macOS app so in-place self-update doesn't reset TCC grants.
 
     A rebuilt ad-hoc bundle (new cdhash, no stable Designated Requirement) reports
-    "Alfred is damaged" and loses every grant. Clear quarantine xattrs, then sign
+    "+Human is damaged" and loses every grant. Clear quarantine xattrs, then sign
     with ``desktop.macos_signing_identity`` or identifier-pinned ad-hoc, keeping
     entitlements. When a configured identity fails (#121857): over a locally-signed
     install, retry identifier-pinned ad-hoc before the cdhash-only legacy sign;
@@ -816,7 +816,7 @@ def _desktop_macos_relaunchable_fixup(
     exe = _desktop_packaged_executable_in(release_dir or (desktop_dir / "release"))
     if exe is None:
         return True
-    # exe = .../Alfred.app/Contents/MacOS/Alfred  ->  app bundle = .../Alfred.app
+    # exe = .../+Human.app/Contents/MacOS/+Human  ->  app bundle = .../+Human.app
     app = exe.parents[2]
     if not str(app).endswith(".app") or not app.is_dir():
         return True
@@ -858,7 +858,7 @@ def _desktop_macos_relaunchable_fixup(
                     f"  ✗ macOS signing identity {configured!r} did not produce a verified "
                     f"signature, and the installed app is publisher-signed (Team ID "
                     f"{target_sig['team']}); keeping it (no ad-hoc fallback). Fix the identity "
-                    "(e.g. `alfred desktop --setup-tcc-identity` or edit "
+                    "(e.g. `plushuman desktop --setup-tcc-identity` or edit "
                     "desktop.macos_signing_identity in config.yaml) and update again."
                 )
                 return False
@@ -933,14 +933,14 @@ def _swap_in_new_macos_bundle(tmp: Path, target: Path, old: Path) -> None:
 
 
 def _running_macos_app_bundles() -> set[Path]:
-    """``.app`` bundles of every live Alfred Desktop process. A running bundle is never swapped
+    """``.app`` bundles of every live +Human Desktop process. A running bundle is never swapped
     under: Electron loads ``app.asar`` chunks and helper apps lazily, so renaming its bundle away
     and deleting the old tree crashes the live app (the detached updater waits for it to exit)."""
     import psutil
     bundles: set[Path] = set()
     for proc in psutil.process_iter(["exe"]):
         exe = proc.info.get("exe") or ""
-        if exe.endswith("/Contents/MacOS/Alfred"):
+        if exe.endswith("/Contents/MacOS/+Human"):
             bundles.add(Path(exe).resolve().parents[2])
     return bundles
 
@@ -952,10 +952,10 @@ def _stage_macos_bundle_copy(src: Path, dst: Path) -> None:
 
 
 def _install_rebuilt_desktop_app(desktop_dir: Path, candidates: list[Path]) -> tuple[list[Path], list[str]]:
-    """Copy the rebuilt macOS bundle into every stale or missing installed ``Alfred.app`` in
+    """Copy the rebuilt macOS bundle into every stale or missing installed ``+Human.app`` in
     *candidates* (``_installed_desktop_apps()``) (#52339).
 
-    ``alfred desktop --build-only`` (what ``alfred update`` runs) packages into
+    ``plushuman desktop --build-only`` (what ``plushuman update`` runs) packages into
     ``apps/desktop/release/`` only. Finder, the Dock and Spotlight launch the copy in
     ``/Applications`` (or ``~/Applications``), so without this step every update leaves the
     installed shell one build behind the backend it boots. The detached Desktop updater swaps
@@ -971,7 +971,7 @@ def _install_rebuilt_desktop_app(desktop_dir: Path, candidates: list[Path]) -> t
     rebuilt_exe = _desktop_packaged_executable(desktop_dir)
     if rebuilt_exe is None:
         return [], []
-    # .../Alfred.app/Contents/MacOS/Alfred -> .../Alfred.app
+    # .../+Human.app/Contents/MacOS/+Human -> .../+Human.app
     return _install_rebuilt_macos_bundles(
         rebuilt_exe.parents[2], candidates, running=_running_macos_app_bundles())
 
@@ -987,7 +987,7 @@ def _refresh_installed_desktop_apps(desktop_dir: Path) -> None:
     for app in installed:
         if app in missing:
             print(f"  ✓ Reinstalled the Desktop app at {app}: it had been removed, so Finder, "
-                  "the Dock and Spotlight could not find Alfred")
+                  "the Dock and Spotlight could not find +Human")
         else:
             print(f"  ✓ Installed the rebuilt Desktop app at {app}")
     for problem in problems:
@@ -995,7 +995,7 @@ def _refresh_installed_desktop_apps(desktop_dir: Path) -> None:
     from hermes_cli.gui_uninstall import desktop_install_record
     from utils import atomic_json_write, read_json_or_empty
     # A copy that failed to reinstall stays recorded, so the next update retries it. Every
-    # `alfred desktop` launch lands here: write only when the set changed.
+    # `plushuman desktop` launch lands here: write only when the set changed.
     apps = [str(app) for app in owned]
     if read_json_or_empty(desktop_install_record()).get("apps", []) == apps:
         return
@@ -1006,7 +1006,7 @@ def _refresh_installed_desktop_apps(desktop_dir: Path) -> None:
 
 
 def _update_owned_macos_bundles(candidates: list[Path]) -> list[Path]:
-    """The existing bundles in *candidates* that only ``alfred update`` keeps current (#52339).
+    """The existing bundles in *candidates* that only ``plushuman update`` keeps current (#52339).
 
     Ownership comes from the bundle's own ``install-stamp.json``. ``updateMechanism: self`` is a
     bootstrap build (a local pack or the bootstrap download), and stamps older than the field
@@ -1025,7 +1025,7 @@ def _update_owned_macos_bundles(candidates: list[Path]) -> list[Path]:
 
 
 def _owns_installed_desktop_apps() -> bool:
-    """A packaged app runs the checkout under the default Alfred home, so only that checkout (on
+    """A packaged app runs the checkout under the default +Human home, so only that checkout (on
     macOS) may build for it: a bundle from any other tree (a dev worktree) would split shell from
     backend."""
     if sys.platform != "darwin":
@@ -1036,12 +1036,12 @@ def _owns_installed_desktop_apps() -> bool:
 
 
 def _installed_desktop_apps() -> list[Path]:
-    """Installed macOS ``Alfred.app`` bundles this checkout's update owns.
+    """Installed macOS ``+Human.app`` bundles this checkout's update owns.
 
     When no owned copy is left, a recorded one that has gone missing still counts: its ownership
     stamp left with the bundle, and without the record nothing would ever put it back (Finder, the
-    Dock and Spotlight lose Alfred for good). A copy moved to the other Applications folder keeps
-    its stamp, so it is found instead of doubled. Alfred' GUI uninstall deletes the record.
+    Dock and Spotlight lose +Human for good). A copy moved to the other Applications folder keeps
+    its stamp, so it is found instead of doubled. +Human' GUI uninstall deletes the record.
     """
     if not _owns_installed_desktop_apps():
         return []
@@ -1057,9 +1057,9 @@ def _installed_desktop_apps() -> list[Path]:
 
 
 def _installed_desktop_launch_target(desktop_dir: Path, packaged_executable: Path) -> Path:
-    """The executable ``alfred desktop`` launches: the installed app once it IS the checkout build.
+    """The executable ``plushuman desktop`` launches: the installed app once it IS the checkout build.
 
-    Finder, the Dock and Spotlight open the installed ``Alfred.app``; launching the ``release/``
+    Finder, the Dock and Spotlight open the installed ``+Human.app``; launching the ``release/``
     bundle beside it ran the same app from a second path while the installed copy went stale
     (#52339). Refresh the installed copies, then launch the first one that matches the checkout
     build. The checkout bundle stays the fallback: nothing installed, or a copy that is running
@@ -1071,7 +1071,7 @@ def _installed_desktop_launch_target(desktop_dir: Path, packaged_executable: Pat
     rebuilt_hash = _app_asar_hash(packaged_executable.parents[2])
     for app in _installed_desktop_apps():
         if rebuilt_hash is not None and _app_asar_hash(app) == rebuilt_hash:
-            return app / "Contents" / "MacOS" / "Alfred"
+            return app / "Contents" / "MacOS" / "+Human"
     return packaged_executable
 
 
@@ -1099,8 +1099,8 @@ def _install_rebuilt_macos_bundles(
             continue
         if app.resolve() in running:
             problems.append(
-                f"{app} is running and was not refreshed; quit Alfred Desktop and run "
-                "`alfred update` again (or update from inside the app)")
+                f"{app} is running and was not refreshed; quit +Human Desktop and run "
+                "`plushuman update` again (or update from inside the app)")
             continue
         if codesign:
             installed_sig = _macos_signature_summary(codesign, app)
@@ -1201,7 +1201,7 @@ def _desktop_linux_sandbox_fixup(packaged_executable: Path) -> bool:
 
     sandbox, st = _sandbox_helper_lstat(packaged_executable)
     if not sandbox.exists():
-        print(f"✗ Alfred Desktop is missing Electron's Linux sandbox helper: {sandbox}")
+        print(f"✗ +Human Desktop is missing Electron's Linux sandbox helper: {sandbox}")
         return False
     # Reject symlinks — chown/chmod must not follow an attacker-controlled link.
     if st is None:
@@ -1220,7 +1220,7 @@ def _desktop_linux_sandbox_fixup(packaged_executable: Path) -> bool:
 
     sudo = shutil.which("sudo")
     if not sudo:
-        print("✗ Alfred Desktop requires sudo to configure Electron's Linux sandbox helper.")
+        print("✗ +Human Desktop requires sudo to configure Electron's Linux sandbox helper.")
         return False
 
     print("→ Configuring Electron Linux sandbox helper (sudo required)...")
@@ -1342,10 +1342,10 @@ def _desktop_launch_options() -> tuple[list[str], str, str, str, bool]:
 
 
 def _register_linux_desktop_entry(defer: bool = False):
-    """Install the XDG desktop entry for Alfred Desktop (Linux only, best-effort).
+    """Install the XDG desktop entry for +Human Desktop (Linux only, best-effort).
 
     ``Exec`` and ``Icon`` are absolute so the entry works outside a login shell.
-    ``alfred uninstall --gui`` removes it.
+    ``plushuman uninstall --gui`` removes it.
 
     ``defer=True`` (app-grid launch) returns a ``DeferredDesktopEntryInstall`` that writes the
     entry only once the Electron window is on screen (#111906); ``None`` when nothing is
@@ -1435,10 +1435,10 @@ def build_prepared_desktop(desktop_dir: Path, *, source_mode: bool, npm: str, en
         # The Desktop running this build holds the exe lock the promotion rename needs,
         # and stopping it would kill this process first (#123499). Packing would only
         # produce a build that cannot be installed; leave the app as it is. Its content
-        # stamp stays stale, so `alfred desktop` run outside the app rebuilds it
+        # stamp stays stale, so `plushuman desktop` run outside the app rebuilds it
         # (_desktop_build_needed), and the in-app update completes with desktop=True.
         print(f"  ⚠ Skipped rebuilding the desktop app: this update is running inside it (pid {ancestor}),")
-        print("    and Windows locks a running app's files. Quit Alfred Desktop and run `alfred desktop`")
+        print("    and Windows locks a running app's files. Quit +Human Desktop and run `plushuman desktop`")
         print("    from a terminal, or use Update now in Settings → About, to rebuild and reopen it.")
         return None
     build_label = "source build" if source_mode else "packaged app"
@@ -1610,20 +1610,27 @@ def _site_packages_install_kind(project_root: Path) -> Optional[str]:
 
 
 def _launch_installed_macos_desktop_app() -> bool:
-    """Launch a separately installed ``/Applications/Alfred.app``, if present.
+    """Launch a separately installed ``/Applications/+Human.app``, if present.
 
     Returns True only when the app bundle exists and a detached launch was
     started — the caller then exits without touching the build ladder.
     """
     if sys.platform != "darwin":
         return False
-    executable = Path("/Applications/Alfred.app/Contents/MacOS/Alfred")
+    executable = next(  # alfred:keep — earlier installs keep their bundle path (in-app updates swap in place)
+        (p for p in (Path("/Applications/+Human.app/Contents/MacOS/+Human"),  # alfred:keep
+                     Path("/Applications/+Human.app/Contents/MacOS/Alfred"),  # alfred:keep
+                     Path("/Applications/Alfred.app/Contents/MacOS/+Human"),  # alfred:keep
+                     Path("/Applications/Alfred.app/Contents/MacOS/Alfred"),  # alfred:keep
+                     ) if p.is_file()),  # alfred:keep
+        Path("/Applications/+Human.app/Contents/MacOS/+Human"),  # alfred:keep
+    )
     if not executable.is_file():
         return False
     from hermes_cli.bundled_app import launch_detached
 
     pid = launch_detached([str(executable)], cwd=executable.parent)
-    print(f"→ Launched the installed Alfred Desktop app: {executable} (pid {pid})")
+    print(f"→ Launched the installed +Human Desktop app: {executable} (pid {pid})")
     return True
 
 
@@ -1650,10 +1657,10 @@ def cmd_gui(args: argparse.Namespace):
         print(f"Desktop GUI source not found at: {desktop_dir}")
         if install_kind == "homebrew":
             print(
-                "  This Alfred came from Homebrew, which does not ship the desktop app's\n"
+                "  This +Human came from Homebrew, which does not ship the desktop app's\n"
                 "  source tree, so it cannot be built from this install.\n"
                 "  Install the desktop app from https://github.com/Blubobo1010/Alfred-Ai-Audit/releases/latest,\n"
-                "  or run `alfred desktop` from a source checkout."
+                "  or run `plushuman desktop` from a source checkout."
             )
         sys.exit(1)
 
@@ -1671,7 +1678,7 @@ def cmd_gui(args: argparse.Namespace):
     # grants survive rebuilds, then exit without building/launching.
     if getattr(args, "setup_tcc_identity", False):
         from hermes_cli.main_desktop_tcc import _desktop_macos_setup_tcc_identity
-        identity = getattr(args, "identity", None) or "Alfred Local Signing"
+        identity = getattr(args, "identity", None) or "+Human Local Signing"
         sys.exit(0 if _desktop_macos_setup_tcc_identity(identity) else 1)
 
     if bundled:
@@ -1681,7 +1688,7 @@ def cmd_gui(args: argparse.Namespace):
 
     # The mutable preflight (freshness check → npm install → pack) mutates
     # checkout-scoped node_modules and apps/desktop/release. Serialize it
-    # across processes so a manual `alfred desktop` racing `alfred update`'s
+    # across processes so a manual `plushuman desktop` racing `plushuman update`'s
     # rebuild cannot corrupt either (#93940). The lock lives outside the
     # checkout, keyed by the resolved checkout path.
     from hermes_cli.desktop_build_lock import DesktopBuildLock
@@ -1696,7 +1703,7 @@ def cmd_gui(args: argparse.Namespace):
             print("  Refusing to run npm without serialization; check the checkout permissions and retry.")
             sys.exit(1)
         if not acquired:
-            print("✗ A Alfred update or another desktop dependency install or build is already running.")
+            print("✗ A +Human update or another desktop dependency install or build is already running.")
             print("  Wait for it to finish, then retry.")
             sys.exit(2)
 
@@ -1759,7 +1766,7 @@ def cmd_gui(args: argparse.Namespace):
         return
 
     if source_mode:
-        print("→ Launching Alfred Desktop from source build...")
+        print("→ Launching +Human Desktop from source build...")
         # Launch only the prepared runtime. npm exec can provision a missing
         # Electron package, including when --skip-build was requested.
         electron = _electron_dir(PROJECT_ROOT)
@@ -1783,13 +1790,13 @@ def cmd_gui(args: argparse.Namespace):
         launch_command.append("--local")
     # Out-of-band preview escape hatch (#97213): a fullscreened preview pane
     # owns all input, and Wayland has no xdotool/wmctrl to break out from a
-    # terminal. `alfred desktop --close-preview` rides the single-instance
+    # terminal. `plushuman desktop --close-preview` rides the single-instance
     # argv so a second CLI invocation unlocks the running app.
     if getattr(args, "close_preview", False):
         launch_command.append("--close-preview")
     launch_command.extend(_explicit_profile_args())
     if not source_mode:
-        desktop_launch_notice(f"→ Launching packaged Alfred Desktop: {' '.join(launch_command)}")
+        desktop_launch_notice(f"→ Launching packaged +Human Desktop: {' '.join(launch_command)}")
     # The launch target is ready; the fixups above finished mutating the
     # packaged tree. Electron is the long-lived handoff, so release the build
     # lock now — an open Desktop window must never block a future rebuild.
@@ -1839,7 +1846,7 @@ def cmd_gui(args: argparse.Namespace):
             )
         if deferred_entry is not None:
             deferred_entry.finish()
-        desktop_launch_notice("✓ Alfred Desktop launched in a detached window; you can close this shell.")
+        desktop_launch_notice("✓ +Human Desktop launched in a detached window; you can close this shell.")
         sys.exit(0)
     with desktop_console_output(source_mode=source_mode) as streams:
         try:
@@ -1851,7 +1858,7 @@ def cmd_gui(args: argparse.Namespace):
             # closing the Desktop, not a launcher crash. Exit cleanly instead
             # of dumping a KeyboardInterrupt traceback from subprocess.run
             # (#59848).
-            print("\n✓ Alfred Desktop closed.")
+            print("\n✓ +Human Desktop closed.")
             sys.exit(0)
     if deferred_entry is not None:
         deferred_entry.finish()
@@ -1861,7 +1868,7 @@ def cmd_gui(args: argparse.Namespace):
 def _explicit_profile_args() -> list[str]:
     """``--profile <name>`` for Electron when ``-p``/``--profile`` was on argv.
 
-    Explicit flag only. A bare `alfred desktop` must not forward the sticky CLI
+    Explicit flag only. A bare `plushuman desktop` must not forward the sticky CLI
     profile — Electron would persist it over the stored desktop one.
     """
     from hermes_cli.main import explicit_cli_profile
@@ -1897,7 +1904,7 @@ def _launch_bundled_desktop(
         if getattr(args, name, False)
     ]
     if refused:
-        print(f"✗ {', '.join(refused)} cannot apply to a bundled Alfred install.")
+        print(f"✗ {', '.join(refused)} cannot apply to a bundled +Human install.")
         print("  This app ships prebuilt and has no desktop source tree to build.")
         sys.exit(2)
 
@@ -1907,13 +1914,13 @@ def _launch_bundled_desktop(
         # The stamp says bundled, so a tree that is not one is a damaged or
         # mispackaged install. Report it — degrading to the build ladder
         # would run npm inside the app's own resources.
-        print(f"✗ This Alfred is stamped as a bundled desktop install, but {exc}.")
-        print("  The install is damaged — reinstall Alfred from the website.")
+        print(f"✗ This +Human is stamped as a bundled desktop install, but {exc}.")
+        print("  The install is damaged — reinstall +Human from the website.")
         sys.exit(1)
 
     if layout.launcher is None:
-        print(f"✗ Found no Alfred Desktop launcher in {layout.app_root}.")
-        print("  The install is damaged — reinstall Alfred from the website.")
+        print(f"✗ Found no +Human Desktop launcher in {layout.app_root}.")
+        print("  The install is damaged — reinstall +Human from the website.")
         sys.exit(1)
 
     launch_command = [str(layout.launcher)]
@@ -1927,7 +1934,7 @@ def _launch_bundled_desktop(
     launch_command.extend(electron_flags)
     launch_command.extend(_explicit_profile_args())
     pid = launch_detached(launch_command, env=env, cwd=layout.app_root)
-    print(f"→ Launched Alfred Desktop: {' '.join(launch_command)} (pid {pid})")
+    print(f"→ Launched +Human Desktop: {' '.join(launch_command)} (pid {pid})")
     sys.exit(0)
 
 

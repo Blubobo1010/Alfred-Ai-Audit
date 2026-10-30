@@ -1,4 +1,4 @@
-# tests/ — how Alfred tests are written and run
+# tests/ — how +Human tests are written and run
 
 Applies on top of the root `AGENTS.md`. Read it before adding or changing any test.
 

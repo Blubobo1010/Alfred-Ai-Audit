@@ -500,7 +500,7 @@ def test_failed_launch_completion_degrades_to_a_warning(source_launch, tmp_path,
         assert _receipts(tmp_path) == before_receipts, "a metadata query attempted a dependency sync"
     else:
         assert "source-update completion failed" in result.stderr
-        assert "alfred update" in result.stderr
+        assert "plushuman update" in result.stderr
 
 
 @pytest.mark.platforms("posix")
@@ -545,7 +545,7 @@ def test_completion_retry_backoff_and_cap(tmp_path, monkeypatch):
 @pytest.mark.platforms("posix")
 def test_capped_completion_attempts_leave_marker_for_explicit_update(source_launch, tmp_path, capsys):
     """Past the retry cap a launch must NOT re-run the tail; it keeps the pending marker
-    and points the operator at `alfred update` instead of burning another doomed attempt."""
+    and points the operator at `plushuman update` instead of burning another doomed attempt."""
     root, store_python, _ = source_launch
     from hermes_cli.venv_sync import (
         _completion_attempts_path,
@@ -565,7 +565,7 @@ def test_capped_completion_attempts_leave_marker_for_explicit_update(source_laun
     assert venv_sync.prepare_launch(root, []) == store_python
     out = capsys.readouterr().err
     assert "could not be finished automatically" in out
-    assert "alfred update" in out
+    assert "plushuman update" in out
     assert completion_pending_path(root).is_file(), "the owed completion is still recorded"
     assert not (tmp_path / "completion-calls").exists(), "a capped launch re-ran the tail"
 

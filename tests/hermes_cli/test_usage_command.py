@@ -1,6 +1,6 @@
-"""``alfred usage`` — the non-interactive /usage surface (issue #33094).
+"""``plushuman usage`` — the non-interactive /usage surface (issue #33094).
 
-Drives the real ``alfred`` argparse entrypoint; only the network fetch is replaced with a snapshot
+Drives the real ``plushuman`` argparse entrypoint; only the network fetch is replaced with a snapshot
 (``agent.account_usage.fetch_account_usage`` is what ``cmd_usage`` reads at call time).
 """
 

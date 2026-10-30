@@ -1,4 +1,4 @@
-"""User-facing wording contracts for ``alfred update`` failure/partial output.
+"""User-facing wording contracts for ``plushuman update`` failure/partial output.
 
 Invariants only (what the user must be able to read and act on), never whole-string snapshots.
 """
@@ -24,7 +24,7 @@ class TestFleetMatrixVerdict:
         ]
         assert ur.print_fleet_version_matrix(fleet) is True
         out = capsys.readouterr().out
-        assert "alfred gateway restart" in out
+        assert "plushuman gateway restart" in out
 
     def test_unknown_rows_print_no_verdict(self, capsys):
         fleet = [{"profile": "default", "pid": 1, "code_sha": None, "state": "unknown"}]

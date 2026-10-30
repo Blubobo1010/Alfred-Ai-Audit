@@ -1,4 +1,4 @@
-# Alfred install & update e2e (overlay from alfred-build).
+# +Human install & update e2e (overlay from alfred-build).
 #
 # Proves the two things a generated fork must never break: the one-liner installer works from
 # this commit, and `alfred update` fast-forwards an older Alfred install to it. Reuses upstream's
@@ -20,7 +20,7 @@ on:
   workflow_dispatch:
     inputs:
       install-ref:
-        description: Old ref to install first (default - newest Alfred stable tag merged into HEAD^)
+        description: Old ref to install first (default - newest stable tag merged into HEAD^)
         required: false
         default: ''
       update-ref:
@@ -62,7 +62,7 @@ jobs:
             echo "upgrade leg: $old -> ${{ inputs.update-ref || 'HEAD' }}"
             legs='["fresh", "upgrade"]'
           else
-            echo "::notice::no earlier Alfred stable tag: the upgrade leg is skipped"
+            echo "::notice::no earlier stable tag: the upgrade leg is skipped"
             legs='["fresh"]'
           fi
           echo "old=$old" >> "$GITHUB_OUTPUT"

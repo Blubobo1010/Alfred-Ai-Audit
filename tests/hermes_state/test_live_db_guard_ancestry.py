@@ -144,11 +144,11 @@ class TestPytestProcessRecognition:
     @pytest.mark.parametrize(
         "cmdline",
         [
-            ["alfred", "gateway", "start"],
+            ["plushuman", "gateway", "start"],
             ["/usr/bin/python", "-m", "hermes_cli.main", "sessions", "list"],
             # A path that merely *contains* "pytest" is not a pytest process:
             # tmp paths like /tmp/pytest-of-dev/... show up in real argv.
-            ["alfred", "run", "--file", "/tmp/pytest-of-dev/test0/input.txt"],
+            ["plushuman", "run", "--file", "/tmp/pytest-of-dev/test0/input.txt"],
         ],
     )
     def test_ignores_non_pytest_invocations(self, cmdline):

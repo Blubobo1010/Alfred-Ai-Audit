@@ -91,7 +91,7 @@ declare global {
         sessionId: string,
         opts?: { connectionId?: null | string; profile?: null | string; watch?: boolean }
       ) => Promise<{ ok: boolean; error?: string }>
-      // Resume this session in the user's own terminal emulator (`alfred --tui
+      // Resume this session in the user's own terminal emulator (`plushuman --tui
       // --resume <id>`) — the external terminal, not the in-app pane.
       openSessionInTerminal: (
         sessionId: string,
@@ -106,7 +106,7 @@ declare global {
       // `onBrowserPopoutClosed` so the caller can dock the tab again.
       openBrowserWindow: (tabId: string) => Promise<{ ok: boolean; error?: string }>
       // Cross-window renderer relay (pop-out Browser ↔ chat windows). Electron
-      // main relays opaque payloads to the other Alfred renderer windows;
+      // main relays opaque payloads to the other +Human renderer windows;
       // renderer code keeps the destination exact and rejects anything not
       // addressed to its window.
       windowRelay?: {
@@ -243,7 +243,7 @@ declare global {
         // Drain/update/restore one Desktop-managed SSH install. External URL
         // and cloud sources are refused without touching their processes.
         updateManaged?: (id: string) => Promise<DesktopManagedConnectionUpdateResult>
-        // Fan out `alfred update` to every eligible registered connection;
+        // Fan out `plushuman update` to every eligible registered connection;
         // cloud entries are skipped (platform-managed), each row independent.
         // excludeIds skips connections the caller updates through another
         // path (the everything-update flow's active backend + local client).
@@ -266,7 +266,7 @@ declare global {
         options?: DesktopOauthLoginOptions
       ) => Promise<DesktopOauthLoginResult>
       oauthLogoutConnectionConfig: (remoteUrl: string) => Promise<DesktopOauthLogoutResult>
-      // Alfred Cloud: one portal login powers discovery + silent per-agent
+      // +Human Cloud: one portal login powers discovery + silent per-agent
       // sign-in (cloud-auto-discovery Phase 3).
       cloud: {
         status: () => Promise<DesktopCloudStatus>
@@ -788,7 +788,7 @@ export interface DesktopVersionInfo {
    *  desktop first-launch bootstrap) created it, a manual clone did not. */
   installedByScript?: boolean
   /** sha16 of the canonical install-root path — the per-install channel key and
-   *  the shape `alfred update --install-id` prints. */
+   *  the shape `plushuman update --install-id` prints. */
   installId?: string
   /** What this build carries (embedded / light / external) and where an
    *  external backend resolved from. Bundled artifacts run their payload; light
@@ -814,7 +814,7 @@ export type RuntimeSource =
   | { type: 'desktop-app'; root: string | null } // sealed tree stewarded by the desktop bundle
   | { type: 'desktop-bootstrap'; root: string } // canonical install created by the desktop first-launch bootstrap
   | { type: 'unknown' } // no stamp, no .git — provenance cannot be told
-  | { type: 'path'; command: string } // an existing `alfred` CLI found on PATH
+  | { type: 'path'; command: string } // an existing `plushuman` CLI found on PATH
   | { type: 'system-python'; command: string } // pip-installed hermes_cli on system Python
   | { type: 'bootstrap' } // nothing usable yet; the first-launch installer runs
 
@@ -910,7 +910,7 @@ export interface DesktopUpdateApplyResult {
   message?: string
 
   /** True when no staged updater exists (CLI install) and the user should run
-   *  `alfred update` themselves. `command` is the exact line to run. */
+   *  `plushuman update` themselves. `command` is the exact line to run. */
   manual?: boolean
   command?: string
   hermesRoot?: string
@@ -1049,7 +1049,7 @@ export interface DesktopActiveProfile {
 
 export interface DesktopConnectionConfig {
   envOverride: boolean
-  // The saved connection mode. 'cloud' is a Alfred Cloud connection: it carries
+  // The saved connection mode. 'cloud' is a +Human Cloud connection: it carries
   // a remote-shaped block (remoteUrl = the selected agent's dashboardUrl,
   // remoteAuthMode 'oauth') but is remembered as cloud so settings reopens into
   // the cloud picker. Resolution treats cloud exactly as remote
@@ -1072,7 +1072,7 @@ export interface DesktopConnectionConfig {
   // encryption is opted out — plain text is the chosen mode there.
   remoteTokenPlainText: boolean
   remoteUrl: string
-  // For a 'cloud' connection: the persisted Alfred Cloud org (slug or id) the
+  // For a 'cloud' connection: the persisted +Human Cloud org (slug or id) the
   // connected instance was discovered under, so Settings → Gateway can reopen
   // into that org. Empty string for remote/local.
   cloudOrg: string
@@ -1096,7 +1096,7 @@ export interface DesktopConnectionConfigInput {
   // user opt-in from the renderer.
   allowPlainTextToken?: boolean
   remoteUrl?: string
-  // For a 'cloud' connection: the selected Alfred Cloud org (slug or id) to
+  // For a 'cloud' connection: the selected +Human Cloud org (slug or id) to
   // persist so Settings can reopen into it. Ignored for remote/local modes.
   cloudOrg?: string
   cloudName?: string
@@ -1354,7 +1354,7 @@ export interface DesktopOauthLogoutResult {
   connected: boolean
 }
 
-// --- Alfred Cloud (cloud-auto-discovery Phase 3) ---
+// --- +Human Cloud (cloud-auto-discovery Phase 3) ---
 
 export interface DesktopCloudStatus {
   // The portal base URL the desktop talks to (default or env-overridden).
@@ -1364,7 +1364,7 @@ export interface DesktopCloudStatus {
   signedIn: boolean
 }
 
-// A discovered Alfred Cloud agent — the trimmed DTO from NAS GET /api/agents.
+// A discovered +Human Cloud agent — the trimmed DTO from NAS GET /api/agents.
 export interface DesktopCloudAgent {
   id: string
   name: string

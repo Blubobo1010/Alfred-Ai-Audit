@@ -78,13 +78,13 @@ test('nativeRemovalInstructions names the steward per kind and OS', () => {
 
   assert.match(nativeRemovalInstructions('bundled', 'win32'), /Installed apps/)
   assert.equal(
-    nativeRemovalInstructions('bundled', 'darwin', '/Applications/Alfred Canary.app'),
-    'Quit the app and drag Alfred Canary.app from /Applications to the Trash.'
+    nativeRemovalInstructions('bundled', 'darwin', '/Applications/+Human Canary.app'),
+    'Quit the app and drag +Human Canary.app from /Applications to the Trash.'
   )
-  assert.match(nativeRemovalInstructions('bundled', 'darwin'), /drag the Alfred app from Applications to the Trash/)
+  assert.match(nativeRemovalInstructions('bundled', 'darwin'), /drag the \+Human app from Applications to the Trash/)
   assert.match(
     nativeRemovalInstructions('bundled', 'linux', '/home/x/Apps/Hermes.AppImage'),
-    /\/home\/x\/Apps\/Alfred\.AppImage/
+    /\/home\/x\/Apps\/\+Human\.AppImage/
   )
   assert.match(
     nativeRemovalInstructions('bundled', 'linux', '/opt/hermes/linux-unpacked'),
@@ -111,12 +111,12 @@ test('mode predicates classify what each mode removes', () => {
 
 test('resolveRemovableAppPath finds the .app bundle on macOS', () => {
   assert.equal(
-    resolveRemovableAppPath('/Applications/Alfred.app/Contents/MacOS/Alfred', 'darwin'),
-    '/Applications/Alfred.app'
+    resolveRemovableAppPath('/Applications/+Human.app/Contents/MacOS/+Human', 'darwin'),
+    '/Applications/+Human.app'
   )
   assert.equal(
-    resolveRemovableAppPath('/Users/x/Applications/Alfred.app/Contents/MacOS/Alfred', 'darwin'),
-    '/Users/x/Applications/Alfred.app'
+    resolveRemovableAppPath('/Users/x/Applications/+Human.app/Contents/MacOS/+Human', 'darwin'),
+    '/Users/x/Applications/+Human.app'
   )
 })
 
@@ -135,17 +135,17 @@ test('resolveRemovableAppPath: dev-run .app resolves (safety is shouldRemoveAppB
 
 test('resolveRemovableAppPath finds the install dir on Windows', () => {
   assert.equal(
-    resolveRemovableAppPath('C:\\Users\\x\\AppData\\Local\\Programs\\Alfred\\Alfred.exe', 'win32'),
-    'C:\\Users\\x\\AppData\\Local\\Programs\\Alfred'
+    resolveRemovableAppPath('C:\\Users\\x\\AppData\\Local\\Programs\\+Human\\+Human.exe', 'win32'),
+    'C:\\Users\\x\\AppData\\Local\\Programs\\+Human'
   )
   assert.equal(
-    resolveRemovableAppPath('C:\\Users\\x\\AppData\\Local\\hermes-desktop\\Alfred.exe', 'win32'),
+    resolveRemovableAppPath('C:\\Users\\x\\AppData\\Local\\hermes-desktop\\+Human.exe', 'win32'),
     'C:\\Users\\x\\AppData\\Local\\hermes-desktop'
   )
 })
 
 test('resolveRemovableAppPath returns null for an unrecognized Windows dir', () => {
-  assert.equal(resolveRemovableAppPath('C:\\Temp\\foo\\Alfred.exe', 'win32'), null)
+  assert.equal(resolveRemovableAppPath('C:\\Temp\\foo\\+Human.exe', 'win32'), null)
 })
 
 test('resolveRemovableAppPath uses APPIMAGE on Linux when set', () => {
@@ -169,8 +169,8 @@ test('resolveRemovableAppPath returns null for an empty exe path', () => {
 // --- shouldRemoveAppBundle ---
 
 test('shouldRemoveAppBundle requires packaged AND a resolved path', () => {
-  assert.equal(shouldRemoveAppBundle(true, '/Applications/Alfred.app'), true)
-  assert.equal(shouldRemoveAppBundle(false, '/Applications/Alfred.app'), false)
+  assert.equal(shouldRemoveAppBundle(true, '/Applications/+Human.app'), true)
+  assert.equal(shouldRemoveAppBundle(false, '/Applications/+Human.app'), false)
   assert.equal(shouldRemoveAppBundle(true, null), false)
   assert.equal(shouldRemoveAppBundle(false, null), false)
 })
@@ -259,7 +259,7 @@ test('buildWindowsCleanupScript waits (bounded) for PID, runs uninstall, rmdir b
     pythonPath: 'C:\\hermes',
     agentRoot: 'C:\\hermes',
     uninstallArgs: ['-m', 'hermes_cli.uninstall', '--mode', 'full'],
-    appPath: 'C:\\Users\\x\\AppData\\Local\\Programs\\Alfred',
+    appPath: 'C:\\Users\\x\\AppData\\Local\\Programs\\+Human',
     hermesHome: 'C:\\Users\\x\\AppData\\Local\\hermes'
   })
 
@@ -273,7 +273,7 @@ test('buildWindowsCleanupScript waits (bounded) for PID, runs uninstall, rmdir b
   assert.match(script, /findstr \/r \/c:" %PID% "/)
   // Removal is a retry loop (Windows releases dir handles lazily).
   assert.match(script, /:rmloop/)
-  assert.match(script, /rmdir \/s \/q "C:\\Users\\x\\AppData\\Local\\Programs\\Alfred" >nul 2>&1/)
+  assert.match(script, /rmdir \/s \/q "C:\\Users\\x\\AppData\\Local\\Programs\\+Human" >nul 2>&1/)
   assert.match(script, /if %tries% geq 10 goto rmdone/)
   assert.match(script, /del "%~f0"/)
 })

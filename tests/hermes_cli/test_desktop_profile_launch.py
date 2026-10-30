@@ -1,6 +1,6 @@
-"""alfred desktop forwards an explicit profile into the packaged Electron launch.
+"""plushuman desktop forwards an explicit profile into the packaged Electron launch.
 
-Electron boots from active-profile.json. ``alfred -p <name> desktop`` used to
+Electron boots from active-profile.json. ``plushuman -p <name> desktop`` used to
 set only the CLI HERMES_HOME, so the packaged app still started the stored
 profile. A launch with no ``-p`` / ``--profile`` must not invent a flag.
 """
@@ -51,9 +51,9 @@ def _named_profiles(argv: list[str]) -> set[str]:
 def _packaged_exe(root: Path) -> Path:
     desktop_dir = root / "apps" / "desktop"
     if sys.platform == "darwin":
-        exe = desktop_dir / "release" / "mac-arm64" / "Alfred.app" / "Contents" / "MacOS" / "Alfred"
+        exe = desktop_dir / "release" / "mac-arm64" / "+Human.app" / "Contents" / "MacOS" / "+Human"
     elif sys.platform == "win32":
-        exe = desktop_dir / "release" / "win-unpacked" / "Alfred.exe"
+        exe = desktop_dir / "release" / "win-unpacked" / "+Human.exe"
     else:
         exe = desktop_dir / "release" / "linux-unpacked" / "hermes"
         exe.parent.mkdir(parents=True, exist_ok=True)
@@ -120,20 +120,20 @@ def _launch_command(tmp_path, monkeypatch, argv: list[str], *, active_profile: s
 
 
 def test_dash_p_desktop_appends_profile_to_packaged_launch(tmp_path, monkeypatch):
-    launched = _launch_command(tmp_path, monkeypatch, ["alfred", "-p", "desktop", "desktop"])
+    launched = _launch_command(tmp_path, monkeypatch, ["plushuman", "-p", "desktop", "desktop"])
 
     assert launched[-2:] == ["--profile", "desktop"]
 
 
 def test_profile_equals_spelling_is_forwarded(tmp_path, monkeypatch):
-    launched = _launch_command(tmp_path, monkeypatch, ["alfred", "desktop", "--profile=work"])
+    launched = _launch_command(tmp_path, monkeypatch, ["plushuman", "desktop", "--profile=work"])
 
     assert launched[-2:] == ["--profile", "work"]
 
 
 def test_missing_flag_does_not_forward_sticky_profile(tmp_path, monkeypatch):
     launched = _launch_command(
-        tmp_path, monkeypatch, ["alfred", "desktop"], active_profile="coder"
+        tmp_path, monkeypatch, ["plushuman", "desktop"], active_profile="coder"
     )
 
     assert "--profile" not in launched

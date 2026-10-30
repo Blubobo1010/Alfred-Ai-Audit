@@ -1,8 +1,8 @@
 /**
  * Bot Mode across two machines (#120730, the reported shape): the Desktop
- * runs its OWN local primary backend (Electron-spawned `alfred serve`, the
+ * runs its OWN local primary backend (Electron-spawned `plushuman serve`, the
  * default profile only) and has a second, REMOTE connection registered in
- * connections.json — a real `alfred serve` the test spawns under a different
+ * connections.json — a real `plushuman serve` the test spawns under a different
  * HOME/HERMES_HOME (./remote-helpers.ts) that hosts the bot profile. The user
  * opens that bot from the Bots roster, so the chat is owned by the remote
  * secondary while the window's primary stays local. Only the LLM is faked.

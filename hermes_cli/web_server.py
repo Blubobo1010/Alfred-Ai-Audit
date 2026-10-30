@@ -1,4 +1,4 @@
-"""Alfred — Web UI server: FastAPI app assembly, auth/host middleware, ``start_server``.
+"""+Human — Web UI server: FastAPI app assembly, auth/host middleware, ``start_server``.
 
 Route handlers live in ``web_routers/``; their helpers live in the sibling
 ``web_server_<concern>`` modules and are re-imported here so ``web_server.<name>``
@@ -42,7 +42,7 @@ try:
     from fastapi.responses import JSONResponse
 except ImportError:
     # First try lazy-installing the dashboard extras. Only the user actually
-    # running `alfred dashboard` needs fastapi+uvicorn; lazy install keeps
+    # running `plushuman dashboard` needs fastapi+uvicorn; lazy install keeps
     # them out of every other install path. After install, re-import.
     try:
         from pm import ensure_import
@@ -55,7 +55,7 @@ except ImportError:
     except Exception:
         raise SystemExit(
             "Web UI requires fastapi and uvicorn.\n"
-            "Run hermes pm repair, then restart Alfred."
+            "Run hermes pm repair, then restart +Human."
         )
 
 WEB_DIST = Path(os.environ["HERMES_WEB_DIST"]) if "HERMES_WEB_DIST" in os.environ else Path(__file__).parent / "web_dist"
@@ -90,7 +90,7 @@ def _gateway_owns_cron(name: str, home) -> bool:
 def _start_desktop_cron_ticker(stop_event: threading.Event, interval: int = 60) -> None:
     """Tick the cron scheduler from inside the desktop dashboard backend.
 
-    The desktop spawns a ``alfred dashboard`` backend, not a gateway, so without
+    The desktop spawns a ``plushuman dashboard`` backend, not a gateway, so without
     this a cron created in the app would never fire (no live adapters; delivery
     falls back to the per-platform send path). The primary backend outlives the
     per-profile pool (reaped after ~10 idle minutes), so it ticks EVERY local
@@ -187,7 +187,7 @@ async def _lifespan(app: FastAPI):
     app.state.chat_argv_lock = asyncio.Lock()
 
     # Bring state.db schema current BEFORE the first session-list poll
-    # (#79531/#80037): a store left behind by `alfred update` otherwise 500s
+    # (#79531/#80037): a store left behind by `plushuman update` otherwise 500s
     # every poll while the read-probe heal loses to sibling lock contention.
     # Off-thread so a locked store never delays the socket (Desktop
     # ready-probe times out at 10s, GH-73083). NOT a daemon, and joined at
@@ -208,7 +208,7 @@ async def _lifespan(app: FastAPI):
     _warm_gateway_module()
 
     # Snapshot the checkout revision so lazy-import paths (model picker) can
-    # refuse with "restart required" after `alfred update` replaced the code
+    # refuse with "restart required" after `plushuman update` replaced the code
     # (#86207); the update flow does not reliably restart the dashboard.
     from gateway.code_skew import record_boot_fingerprint
 
@@ -244,7 +244,7 @@ async def _lifespan(app: FastAPI):
     hosted_room_start_thread.start()
 
     # Desktop-spawned backends fire cron jobs themselves, since the app has no
-    # gateway running the scheduler. Server `alfred dashboard` is unaffected —
+    # gateway running the scheduler. Server `plushuman dashboard` is unaffected —
     # it relies on its own gateway.
     cron_stop: threading.Event | None = None
     cron_thread: threading.Thread | None = None
@@ -363,7 +363,7 @@ def _get_pty_active_session_files(app: FastAPI) -> dict[str, Path]:
     return _app_state_default(app, "pty_active_session_files", dict)
 
 
-app = FastAPI(title="Alfred", version=get_version_info().base_version, lifespan=_lifespan)
+app = FastAPI(title="+Human", version=get_version_info().base_version, lifespan=_lifespan)
 
 from hermes_cli.dashboard_auth.body_limit import AuthBodyLimitMiddleware
 
@@ -895,7 +895,7 @@ _FS_DATA_URL_MAX_BYTES = 16 * 1024 * 1024
 _UPLOAD_CHUNK_BYTES = 1024 * 1024
 
 # Stable install identity for /api/status: one uuid4 hex per physical install,
-# persisted under the ROOT Alfred home (not the profile HERMES_HOME) so every
+# persisted under the ROOT +Human home (not the profile HERMES_HOME) so every
 # profile reports the same id and the desktop can collapse duplicate roster rows
 # for one backend. Must never change across restarts, so cached per process.
 _INSTALL_ID_CACHE: dict[str, Optional[str]] = {"root": None, "value": None}
@@ -926,7 +926,7 @@ _LAST_GATEWAY_RESTART: Optional[tuple[float, subprocess.Popen, tuple[str, ...]]]
 
 
 def _spawn_gateway_restart(profile: Optional[str] = None) -> tuple[subprocess.Popen, bool]:
-    """Spawn ``alfred gateway restart``, reusing an in-flight or recent restart.
+    """Spawn ``plushuman gateway restart``, reusing an in-flight or recent restart.
 
     Concurrent children race each other on the kill-and-start path, so a live
     child is reused; requests within ``GATEWAY_RESTART_COOLDOWN_SECONDS`` for the
@@ -1118,7 +1118,7 @@ def _no_auth_provider_message(host: str) -> str:
         "    (hash with: python -c \"from "
         "plugins.dashboard_auth.basic import hash_password; "
         "print(hash_password('your-password'))\")\n"
-        "  • OAuth: run `alfred dashboard register` (Nous Portal) or "
+        "  • OAuth: run `plushuman dashboard register` (Nous Portal) or "
         "install a DashboardAuthProvider plugin.\n"
         "There is no unauthenticated public-dashboard option. For "
         "local-only use, bind 127.0.0.1 and leave dashboard.public_url "
@@ -1141,7 +1141,7 @@ def _no_auth_provider_message(host: str) -> str:
                 "plugins.disabled but dashboard.basic_auth is "
                 "configured.\n"
                 "Remove 'basic' from plugins.disabled (or run "
-                "`alfred plugins enable basic`), then restart the "
+                "`plushuman plugins enable basic`), then restart the "
                 "dashboard.\n\n"
             ) + fix_hint
     except Exception:
@@ -1324,7 +1324,7 @@ def _publish_host_rendezvous(host: str, port: int) -> None:
     # Desktop shell) are loopback, random-port and per-profile. Recording one as the HOST owner
     # made a later independently supervised `dashboard --host 0.0.0.0 --port N` refuse behind
     # the private child on every restart (#119824): the attach/refuse ladder reads ROLE_SERVE
-    # only. They still publish under their own role so `alfred plugins install` from a terminal
+    # only. They still publish under their own role so `plushuman plugins install` from a terminal
     # can reach the backend hosting the open chats on a Desktop-only box (#119644).
     from gateway import host_rendezvous as hr
 
@@ -1409,7 +1409,7 @@ def _on_server_started(
     # ledger + spawner provably dead); anything alive or unprovable is untouched.
     _best_effort("orphan MCP helper reap", _reap_mcp_helpers)
 
-    # No-op for standalone `alfred serve` (no HERMES_PARENT_PID).
+    # No-op for standalone `plushuman serve` (no HERMES_PARENT_PID).
     _start_parent_death_watchdog()
     # SSH-isolated backends are detached from any parent on purpose (#91668); their liveness signal
     # is "does a client still hold a WebSocket" (#101626).
@@ -1439,13 +1439,13 @@ def _on_server_started(
 
     actual_port = _read_bound_port(server, fallback=port)
     app.state.bound_port = actual_port
-    # Published by /api/host/identity: an attaching `alfred dashboard` must never be routed to a
+    # Published by /api/host/identity: an attaching `plushuman dashboard` must never be routed to a
     # headless backend (a URL with no UI behind it).
     app.state.serves_spa = not headless
 
     # Positive process identity in the machine spawn ledger (+ Windows
     # kill-on-close job). Registered AFTER the bind so the entry carries the
-    # ACTUAL port — what lets `alfred update` relaunch a manually-started serve
+    # ACTUAL port — what lets `plushuman update` relaunch a manually-started serve
     # on its real endpoint (#63206).
     def _register_identity() -> None:
         from hermes_cli.process_identity import attach_self_to_kill_on_close_job, register_self
@@ -1458,7 +1458,7 @@ def _on_server_started(
 
     _best_effort("process-identity registration", _register_identity)
 
-    # Host rendezvous (multiplex-only): the host lock + record that let a SECOND `alfred serve`
+    # Host rendezvous (multiplex-only): the host lock + record that let a SECOND `plushuman serve`
     # for any profile find this process and attach instead of binding a second port. Published
     # after the bind so the record carries the real port, and beside — not instead of — the
     # spawn-ledger entry above, which Desktop's attach ladder reads.
@@ -1480,11 +1480,11 @@ def _on_server_started(
     if headless:
         # Auth-gated JSON-RPC/WS only — announce the bind, not a URL. flush:
         # a piped stdout otherwise surfaces this minutes after the sentinel.
-        print(f"  Alfred backend listening on {host}:{actual_port}", flush=True)
+        print(f"  +Human backend listening on {host}:{actual_port}", flush=True)
     else:
         from hermes_cli.url_utils import format_url_host
 
-        print(f"  Alfred Web UI → http://{format_url_host(host)}:{actual_port}")
+        print(f"  +Human Web UI → http://{format_url_host(host)}:{actual_port}")
     _maybe_open_browser(host, actual_port, open_browser, initial_profile)
 
     if start_mcp_discovery_after_bind:

@@ -2,7 +2,7 @@
 name: dogfood
 description: "Exploratory QA of web apps: find bugs, evidence, reports."
 version: 1.0.0
-author: Teknium (teknium1), Alfred
+author: Teknium (teknium1), +Human
 license: MIT
 platforms: [linux, macos, windows]
 metadata:

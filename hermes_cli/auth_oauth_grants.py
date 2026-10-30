@@ -211,7 +211,7 @@ def _is_pkce_row(row: dict[str, Any]) -> bool:
 def strip_cloned_single_use_oauth_grants(profile_dir: Path) -> dict[str, Any]:
     """Remove forked single-use OAuth grants from a freshly cloned profile.
 
-    Called after any path that copies credential files between profiles (``alfred profile create
+    Called after any path that copies credential files between profiles (``plushuman profile create
     --clone-all``, the dashboard/TUI ``mirror_credentials`` flow). API-key pool rows are kept — a
     static key is safe to duplicate. Returns ``{"pool": [...provider ids], "providers": [...],
     "files": [...]}`` of what was stripped. Never raises: a clone must not fail because hygiene
@@ -297,7 +297,7 @@ _oauth_heal_notices: list[str] = []
 _oauth_heal_clean_marks: dict[str, tuple[Any, ...]] = {}
 
 # Filename for the ON-DISK twin of ``_oauth_heal_clean_marks``. The in-memory mark only silences
-# the heal for the life of ONE process, so every fresh `alfred` invocation and every new worker
+# the heal for the life of ONE process, so every fresh `plushuman` invocation and every new worker
 # re-pays the heal's two nested EXCLUSIVE auth-store locks just to discover there is nothing to
 # consolidate. Behind a sibling holding those locks that costs a full AUTH_LOCK_TIMEOUT_SECONDS
 # per provider (measured: 30s for two providers on an otherwise-idle machine) before the process
@@ -385,7 +385,7 @@ def _mark_oauth_heal_clean(provider_id: str, fingerprint: tuple) -> None:
 def consume_oauth_heal_notices() -> list[str]:
     """Return (and clear) human-readable notes about heals run in this process.
 
-    ``alfred auth list`` / ``alfred auth status`` print them so the user sees the consolidation.
+    ``plushuman auth list`` / ``plushuman auth status`` print them so the user sees the consolidation.
     """
     from hermes_cli.auth import _oauth_heal_notices
     notes = list(_oauth_heal_notices)
@@ -490,7 +490,7 @@ def heal_forked_single_use_oauth_grants(provider_id: str) -> Optional[dict[str, 
     LINEAGE with a root row (same pool id or shared token material), keeps the
     freshest rotation, writes it into ROOT when root's is older, and strips the profile's copy so
     the profile borrows root from then on. Idempotent; never touches API-key rows; never deletes a
-    row with no root counterpart (an independent ``alfred -p <p> auth add`` grant, or the only
+    row with no root counterpart (an independent ``plushuman -p <p> auth add`` grant, or the only
     surviving copy); reads only the two auth.json files the root fallback already reads. Returns
     ``{"adopted", "stripped_ids", "files", "providers_block"}`` when something healed, else None.
     Never raises.
@@ -623,7 +623,7 @@ class _HealPass:
                 self.lineage_proven = True
                 self._adopt_root_row(match_idx, row)
             # No root pool counterpart. Root's grant may live only in its .anthropic_oauth.json
-            # (the ``alfred auth`` PKCE shape); a profile ``hermes_pkce`` row is its copy. Not
+            # (the ``plushuman auth`` PKCE shape); a profile ``hermes_pkce`` row is its copy. Not
             # ``manual:hermes_pkce``: that is an ``auth add`` login the pool owns, never a copy.
             elif row.get("source") == "hermes_pkce" and self.root_singleton_row is not None and not self.r_oauth:
                 self._adopt_root_singleton(row)

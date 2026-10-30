@@ -38,12 +38,12 @@ describe('previewGuestInputAction', () => {
 
 describe('hasClosePreviewFlag', () => {
   it('detects the flag in both forms', () => {
-    expect(hasClosePreviewFlag(['Alfred', '--close-preview'])).toBe(true)
-    expect(hasClosePreviewFlag(['Alfred', '--close-preview=1'])).toBe(true)
+    expect(hasClosePreviewFlag(['+Human', '--close-preview'])).toBe(true)
+    expect(hasClosePreviewFlag(['+Human', '--close-preview=1'])).toBe(true)
   })
 
   it('ignores other argv and empty argv', () => {
-    expect(hasClosePreviewFlag(['Alfred'])).toBe(false)
+    expect(hasClosePreviewFlag(['+Human'])).toBe(false)
     expect(hasClosePreviewFlag(['--close'])).toBe(false)
     expect(hasClosePreviewFlag([])).toBe(false)
   })

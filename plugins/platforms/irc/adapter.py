@@ -1,4 +1,4 @@
-"""IRC Platform Adapter for Alfred — stdlib asyncio only, zero external dependencies.
+"""IRC Platform Adapter for +Human — stdlib asyncio only, zero external dependencies.
 
 config.yaml ``gateway.platforms.irc.extra`` keys: server, port (6697), nickname (hermes-bot), channel,
 use_tls (true), server_password, nickserv_password, allowed_users ([] = allow all), max_message_length (450).
@@ -173,7 +173,7 @@ class IRCAdapter(BasePlatformAdapter):
         if self.server_password:
             await self._send_raw(f"PASS {self.server_password}")
         await self._send_raw(f"NICK {self.nickname}")
-        await self._send_raw(f"USER {self.nickname} 0 * :Alfred")
+        await self._send_raw(f"USER {self.nickname} 0 * :+Human")
         self._recv_task = asyncio.create_task(self._receive_loop())
         try:  # wait for registration (001 RPL_WELCOME)
             await asyncio.wait_for(self._registration_event.wait(), timeout=30.0)
@@ -338,7 +338,7 @@ def validate_config(config) -> bool:
 
 
 def interactive_setup() -> None:
-    """`alfred gateway setup` flow (lazy hermes_cli imports keep the plugin importable outside the CLI)."""
+    """`plushuman gateway setup` flow (lazy hermes_cli imports keep the plugin importable outside the CLI)."""
     from hermes_cli.setup import (
         prompt, prompt_yes_no, save_env_value, get_env_value, print_header, print_info, print_warning, print_success)
     from hermes_cli.setup_platforms import declines_reconfigure
@@ -358,7 +358,7 @@ def interactive_setup() -> None:
     existing_server = get_env_value("IRC_SERVER")
     if declines_reconfigure("IRC", "Reconfigure IRC?", "IRC_SERVER"):
         return
-    info("Connect Alfred to an IRC network. Uses Python stdlib — no extra packages needed.",
+    info("Connect +Human to an IRC network. Uses Python stdlib — no extra packages needed.",
          "   Works with Libera.Chat, OFTC, your own ZNC/InspIRCd, etc.")
     print()
     if not _required("IRC server hostname (e.g. irc.libera.chat)", "IRC_SERVER", existing_server or "", "Server"):
@@ -406,7 +406,7 @@ def interactive_setup() -> None:
             print_info("No nicks allowed — the bot will ignore all messages until you add nicks.")
     print()
     print_success("IRC configuration saved to ~/.hermes/.env")
-    print_info("Restart the gateway for changes to take effect: alfred gateway restart")
+    print_info("Restart the gateway for changes to take effect: plushuman gateway restart")
 
 
 def is_connected(config) -> bool:
@@ -499,7 +499,7 @@ async def _sa_register(conn: _StandaloneConn, nick_base: str, server_password: s
     if server_password:
         await conn.raw(f"PASS {_strip_irc_control_chars(server_password)}")
     await conn.raw(f"NICK {standalone_nick}")
-    await conn.raw(f"USER {standalone_nick} 0 * :Alfred (cron)")
+    await conn.raw(f"USER {standalone_nick} 0 * :+Human (cron)")
     registered = await conn.pump(15.0, _on_registration)
     if registered is None:
         return _sa_error("registration timeout (no RPL_WELCOME)")
@@ -583,7 +583,7 @@ async def _standalone_send(pconfig, chat_id: str, message: str, *, thread_id: Op
 
 
 def register(ctx):
-    """Plugin entry point: called by the Alfred plugin system."""
+    """Plugin entry point: called by the +Human plugin system."""
     ctx.register_platform(
         name="irc",
         label="IRC",

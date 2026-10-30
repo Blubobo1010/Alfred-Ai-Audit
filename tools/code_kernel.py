@@ -74,7 +74,7 @@ def run_cell(request, execution_count):
 '''
 
 KERNEL_RUNNER_SOURCE = f'''\
-"""Auto-generated Alfred session-kernel runner. One exec cell per request."""
+"""Auto-generated +Human session-kernel runner. One exec cell per request."""
 import contextlib
 import io
 import json

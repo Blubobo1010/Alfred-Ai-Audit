@@ -3,7 +3,7 @@
 A profile served by the default multiplexer runs its ticks inside the default profile's process:
 ``os.environ`` holds the DEFAULT profile's ``.env`` and the served profile's values exist only
 in its secret scope / home override. Every knob cron reads from ``.env`` and every child env it
-builds must resolve exactly as it would under a standalone ``alfred -p <name> gateway run``.
+builds must resolve exactly as it would under a standalone ``plushuman -p <name> gateway run``.
 """
 
 from pathlib import Path

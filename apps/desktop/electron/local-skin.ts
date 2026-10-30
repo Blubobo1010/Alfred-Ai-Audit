@@ -105,14 +105,14 @@ const stringMap = (value: unknown): SkinColors | undefined => {
   return entries
 }
 
-/** The profile key mirrors `alfred --profile <name>` and is safe for a path. */
+/** The profile key mirrors `plushuman --profile <name>` and is safe for a path. */
 export function localSkinProfileKey(profile: null | string | undefined): string {
   const name = typeof profile === 'string' ? profile.trim() : ''
 
   return name && name !== 'default' && PROFILE_NAME_RE.test(name) ? name : 'default'
 }
 
-/** The profile home mirrors `alfred --profile <name>`: `<root>/profiles/<name>`. */
+/** The profile home mirrors `plushuman --profile <name>`: `<root>/profiles/<name>`. */
 export function localSkinHome(hermesHome: string, profile: null | string): string {
   const name = localSkinProfileKey(profile)
 

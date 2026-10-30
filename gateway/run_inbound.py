@@ -290,7 +290,7 @@ class GatewayInboundMixin(GatewayPluginInjectionMixin):
     def _hm_estop_gate(
         self, event: MessageEvent, source: SessionSource, is_internal: bool
     ) -> Optional[str]:
-        """Global emergency-stop (`alfred pause`) notice when this turn must be blocked, else None.
+        """Global emergency-stop (`plushuman pause`) notice when this turn must be blocked, else None.
         Placed after auth so unauthorized senders can't probe pause state. A synthetic heartbeat that
         slipped past the poller's pause check gets "" (blocked, nothing sent): nobody typed it, and
         settle_heartbeat_attempt leaves its tick due for after resume."""

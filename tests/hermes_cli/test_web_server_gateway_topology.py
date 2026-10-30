@@ -654,7 +654,7 @@ class TestStatusEndpointTopology:
 
     def test_profile_names_and_mode_public_when_auth_gated(self, monkeypatch):
         # Profile NAMES + gateway_mode are low-sensitivity product surface: the
-        # Alfred Cloud Portal reads /api/status over the network (a gated bind)
+        # +Human Cloud Portal reads /api/status over the network (a gated bind)
         # to render the profile list, so they must survive the auth gate.
         monkeypatch.setattr(
             _web_server_gateway, "_collect_profile_gateway_topology",

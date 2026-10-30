@@ -1,4 +1,4 @@
-"""Alfred Gateway - multi-platform messaging integration (sessions, context
+"""+Human Gateway - multi-platform messaging integration (sessions, context
 injection, delivery routing, platform-specific toolsets)."""
 
 from importlib import import_module

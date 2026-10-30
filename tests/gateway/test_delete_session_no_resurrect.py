@@ -99,7 +99,7 @@ class TestOutOfProcessDeleteSelfHeals:
         db = store._db_for_key(key)
         assert db.get_session(entry.session_id) is not None
 
-        # Out-of-process hard delete (CLI `alfred sessions delete`, TUI): only the
+        # Out-of-process hard delete (CLI `plushuman sessions delete`, TUI): only the
         # durable row goes; the gateway's in-memory index is untouched.
         assert db.delete_session(entry.session_id, sessions_dir=store.sessions_dir)
 

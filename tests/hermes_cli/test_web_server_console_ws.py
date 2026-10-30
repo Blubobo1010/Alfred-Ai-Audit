@@ -1,4 +1,4 @@
-"""Dashboard Alfred Console websocket tests."""
+"""Dashboard +Human Console websocket tests."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""Regression tests for Desktop-owned ``alfred serve`` lifecycle tracking."""
+"""Regression tests for Desktop-owned ``plushuman serve`` lifecycle tracking."""
 
 import pytest
 

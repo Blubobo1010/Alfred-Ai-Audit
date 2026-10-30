@@ -1,13 +1,13 @@
 """Interrupted-update fleet-restart obligation (#95294 parts 1+2).
 
-A ``alfred update`` killed after git pull advanced HEAD but before the
+A ``plushuman update`` killed after git pull advanced HEAD but before the
 fleet restart left running gateways on stale code. The next update said
 "Already up to date" and skipped restart. These tests cover:
 
 - ``fleet_restart_pending`` marker written after HEAD advances, cleared
   after a successful (or no-op) fleet restart
 - interrupt between pull and restart leaves the marker
-- next ``alfred update`` with git already up to date still runs the
+- next ``plushuman update`` with git already up to date still runs the
   pending restart when the marker OR a skewed unfinished latest.json is
   present
 
@@ -588,7 +588,7 @@ def test_startup_warn_prints_when_marker_present(capsys):
     update_cmd._warn_pending_fleet_restart_on_startup()
     err = capsys.readouterr().err
     assert "did not restart running gateways" in err
-    assert "alfred gateway restart" in err
+    assert "plushuman gateway restart" in err
 
 
 def test_startup_warn_silent_when_nothing_pending(capsys):
@@ -763,7 +763,7 @@ def test_startup_warn_kept_without_positive_evidence(monkeypatch, capsys, disk_s
 #
 # A cherry-picked hotfix on top of the pulled SHA moves HEAD without arming a fresh obligation,
 # so an equality gate on ``expected_sha`` could never discharge the old one: every CLI start
-# warned and every no-op ``alfred update`` exited 1 while the gateway verifiably served HEAD.
+# warned and every no-op ``plushuman update`` exited 1 while the gateway verifiably served HEAD.
 
 
 def _checkout_with_carried_commit(monkeypatch, tmp_path):
@@ -858,7 +858,7 @@ def test_startup_warn_silent_when_failed_receipt_already_restarted_fleet(monkeyp
     """#112604 aftermath: the update pulled ``pulled``, restarted every gateway onto it, then a
     post-restart step crashed (receipt ``failed``, empty ``fleet`` matrix). Later a manual
     ``git pull`` moved the checkout again. The startup hint must not blame that update for a
-    restart it performed; ``alfred update``'s catch-up still owes the fleet the checkout."""
+    restart it performed; ``plushuman update``'s catch-up still owes the fleet the checkout."""
     pre, pulled, checkout = "a" * 40, "b" * 40, "c" * 40
     _patch_marker_sha(monkeypatch, checkout)
     receipt_dir = get_hermes_home() / "logs" / "update_receipts"
@@ -895,7 +895,7 @@ def test_startup_warn_silent_when_failed_receipt_already_restarted_fleet(monkeyp
 
 def test_startup_warn_silent_when_completed_update_fleet_restarted_onto_moved_checkout(monkeypatch, capsys):
     """The remedy the warning names must clear it: after a completed update, a manual ``git pull``
-    plus ``alfred gateway restart`` leaves every owed gateway on today's checkout — newer than the
+    plus ``plushuman gateway restart`` leaves every owed gateway on today's checkout — newer than the
     update's ``post_update.sha`` — which is nothing that update still owes (#113350 steps 3–4)."""
     pre, pulled, checkout = "a" * 40, "b" * 40, "c" * 40
     _patch_marker_sha(monkeypatch, checkout)
@@ -1036,7 +1036,7 @@ def _spy_fleet_restart(monkeypatch):
 
 
 def test_up_to_date_update_leaves_current_fleet_alone(monkeypatch, tmp_path, capsys):
-    """Every live gateway already serves the checkout code: `alfred update` (cron, a second
+    """Every live gateway already serves the checkout code: `plushuman update` (cron, a second
     profile) must not drain and restart the shared multiplexer again, and must still discharge
     the obligation it armed and finish clean."""
     args = _update_args()

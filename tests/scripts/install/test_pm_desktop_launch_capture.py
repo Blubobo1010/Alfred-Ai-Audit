@@ -14,7 +14,7 @@ import pytest
 @pytest.mark.parametrize("packaged", [False, True])
 def test_isolated_pm_launch_captures_only_final_electron_spawn(tmp_path, packaged):
     launch_argv = (
-        [str(tmp_path / "apps/desktop/release/mac-arm64/Alfred.app/Contents/MacOS/Alfred")]
+        [str(tmp_path / "apps/desktop/release/mac-arm64/+Human.app/Contents/MacOS/+Human")]
         if packaged else ["npm", "exec", "--", "electron", "."]
     )
     root = Path(__file__).resolve().parents[3]

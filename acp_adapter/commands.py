@@ -66,7 +66,7 @@ class SlashCommandsMixin:
             "Queue a prompt to run after the current turn finishes",
             "prompt to run next",
         ),
-        "version": ("Show Alfred version", "Show Alfred version", None),
+        "version": ("Show +Human version", "Show +Human version", None),
     }
 
 
@@ -109,7 +109,7 @@ class SlashCommandsMixin:
         handler = getattr(self, f"_cmd_{cmd}")
 
         # Handlers run outside the per-turn cwd-pinning context. ``/compress``
-        # and ``/model`` REBUILD the system prompt, so unpinned they'd bake the Alfred install tree
+        # and ``/model`` REBUILD the system prompt, so unpinned they'd bake the +Human install tree
         # into the persisted cached prompt. Pin inside a fresh context: no leak, no teardown.
         def _dispatch() -> str | None:
             try:
@@ -309,4 +309,4 @@ class SlashCommandsMixin:
     def _cmd_version(self, args: str, state: SessionState) -> str:
         from hermes_cli.version_info import get_version_info
 
-        return f"Alfred v{get_version_info().derived_version}"
+        return f"+Human v{get_version_info().derived_version}"

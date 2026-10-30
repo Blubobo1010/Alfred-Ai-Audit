@@ -9,7 +9,7 @@ or ``_reset_session_agent``, ``_stored_session_runtime_overrides`` fed
 provider="custom" back into ``_make_agent`` →
 ``resolve_runtime_provider(requested="custom")``, which cannot match an entry
 named "mimo-v2.5-pro". Depending on config the rebuild either raised
-"No LLM provider configured. Run `alfred model`..." (resume failed) or
+"No LLM provider configured. Run `plushuman model`..." (resume failed) or
 silently resolved placeholder credentials ("no-key-required") against the
 patched-back base_url.
 
@@ -109,7 +109,7 @@ def _make_agent_with_override(override, monkeypatch, config, model_cfg=None):
     patched config, returning the kwargs AIAgent was constructed with."""
     monkeypatch.setattr(rp, "load_config", lambda: config)
     monkeypatch.setattr(rp, "_get_model_config", lambda: model_cfg or {})
-    # Keep credential-pool resolution off the developer's real ALFRED home.
+    # Keep credential-pool resolution off the developer's real PLUSHUMAN home.
     monkeypatch.setattr(rp, "_try_resolve_from_custom_pool", lambda *a, **k: None)
 
     fake_cfg = {"agent": {"system_prompt": ""}, "model": {"default": "unused"}}
@@ -175,7 +175,7 @@ class TestResumeRoundTrip:
 class TestMakeAgentForwardsProviderRequestBody:
     """#103738 hole 1: the resolver lifts a custom entry's ``extra_body`` onto ``request_overrides``; the
     TUI/Desktop build must hand it to AIAgent like the CLI and cron do, or a proxy that requires a body field
-    (``user``) 400s in the app while ``alfred chat`` works."""
+    (``user``) 400s in the app while ``plushuman chat`` works."""
 
     def test_entry_extra_body_reaches_agent(self, monkeypatch):
         entry = {**LEGACY_LIST_CONFIG["custom_providers"][0], "extra_body": {"user": "proxy-user"}}

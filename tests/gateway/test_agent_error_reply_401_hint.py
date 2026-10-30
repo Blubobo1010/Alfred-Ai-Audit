@@ -1,5 +1,5 @@
 """The gateway's 401 exception reply names the turn's provider and the failing profile's own
-sign-in (93889b770da: a bare ``alfred auth add <provider>`` from a named profile re-signs the
+sign-in (93889b770da: a bare ``plushuman auth add <provider>`` from a named profile re-signs the
 ROOT store — the loop #114012 measured)."""
 
 import asyncio
@@ -37,9 +37,9 @@ def test_gateway_401_reply_names_the_provider_and_the_profile(monkeypatch, tmp_p
 
     known = _reply_for_401("openai-codex")
     assert "/login" in known
-    assert "`alfred -p codex auth add openai-codex --type oauth`" in known, known
+    assert "`plushuman -p codex auth add openai-codex --type oauth`" in known, known
     assert "<provider>" not in known and "{relogin}" not in known
 
     # No agent yet (failure before the turn claimed one): keep the placeholder, still profile-pinned.
     unknown = _reply_for_401(None)
-    assert "`alfred -p codex auth add <provider>`" in unknown, unknown
+    assert "`plushuman -p codex auth add <provider>`" in unknown, unknown

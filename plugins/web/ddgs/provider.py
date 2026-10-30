@@ -1,5 +1,5 @@
 """DuckDuckGo search via the optional ``ddgs`` package (search only, no key). ``is_available()``
-reflects package importability; the plugin registers either way so ``alfred tools`` can offer to
+reflects package importability; the plugin registers either way so ``plushuman tools`` can offer to
 install it. Isolation: ``ddgs``/``primp`` can block inside native code while holding the GIL, so a
 thread-pool ``future.result(timeout=…)`` cap can never fire and Ctrl+C/SIGTERM freeze the process —
 each search runs in a disposable child process the parent can terminate/kill.
@@ -96,7 +96,7 @@ def _spawn_worker(env: dict[str, str]) -> subprocess.Popen:
 
     # pm store PATH: the worker runs under the STORE python, whose third-party
     # imports (ddgs/primp) arrive via the launcher-composed PYTHONPATH. The
-    # sanitizer strips Alfred-owned entries (cross-version protection); this
+    # sanitizer strips +Human-owned entries (cross-version protection); this
     # worker is the SAME interpreter, so merge the ambient PYTHONPATH back in.
     _ambient_pp = os.environ.get("PYTHONPATH")
     if _ambient_pp:
@@ -189,7 +189,7 @@ class DDGSWebSearchProvider(BaseWebSearchProvider):
 
     def is_available(self) -> bool:
         """True when ``ddgs`` is importable. Must NOT do network I/O — runs at
-        tool-registration time and on every ``alfred tools`` paint."""
+        tool-registration time and on every ``plushuman tools`` paint."""
         try:
             import ddgs
             return True
@@ -198,7 +198,7 @@ class DDGSWebSearchProvider(BaseWebSearchProvider):
 
     def search(self, query: str, limit: int = 5) -> dict[str, Any]:
         """Run the search in a disposable child with a hard wall-clock timeout so a
-        hung native ``primp`` call cannot freeze the Alfred process.
+        hung native ``primp`` call cannot freeze the +Human process.
 
         See #36776, #68096.
         """

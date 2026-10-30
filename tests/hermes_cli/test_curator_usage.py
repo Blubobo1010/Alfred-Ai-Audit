@@ -1,4 +1,4 @@
-"""Tests for `alfred curator usage` — the all-skills usage view.
+"""Tests for `plushuman curator usage` — the all-skills usage view.
 
 Covers:
 - Lists every skill regardless of provenance (agent / bundled / hub), unlike

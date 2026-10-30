@@ -1,10 +1,10 @@
-"""``alfred`` must survive git operations on the checkout (launcher layout).
+"""``plushuman`` must survive git operations on the checkout (launcher layout).
 
-The Windows ``alfred`` command is a staged launcher whose canonical home is
+The Windows ``plushuman`` command is a staged launcher whose canonical home is
 the managed binary dir ``HERMES_HOME\\bin`` — OUTSIDE the git checkout —
 because the earlier in-checkout home (``hermes-agent\\bin``) was swept by
-``alfred update``'s autostash (``git stash push --include-untracked``) and,
-with the desktop updater's ``--keep-stash``, never restored: ``alfred``
+``plushuman update``'s autostash (``git stash push --include-untracked``) and,
+with the desktop updater's ``--keep-stash``, never restored: ``plushuman``
 stopped resolving in every new terminal (``venv\\Scripts`` itself must stay
 off PATH — it shadows the user's ``python``, #83797).
 
@@ -16,7 +16,7 @@ When the store interpreter has not materialized yet, a runtime-resolving
 with a clear message until ``hermes pm install`` lands it; legacy copied
 venv trampolines (detected by their embedded interpreter path) are replaced.
 ``migrate_windows_bin_path`` moves an existing install's PATH to the
-canonical layout from the ``alfred update`` tail. Platform verdict, PATH
+canonical layout from the ``plushuman update`` tail. Platform verdict, PATH
 values, and registry I/O are injected parameters (same pattern as
 ``hermes_constants.venv_bin_dir``), so these tests are host-independent
 input→output checks, not host fakes.
@@ -239,7 +239,7 @@ def test_noop_on_posix(managed_install):
 
 
 def test_profile_session_still_heals_the_shared_bin(tmp_path, monkeypatch):
-    """Under ``alfred -p <name>`` HERMES_HOME points inside profiles/<name>;
+    """Under ``plushuman -p <name>`` HERMES_HOME points inside profiles/<name>;
     the launcher dir is per-machine, so the heal must anchor on the default
     root and fire anyway — a habitual profile user gets the same repair."""
     home = tmp_path / "hermes"
@@ -268,7 +268,7 @@ def test_no_staging_litter_left_behind(managed_install):
 
 
 # ---------------------------------------------------------------------------
-# migrate_windows_bin_path — the `alfred update` tail migration
+# migrate_windows_bin_path — the `plushuman update` tail migration
 # ---------------------------------------------------------------------------
 
 
@@ -389,7 +389,7 @@ def test_migration_noop_on_posix(managed_install):
 def test_normalize_windows_path_equivalences():
     assert (
         _normalize_windows_path(r"C:\Users\Me\AppData\Local\hermes\bin")
-        == _normalize_windows_path("c:/users/me/appdata/local/ALFRED/BIN/")
+        == _normalize_windows_path("c:/users/me/appdata/local/PLUSHUMAN/BIN/")
     )
 
 
@@ -397,7 +397,7 @@ def test_repo_gitignores_the_legacy_bin_dir():
     """Transition safety: legacy in-checkout launchers must not be stash-swept.
 
     Until every install has migrated, pre-migration checkouts still carry
-    launchers at ``<checkout>/bin``. ``alfred update`` autostashes with
+    launchers at ``<checkout>/bin``. ``plushuman update`` autostashes with
     ``git stash push --include-untracked``; anything untracked and NOT
     ignored inside the checkout gets swept off disk. Exercises git's real
     ignore machinery rather than reading .gitignore text.
@@ -434,6 +434,6 @@ def test_repo_gitignores_the_legacy_bin_dir():
         check=False,
     )
     assert result.returncode == 0, (
-        "bin/hermes.exe is not gitignored — alfred update's autostash "
+        "bin/hermes.exe is not gitignored — plushuman update's autostash "
         "(--include-untracked) would sweep pre-migration launchers off disk"
     )

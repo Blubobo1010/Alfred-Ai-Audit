@@ -1,4 +1,4 @@
-"""Alfred scope cwd export through the real NeMo Relay ATOF plugin."""
+"""+Human scope cwd export through the real NeMo Relay ATOF plugin."""
 
 from __future__ import annotations
 

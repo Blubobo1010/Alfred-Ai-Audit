@@ -136,9 +136,9 @@ async function canImportHermesCli(
 /**
  * Return true iff `<hermesCommand> --version` exits 0.
  *
- * Used to gate the "existing `alfred` on PATH" rung. Without this, a
+ * Used to gate the "existing `plushuman` on PATH" rung. Without this, a
  * stale hermes.cmd shim left behind by an uninstalled pip install (or
- * a half-built venv whose `alfred` entry-point points at a deleted
+ * a half-built venv whose `plushuman` entry-point points at a deleted
  * Python) survives findOnPath() and gets selected as the backend.
  *
  * We intentionally avoid invoking the command with the dashboard args
@@ -156,7 +156,7 @@ async function canImportHermesCli(
 /**
  * An explicit desktop backend command is a deployment contract, not a PATH
  * discovery candidate. In particular, the Nix desktop wrapper points this at
- * its immutable, matching Alfred package; it must never fall through to the
+ * its immutable, matching +Human package; it must never fall through to the
  * mutable install-script bootstrap path if a best-effort probe is slow.
  */
 function shouldTrustHermesOverride(hermesOverride?: string) {

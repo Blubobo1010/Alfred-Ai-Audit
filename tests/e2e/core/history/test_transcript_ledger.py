@@ -12,7 +12,7 @@ auto-compaction) the ledger asserts:
     the model ever saw is still in the display history exactly once (compaction archives, it
     never drops or duplicates — the kept window survives);
 (f) sessions + session_model_usage totals equal what the provider billed;
-and at the end of every scenario a FRESH ``alfred chat --resume`` process replays the persisted
+and at the end of every scenario a FRESH ``plushuman chat --resume`` process replays the persisted
 history as a byte-identical request prefix (d), and the whole request stream only breaks its
 prefix at the declared compaction boundaries (C17).
 """
@@ -258,7 +258,7 @@ def test_transcript_ledger(world, name):
     assert_usage_matches(hermes_home, lineage(hermes_home, sid), srv.requests, f"scenario {name}")
     integrity_ok(hermes_home)
 
-    # (d) resume in a FRESH `alfred chat --resume` process: its first request replays the persisted
+    # (d) resume in a FRESH `plushuman chat --resume` process: its first request replays the persisted
     # model view and is a byte-identical extension of the last in-process request. Messages only:
     # the tools array of an in-process AIAgent is a harness construction choice; the cross-surface
     # tools comparison lives in test_prefix_stability.py (real surfaces only).

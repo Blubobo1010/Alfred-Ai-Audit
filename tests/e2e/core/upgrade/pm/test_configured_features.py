@@ -1,13 +1,13 @@
 """Configured features survive every dependency rebuild (PM lifecycle, failure class 1).
 
 A PM install's dependency environment is rebuilt as a NEW generation whenever its inputs change:
-a release that moves ``uv.lock`` (``alfred update``), ``hermes pm repair``, and the first
-``alfred update`` of a main-era install (the legacy ``venv/`` is replaced by a PM generation). The
+a release that moves ``uv.lock`` (``plushuman update``), ``hermes pm repair``, and the first
+``plushuman update`` of a main-era install (the legacy ``venv/`` is replaced by a PM generation). The
 user-visible contract is that whatever feature the user had working before the rebuild still
 imports in the generation selected after it:
 
 * an extra the user installed with the documented command (``hermes pm install --extra telegram``);
-* the MCP client (an HTTP MCP server in config.yaml must still connect: ``alfred mcp test``
+* the MCP client (an HTTP MCP server in config.yaml must still connect: ``plushuman mcp test``
   against a real local streamable-HTTP server);
 * a gateway platform enabled in config.yaml (Discord): the update installs the platform's extra
   instead of only warning that the SDK is missing (#124228);
@@ -48,12 +48,12 @@ MANAGED = ("telegram", "discord", "mcp.client.streamable_http")
 
 
 def _mcp_test(sb: I.Sandbox, server: HttpMcpServer) -> str:
-    """``alfred mcp test`` against the live server; returns a failure description or ''."""
+    """``plushuman mcp test`` against the live server; returns a failure description or ''."""
     before = server.log.read_text(encoding="utf-8").count('"initialize"') if server.log.exists() else 0
     cp = sb.cli("mcp", "test", MCP_NAME, timeout=180)
     after = server.log.read_text(encoding="utf-8").count('"initialize"') if server.log.exists() else 0
     if cp.returncode != 0 or "Connected" not in cp.stdout or after <= before:
-        return f"`alfred mcp test {MCP_NAME}` did not connect (server saw {after - before} initialize)\n{I.describe(cp)}"
+        return f"`plushuman mcp test {MCP_NAME}` did not connect (server saw {after - before} initialize)\n{I.describe(cp)}"
     return ""
 
 
@@ -65,7 +65,7 @@ def provider():
 
 @pytest.fixture(scope="module")
 def rebuilt(tmp_path_factory, provider):
-    """One install taken through a dependency-changing ``alfred update`` and a ``pm repair``."""
+    """One install taken through a dependency-changing ``plushuman update`` and a ``pm repair``."""
     root = tmp_path_factory.mktemp("pm-features")
     server = HttpMcpServer(root, "pm-features", MCPE2E_CANARY="CANARY-pm-features").start()
     try:
@@ -95,14 +95,14 @@ def rebuilt(tmp_path_factory, provider):
 
 def test_update_rebuild_keeps_installed_extra_and_mcp(rebuilt):
     sb, up, after = rebuilt["sb"], rebuilt["update"], rebuilt["after_update"]
-    assert up.returncode == 0, "alfred update failed:\n" + P.diagnostics(sb, up)
+    assert up.returncode == 0, "plushuman update failed:\n" + P.diagnostics(sb, up)
     assert after["generation"] != rebuilt["before"]["generation"], (
         "harness: the dependency release did not make the update build a new generation\n" + P.diagnostics(sb, up))
     assert after["imports"]["telegram"] == "ok", (
-        f"the extra installed with `hermes pm install --extra telegram` is gone after `alfred update`: "
+        f"the extra installed with `hermes pm install --extra telegram` is gone after `plushuman update`: "
         f"{after['imports']}\n" + P.diagnostics(sb, up))
     assert after["imports"]["mcp.client.streamable_http"] == "ok", after["imports"]
-    assert after["mcp"] == "", "HTTP MCP server no longer connects after `alfred update`:\n" + after["mcp"]
+    assert after["mcp"] == "", "HTTP MCP server no longer connects after `plushuman update`:\n" + after["mcp"]
 
 
 def test_repair_keeps_installed_extra_and_mcp(rebuilt):
@@ -120,7 +120,7 @@ def test_configured_gateway_platform_has_its_sdk_after_update(rebuilt):
     sb, up, after = rebuilt["sb"], rebuilt["update"], rebuilt["after_update"]
     assert up.returncode == 0, P.diagnostics(sb, up)
     assert after["imports"]["discord"] == "ok", (
-        f"configured discord platform has no SDK after `alfred update`: {after['imports']['discord']}\n"
+        f"configured discord platform has no SDK after `plushuman update`: {after['imports']['discord']}\n"
         + P.diagnostics(sb, up))
 
 
@@ -162,7 +162,7 @@ def migrated(tmp_path_factory, provider):
 def test_legacy_venv_features_carry_into_the_first_pm_generation(migrated):
     leg, up = migrated["leg"], migrated["update"]
     assert migrated["pre"].returncode == 0, "harness: N-1 venv cannot import its features:\n" + H.describe(migrated["pre"])
-    assert up.returncode == 0, "alfred update from a main-era venv failed:\n" + H.describe(up)
+    assert up.returncode == 0, "plushuman update from a main-era venv failed:\n" + H.describe(up)
     assert I.git("rev-parse", "HEAD", cwd=leg.install) == _refs().head, H.describe(up)
     selected = Path(leg.python)
     assert "installs" in selected.parts, f"update left the install on the legacy venv: {selected}\n{H.describe(up)}"

@@ -1,4 +1,4 @@
-"""Idle-exit for Desktop-owned ``alfred serve --isolated`` backends reached over SSH (#101626).
+"""Idle-exit for Desktop-owned ``plushuman serve --isolated`` backends reached over SSH (#101626).
 
 That backend is deliberately detached (``setsid``/``nohup``, PPID 1) so it survives the SSH channel
 closing, and every teardown path lives on the CLIENT. A laptop that sleeps mid-session (dark wake

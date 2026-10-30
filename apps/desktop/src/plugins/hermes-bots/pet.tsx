@@ -159,7 +159,7 @@ export function PetTab({ image, onImage }: PetTabProps) {
   if (!pets.length) {
     return (
       <div className="px-2 py-3 text-center text-xs text-(--ui-text-tertiary)">
-        No pets in the petdex gallery. Run `alfred pets` to explore.
+        No pets in the petdex gallery. Run `plushuman pets` to explore.
       </div>
     )
   }

@@ -1,6 +1,6 @@
-# Alfred macOS release (overlay from alfred-build).
+# +Human macOS release (overlay from alfred-build).
 #
-# Trigger: an Alfred tag vX.Y.Z pushed by alfred-build (or manual dispatch with the tag).
+# Trigger: a product tag vX.Y.Z pushed by alfred-build (or manual dispatch with the tag).
 # Builds the bundled desktop app on Apple Silicon, signs it with Developer ID, notarizes it and
 # publishes DMG + zip + blockmap + latest-mac.yml on the GitHub Release marked "latest", so both
 # electron-updater (github provider, see electron-builder.config.cjs mac.publish fallback) and
@@ -20,7 +20,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Alfred tag to release (vX.Y.Z)
+        description: Tag to release (vX.Y.Z)
         required: true
       publish_without_desktop:
         description: Publish the release even if the desktop build is skipped/failed (source-only)
@@ -76,7 +76,7 @@ jobs:
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "release $TAG exists"
           else
-            gh release create "$TAG" --draft --title "Alfred ${{ needs.verify-tag.outputs.version }}" --notes "$notes"
+            gh release create "$TAG" --draft --title "+Human ${{ needs.verify-tag.outputs.version }}" --notes "$notes"
           fi
 
   build-macos-arm64:
@@ -165,7 +165,7 @@ jobs:
           claim="rc.${GITHUB_RUN_NUMBER}-${HERMES_PAYLOAD_TAG}"
           git config user.name "alfred-release"
           git config user.email "alfred-release@users.noreply.github.com"
-          git tag -a "$claim" -m "Alfred release attempt ${GITHUB_RUN_NUMBER} for ${HERMES_PAYLOAD_TAG}" "${HERMES_PAYLOAD_TAG}^{commit}"
+          git tag -a "$claim" -m "+Human release attempt ${GITHUB_RUN_NUMBER} for ${HERMES_PAYLOAD_TAG}" "${HERMES_PAYLOAD_TAG}^{commit}"
           echo "RELEASE_CLAIM_TAG=$claim" >> "$GITHUB_ENV"
           echo "RELEASE_CLAIM_OBJECT=$(git rev-parse "refs/tags/$claim")" >> "$GITHUB_ENV"
 

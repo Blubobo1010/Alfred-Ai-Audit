@@ -2,7 +2,7 @@
 
 Built on ``_helpers`` (bwrap sandbox, allowlisted env) and ``_install_helpers`` (local bare origin,
 HEAD's own ``scripts/install.sh``). Every cell starts from a real install and then drives the real
-user entry points (``alfred update``, ``hermes pm ...``, ``alfred doctor``, ``alfred gateway ...``).
+user entry points (``plushuman update``, ``hermes pm ...``, ``plushuman doctor``, ``plushuman gateway ...``).
 
 What a PM install looks like on disk, and what the cells read back:
 
@@ -12,7 +12,7 @@ What a PM install looks like on disk, and what the cells read back:
 * ``$HERMES_HOME/installs/<key>/source-completion-pending`` is the owed update tail.
 
 A PM generation is keyed on the bytes of ``uv.lock`` (plus extras, Python, plugin members), so a
-release that changes ``uv.lock`` is what makes ``alfred update`` build a NEW generation.
+release that changes ``uv.lock`` is what makes ``plushuman update`` build a NEW generation.
 ``publish_dependency_release`` publishes exactly that: ``uv.lock`` plus a trailing TOML comment,
 which ``uv sync --locked`` accepts unchanged but which moves the generation key.
 """
@@ -157,7 +157,7 @@ def arm_pending_tail(sb: I.Sandbox) -> None:
 
 
 class Gateway:
-    """``alfred gateway run`` in the sandbox (the user's foreground/systemd ``ExecStart``)."""
+    """``plushuman gateway run`` in the sandbox (the user's foreground/systemd ``ExecStart``)."""
 
     def __init__(self, sb: I.Sandbox, env: dict[str, str], log: Path, argv0: list[str] | None = None):
         self.sb, self.log = sb, log
@@ -236,11 +236,11 @@ def process_files(pid: int) -> tuple[str, list[str], dict[str, str]]:
 
 
 def turn(sb: I.Sandbox, provider, marker: str) -> subprocess.CompletedProcess:
-    """One real ``alfred -z`` turn through the loopback provider; the request must carry ``marker``."""
+    """One real ``plushuman -z`` turn through the loopback provider; the request must carry ``marker``."""
     n = len(provider.main_requests())
     cp = run_env(sb, [sb.hermes, "-z", marker], lazy_env(sb), timeout=600)
     new = provider.main_requests()[n:]
     assert cp.returncode == 0 and len(new) == 1 and marker in json.dumps(new[0]["messages"]), (
-        f"`alfred -z` did not reach the provider ({len(new)} requests)\n"
+        f"`plushuman -z` did not reach the provider ({len(new)} requests)\n"
         + diagnostics(sb, cp))
     return cp

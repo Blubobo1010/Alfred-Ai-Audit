@@ -41,7 +41,7 @@ function makeRepo() {
   tempDirs.push(dir)
   execFileSync('git', ['init', '-q'], { cwd: dir })
   execFileSync('git', ['config', 'user.email', 'hermes-test@example.com'], { cwd: dir })
-  execFileSync('git', ['config', 'user.name', 'Alfred Test'], { cwd: dir })
+  execFileSync('git', ['config', 'user.name', '+Human Test'], { cwd: dir })
   fs.writeFileSync(path.join(dir, 'tracked.txt'), 'tracked\n')
   execFileSync('git', ['add', 'tracked.txt'], { cwd: dir })
   execFileSync('git', ['commit', '-qm', 'initial'], { cwd: dir })
@@ -82,7 +82,7 @@ test('gitFor accepts a Windows no-console host tuple with restricted characters'
       windowsGitHost: () => ({
         isWindows: true,
         pythonBin: String.raw`C:\Tools\python-3.14+build\python.exe`,
-        scriptPath: String.raw`C:\Alfred\hermes-no-console-git.py`
+        scriptPath: String.raw`C:\+Human\hermes-no-console-git.py`
       })
     }
   })

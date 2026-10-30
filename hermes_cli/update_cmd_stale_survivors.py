@@ -64,7 +64,7 @@ def signal_stale_fleet_survivors(fleet: list, restart, drain_budget: float) -> l
         if isinstance(stopped, set):
             stopped.update(manual)
         print(f"  → Stopped {len(manual)} manual gateway process(es) that had no supervisor to respawn them")
-        print("    Restart manually: alfred gateway run")
+        print("    Restart manually: plushuman gateway run")
         if len(manual) > 1:
-            print("    (or: alfred -p <profile> gateway run  for each profile)")
+            print("    (or: plushuman -p <profile> gateway run  for each profile)")
     return signalled

@@ -1,4 +1,4 @@
-"""A Desktop-pooled ``alfred serve`` child must PROVE it is idle before the Desktop may retire it
+"""A Desktop-pooled ``plushuman serve`` child must PROVE it is idle before the Desktop may retire it
 for a foreground open (supersedes #104871, whose idle signal was renderer bookkeeping).
 
 Occupied is not busy: the renderer keeps every pinned tile's backend keepalive-fresh forever, so

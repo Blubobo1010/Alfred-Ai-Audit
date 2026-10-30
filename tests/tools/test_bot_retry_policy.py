@@ -171,7 +171,7 @@ def test_run_delivery_retries_transient_and_reemits_stdout(monkeypatch, tmp_path
 
     monkeypatch.setattr(bot_mode_dm.subprocess, "run", _fake_run)
     rc = bot_mode_dm._run_delivery(
-        ["alfred", "-p", "ops", "chat"], str(dm), stdin_file=False
+        ["plushuman", "-p", "ops", "chat"], str(dm), stdin_file=False
     )
     assert rc == 0
     assert len(calls) == 2
@@ -193,7 +193,7 @@ def test_run_delivery_no_retry_for_missing_config(monkeypatch, tmp_path):
 
     monkeypatch.setattr(bot_mode_dm.subprocess, "run", _fake_run)
     rc = bot_mode_dm._run_delivery(
-        ["alfred", "-p", "ops", "chat"], str(dm), stdin_file=False
+        ["plushuman", "-p", "ops", "chat"], str(dm), stdin_file=False
     )
     assert rc == 1
     assert len(calls) == 1
@@ -260,7 +260,7 @@ def test_run_local_turn_retry_reads_the_stream_the_cli_writes_and_resumes_the_pe
         return _Proc(0, stdout="the reply text")
 
     monkeypatch.setattr(bot_mode_dm.subprocess, "run", _fake_run)
-    rc = bot_mode_dm._run_local_turn(["alfred", "-p", "ops", "chat"], str(dm), env={"HERMES_HOME": str(tmp_path)})
+    rc = bot_mode_dm._run_local_turn(["plushuman", "-p", "ops", "chat"], str(dm), env={"HERMES_HOME": str(tmp_path)})
     assert rc == 0
     assert envs[0] == {"HERMES_HOME": str(tmp_path)}
     assert envs[1] == {"HERMES_HOME": str(tmp_path), RESUME_UNANSWERED_TURN_ENV: "1"}

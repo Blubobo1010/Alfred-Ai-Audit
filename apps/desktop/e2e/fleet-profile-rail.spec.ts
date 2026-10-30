@@ -2,7 +2,7 @@
  * E2E: the fleet profile rail with two registered gateways.
  *
  * "This device" is the Electron-managed local backend (mock inference). The
- * second gateway, "Homelab", is a REAL second `alfred serve` this spec spawns
+ * second gateway, "Homelab", is a REAL second `plushuman serve` this spec spawns
  * with its own HERMES_HOME, profiles and session token, registered in the v2
  * connections.json as a remote URL connection. A click on an at-rest square
  * therefore performs the same dial → commit → re-home the statusbar switcher
@@ -81,7 +81,7 @@ function seedProfiles(home: string, names: string[]): void {
 }
 
 /**
- * Spawn a second, fully real `alfred serve` as the remote gateway. Its
+ * Spawn a second, fully real `plushuman serve` as the remote gateway. Its
  * session token is pinned through HERMES_DASHBOARD_SESSION_TOKEN so the
  * registry entry can carry a plaintext token envelope.
  */
@@ -122,7 +122,7 @@ async function startRemoteGateway(root: string, mockUrl: string, profiles: strin
 
   while (Date.now() < deadline) {
     if (child.exitCode !== null) {
-      throw new Error(`remote alfred serve exited early (${child.exitCode}):\n${log}`)
+      throw new Error(`remote plushuman serve exited early (${child.exitCode}):\n${log}`)
     }
 
     try {
@@ -141,7 +141,7 @@ async function startRemoteGateway(root: string, mockUrl: string, profiles: strin
   }
 
   if (Date.now() >= deadline) {
-    throw new Error(`remote alfred serve never became ready:\n${log}`)
+    throw new Error(`remote plushuman serve never became ready:\n${log}`)
   }
 
   return {

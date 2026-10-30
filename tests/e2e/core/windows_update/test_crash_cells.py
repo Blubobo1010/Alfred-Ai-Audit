@@ -1,4 +1,4 @@
-"""``alfred update`` killed mid-flight on native Windows, then the user's next launch.
+"""``plushuman update`` killed mid-flight on native Windows, then the user's next launch.
 
 Failure class: an update that never finishes. A user closes the console, Task Manager
 ends the tree, the machine loses power. On Windows the kill is ``taskkill /T /F``:
@@ -8,13 +8,13 @@ real process tree that ``hermes.exe update`` (or the Desktop's hand-off script
 
 Each cell kills at one point of the update and then asserts what the user is owed:
 
-* the next ``alfred`` launch runs a turn (the install is runnable);
+* the next ``plushuman`` launch runs a turn (the install is runnable);
 * right after that launch the checkout IS the commit before the update or its target:
   HEAD is one of them and every tracked byte agrees with it (``git status`` clean,
   ``git diff --quiet HEAD``) — never a third, half-written tree. Each target edits
   modules every launch imports (``RUNTIME_FILES``), so a torn tree differs in code
   that runs, not only in a marker file;
-* nothing the dead update left blocks the next one: a plain ``alfred update`` then
+* nothing the dead update left blocks the next one: a plain ``plushuman update`` then
   completes to the target and no ``.hermes-update-in-progress`` marker survives it
   (a marker naming a dead process that refuses every later update is the permanent
   marker the hand-off contract forbids).
@@ -39,8 +39,8 @@ before the next cell starts, noted in the evidence: ``_run_cells``):
 * ``tree_moved``: killed right after the checkout moved to the target, before the
   update finished (dependency sync, launcher refresh, completion stamp);
 * ``desktop_handoff``: the Desktop hand-off script's whole tree killed while its
-  ``alfred update`` child runs;
-* ``orphaned_update``: ONLY the hand-off script killed, once its ``alfred update`` child
+  ``plushuman update`` child runs;
+* ``orphaned_update``: ONLY the hand-off script killed, once its ``plushuman update`` child
   holds its place under the script's claim (that child keeps running: the shape of an
   ended PowerShell). The update must
   finish, ``.hermes-update-in-progress`` must read LIVE for as long as it runs (contract
@@ -48,7 +48,7 @@ before the next cell starts, noted in the evidence: ``_run_cells``):
 
 Kill points are observed states, never timings: a git child of the update in the
 process tree (by its argv), the held filter plus ``index.lock``, HEAD read straight from
-the ref files, the hand-off's ``alfred update``
+the ref files, the hand-off's ``plushuman update``
 child past its lock acquisition (its banner in update.log) plus the claimed marker. Each waits with a bounded timeout and an update that
 exits before its kill point is a harness verdict, never a pass.
 
@@ -95,7 +95,7 @@ pytestmark = [pytest.mark.platforms("windows"), pytest.mark.integration,
               pytest.mark.live_system_guard_bypass, REQUIRES_OPT_IN]
 
 MARKER = ".hermes-update-in-progress"
-# Imported by every `alfred` launch: each crash target appends one statement to both.
+# Imported by every `plushuman` launch: each crash target appends one statement to both.
 RUNTIME_FILES = ("hermes_constants.py", "hermes_cli/main.py")
 
 
@@ -384,7 +384,7 @@ def _handoff(machine, label: str):
 
 
 def _update_child(proc, machine, target) -> str | None:
-    """The hand-off's ``alfred update`` child is running (marker claimed, tree not yet done)."""
+    """The hand-off's ``plushuman update`` child is running (marker claimed, tree not yet done)."""
     for child in descendants(proc):
         try:
             argv = [a.lower() for a in child.cmdline()]
@@ -462,7 +462,7 @@ def _direct_update_child(proc) -> psutil.Process | None:
 # Printed by ``_cmd_update_impl``, which hermes_cli/main.py enters only after
 # ``UpdateLock.acquire()`` returned: once update.log gains one, the update child has
 # taken its place under the script's claim (and named itself in it, where it does).
-UPDATE_BANNER = "Updating Alfred..."
+UPDATE_BANNER = "Updating +Human..."
 
 
 UPDATE_DONE = "Update complete!"
@@ -544,7 +544,7 @@ class _ExitCode:
 
 
 def _orphan(machine, srv, label: str) -> dict:
-    """Start the hand-off script, kill ONLY its powershell once its ``alfred update``
+    """Start the hand-off script, kill ONLY its powershell once its ``plushuman update``
     child runs under the claimed marker, and watch that orphaned update to its end."""
     pre = _head(machine)
     target = machine.mint(pre, label, RUNTIME_FILES)
@@ -559,7 +559,7 @@ def _orphan(machine, srv, label: str) -> dict:
         deadline = time.monotonic() + UPDATE_TIMEOUT
         child = None
         while time.monotonic() < deadline:
-            # Kill point: the script's own `alfred update` child is past its lock
+            # Kill point: the script's own `plushuman update` child is past its lock
             # acquisition (a fresh banner in update.log) and the marker exists.
             child = _direct_update_child(proc)
             if child is not None and _read_marker(machine) is not None and _update_banners(machine) > banners:
@@ -567,12 +567,12 @@ def _orphan(machine, srv, label: str) -> dict:
             child = None
             if proc.poll() is not None:
                 raise AssertionError(fail_with(
-                    machine, f"{label}: the hand-off exited rc={proc.returncode} before its alfred update "
+                    machine, f"{label}: the hand-off exited rc={proc.returncode} before its plushuman update "
                              f"child ran (transcript {proc.transcript.name})"))
             time.sleep(0.05)
         if child is None:
             taskkill_tree(proc.pid)
-            raise AssertionError(fail_with(machine, f"{label}: no alfred update child within {UPDATE_TIMEOUT:.0f}s"))
+            raise AssertionError(fail_with(machine, f"{label}: no plushuman update child within {UPDATE_TIMEOUT:.0f}s"))
         # Held from before the kill, while the update is minutes from done.
         exit_code = _ExitCode(child.pid)
         marker_at_kill = _read_marker(machine)
@@ -865,10 +865,10 @@ def test_desktop_handoff_script_killed_alone_keeps_the_marker_live_until_its_upd
         journey: Journey) -> None:
     m, r = journey.machine, journey["orphaned_update"]
     assert r["orphan_finished"], fail_with(
-        m, f"orphaned_update: the orphaned alfred update was still running {UPDATE_TIMEOUT:.0f}s after "
+        m, f"orphaned_update: the orphaned plushuman update was still running {UPDATE_TIMEOUT:.0f}s after "
            f"the script died")
     assert _orphan_completed(r), fail_with(
-        m, f"orphaned_update: the alfred update orphaned by the dead script did not finish the update "
+        m, f"orphaned_update: the plushuman update orphaned by the dead script did not finish the update "
            f"(rc={r['orphan_rc']}, '{UPDATE_DONE}' logged={r['orphan_reported_done']}, "
            f"its receipt's outcome={r['orphan_receipt']}, "
            f"tree {_tree_text(r['tree_after_orphan'])}, target {r['target']}; marker holders seen: {r['holders']})")
@@ -886,7 +886,7 @@ def test_desktop_handoff_script_killed_alone_keeps_the_marker_live_until_its_upd
     gaps = []
     if r["dead_while_running"] is not None:
         gaps.append(f"{MARKER} read DEAD {r['dead_while_running'][0]}s after the script died while its "
-                    f"alfred update still ran: {r['dead_while_running'][1]} (at kill: {r['marker_at_kill']!r})")
+                    f"plushuman update still ran: {r['dead_while_running'][1]} (at kill: {r['marker_at_kill']!r})")
     if r["marker_after_orphan"] is not None:
         gaps.append(f"{MARKER} survived the orphaned update's exit: {r['marker_after_orphan_text']}")
     with _orphan_gap_excuse():

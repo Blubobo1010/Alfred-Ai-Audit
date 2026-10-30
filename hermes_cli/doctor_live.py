@@ -1,7 +1,7 @@
-"""``alfred doctor --live`` — opt-in bounded real-call tool-backend probes.
+"""``plushuman doctor --live`` — opt-in bounded real-call tool-backend probes.
 
 Opt-in only: these probes make real (cheap, metadata/read-only) network calls and may spend a
-trivial amount of quota. They run ONLY when the user passes ``alfred doctor --live``.
+trivial amount of quota. They run ONLY when the user passes ``plushuman doctor --live``.
 """
 
 from __future__ import annotations

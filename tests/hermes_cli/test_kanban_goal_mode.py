@@ -199,11 +199,11 @@ def test_loop_stops_on_worker_failed_flag_default_reason(monkeypatch):
 
 
 # ---------------------------------------------------------------------------
-# CLI judge gate tests (alfred kanban complete bypass fix)
+# CLI judge gate tests (plushuman kanban complete bypass fix)
 # ---------------------------------------------------------------------------
 
 class TestCLIJudgeGate:
-    """alfred kanban complete must apply the same goal_mode judge gate as the
+    """plushuman kanban complete must apply the same goal_mode judge gate as the
     kanban_complete tool (Issue #38367 sibling gap).
 
     Uses mocks for kb.get_task and kb.complete_task to avoid depending on the

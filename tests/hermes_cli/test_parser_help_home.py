@@ -2,8 +2,8 @@
 
 ``main._apply_profile_override`` builds the parser (``top_level_value_flag_sets``) before it
 re-homes the process to the sticky ``active_profile``; a help string that resolved the home through
-``get_hermes_home()`` printed ``[HERMES_HOME fallback] ... wrong profile`` on every ``alfred``
-command for users of ``alfred profile use`` (#112319, also reported in #112839).
+``get_hermes_home()`` printed ``[HERMES_HOME fallback] ... wrong profile`` on every ``plushuman``
+command for users of ``plushuman profile use`` (#112319, also reported in #112839).
 """
 
 from pathlib import Path

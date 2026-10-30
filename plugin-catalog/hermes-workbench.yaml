@@ -1,7 +1,7 @@
 name: hermes-workbench
 repo: https://github.com/sxuff/hermes-workbench
 sha: f07fb5c90e24c1a396604758feb0fd4ae077760b
-description: The Alfred desktop app in your browser. `hermes workbench` serves the desktop interface through the Alfred dashboard, for headless servers, VPSes and tablets. Disclosure — community plugin, not a Nous product. On the first `hermes workbench` run and again after each Alfred update it runs `npm install --ignore-scripts` (guided by Alfred's lockfile) and Vite against your Alfred checkout's desktop sources, writing only under ~/.hermes/hermes-workbench and its own plugin dir (the checkout is only read), and starts `alfred dashboard` on loopback when none is running.
+description: The +Human desktop app in your browser. `hermes workbench` serves the desktop interface through the +Human dashboard, for headless servers, VPSes and tablets. Disclosure — community plugin, not a Nous product. On the first `hermes workbench` run and again after each +Human update it runs `npm install --ignore-scripts` (guided by +Human's lockfile) and Vite against your +Human checkout's desktop sources, writing only under ~/.hermes/hermes-workbench and its own plugin dir (the checkout is only read), and starts `plushuman dashboard` on loopback when none is running.
 maintainer: sxuff
 tier: community
 category: desktop

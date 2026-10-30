@@ -1,4 +1,4 @@
-"""``alfred update`` subcommand parser."""
+"""``plushuman update`` subcommand parser."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ def build_update_parser(subparsers, *, cmd_update: Callable) -> None:
     """Attach the ``update`` subcommand to ``subparsers``."""
     from hermes_cli.release_channels import validate_name
     update_parser = subparsers.add_parser(
-        "update", help="Update Alfred to the latest version",
+        "update", help="Update +Human to the latest version",
         description="Pull the latest changes from git and reinstall dependencies")
     update_parser.add_argument(
         "--gateway", action="store_true", default=False,
@@ -21,7 +21,7 @@ def build_update_parser(subparsers, *, cmd_update: Callable) -> None:
     update_parser.add_argument(
         "--plan", action="store_true", default=False,
         help="Show the update plan and exit without changing anything: install "
-            "kind (git/docker/nix), every running Alfred service across all "
+            "kind (git/docker/nix), every running +Human service across all "
             "profiles with its supervisor and running code version, and how "
             "each will be restarted. Read-only; safe on a live fleet.")
     update_parser.add_argument(
@@ -40,7 +40,7 @@ def build_update_parser(subparsers, *, cmd_update: Callable) -> None:
     )
     update_parser.add_argument(
         "--yes", "-y", action="store_true", default=False,
-        help="Run without blocking on prompts: accepts the config-migration and stash-restore prompts, skips the fork-upstream prompt without adding a remote. API-key entry is skipped; run 'alfred config migrate' separately for those.",
+        help="Run without blocking on prompts: accepts the config-migration and stash-restore prompts, skips the fork-upstream prompt without adding a remote. API-key entry is skipped; run 'plushuman config migrate' separately for those.",
     )
     update_parser.add_argument(
         "--keep-stash", action="store_true", default=False,

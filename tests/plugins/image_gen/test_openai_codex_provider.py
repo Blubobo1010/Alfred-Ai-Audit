@@ -96,8 +96,8 @@ class TestMetadata:
         schema = provider.get_setup_schema()
         assert schema["env_vars"] == []
         assert schema["post_setup"] == "openai_codex"
-        assert "alfred auth add openai-codex" in schema["post_setup_hint"]
-        assert "alfred auth codex`" not in schema["post_setup_hint"]
+        assert "plushuman auth add openai-codex" in schema["post_setup_hint"]
+        assert "plushuman auth codex`" not in schema["post_setup_hint"]
 
 
 # ── Availability ────────────────────────────────────────────────────────────

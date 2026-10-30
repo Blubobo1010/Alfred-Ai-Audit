@@ -1,4 +1,4 @@
-"""Tests for ``alfred approvals test`` — dry-run approval verdict CLI.
+"""Tests for ``plushuman approvals test`` — dry-run approval verdict CLI.
 
 The tester must compose the REAL runtime evaluators from ``tools.approval``
 (detect_hardline_command, _match_user_deny_rule, detect_dangerous_command,

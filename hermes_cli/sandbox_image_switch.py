@@ -6,7 +6,7 @@ this module is where the user decides: approve (pin the new image; the next term
 recreates the container — ``/root`` and ``/workspace`` are host mounts and carry over, system
 packages get reinstalled, 3.11 venvs need a rebuild) or keep (pin the image the container runs,
 which also ends the notice). Surfaces: the interactive CLI startup offer here, the Screen pane's
-switch action (``display.switchSandboxImage``) and the plain ``alfred config set``. Headless
+switch action (``display.switchSandboxImage``) and the plain ``plushuman config set``. Headless
 surfaces (gateway, cron) never decide; they keep the sandbox and log.
 
 Modal restores its snapshot and Daytona reuses its labeled sandbox regardless of the configured
@@ -122,7 +122,7 @@ def offer_interactive(*, cprint, ask=input) -> Optional[bool]:
     if switch is None:
         return None
     cprint("")
-    cprint("🎩 A new default sandbox image is available.")
+    cprint("✚ A new default sandbox image is available.")
     for line in explain_lines(switch):
         cprint(f"  {line}")
     try:
@@ -138,5 +138,5 @@ def offer_interactive(*, cprint, ask=input) -> Optional[bool]:
         decide(switch, approve=False)
         cprint(f"  ✓ terminal.docker_image = {switch.current_image}; unset it in config.yaml to be asked again.")
         return False
-    cprint("  Later. `alfred config set terminal.docker_image <image>` decides it any time.")
+    cprint("  Later. `plushuman config set terminal.docker_image <image>` decides it any time.")
     return None

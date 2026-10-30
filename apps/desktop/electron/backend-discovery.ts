@@ -1,6 +1,6 @@
 // Host-level backend discovery — the Desktop half of multiplex-only.
 //
-// Exactly ONE `alfred serve` runs per HOST and multiplexes every profile, so
+// Exactly ONE `plushuman serve` runs per HOST and multiplexes every profile, so
 // Desktop must ATTACH to a backend that is already listening and spawn only
 // when the host has none. A backend registered by another profile is still THE
 // backend: refusing it is what produced a second process per profile.
@@ -32,7 +32,7 @@ export interface HostBackendRecord {
 export type SpawnOrAttachDecision =
   { action: 'attach'; record: HostBackendRecord } | { action: 'spawn'; reason: 'isolated' | 'no-running-backend' }
 
-/** Filename the CLI writes under the machine Alfred root. */
+/** Filename the CLI writes under the machine +Human root. */
 export const SPAWN_LEDGER_FILENAME = 'spawn-ledger.json'
 
 /** Ledger purposes that denote a JSON-RPC/WebSocket backend we can attach to. */
@@ -50,7 +50,7 @@ function asInteger(value: unknown): number | null {
  *
  * A record without a bound port predates the structured detail (or belongs to
  * a purpose that never binds) and is skipped: a port is the whole point.
- * A record marked `isolated` (`alfred serve --isolated`, e.g. the backend
+ * A record marked `isolated` (`plushuman serve --isolated`, e.g. the backend
  * another machine's Desktop spawned here over SSH) opted out of the host
  * singleton and belongs to that client, so it is skipped too; the CLI's
  * `_attach_to_host_backend` honours the same flag.

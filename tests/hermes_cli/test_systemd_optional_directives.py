@@ -75,7 +75,7 @@ RestartPreventExitStatus=78
         from hermes_cli import gateway as gw
 
         installed = """[Unit]
-Description=Alfred Gateway
+Description=+Human Gateway
 
 [Service]
 Type=simple

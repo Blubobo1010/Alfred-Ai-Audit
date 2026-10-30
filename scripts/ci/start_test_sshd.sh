@@ -5,7 +5,7 @@
 #
 # Generates (once per state dir) a client keypair and a host key, starts a
 # Debian sshd on 127.0.0.1:<port> (default 2222) that accepts only that key for
-# user `alfred`, waits until it answers, and prints the HERMES_TEST_SSH_*
+# user `plushuman`, waits until it answers, and prints the HERMES_TEST_SSH_*
 # variables tests/tools/test_ssh_environment.py reads (appended to $GITHUB_ENV
 # too when it is set). `docker rm -f hermes-test-sshd` stops it.
 #

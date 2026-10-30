@@ -68,7 +68,7 @@ def destructive_profile(profile: Optional[str], route: str) -> Optional[str]:
     (``is_multiplex_active()``, decided once at boot by
     ``activate_multi_profile_hosting_eagerly``). A genuinely single-profile host has
     nothing to confuse, so there an omitted profile keeps meaning the launch profile
-    and `curl` against a plain ``alfred serve`` is unchanged.
+    and `curl` against a plain ``plushuman serve`` is unchanged.
 
     "Privileged" is the same class as "destructive": arming an auto-approved shell hook
     in the wrong profile is at least as bad as removing one from it.
@@ -104,7 +104,7 @@ def http_failure(log_msg: str, status: int, prefix: Optional[str] = None, *, det
 def spawn_profile_action(
     profile: Optional[str], argv: list, name: str, *, log_msg: str, prefix: str
 ) -> dict:
-    """Spawn a background ``alfred -p <profile> <argv>`` action; a spawn
+    """Spawn a background ``plushuman -p <profile> <argv>`` action; a spawn
     failure is logged and becomes ``500 "<prefix>: <exc>"``."""
     with http_failure(log_msg, 500, prefix):
         proc = _spawn_hermes_action(_profile_cli_args(profile) + argv, name)
@@ -152,13 +152,13 @@ def is_redacted_credential_preview(submitted: Any) -> bool:
 # Corrupt-store reporting for polled read endpoints. The dashboard polls analytics every few
 # seconds; a persistently malformed state.db once produced ~520K identical tracebacks in 24 h
 # (#96591). One WARNING per store per interval, then debug; the caller gets an explicit status
-# instead of a 500. The file is never quarantined or renamed from here — that is `alfred doctor`'s job.
+# instead of a 500. The file is never quarantined or renamed from here — that is `plushuman doctor`'s job.
 _CORRUPT_STORE_WARN_INTERVAL_S = 300.0
 _corrupt_store_warned_at: dict[str, float] = {}  # {db path: monotonic}
 
 CORRUPT_STORE_DETAIL = {
     "error": "state_db_corrupt",
-    "message": "state.db corrupt — run `alfred doctor` (then `alfred doctor --fix` or `alfred sessions repair`).",
+    "message": "state.db corrupt — run `plushuman doctor` (then `plushuman doctor --fix` or `plushuman sessions repair`).",
 }
 # One payload per persistence-cause bucket (``classify_persistence_error``); ``error`` codes
 # all follow the ``state_db_*`` scheme of the pre-existing ``state_db_corrupt``.
@@ -166,14 +166,14 @@ CORRUPT_STORE_DETAIL = {
 # lives would repair the wrong generation in place, so it is deliberately NOT suggested here.
 DELETED_WAL_DETAIL = {
     "error": "state_db_deleted_wal",
-    "message": "another Alfred process still holds an old copy of the session database's write-ahead log — "
-               "quit every Alfred process on this profile, run `alfred doctor` (it names the holders), "
-               "then start Alfred again. Do not run `alfred doctor --fix` while they run.",
+    "message": "another +Human process still holds an old copy of the session database's write-ahead log — "
+               "quit every +Human process on this profile, run `plushuman doctor` (it names the holders), "
+               "then start +Human again. Do not run `plushuman doctor --fix` while they run.",
 }
 STATE_DB_REPLACED_DETAIL = {
     "error": "state_db_replaced",
-    "message": "state.db was replaced while Alfred was running — stop Alfred, run `alfred doctor`, "
-               "then start it again. Do not run `alfred doctor --fix`, which would repair the wrong file in place.",
+    "message": "state.db was replaced while +Human was running — stop +Human, run `plushuman doctor`, "
+               "then start it again. Do not run `plushuman doctor --fix`, which would repair the wrong file in place.",
 }
 # Every other bucket a malformed image can classify as ("corrupt", "fts_index") is the corrupt payload.
 _STORE_STATUS_DETAIL_BY_CAUSE = {"deleted_wal": DELETED_WAL_DETAIL, "replaced": STATE_DB_REPLACED_DETAIL}
@@ -197,7 +197,7 @@ def corrupt_store_as_status(db_path):
         if last is None or now - last >= _CORRUPT_STORE_WARN_INTERVAL_S:
             _corrupt_store_warned_at[key] = now
             log.warning("state.db at %s is unreadable (%s); dashboard reads return a status payload until it is "
-                        "repaired — run `alfred doctor`", db_path, exc)
+                        "repaired — run `plushuman doctor`", db_path, exc)
         else:
             log.debug("state.db at %s still has error: %s", db_path, exc)
         raise HTTPException(status_code=503, detail={**detail, "path": key}) from exc

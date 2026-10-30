@@ -1,14 +1,14 @@
-"""Tests for the post-pull syntax guard in ``alfred update``.
+"""Tests for the post-pull syntax guard in ``plushuman update``.
 
 When a bad commit lands on ``main`` with a syntax error in a critical file
 (e.g. orphan merge-conflict markers in ``hermes_cli/config.py``), the CLI
-becomes unbootable — every ``alfred`` invocation imports those files at
+becomes unbootable — every ``plushuman`` invocation imports those files at
 startup. The guard validates them after ``git pull`` and rolls back to the
 pre-pull SHA on failure so the user's install stays runnable.
 
 Reference incident: PR #28452 (May 18, 2026) shipped unresolved conflict
-markers in ``hermes_cli/config.py``; users who ran ``alfred update`` in
-the 7-minute window before #28458 landed could not run any ``alfred``
+markers in ``hermes_cli/config.py``; users who ran ``plushuman update`` in
+the 7-minute window before #28458 landed could not run any ``plushuman``
 command afterward.
 """
 

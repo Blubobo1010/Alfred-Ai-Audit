@@ -16,12 +16,12 @@ const shipsLocalModels: boolean =
 test('without --local, local models follow the platform on every channel', () => {
   for (const canary of [false, true]) {
     assert.deepEqual(resolveFeatureFlags({ argv: [], canary }), { localModels: shipsLocalModels })
-    assert.deepEqual(resolveFeatureFlags({ argv: ['Alfred.exe'], canary }), { localModels: shipsLocalModels })
+    assert.deepEqual(resolveFeatureFlags({ argv: ['+Human.exe'], canary }), { localModels: shipsLocalModels })
   }
 })
 
 test('--local in argv opts into local models on any channel and platform', () => {
-  assert.deepEqual(resolveFeatureFlags({ argv: ['Alfred.exe', '--local'], canary: false }), { localModels: true })
+  assert.deepEqual(resolveFeatureFlags({ argv: ['+Human.exe', '--local'], canary: false }), { localModels: true })
   assert.deepEqual(resolveFeatureFlags({ argv: ['--local'], canary: true }), { localModels: true })
 })
 

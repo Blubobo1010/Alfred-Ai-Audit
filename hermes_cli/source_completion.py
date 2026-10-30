@@ -53,20 +53,20 @@ def complete_source_checkout(
     root = Path(root)
     # This tail is the last mutating step of an install or update, and its product
     # builds run for minutes. A gateway restarted while it runs (launchd KeepAlive,
-    # a service manager, a second `alfred` launch) reaches the same tail through
-    # venv_sync, and `alfred update` runs its own: two completions then build the
+    # a service manager, a second `plushuman` launch) reaches the same tail through
+    # venv_sync, and `plushuman update` runs its own: two completions then build the
     # same output directories concurrently and race on install-stamp.json (#123376).
     # Claim the shared update lock so stacked completions serialize. A tail whose
     # orchestrator already holds the lock (venv_sync's interrupted-update finish,
     # the updater's completion child) runs under its parent's claim, exactly as
-    # `alfred update` does under the desktop handoff pid. The CHECKOUT lock is acquired, not
+    # `plushuman update` does under the desktop handoff pid. The CHECKOUT lock is acquired, not
     # sampled (R2): a completion from another home must not build a checkout an update owns;
     # one inside the update's tree joins the lock it inherited.
     lock = UpdateLock(install_root=root)
     if not lock.acquire():
         raise RuntimeError(
             f"an update is still running ({describe_holder(lock.holder)}); "
-            "wait for it to exit, then relaunch Alfred"
+            "wait for it to exit, then relaunch +Human"
         )
     try:
         return _complete_locked(
@@ -175,7 +175,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args([argument for argument in argv if argument != _PREPARED])
     root = args.source.resolve()
     if not (root / "hermes_cli/source_completion.py").is_file():
-        print(f"✗ {root} is not a Alfred source checkout", file=sys.stderr)
+        print(f"✗ {root} is not a +Human source checkout", file=sys.stderr)
         return 1
 
     if prepared:
@@ -186,7 +186,7 @@ def main(argv: list[str] | None = None) -> int:
         activate_dependencies(root)
         if args.finish_update:
             # A source update that never reached its own completion -- a
-            # pre-handoff release cannot flip during `alfred update`, so its
+            # pre-handoff release cannot flip during `plushuman update`, so its
             # update ends with the tree at HEAD and nothing built -- lands here
             # on the next ordinary startup. Same tail as an install, so the two
             # states cannot drift apart. Only owed TAIL work keeps it pending: an

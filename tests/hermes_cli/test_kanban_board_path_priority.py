@@ -106,7 +106,7 @@ def test_workspaces_root_also_honors_explicit_board_over_env(monkeypatch, tmp_pa
 # ---------------------------------------------------------------------------
 # CLI --board boundary (os-reviewer P1 on PR#107195 / t_11c4afd8): a
 # worker-pinned env (HERMES_KANBAN_DB/HERMES_KANBAN_BOARD) must not outrank
-# an explicit `alfred kanban --board B ...` invocation, which resolves via
+# an explicit `plushuman kanban --board B ...` invocation, which resolves via
 # scoped_current_board() rather than a direct board= call argument. The
 # original fix only prioritized the direct argument; --board went through
 # _board_path(..., board=None) and so still lost to the env pin.
@@ -127,7 +127,7 @@ def test_scoped_current_board_context_trumps_kanban_db_env(monkeypatch, tmp_path
 def test_cli_board_flag_trumps_worker_env_pin_end_to_end(monkeypatch, tmp_path):
     """Real boundary: a worker shell pinned via HERMES_KANBAN_DB/BOARD (the
     exact env every dispatcher-spawned kanban worker runs with) invokes
-    `alfred kanban --board B create ...` through the actual CLI parser.
+    `plushuman kanban --board B create ...` through the actual CLI parser.
     Only board B's physical database may receive the write; the pinned
     board's database must not also contain the task."""
     import argparse
@@ -148,7 +148,7 @@ def test_cli_board_flag_trumps_worker_env_pin_end_to_end(monkeypatch, tmp_path):
     monkeypatch.setenv("HERMES_KANBAN_DB", str(worker_pinned_db))
     monkeypatch.setenv("HERMES_KANBAN_BOARD", "worker-own-board")
 
-    parser = argparse.ArgumentParser(prog="alfred", add_help=False)
+    parser = argparse.ArgumentParser(prog="plushuman", add_help=False)
     sub = parser.add_subparsers(dest="command")
     kc.build_parser(sub)
     args = parser.parse_args(["kanban", "--board", "target-board", "create", "cross-board task"])

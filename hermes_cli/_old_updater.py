@@ -199,8 +199,8 @@ def stop_for_relaunch(*, incomplete: bool = False) -> NoReturn:
         if record is not None:
             record("old_version_handoff")
         print(
-            "You're updating from an older version of Alfred. "
-            "To complete this update, run `alfred update` again.",
+            "You're updating from an older version of +Human. "
+            "To complete this update, run `plushuman update` again.",
             file=sys.stderr,
         )
         raise SystemExit(1)

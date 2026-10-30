@@ -118,7 +118,7 @@ def test_merges_down_to_the_target_into_one_pack_whatever_the_size_limit(
     _age(repo)
     held = _objects(repo)
     monkeypatch.setattr(tidy, "PACK_COUNT_TARGET", 1)
-    # The merge writes the object store during `alfred update`: it is an updater git, so it runs in
+    # The merge writes the object store during `plushuman update`: it is an updater git, so it runs in
     # the update's custody holding the checkout lock fd (a killed update's orphan keeps the lock).
     from hermes_cli import update_custody
 

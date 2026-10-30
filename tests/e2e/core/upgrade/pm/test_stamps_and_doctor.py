@@ -1,20 +1,20 @@
 """Stamps, receipts and doctor tell the truth about a PM install (PM lifecycle, failure class 3).
 
-One real install, taken through a dependency-changing ``alfred update`` so the selected generation
+One real install, taken through a dependency-changing ``plushuman update`` so the selected generation
 is not the installer's. Then:
 
-* every ``alfred`` the install ships agrees on what the install is. The selected generation's own
-  console script (``<gen>/venv/bin/hermes``) is on PATH for every child a Alfred process spawns
+* every ``plushuman`` the install ships agrees on what the install is. The selected generation's own
+  console script (``<gen>/venv/bin/hermes``) is on PATH for every child a +Human process spawns
   (``activate_dependencies`` prepends that ``bin``), so the agent's terminal, workers and scripts
-  resolve ``alfred`` to it. It must report the checkout as the install and be able to check for
+  resolve ``plushuman`` to it. It must report the checkout as the install and be able to check for
   updates; it reports the workspace copy instead (gated on #122425 and #122627);
-* ``alfred doctor`` on that healthy install reports nothing wrong with the command installation
+* ``plushuman doctor`` on that healthy install reports nothing wrong with the command installation
   (#124050 is the false positive class) and ``hermes pm status`` reports the update as a success;
 * real drift is caught and healed: a user uninstalls fastapi (the ``web`` extra the dashboard
-  imports) from the selected environment. ``alfred doctor`` must say so, and ``hermes pm repair``
+  imports) from the selected environment. ``plushuman doctor`` must say so, and ``hermes pm repair``
   must bring the dashboard's import back;
 * a dependency update that cannot resolve after the tree moved is an owed follow-up (contract C3,
-  A6): ``alfred update`` exits 0 but says loudly that the dependencies are not installed yet, the
+  A6): ``plushuman update`` exits 0 but says loudly that the dependencies are not installed yet, the
   receipt names the ``dependencies`` follow-up, the source-update tail stays armed for the next
   launch, and the previous generation stays selected and working.
 """
@@ -44,7 +44,7 @@ pytestmark = [
 
 
 def _section(doctor_out: str, title: str) -> list[str]:
-    """The lines of one ``◆ <title>`` section of ``alfred doctor`` output."""
+    """The lines of one ``◆ <title>`` section of ``plushuman doctor`` output."""
     lines, inside = [], False
     for line in doctor_out.splitlines():
         if line.startswith("◆ "):
@@ -69,7 +69,7 @@ def updated(tmp_path_factory, provider):
     installed_gen = P.selected_generation(sb)
     target = P.publish_dependency_release(origin, root, 1)
     up = P.update(sb)
-    P.ok(up, "alfred update failed")
+    P.ok(up, "plushuman update failed")
     assert P.selected_generation(sb) != installed_gen, "harness: update did not select a new generation"
     assert I.git("rev-parse", "HEAD", cwd=sb.checkout) == target
     return {"sb": sb, "target": target, "update": up, "origin": origin, "root": root}
@@ -82,10 +82,10 @@ def _venv_hermes(sb: I.Sandbox) -> str:
 def test_managed_env_hermes_can_check_for_updates(updated):
     sb = updated["sb"]
     exe = _venv_hermes(sb)
-    assert Path(exe).is_file(), f"harness: selected generation ships no alfred console script: {exe}"
+    assert Path(exe).is_file(), f"harness: selected generation ships no plushuman console script: {exe}"
     cp = sb.run([exe, "update", "--check"], timeout=300)
     assert cp.returncode == 0 and "Not a git repository" not in cp.stdout + cp.stderr, (
-        "`alfred update --check` from the managed environment: " + (cp.stdout + cp.stderr).strip()[-400:]
+        "`plushuman update --check` from the managed environment: " + (cp.stdout + cp.stderr).strip()[-400:]
         + "\n" + I.describe(cp))
 
 
@@ -108,8 +108,8 @@ def test_doctor_on_a_healthy_pm_install_reports_no_command_installation_problem(
     section = _section(cp.stdout, "Command Installation")
     assert section, "doctor printed no Command Installation section:\n" + I.describe(cp)
     bad = [line for line in section if line.lstrip().startswith(("⚠", "✗"))]
-    assert not bad, f"alfred doctor reports a launcher problem on a healthy PM install: {bad}\n" + I.describe(cp)
-    assert f"Alfred entry point exists ({sb.checkout / 'hermes'})" in cp.stdout, "\n".join(section)
+    assert not bad, f"plushuman doctor reports a launcher problem on a healthy PM install: {bad}\n" + I.describe(cp)
+    assert f"+Human entry point exists ({sb.checkout / 'hermes'})" in cp.stdout, "\n".join(section)
 
 
 def test_pm_status_receipt_reports_the_successful_update(updated):
@@ -139,7 +139,7 @@ def test_doctor_reports_web_extra_drift(drifted):
     flagged = [line for line in cp.stdout.splitlines()
                if re.search(r"(?i)fastapi|dashboard|web extra|\bweb\b.*(missing|not installed)", line)
                and line.lstrip().startswith(("⚠", "✗"))]
-    assert flagged, ("alfred doctor is silent about fastapi missing from the selected environment "
+    assert flagged, ("plushuman doctor is silent about fastapi missing from the selected environment "
                      f"(rc={cp.returncode})\n" + I.describe(cp))
 
 
@@ -164,7 +164,7 @@ def test_failed_dependency_update_is_an_owed_followup(updated):
     up = P.update(sb)
     receipt = json.loads(P.ok(sb.cli("pm", "status")).stdout)
     assert up.returncode == 0, (
-        "`alfred update` failed although the code committed; a dependency sync after the tree moved "
+        "`plushuman update` failed although the code committed; a dependency sync after the tree moved "
         "is an owed follow-up (A6)\n" + P.diagnostics(sb, up))
     assert I.git("rev-parse", "HEAD", cwd=sb.checkout) == target, "the code update did not land\n" + P.diagnostics(sb, up)
     assert re.search(r"⚠ Update follow-up 'dependencies' did not finish: .*dependencies not installed yet",

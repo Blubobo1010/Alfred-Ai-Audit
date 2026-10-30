@@ -48,12 +48,12 @@ def test_extract_markdown_entries_promotes_heading_context():
 
 ### Active Projects
 
-- Alfred
+- +Human
 """
     entries = mod.extract_markdown_entries(text)
     assert "Tyler Williams: Founder of VANTA Research" in entries
     assert "Tyler Williams: Timezone: America/Los_Angeles" in entries
-    assert "Tyler Williams > Active Projects: Alfred" in entries
+    assert "Tyler Williams > Active Projects: +Human" in entries
 
 
 
@@ -601,15 +601,15 @@ def test_skill_installs_cleanly_under_skills_guard():
 
 def test_rebrand_text_replaces_openclaw_variants():
     mod = load_module()
-    # Mixed-case / capitalized matches → capital-H ``Alfred``.
-    assert mod.rebrand_text("OpenClaw prefers Python 3.11") == "Alfred prefers Python 3.11"
-    assert mod.rebrand_text("I told Open Claw to use dark mode") == "I told Alfred to use dark mode"
-    assert mod.rebrand_text("Open-Claw config is great") == "Alfred config is great"
-    assert mod.rebrand_text("OPENCLAW uses tools well") == "Alfred uses tools well"
-    # All-lowercase matches → lowercase ``alfred``; this preserves the
-    # real filesystem path ``~/.hermes`` (Alfred home) when rebranding
+    # Mixed-case / capitalized matches → capital-H ``+Human``.
+    assert mod.rebrand_text("OpenClaw prefers Python 3.11") == "+Human prefers Python 3.11"
+    assert mod.rebrand_text("I told Open Claw to use dark mode") == "I told +Human to use dark mode"
+    assert mod.rebrand_text("Open-Claw config is great") == "+Human config is great"
+    assert mod.rebrand_text("OPENCLAW uses tools well") == "+Human uses tools well"
+    # All-lowercase matches → lowercase ``plushuman``; this preserves the
+    # real filesystem path ``~/.hermes`` (+Human home) when rebranding
     # memory entries that reference ``~/.openclaw`` or ``openclaw`` prose.
-    assert mod.rebrand_text("openclaw should always respond concisely") == "alfred should always respond concisely"
+    assert mod.rebrand_text("openclaw should always respond concisely") == "plushuman should always respond concisely"
 
 
 

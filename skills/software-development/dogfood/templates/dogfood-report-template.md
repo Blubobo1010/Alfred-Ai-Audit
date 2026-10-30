@@ -3,7 +3,7 @@
 **Target:** {target_url}
 **Date:** {date}
 **Scope:** {scope_description}
-**Tester:** Alfred (automated exploratory QA)
+**Tester:** +Human (automated exploratory QA)
 
 ---
 

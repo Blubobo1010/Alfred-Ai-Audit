@@ -93,7 +93,7 @@ def test_sessions_export_redact_scrubs_secrets(monkeypatch, tmp_path):
         sys,
         "argv",
         [
-            "alfred", "sessions", "export", "--format", "md",
+            "plushuman", "sessions", "export", "--format", "md",
             "--session-id", "s1", "--redact", str(tmp_path),
         ],
     )
@@ -142,7 +142,7 @@ def _export_delete(monkeypatch, out_dir, session_id, *extra):
     import hermes_cli.main as main_mod
 
     monkeypatch.setattr(sys, "argv", [
-        "alfred", "sessions", "export", "--format", "md", "--session-id", session_id,
+        "plushuman", "sessions", "export", "--format", "md", "--session-id", session_id,
         "--delete-after-verified", "--yes", *extra, str(out_dir),
     ])
     main_mod.main()

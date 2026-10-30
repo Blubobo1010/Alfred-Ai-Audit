@@ -1,8 +1,8 @@
 """Tests for cua-driver subprocess teardown on interpreter exit.
 
 ``CuaDriverBackend`` spawns a long-lived ``cua-driver`` child process and
-caches it for the life of the Alfred process. Nothing ever tore it down, so
-the driver outlived the session that started it (#28152 item 3 — "Alfred does
+caches it for the life of the +Human process. Nothing ever tore it down, so
+the driver outlived the session that started it (#28152 item 3 — "+Human does
 not keep the driver alive after tool completion"). #69903 fixed the *overlay*
 redraw loop that made the lingering process burn CPU, but not the lingering
 process itself.

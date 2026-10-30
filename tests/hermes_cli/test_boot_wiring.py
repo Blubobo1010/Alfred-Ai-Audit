@@ -53,7 +53,7 @@ def _run_cli_main(argv):
 
 
 def test_cli_main_runs_boot_bootstrap_once(hermes_home, boot_probe, capsys):
-    _run_cli_main(["alfred", "--version"])
+    _run_cli_main(["plushuman", "--version"])
 
     assert len(boot_probe) == 1, "every dispatch through main() reaches the registry"
     # the root probed is THIS checkout (identity: git HEAD)
@@ -63,7 +63,7 @@ def test_cli_main_runs_boot_bootstrap_once(hermes_home, boot_probe, capsys):
 
 
 def test_cli_main_skips_boot_bootstrap_during_update(hermes_home, boot_probe):
-    _run_cli_main(["alfred", "update", "--help"])
+    _run_cli_main(["plushuman", "update", "--help"])
 
     assert boot_probe == [], "the update flow owns its own maintenance pass"
 

@@ -1,0 +1,23 @@
+{
+  "comment": "+Human's own plugins at the commit this release ships, written by alfred-build from brand.toml [[plugins]]. Plugins a home never installed are left alone.",
+  "plugins": [
+    {
+      "dir": "brain",
+      "repo": "Blubobo1010/alfred-brain",
+      "sha": "ca233c087625a9f4eaed1d536ad4eb6e7280b7c4",
+      "version": "0.6.1"
+    },
+    {
+      "dir": "alfred-m365",
+      "repo": "Blubobo1010/alfred-m365",
+      "sha": "8c68850db2d731c99e916418ad510aaabf1a45e7",
+      "version": "0.2.1"
+    },
+    {
+      "dir": "alfred-odoo",
+      "repo": "Blubobo1010/alfred-odoo",
+      "sha": "a5bc48f54bc830b0f1173592ea53334c66454921",
+      "version": "0.4.1"
+    }
+  ]
+}

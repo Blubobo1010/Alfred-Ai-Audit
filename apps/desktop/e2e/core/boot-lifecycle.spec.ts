@@ -1,7 +1,7 @@
 /**
  * C5 core: boot handshake and backend process lifecycle.
  *
- * Real Electron + real `alfred serve`; only the LLM is faked. Process facts
+ * Real Electron + real `plushuman serve`; only the LLM is faked. Process facts
  * come from a /proc census of every process carrying this sandbox's
  * HERMES_HOME (so an orphan reparented to init is still counted), sampled
  * continuously in the background so a transient extra spawn is seen too.

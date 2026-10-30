@@ -145,7 +145,7 @@ def test_turn_wait_seconds_reads_config(monkeypatch):
 
 
 def test_run_delivery_holds_profile_lock_during_turn(root, tmp_path, monkeypatch):
-    """The local `alfred -p <profile>` turn runs UNDER the profile lock."""
+    """The local `plushuman -p <profile>` turn runs UNDER the profile lock."""
     home = root / ".hermes"
     home.mkdir()
     monkeypatch.setenv("HERMES_HOME", str(home))
@@ -169,10 +169,10 @@ def test_run_delivery_holds_profile_lock_during_turn(root, tmp_path, monkeypatch
 
     monkeypatch.setattr(bot_mode_dm.subprocess, "run", _fake_run)
     rc = bot_mode_dm._run_delivery(
-        ["alfred", "-p", "ops", "chat"], str(dm), stdin_file=False
+        ["plushuman", "-p", "ops", "chat"], str(dm), stdin_file=False
     )
     assert rc == 0
-    assert observed["argv"][:3] == ["alfred", "-p", "ops"]
+    assert observed["argv"][:3] == ["plushuman", "-p", "ops"]
     # …and after the turn, the lock is free again.
     with acquire_turn_lock(home, "ops", timeout_seconds=0.5):
         pass
@@ -196,7 +196,7 @@ def test_delivery_main_reports_target_busy_json(root, tmp_path, monkeypatch, cap
     assert held.wait(timeout=5)
     try:
         rc = bot_mode_dm._delivery_main(
-            ["--run-delivery", "query-file", str(dm), "alfred", "-p", "ops", "chat"]
+            ["--run-delivery", "query-file", str(dm), "plushuman", "-p", "ops", "chat"]
         )
         assert rc == 1
         payload = json.loads(capsys.readouterr().out.strip())
@@ -233,7 +233,7 @@ def test_peer_stdin_delivery_skips_local_lock(root, tmp_path, monkeypatch):
 
         monkeypatch.setattr(bot_mode_dm.subprocess, "run", _fake_run)
         rc = bot_mode_dm._run_delivery(
-            ["alfred", "peer", "dm", "spark/ops"], str(dm), stdin_file=True
+            ["plushuman", "peer", "dm", "spark/ops"], str(dm), stdin_file=True
         )
         assert rc == 0  # did not contend with the held 'ops' lock
     finally:
@@ -414,7 +414,7 @@ def test_delivery_main_reports_every_failure_as_typed_json(tmp_path, monkeypatch
 
     monkeypatch.setattr(bot_mode_dm, "_run_delivery", _raise)
 
-    rc = bot_mode_dm._delivery_main(["--run-delivery", "query-file", str(dm), "alfred", "-p", "ops", "chat"])
+    rc = bot_mode_dm._delivery_main(["--run-delivery", "query-file", str(dm), "plushuman", "-p", "ops", "chat"])
 
     assert rc == 1
     payload = json.loads(capsys.readouterr().out.strip())

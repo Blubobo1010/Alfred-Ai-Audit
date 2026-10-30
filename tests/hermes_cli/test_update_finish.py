@@ -208,7 +208,7 @@ def completion(tmp_path, monkeypatch):
                         assert isinstance(plan, UpdatePlan)
                         assert isinstance(plan.runtimes[0], RuntimeRecord)
                         assert plan.to_dict() == request['plan'] | {
-                            'updatable_in_place': True, 'update_mechanism': 'alfred update'}
+                            'updatable_in_place': True, 'update_mechanism': 'plushuman update'}
                         (root / 'restarted-plan.json').write_text(json.dumps(plan.to_dict()))
                         return fleet._GatewayRestartOutcome(
                             incomplete=False, phase_errors=[], pre_restart_gateway_pids=[],
@@ -359,7 +359,7 @@ def test_missing_desktop_observation_uses_installed_products(completion, capture
     if installed == "renderer":
         _put(source, "apps/desktop/dist/index.html", "old renderer")
     elif installed == "packaged":
-        executable = ("mac-arm64/Alfred.app/Contents/MacOS/Alfred" if sys.platform == "darwin"
+        executable = ("mac-arm64/+Human.app/Contents/MacOS/+Human" if sys.platform == "darwin"
                       else "linux-unpacked/hermes")
         _put(source, f"apps/desktop/release/{executable}", "old packaged app")
     before = context.read_bytes()

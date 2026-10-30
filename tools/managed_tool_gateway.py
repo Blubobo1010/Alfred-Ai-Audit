@@ -33,7 +33,7 @@ def _clean(value: object) -> Optional[str]:
 
 
 def auth_json_path():
-    """Return the Alfred auth store path, respecting HERMES_HOME overrides."""
+    """Return the +Human auth store path, respecting HERMES_HOME overrides."""
     return get_hermes_home() / "auth.json"
 
 

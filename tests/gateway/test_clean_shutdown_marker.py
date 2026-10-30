@@ -1,6 +1,6 @@
 """Tests for the clean shutdown marker that prevents unwanted session auto-resets.
 
-When the gateway shuts down gracefully (alfred update, gateway restart, /restart),
+When the gateway shuts down gracefully (plushuman update, gateway restart, /restart),
 it writes a .clean_shutdown marker.  On the next startup, if the marker exists,
 crash-turn recovery is skipped and orphan turn markers are discarded.
 """

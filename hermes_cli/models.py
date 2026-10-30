@@ -285,7 +285,7 @@ def union_with_nous_on_sale_models(curated_ids: list[str], pricing: dict[str, di
     discount first. A sale lives only in ``/v1/models`` ``pricing.original``, so without this the
     picker badges discounts on curated rows but never shows a discounted model the curated list and
     Portal recommendations omit. Free rows stay with ``freeRecommendedModels``; rows the gateway
-    marks tool-less (``"tools": False``) are skipped because Alfred is tool-calling-first, and
+    marks tool-less (``"tools": False``) are skipped because +Human is tool-calling-first, and
     image/video generation rows are skipped because they are not chat models."""
     from math import isfinite
 
@@ -832,7 +832,7 @@ def _provider_has_credentials(pid: str) -> bool:
 
 
 def list_available_providers() -> list[dict[str, str]]:
-    """``{id, label, aliases, authenticated}`` per listed provider (shared with ``alfred model`` / ``/model``)."""
+    """``{id, label, aliases, authenticated}`` per listed provider (shared with ``plushuman model`` / ``/model``)."""
     from hermes_cli.models_catalog_static import listed_canonical_providers
     aliases_for: dict[str, list[str]] = {}
     for alias, canonical in _PROVIDER_ALIASES.items():
@@ -1232,7 +1232,7 @@ def _strip_vendor_prefix(model_id: str) -> str:
 
 
 def model_supports_fast_mode(model_id: Optional[str]) -> bool:
-    """Return whether Alfred should expose the /fast toggle for this model."""
+    """Return whether +Human should expose the /fast toggle for this model."""
     from agent.model_metadata import is_grok_46_family
 
     return (
@@ -1475,7 +1475,7 @@ def _nous_catalog(normalized: str, force_refresh: bool) -> Optional[list[str]]:
     except Exception:
         pass
     # Live failed / no creds: the docs-hosted manifest — NOT the in-repo snapshot — so newly added
-    # Portal models still surface without a Alfred release.
+    # Portal models still surface without a +Human release.
     return get_curated_nous_model_ids() or None
 
 
@@ -1542,10 +1542,10 @@ def _openai_catalog(normalized: str, force_refresh: bool) -> Optional[list[str]]
     base = _openai_discovery_base_url(normalized)
     # Custom OpenAI-compatible endpoints serve a small curated catalog — use it verbatim. Official
     # OpenAI hosts (canonical and data-residency regional) return 120+ embeddings/whisper/tts/…
-    # entries, so intersect with the curated agentic catalog so ``/model`` matches ``alfred model``.
+    # entries, so intersect with the curated agentic catalog so ``/model`` matches ``plushuman model``.
     # Model not in live /v1/models — check the curated catalog before rejecting. Providers may omit models
     # from their live listing that are still valid (stale cache, partial rollout, gated previews). Use the
-    # pure-catalog helper (no extra live fetch) so we only accept models Alfred actually ships. (#46850)
+    # pure-catalog helper (no extra live fetch) so we only accept models +Human actually ships. (#46850)
     # Their /v1/models listing is access-scoped and authoritative — a model absent from it is one this key
     # CANNOT serve, so the curated soft-accept would manufacture a selection that 400s at first use. Custom
     # OpenAI-compatible proxies keep the fallback (incomplete listings are common there).
@@ -1677,7 +1677,7 @@ def _profile_live_catalog(normalized: str) -> Optional[list[str]]:
             logger.debug("external_process catalog fetch failed for %s: %s", normalized, exc)
             live = None
         # Same merge as setup (`_model_flow_plugin_provider`) so /model, the Desktop picker and
-        # `alfred model` offer one list: live ids plus any pinned id the probe omitted.
+        # `plushuman model` offer one list: live ids plus any pinned id the probe omitted.
         return merge_profile_catalog(normalized, profile, list(live) if live else None)
     if not (profile.auth_type == "api_key" and profile.base_url):
         return list(profile.fallback_models) or None
@@ -2170,7 +2170,7 @@ def cached_provider_model_ids(
 
 def clear_provider_models_cache(provider: Optional[str] = None) -> None:
     """Drop one provider's cache entry, or wipe the whole cache (``provider=None``). Used by
-    ``/model --refresh`` and ``alfred model --refresh``."""
+    ``/model --refresh`` and ``plushuman model --refresh``."""
     try:
         # Native Ollama tags are keyed by root URL, not provider slug — a targeted refresh can't
         # identify the root from the name alone, so clear this small in-process cache every time.

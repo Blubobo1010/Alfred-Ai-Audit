@@ -56,7 +56,7 @@ def _notify_session_boundary(event_type: str, session_id: str | None, platform: 
     return []
 
 
-_SESSION_OWNERSHIP_UNAVAILABLE = "Alfred could not safely reserve this session. Try again."
+_SESSION_OWNERSHIP_UNAVAILABLE = "+Human could not safely reserve this session. Try again."
 _AUTOMATIC_SESSION_END_REASONS = frozenset({"ws_orphan_reap", "ws_disconnect", "idle_timeout", "lru_evict", "tui_shutdown"})
 
 
@@ -1033,7 +1033,7 @@ def _close_sessions_for_transport(transport, *, end_reason: str = "ws_disconnect
                 claimed_for_teardown = _pop_session_by_id(sid)
             else:
                 # Point at the drop sentinel (NOT real stdio) so _ws_session_is_orphaned recognizes it; standalone
-                # `alfred --tui` keeps real _stdio. UNLESS another window (pop-out viewer) still shows the session:
+                # `plushuman --tui` keeps real _stdio. UNLESS another window (pop-out viewer) still shows the session:
                 # re-bind to the most recent surviving viewer instead.
                 viewers = current.get("viewers") or {}
                 # See #83716.

@@ -1,8 +1,8 @@
 """Oneshot (-z) mode: send a prompt, get the final content block, exit.
 
-Toolsets = explicit --toolsets, else the user's "cli" toolsets from `alfred tools`. Rules /
+Toolsets = explicit --toolsets, else the user's "cli" toolsets from `plushuman tools`. Rules /
 memory / AGENTS.md / preloaded skills = same as a normal chat turn. Approvals are auto-bypassed
-(HERMES_YOLO_MODE=1). Model/provider mirror `alfred chat`: both optional; only --model → auto-detect
+(HERMES_YOLO_MODE=1). Model/provider mirror `plushuman chat`: both optional; only --model → auto-detect
 the provider; only --provider → error (ambiguous).
 """
 
@@ -134,7 +134,7 @@ def _build_preloaded_skills_prompt(skills: object = None) -> str | None:
         if not loaded_skills:
             raise ValueError(format_missing_skills(missing_skills))
         logging.warning(
-            "Skipping %s. Continuing with: %s. List available skills with `alfred skills list`.",
+            "Skipping %s. Continuing with: %s. List available skills with `plushuman skills list`.",
             format_missing_skills(missing_skills),
             ", ".join(loaded_skills),
         )
@@ -169,7 +169,7 @@ def _validate_explicit_toolsets(toolsets: object = None) -> tuple[list[str] | No
     try:
         from toolsets import validate_toolset
     except Exception as exc:
-        return None, f"alfred -z: failed to validate --toolsets: {exc}\n"
+        return None, f"plushuman -z: failed to validate --toolsets: {exc}\n"
 
     built_in = [name for name in normalized if validate_toolset(name)]
     unresolved = [name for name in normalized if name not in built_in]
@@ -189,7 +189,7 @@ def _validate_explicit_toolsets(toolsets: object = None) -> tuple[list[str] | No
         ignored = [name for name in normalized if name not in _ALL_TOOLSETS]
         if ignored:
             sys.stderr.write(
-                "alfred -z: --toolsets all enables every toolset; "
+                "plushuman -z: --toolsets all enables every toolset; "
                 f"ignoring additional entries: {', '.join(ignored)}\n"
             )
         return None, None
@@ -201,14 +201,14 @@ def _validate_explicit_toolsets(toolsets: object = None) -> tuple[list[str] | No
     valid = built_in + mcp_valid
 
     if unknown:
-        sys.stderr.write(f"alfred -z: ignoring unknown --toolsets entries: {', '.join(unknown)}\n")
+        sys.stderr.write(f"plushuman -z: ignoring unknown --toolsets entries: {', '.join(unknown)}\n")
     if disabled:
         sys.stderr.write(
-            "alfred -z: ignoring disabled MCP servers (set enabled: true in config.yaml to use): "
+            "plushuman -z: ignoring disabled MCP servers (set enabled: true in config.yaml to use): "
             f"{', '.join(disabled)}\n"
         )
     if not valid:
-        return None, "alfred -z: --toolsets did not contain any valid toolsets.\n"
+        return None, "plushuman -z: --toolsets did not contain any valid toolsets.\n"
     return valid, None
 
 
@@ -261,7 +261,7 @@ def run_oneshot(
     env_model_early = os.getenv("HERMES_INFERENCE_MODEL", "").strip()
     if provider and not ((model or "").strip() or env_model_early):
         sys.stderr.write(
-            "alfred -z: --provider requires --model (or HERMES_INFERENCE_MODEL). "
+            "plushuman -z: --provider requires --model (or HERMES_INFERENCE_MODEL). "
             "Pass both explicitly, or neither to use your configured defaults.\n"
         )
         return 2
@@ -275,7 +275,7 @@ def run_oneshot(
     # Non-interactive by definition — an approval prompt would hang forever.
     os.environ["HERMES_YOLO_MODE"] = "1"
     os.environ["HERMES_ACCEPT_HOOKS"] = "1"
-    # Same finite-chat marker as `alfred chat -q` (cli.py): the session-source resolver uses it to drop an
+    # Same finite-chat marker as `plushuman chat -q` (cli.py): the session-source resolver uses it to drop an
     # inherited tui/desktop transport label, and delegate dispatch to route detached results inline.
     os.environ["HERMES_SINGLE_QUERY_SESSION"] = "1"
 
@@ -317,7 +317,7 @@ def run_oneshot(
             _write_usage_file(usage_file, result, failure=repr(failure))
             raise failure
         _write_usage_file(usage_file, result, failure=str(failure))
-        real_stderr.write(f"alfred -z: agent failed: {failure}\n")
+        real_stderr.write(f"plushuman -z: agent failed: {failure}\n")
         real_stderr.flush()
         return 1
 
@@ -337,7 +337,7 @@ def run_oneshot(
 
     exit_code = _oneshot_exit_code(response, result)
     if exit_code == 1:
-        real_stderr.write("alfred -z: no final response was produced; treating the run as failed.\n")
+        real_stderr.write("plushuman -z: no final response was produced; treating the run as failed.\n")
         real_stderr.flush()
     return exit_code
 
@@ -442,7 +442,7 @@ def _load_resume_target(session_db, resume: Optional[str]) -> tuple[Optional[str
     ``session_meta`` rows dropped. An unknown session raises (the user passed an explicit id;
     silently starting a fresh session is the resume-dropped failure mode this exists to fix —
     see #105892). An empty stored transcript still returns the resolved id: the turn replays
-    nothing but is recorded under the requested session — ``alfred -z "hello" -c <title>
+    nothing but is recorded under the requested session — ``plushuman -z "hello" -c <title>
     --create-if-missing`` must fill the titled session it created, not mint a fresh id
     (same contract as the interactive /resume of an empty session).
 
@@ -588,7 +588,7 @@ def _run_agent(
             session_id=resume_sid,
             credential_pool=runtime.get("credential_pool"),
             fallback_model=get_fallback_chain(cfg) or None,
-            # The resolved provider's request body (a custom entry's extra_body), as `alfred chat` passes it.
+            # The resolved provider's request body (a custom entry's extra_body), as `plushuman chat` passes it.
             request_overrides=runtime.get("request_overrides"),
             ephemeral_system_prompt=skills_prompt,
             reasoning_config=reasoning_config,

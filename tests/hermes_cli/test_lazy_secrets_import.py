@@ -1,4 +1,4 @@
-"""Regression test: alfred update must not load cryptography eagerly."""
+"""Regression test: plushuman update must not load cryptography eagerly."""
 
 import sys
 import subprocess
@@ -76,7 +76,7 @@ sys.exit(0)
         )
 
     def test_update_check_no_cryptography(self) -> None:
-        """Running alfred update --check should NOT load cryptography._rust."""
+        """Running plushuman update --check should NOT load cryptography._rust."""
         # Write a small script in the repo root so hermes_cli is importable,
         # and use a filename that doesn't trigger the live-system guard.
         repo_root = Path(__file__).parent.parent.parent
@@ -84,7 +84,7 @@ sys.exit(0)
         script.write_text(
             """
 import sys
-sys.argv = ['alfred', 'update', '--check']
+sys.argv = ['plushuman', 'update', '--check']
 
 import hermes_cli.main
 from hermes_cli.update_cmd import _cmd_update_check

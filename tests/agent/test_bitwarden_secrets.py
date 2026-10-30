@@ -35,7 +35,7 @@ def _reset_caches():
 
 @pytest.fixture
 def hermes_home(tmp_path, monkeypatch):
-    """Point Alfred at an isolated home directory."""
+    """Point +Human at an isolated home directory."""
     home = tmp_path / ".hermes"
     home.mkdir()
     monkeypatch.setenv("HERMES_HOME", str(home))

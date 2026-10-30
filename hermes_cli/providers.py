@@ -1,4 +1,4 @@
-"""Single source of truth for provider identity in Alfred."""
+"""Single source of truth for provider identity in +Human."""
 
 from __future__ import annotations
 
@@ -11,11 +11,11 @@ from utils import base_url_host_matches, base_url_hostname
 logger = logging.getLogger(__name__)
 
 
-# -- Alfred overlay: metadata models.dev doesn't provide ----------------------
+# -- +Human overlay: metadata models.dev doesn't provide ----------------------
 
 @dataclass(frozen=True)
 class HermesOverlay:
-    """Alfred-specific provider metadata layered on top of models.dev."""
+    """+Human-specific provider metadata layered on top of models.dev."""
 
     transport: str = "openai_chat"        # openai_chat | anthropic_messages | codex_responses
     is_aggregator: bool = False
@@ -192,8 +192,8 @@ def _overlay_pdef(canonical, ov: HermesOverlay, name, env_vars, base_url, doc, s
 
 
 def get_provider(name: str, *, allow_network: bool = True) -> Optional[ProviderDef]:
-    """Look up a built-in provider by id or alias: models.dev catalog merged with the Alfred overlay;
-    Alfred-only overlay (nous, openai-codex, …); plugin provider profiles with a concrete endpoint."""
+    """Look up a built-in provider by id or alias: models.dev catalog merged with the +Human overlay;
+    +Human-only overlay (nous, openai-codex, …); plugin provider profiles with a concrete endpoint."""
     canonical = normalize_provider(name)
     mdev_info = _models_dev_info(canonical, allow_network)
     overlay = HERMES_OVERLAYS.get(canonical)
@@ -475,7 +475,7 @@ def resolve_custom_provider(name: str, custom_providers: Optional[list[dict[str,
 
 
 def _lossy_alias_registry_pdef(raw: str, canonical: str) -> Optional[ProviderDef]:
-    """Exact Alfred registry ids win over LOSSY alias collapsing (kimi-coding-cn must stay distinct
+    """Exact +Human registry ids win over LOSSY alias collapsing (kimi-coding-cn must stay distinct
     from kimi-coding instead of collapsing through the shared models.dev alias "kimi-for-coding").
     A collapse is lossy only when MULTIPLE registry providers normalize to the same canonical name;
     single-entry rewrites ("copilot" -> "github-copilot") are correct routing and keep resolving
@@ -502,7 +502,7 @@ LLAMACPP_ALIASES: tuple[str, ...] = (LLAMACPP_PROVIDER_ID, "llama.cpp", "llama-c
 
 
 def _has_staged_local_models() -> bool:
-    """True when GGUFs are staged under the Alfred home's ``models/`` — the model the picker's Local
+    """True when GGUFs are staged under the +Human home's ``models/`` — the model the picker's Local
     row offers, which the runtime seam serves by booting/attaching a server on selection."""
     try:
         from hermes_cli.local_runtime.bootstrap import staged_model_ids
@@ -575,7 +575,7 @@ def resolve_provider_full(name: str, user_providers: Optional[dict[str, Any]] = 
         pass
     # Plugin profiles whose endpoint is minted at runtime (empty base_url, e.g. a token exchange
     # that also returns the host) are still real providers: /model --provider, the model picker
-    # and `alfred model` must not reject them as unknown. Last rung, so every user-configured
+    # and `plushuman model` must not reject them as unknown. Last rung, so every user-configured
     # entry above wins; the bare ``custom`` placeholder is excluded because model-switch completes
     # it from the current endpoint (see get_provider).
     pdef = _plugin_profile_pdef(canonical)

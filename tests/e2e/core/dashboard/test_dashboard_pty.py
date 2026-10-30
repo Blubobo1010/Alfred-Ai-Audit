@@ -1,7 +1,7 @@
-"""Dashboard embedded chat: the ``/api/pty`` WebSocket drives a REAL ``alfred --tui`` end to end.
+"""Dashboard embedded chat: the ``/api/pty`` WebSocket drives a REAL ``plushuman --tui`` end to end.
 
 Issue class: the dashboard Chat tab talking to the wrong profile, or losing the conversation on a
-reconnect. Every cell runs the real ``alfred dashboard``, which
+reconnect. Every cell runs the real ``plushuman dashboard``, which
 spawns the real Ink TUI (``ui-tui/dist/entry.js``) and its ``tui_gateway`` under a real PTY; the
 client is what the browser's xterm does (raw PTY bytes, the ``\\x1b[RESIZE:c;r]`` control frame, the
 SPA's ``?attach=`` keep-alive token, ``?profile=`` and a per-(profile) ``?channel=``). Each profile

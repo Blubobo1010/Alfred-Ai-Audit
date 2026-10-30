@@ -330,7 +330,7 @@ class TestNotifyIsConfigurable:
 
 class TestUnverifiedDeliveryIsRecordedOnTheJob:
     """An evidence-free ack is accepted, but the state must reach the job
-    record (and from there ``alfred cron list`` / ``cron doctor``), not only a
+    record (and from there ``plushuman cron list`` / ``cron doctor``), not only a
     WARNING log line."""
 
     def test_evidence_free_ack_records_the_target(self):

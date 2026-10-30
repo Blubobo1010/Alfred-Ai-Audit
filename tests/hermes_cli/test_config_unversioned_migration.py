@@ -1,5 +1,5 @@
 """A config.yaml without ``_config_version`` is current-schema content that was never stamped:
-the installers seed it from cli-config.yaml.example and targeted writers (``alfred config set``,
+the installers seed it from cli-config.yaml.example and targeted writers (``plushuman config set``,
 /personality) never stamp. The one-time migration ladder must not treat it as a v0 install —
 its value- and absence-based steps would overwrite what the user chose."""
 
@@ -50,7 +50,7 @@ def test_update_keeps_user_values_of_an_unversioned_config_and_migrates_legacy_k
     # Seeded before the template carried a stamp; early-2026 templates shipped this retired key.
     (hermes_home / "config.yaml").write_text(
         "compression:\n  summary_model: google/gemini-3-flash-preview\n", encoding="utf-8")
-    # Installed with `alfred plugins install` and never enabled.
+    # Installed with `plushuman plugins install` and never enabled.
     plugin = hermes_home / "plugins" / "notes-helper"
     plugin.mkdir(parents=True)
     (plugin / "plugin.yaml").write_text("name: notes-helper\nversion: 0.1.0\n", encoding="utf-8")
@@ -73,7 +73,7 @@ def test_update_keeps_user_values_of_an_unversioned_config_and_migrates_legacy_k
 
 
 def test_config_seeded_from_the_template_reads_as_current(hermes_home):
-    """install.sh, install.ps1, docker/stage2-hook.sh and `alfred doctor --fix` copy the template."""
+    """install.sh, install.ps1, docker/stage2-hook.sh and `plushuman doctor --fix` copy the template."""
     from hermes_cli.config import check_config_version
 
     shutil.copy(TEMPLATE, hermes_home / "config.yaml")

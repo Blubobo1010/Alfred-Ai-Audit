@@ -70,7 +70,7 @@ class _AsyncBridge:
 # is never replayed; the caller decides after taking fresh state.
 _UNKNOWN_OUTCOME_MESSAGES = {
     "transport_outcome_unknown": (
-        "cua-driver transport failed during {name}; the action outcome is unknown, so Alfred "
+        "cua-driver transport failed during {name}; the action outcome is unknown, so +Human "
         "did not replay it. Take fresh state before deciding whether to act again."),
     "timeout_outcome_unknown": (
         "cua-driver MCP call {name} timed out; the action outcome is unknown and may still have "
@@ -231,7 +231,7 @@ class _CuaDriverSession:
                 (daemon.proxy_invocation(), daemon.child_env()) if daemon is not None
                 else _cb.sandbox_mcp_invocation() or (_driver._resolve_mcp_invocation(driver_cmd), _cb.cua_driver_child_env()))
             _t_manifest = _time.monotonic()
-            # Telemetry policy first (default: disabled), then strip Alfred secrets.
+            # Telemetry policy first (default: disabled), then strip +Human secrets.
             params = StdioServerParameters(command=command, args=args, env=_sanitize_subprocess_env(child_env))
             async with stdio_client(params) as (read, write):
                 self._startup_phase = "mcp-initialize"
@@ -306,7 +306,7 @@ class _CuaDriverSession:
             from hermes_constants import display_hermes_home
             raise RuntimeError(
                 f"cua-driver session never reached ready (timeout 30s; stuck in phase: "
-                f"{getattr(self, '_startup_phase', 'unknown')}). Run `alfred computer-use doctor` and check "
+                f"{getattr(self, '_startup_phase', 'unknown')}). Run `plushuman computer-use doctor` and check "
                 f"{display_hermes_home()}/logs/agent.log for the phase timings.")
         if self._setup_error is not None:
             raise RuntimeError(f"cua-driver session setup failed: {self._setup_error}") from self._setup_error

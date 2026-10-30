@@ -1,4 +1,4 @@
-"""Alfred Desktop (Chat GUI) uninstaller: removes only GUI state — built Electron artifacts, the packaged
+"""+Human Desktop (Chat GUI) uninstaller: removes only GUI state — built Electron artifacts, the packaged
 app, and the desktop's own ``userData`` — never agent source, venv, config, sessions or .env."""
 
 import os
@@ -25,17 +25,17 @@ def _env_dir(var: str, fallback: Path) -> Path:
 
 
 def desktop_userdata_dir() -> Path:
-    """Electron ``app.getPath('userData')`` for an app named "Alfred" on each platform (GUI-only state)."""
+    """Electron ``app.getPath('userData')`` for an app named "+Human" on each platform (GUI-only state)."""
     home = Path.home()
     if sys.platform == "darwin":
-        return home / "Library" / "Application Support" / "Alfred"
+        return home / "Library" / "Application Support" / "+Human"
     if sys.platform == "win32":
-        return _env_dir("APPDATA", home / "AppData" / "Roaming") / "Alfred"
-    return _env_dir("XDG_CONFIG_HOME", home / ".config") / "Alfred"
+        return _env_dir("APPDATA", home / "AppData" / "Roaming") / "+Human"
+    return _env_dir("XDG_CONFIG_HOME", home / ".config") / "+Human"
 
 
 def source_built_gui_artifacts(hermes_home: Path) -> list[Path]:
-    """GUI build artifacts produced by ``alfred desktop`` inside the checkout (same ``hermes-agent/`` layout
+    """GUI build artifacts produced by ``plushuman desktop`` inside the checkout (same ``hermes-agent/`` layout
     install.sh uses). The workspace-root node_modules is shared with the TUI, dashboard and other
     workspaces, so only the desktop workspace's own dependencies belong to GUI removal."""
     agent_root = hermes_home / "hermes-agent"
@@ -45,7 +45,7 @@ def source_built_gui_artifacts(hermes_home: Path) -> list[Path]:
 
 
 def desktop_install_record() -> Path:
-    """Where ``alfred update`` records the installed ``Alfred.app`` copies it keeps current. The apps
+    """Where ``plushuman update`` records the installed ``+Human.app`` copies it keeps current. The apps
     are machine-wide, so the record sits under the default root whichever profile runs; deleting it
     is what stops an uninstalled app from being put back by the next update."""
     from hermes_constants import get_default_hermes_root
@@ -55,16 +55,17 @@ def desktop_install_record() -> Path:
 def packaged_gui_app_paths() -> list[Path]:
     """Standard install locations of the packaged desktop distributable for the current OS. Every candidate
     is returned; the caller filters to those that exist. Never globs system-wide — only the well-known
-    electron-builder output locations for the "Alfred" product."""
+    electron-builder output locations for the "+Human" product."""
     home = Path.home()
     if sys.platform == "darwin":
-        return [Path("/Applications/Alfred.app"), home / "Applications" / "Alfred.app"]
+        return [Path("/Applications/+Human.app"), home / "Applications" / "+Human.app",
+                Path("/Applications/Alfred.app"), home / "Applications" / "Alfred.app"]  # alfred:keep — earlier installs keep their bundle path
     if sys.platform == "win32":
         local_base = _env_dir("LOCALAPPDATA", home / "AppData" / "Local")
         # NSIS per-user install (perMachine=false), an older/alternate layout, NSIS per-machine (needs admin).
         program_files = os.environ.get("ProgramFiles")
-        return [local_base / "Programs" / "Alfred", local_base / "hermes-desktop"] + (
-            [Path(program_files) / "Alfred"] if program_files else [])
+        return [local_base / "Programs" / "+Human", local_base / "hermes-desktop"] + (
+            [Path(program_files) / "+Human"] if program_files else [])
     # Linux: an AppImage lives wherever the user put it and deb/rpm files belong to the package manager
     # (see the hint in ``uninstall_gui``), so only the desktop entry + hicolor icons are cleaned here.
     from hermes_cli.linux_desktop_entry import LEGACY_DESKTOP_ENTRY_NAME, desktop_entry_path
@@ -158,7 +159,7 @@ def uninstall_gui(hermes_home: Path | None = None, *, remove_userdata: bool = Tr
     if not removed:
         log_info("No desktop GUI artifacts found to remove")
     if sys.platform.startswith("linux"):
-        # The desktop entry was removed above but the menu caches still list it; reindex so Alfred
+        # The desktop entry was removed above but the menu caches still list it; reindex so +Human
         # disappears from the launcher.
         try:
             from hermes_cli.linux_desktop_entry import desktop_entry_path, refresh_desktop_databases

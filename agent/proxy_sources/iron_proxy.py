@@ -67,7 +67,7 @@ _BEARER_PROVIDERS: dict[str, tuple[str, ...]] = {
 # ``secrets.replace.match_headers`` targets arbitrary header names (case-insensitive; confirmed by the
 # iron-proxy author on PR #30179 and verified in the pinned v0.39.0 source — ``swapHeaders`` +
 # ``parseHeaderMatchers``), so these are first-class swapped providers, not "uncovered". ``aliases`` are
-# interchangeable env-var names for the SAME upstream credential (Alfred' auth.py keys Google on both
+# interchangeable env-var names for the SAME upstream credential (+Human' auth.py keys Google on both
 # GEMINI_API_KEY and GOOGLE_API_KEY). The sandbox receives the minted token under the canonical name AND
 # every alias so SDKs reading either work.
 _HEADER_AUTH_PROVIDERS: dict[str, dict[str, tuple[str, ...]]] = {
@@ -305,7 +305,7 @@ def ensure_management_token(*, force: bool = False) -> str:
     Stored at the path from :func:`_management_token_path` with 0600 perms.
     The daemon receives it via the ``HERMES_IRON_PROXY_MGMT_KEY`` env var
     (named in the generated config's ``management.api_key_env``);
-    ``alfred egress reload`` reads the same file to authenticate.
+    ``plushuman egress reload`` reads the same file to authenticate.
     """
 
     _proxy_state_dir()
@@ -363,20 +363,20 @@ def _probe_target() -> tuple[str, int]:
 # Management-API error status -> operator message (422 = validation rejected, ruleset unchanged; 401 = daemon started with another management.token).
 _RELOAD_HTTP_ERRORS = {
     422: "iron-proxy rejected the new config (validation failed; the running ruleset is unchanged): {body}",
-    401: "management API rejected our key (401).  The running daemon was started with a different management.token — run `alfred egress restart`.",
+    401: "management API rejected our key (401).  The running daemon was started with a different management.token — run `plushuman egress restart`.",
 }
 
 
 def reload_proxy() -> bool:
     """``POST /v1/reload`` (validation failures leave the running config untouched); actionable RuntimeError on any failure."""
     if not (pid := _read_pid()) or not _pid_alive(pid):
-        raise RuntimeError("iron-proxy is not running — nothing to reload.  Run `alfred egress start`.")
+        raise RuntimeError("iron-proxy is not running — nothing to reload.  Run `plushuman egress start`.")
     if (mgmt := _read_management_listen_from_config()) is None:
         raise RuntimeError(
-            "The generated proxy.yaml has no management listener (written before reload support).  Re-run `alfred egress setup` and use `alfred egress restart` this one time."
+            "The generated proxy.yaml has no management listener (written before reload support).  Re-run `plushuman egress setup` and use `plushuman egress restart` this one time."
         )
     if not (token := _read_text_or_none(_management_token_path())):
-        raise RuntimeError("management.token is missing — re-run `alfred egress setup`, then `alfred egress restart`.")
+        raise RuntimeError("management.token is missing — re-run `plushuman egress setup`, then `plushuman egress restart`.")
     host, port = mgmt
     req = urllib.request.Request(f"http://{host}:{port}/v1/reload", method="POST", headers={"Authorization": f"Bearer {token}"}, data=b"")
     try:
@@ -393,7 +393,7 @@ def reload_proxy() -> bool:
     except (urllib.error.URLError, OSError) as exc:
         # A daemon started from a pre-management config is alive but has no listener.
         raise RuntimeError(
-            f"could not reach the management API at {host}:{port} ({exc}).  If the daemon was started before reload support, run `alfred egress restart` once."
+            f"could not reach the management API at {host}:{port} ({exc}).  If the daemon was started before reload support, run `plushuman egress restart` once."
         ) from exc
 
 
@@ -657,9 +657,9 @@ def start_proxy(
     if (existing := _read_pid()) and _pid_alive(existing):
         return get_status()
     if (bin_path := binary or find_iron_proxy(install_if_missing=install_if_missing)) is None:
-        raise RuntimeError("iron-proxy binary not available — run `alfred egress install`.")
+        raise RuntimeError("iron-proxy binary not available — run `plushuman egress install`.")
     if not (cfg := config_path or (_proxy_state_dir() / "proxy.yaml")).exists():
-        raise RuntimeError(f"iron-proxy config not found at {cfg}. Run `alfred egress setup` first.")
+        raise RuntimeError(f"iron-proxy config not found at {cfg}. Run `plushuman egress setup` first.")
     # Minimal env: os.environ.copy() would expose every operator secret via /proc/<pid>/environ.
     env = _build_proxy_subprocess_env(extra_env=extra_env, refresh_from_bitwarden=refresh_secrets_from_bitwarden, bitwarden_config=bitwarden_config)
     # v0.39 validates api_key_env is non-empty when management.listen is set.
@@ -670,7 +670,7 @@ def start_proxy(
     env[_HERMES_IRON_PROXY_NONCE_ENV] = _proxy_nonce
     log_path = _proxy_state_dir() / "iron-proxy.log"
     proc = _spawn_daemon(bin_path, cfg, env, log_path)
-    # Pidfile BEFORE the listening poll so `alfred egress stop` can clean an orphan if the parent dies mid-poll.
+    # Pidfile BEFORE the listening poll so `plushuman egress stop` can clean an orphan if the parent dies mid-poll.
     pidfile = _pidfile()
     try:
         _write_pidfile_safely(pidfile, proc.pid)
@@ -765,7 +765,7 @@ def _write_pidfile_safely(pidfile: Path, pid: int) -> None:
     except FileExistsError:
         if (existing_pid := _read_pid()) and _pid_alive(existing_pid):
             raise RuntimeError(
-                f"Another iron-proxy start appears to be in progress (pidfile {pidfile} -> pid {existing_pid}).  Run `alfred egress stop` if that proxy is stuck."
+                f"Another iron-proxy start appears to be in progress (pidfile {pidfile} -> pid {existing_pid}).  Run `plushuman egress stop` if that proxy is stuck."
             )
         pidfile.unlink(missing_ok=True)
         fd = os.open(str(pidfile), open_flags, 0o600)
@@ -865,12 +865,12 @@ def _refresh_secrets_from_bitwarden(env: dict[str, str], needed: set, bitwarden_
         _bitwarden_shortfall(
             allow_env_fallback,
             f"Bitwarden refresh did not return secrets for {missing}.  Either add the secrets to your BWS project, switch to "
-            f"credential_source: env via `alfred egress setup --no-bitwarden`, or set `proxy.allow_env_fallback: true` in "
+            f"credential_source: env via `plushuman egress setup --no-bitwarden`, or set `proxy.allow_env_fallback: true` in "
             f"config.yaml to opt into the legacy host-env fallback.",
             "Bitwarden refresh did not return secrets for %s — falling back to host env for those names (allow_env_fallback=true).", missing,
         )
     if warnings:  # log only the count: the taint analyzer can't tell bws status text is non-secret
-        logger.warning("Bitwarden refresh produced %d warning(s); run `alfred secrets bitwarden status` for detail.", len(warnings))
+        logger.warning("Bitwarden refresh produced %d warning(s); run `plushuman secrets bitwarden status` for detail.", len(warnings))
 
 
 def _forget_daemon() -> None:

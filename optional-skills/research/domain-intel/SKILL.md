@@ -2,7 +2,7 @@
 name: domain-intel
 description: Passive recon of subdomains, SSL certs, WHOIS, and DNS.
 version: 1.0.0
-author: FurkanL0, Alfred
+author: FurkanL0, +Human
 license: MIT
 platforms: [linux, macos, windows]
 metadata:

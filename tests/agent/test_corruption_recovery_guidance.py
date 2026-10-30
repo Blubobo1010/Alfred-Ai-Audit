@@ -12,7 +12,7 @@ The fix adds:
 2. _send_session_db_warning_notifications() — broadcasts a recovery-guidance
    message to all home channels after the gateway connects
 3. Improved "corrupt" cause wording in _format_turn_completion_explanation
-   with the full recovery path (alfred doctor, sqlite3 .recover, backups)
+   with the full recovery path (plushuman doctor, sqlite3 .recover, backups)
 """
 
 
@@ -79,7 +79,7 @@ def test_format_turn_completion_corrupt_never_names_the_live_db():
     when pointed at a live state.db, splitting the store into two
     generations whose acknowledged writes vanish. The guidance that ships
     in the corruption banner must be the snapshot-copying
-    `alfred sessions recover` lane.
+    `plushuman sessions recover` lane.
     """
     from run_agent import AIAgent
 
@@ -89,7 +89,7 @@ def test_format_turn_completion_corrupt_never_names_the_live_db():
     assert "sessions recover" in explanation
     assert 'sqlite3 ~/.hermes/state.db ".recover"' not in explanation
     # The replacement guidance names the safe command.
-    assert "alfred sessions recover --source" in explanation
+    assert "plushuman sessions recover --source" in explanation
 
 
 
@@ -99,7 +99,7 @@ def test_format_turn_completion_corrupt_never_names_the_live_db():
 def test_corrupt_guidance_pins_the_failing_profile(tmp_path, monkeypatch):
     """#105887: every `hermes ...` command in the recovery guidance (turn explainer, gateway
     home-channel notice, exhausted-repair diagnostic) carries the active profile selector and
-    names that profile's state.db. A bare `alfred` follows the sticky ``active_profile`` file,
+    names that profile's state.db. A bare `plushuman` follows the sticky ``active_profile`` file,
     so with another profile active the operator would repair the wrong database."""
     import asyncio
 
@@ -116,8 +116,8 @@ def test_corrupt_guidance_pins_the_failing_profile(tmp_path, monkeypatch):
     monkeypatch.setenv("HERMES_HOME", str(home))
 
     explanation = AIAgent._format_turn_completion_explanation("session_persistence_failed", "corrupt")
-    commands = [line.strip() for line in explanation.splitlines() if "alfred " in line]
-    assert commands and all("alfred -p research " in line for line in commands), commands
+    commands = [line.strip() for line in explanation.splitlines() if "plushuman " in line]
+    assert commands and all("plushuman -p research " in line for line in commands), commands
     # The conftest pins hermes_state.DEFAULT_DB_PATH, so the store named is whatever the
     # process resolves — the contract is "the same path the runtime would open".
     assert f"--source {_default_db_path()} " in explanation
@@ -132,9 +132,9 @@ def test_corrupt_guidance_pins_the_failing_profile(tmp_path, monkeypatch):
 
     monkeypatch.setattr(runner, "_send_home_channel_message", _capture_send)
     asyncio.run(runner._send_session_db_warning_notifications())
-    notice_commands = [line.strip() for line in sent[0].splitlines() if "alfred " in line]
-    assert notice_commands and all("alfred -p research " in line for line in notice_commands), notice_commands
+    notice_commands = [line.strip() for line in sent[0].splitlines() if "plushuman " in line]
+    assert notice_commands and all("plushuman -p research " in line for line in notice_commands), notice_commands
     assert f"--source {_default_db_path()} " in sent[0]
 
     exhausted = _persistent_repair_exhausted_error(home / "state.db")
-    assert "`alfred -p research sessions recover --source" in exhausted
+    assert "`plushuman -p research sessions recover --source" in exhausted

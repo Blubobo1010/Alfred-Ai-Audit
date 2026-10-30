@@ -101,7 +101,7 @@ export function getMemoryProviderOAuthStatus(
 }
 
 // ---------------------------------------------------------------------------
-// Memory data + curator (parity with `alfred memory` / `alfred curator`).
+// Memory data + curator (parity with `plushuman memory` / `plushuman curator`).
 // ---------------------------------------------------------------------------
 
 export function getMemoryStatus(): Promise<MemoryStatusResponse> {
@@ -278,8 +278,8 @@ export function getGhAuthStatus(refresh = false): Promise<{ available: boolean; 
 }
 
 // ---------------------------------------------------------------------------
-// Maintenance operations (parity with `alfred doctor` / `alfred security
-// audit` / `alfred backup` / `alfred debug share` and the dashboard System
+// Maintenance operations (parity with `plushuman doctor` / `plushuman security
+// audit` / `plushuman backup` / `plushuman debug share` and the dashboard System
 // page). All except debug share are spawn-based background actions tailed via
 // getActionStatus().
 //

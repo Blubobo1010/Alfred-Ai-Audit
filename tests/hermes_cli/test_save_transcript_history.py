@@ -136,7 +136,7 @@ def test_save_json_restores_compacted_history_as_archived(tmp_path, monkeypatch,
         assert [m["id"] for m in snapshot["messages"]] == kept  # every kept row, not the deduped display read
         assert sum(snapshot["timings"]["role_counts"].values()) == len(kept)  # timings name no undone row
         assert {i[k] for i in snapshot["timings"]["intervals"] for k in ("from_message_id", "to_message_id")} <= set(kept)
-        # Like `alfred sessions export`, the in-memory backup is capped per session (the session profile's
+        # Like `plushuman sessions export`, the in-memory backup is capped per session (the session profile's
         # sessions.max_export_messages).
         (tmp_path / "config.yaml").write_text("sessions:\n  max_export_messages: 5\n", encoding="utf-8")
         assert "max_export_messages" in save(db, "json", tmp_path / "capped.json")

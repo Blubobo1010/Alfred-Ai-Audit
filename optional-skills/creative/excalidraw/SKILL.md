@@ -2,7 +2,7 @@
 name: excalidraw
 description: "Hand-drawn Excalidraw JSON diagrams (arch, flow, seq)."
 version: 1.0.1
-author: Alfred
+author: +Human
 license: MIT
 dependencies: []
 platforms: [linux, macos, windows]

@@ -74,10 +74,10 @@ self.play(Restore(circle))
 
 ```python
 # WRONG
-Text("ALFRED", letter_spacing=6)
+Text("PLUSHUMAN", letter_spacing=6)
 
 # RIGHT: use MarkupText with Pango attributes for spacing control
-MarkupText('<span letter_spacing="6000">ALFRED</span>', font_size=18)
+MarkupText('<span letter_spacing="6000">PLUSHUMAN</span>', font_size=18)
 # Note: Pango letter_spacing is in 1/1024 of a point
 ```
 

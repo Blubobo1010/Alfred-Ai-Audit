@@ -136,7 +136,7 @@ def begin(kind: str) -> contextvars.Token:
     outer receipt survives the inner finalize.
 
     The receipt is stamped with the ambient update correlation id (the
-    ``alfred update`` this sync belongs to), or None for a standalone
+    ``plushuman update`` this sync belongs to), or None for a standalone
     sync — the id is what makes the updater's embed selective."""
     return _current.set(
         {

@@ -148,4 +148,4 @@ def test_down_and_stale_both_escalate_with_remediation(capsys):
     out = capsys.readouterr().out
     assert "STALE" in out
     assert "DOWN" in out
-    assert "alfred gateway restart" in out
+    assert "plushuman gateway restart" in out

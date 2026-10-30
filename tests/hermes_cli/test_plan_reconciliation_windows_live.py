@@ -1,6 +1,6 @@
 """LIVE Windows E2E for plan-reconciliation (#92902) on windows-latest.
 
-Real processes with real Alfred-shaped argv, real inventory collection
+Real processes with real +Human-shaped argv, real inventory collection
 (PID-file discovery + supervisor detection on REAL Windows), real
 reconciliation. No mocks on the components under test.
 
@@ -56,7 +56,7 @@ def test_plan_reconciliation_live_windows(tmp_path, monkeypatch):
     # which requires a live `gateway run` command line (#109680), so the
     # stand-in wears one; a bare sleeper is recorded too and must NOT count.
     child = subprocess.Popen(
-        [sys.executable, sleeper_script_path(), "alfred", "gateway", "run"],
+        [sys.executable, sleeper_script_path(), "plushuman", "gateway", "run"],
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
     )
     foreign = subprocess.Popen(

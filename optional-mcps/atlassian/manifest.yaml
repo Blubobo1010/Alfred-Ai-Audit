@@ -8,9 +8,9 @@ description: >-
   Jira issues and Confluence pages via Atlassian's hosted remote MCP.
 source: https://support.atlassian.com/rovo/docs/getting-started-with-the-atlassian-remote-mcp-server/
 
-# Official vendor-hosted remote MCP (URL-only — Alfred never spawns a local
+# Official vendor-hosted remote MCP (URL-only — +Human never spawns a local
 # process for this entry). Native OAuth 2.1 + Dynamic Client Registration;
-# Alfred's MCP client + mcp_oauth_manager handle discovery, PKCE, token
+# +Human's MCP client + mcp_oauth_manager handle discovery, PKCE, token
 # exchange, and refresh.
 transport:
   type: http
@@ -36,6 +36,6 @@ suggest:
     - jira.com
 
 post_install: |
-  On first connection Alfred opens a browser to authorize with
-  Atlassian (or run `alfred mcp login atlassian`). Approve access,
+  On first connection +Human opens a browser to authorize with
+  Atlassian (or run `plushuman mcp login atlassian`). Approve access,
   then restart the session so tools load.

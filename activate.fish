@@ -1,10 +1,10 @@
-# venv-style activation of the Alfred dev environment for fish.
+# venv-style activation of the +Human dev environment for fish.
 #
 #   source ./activate.fish
 #
 # The fish counterpart of ./activate: applies the composed pm env to the
 # CURRENT shell, with save/restore (`deactivate` undoes exactly what activation
-# changed), makes `alfred` a function for this checkout, and prefixes the prompt
+# changed), makes `plushuman` a function for this checkout, and prefixes the prompt
 # with the worktree name. Scripts and other processes run under
 # `scripts/run-in-hermes-env` instead.
 #
@@ -50,7 +50,7 @@ for name in $__hermes_keys
 end
 string join \n -- $composed | source
 
-# This checkout, not whichever `alfred` PATH finds. A function beats PATH.
+# This checkout, not whichever `plushuman` PATH finds. A function beats PATH.
 set -g __hermes_worktree $repo
 # The branch names the worktree. A checkout cannot share a branch with another.
 set -g __hermes_worktree_name (git -C $repo rev-parse --abbrev-ref HEAD 2>/dev/null)
@@ -64,7 +64,7 @@ function __hermes_worktree_here
     test (path resolve $top) = (path resolve $__hermes_worktree)
 end
 
-function alfred --description 'hermes of the activated checkout'
+function plushuman --description 'hermes of the activated checkout'
     if not __hermes_worktree_here
         echo "hermes: $PWD is outside $__hermes_worktree; refusing (the installed command is hidden while this checkout is active)" >&2
         return 1

@@ -31,7 +31,7 @@ def _exec_py(image: str, py: str) -> str:
     # dashboard PTY child runs as — not root.
     cmd = [
         "docker", "run", "--rm", "--network=none", "--entrypoint", "su", image,
-        "alfred", "-s", "/bin/bash", "-c", inner,
+        "plushuman", "-s", "/bin/bash", "-c", inner,
     ]
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=120, check=False)
     assert r.returncode == 0, f"in-container python failed:\n{r.stderr[-2000:]}"

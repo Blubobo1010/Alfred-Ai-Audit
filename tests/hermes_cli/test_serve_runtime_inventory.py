@@ -1,6 +1,6 @@
 """Serve-kind runtime inventory (#63206, campaign #91277).
 
-A network-bound `alfred serve --host <ip>` powering a remote Desktop used to
+A network-bound `plushuman serve --host <ip>` powering a remote Desktop used to
 be invisible to the update pipeline. The spawn ledger's structured launch
 identity (host/port/profile, registered at serve startup) now feeds the
 update inventory and the dashboard process scan.
@@ -25,7 +25,7 @@ def _ledger_entry(**over):
         "spawner_pid": None,
         "spawner_create": None,
         "registered_at": 222.0,
-        "argv": "alfred serve --host 100.94.65.93 --port 9119",
+        "argv": "plushuman serve --host 100.94.65.93 --port 9119",
         "host": "100.94.65.93",
         "port": 9119,
         "profile": "",
@@ -111,7 +111,7 @@ def test_inventory_classifies_desktop_owned_serve(monkeypatch):
     assert serves[0].restart_via == "desktop"
 
 
-_SSH_ARGV = ("alfred serve --isolated --host 127.0.0.1 --port 0 "
+_SSH_ARGV = ("plushuman serve --isolated --host 127.0.0.1 --port 0 "
              "--ssh-session-token-file /h/.hermes/desktop-ssh/a/b.token --ssh-owner-nonce 0123456789abcdef")
 
 
@@ -135,8 +135,8 @@ def test_inventory_classifies_remote_desktop_ssh_serve_as_its_clients(monkeypatc
 
 def test_hand_started_isolated_serve_stays_manual(monkeypatch):
     """``--isolated`` alone is an opt-out of the host singleton, not remote ownership: a user's own
-    ``alfred serve --isolated`` keeps its manual-serve relaunch."""
-    entry = _ledger_entry(argv="alfred serve --isolated --host 127.0.0.1 --port 9119", isolated=True)
+    ``plushuman serve --isolated`` keeps its manual-serve relaunch."""
+    entry = _ledger_entry(argv="plushuman serve --isolated --host 127.0.0.1 --port 9119", isolated=True)
     fake_pi = SimpleNamespace(ledger_entries=lambda **k: [entry], spawner_is_dead=lambda e: None)
     monkeypatch.setitem(sys.modules, "hermes_cli.process_identity", fake_pi)
     row = next(r for r in update_inventory.collect_runtime_inventory().runtimes if r.kind == "serve")
@@ -169,13 +169,13 @@ def test_stale_remote_desktop_ssh_serve_is_deferred_to_its_client_not_unaccounte
 # ---------------------------------------------------------------------------
 
 def test_scan_dashboard_processes_includes_ledger_only_serves(monkeypatch):
-    """A profiled serve (`alfred --profile p serve ...`) matches no scan
+    """A profiled serve (`plushuman --profile p serve ...`) matches no scan
     pattern; the ledger row must still surface it."""
     import hermes_cli.dashboard_procs as dp
 
     profiled = _ledger_entry(
         pid=8123,
-        argv="alfred --profile work serve --host 100.94.65.93 --port 9119",
+        argv="plushuman --profile work serve --host 100.94.65.93 --port 9119",
         profile="work",
     )
     fake_pi = SimpleNamespace(ledger_entries=lambda **k: [profiled])
@@ -233,7 +233,7 @@ def test_inventory_classifies_launchd_job_owned_serve(monkeypatch):
         spawner_is_dead=lambda e: True,  # bootstrap shell provably gone
     )
     jobs = [("gui/501", "ai.hermes.dashboard",
-             ["alfred", "serve", "--host", "100.94.65.93", "--port", "9119"], None)]
+             ["plushuman", "serve", "--host", "100.94.65.93", "--port", "9119"], None)]
     monkeypatch.setitem(sys.modules, "hermes_cli.process_identity", fake_pi)
     with patch.object(main_dashboard, "_loaded_launchd_backend_jobs", return_value=jobs), \
          patch("hermes_cli.dashboard_procs._process_ancestors", return_value=[]):

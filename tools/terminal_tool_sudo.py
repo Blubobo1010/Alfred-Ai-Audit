@@ -93,7 +93,7 @@ _SUDO_HEADLESS_FAILURES = ("sudo: a password is required", "sudo: no tty present
 
 def _handle_sudo_failure(output: str, env_type: str) -> str:
     """Append a SUDO_PASSWORD tip when sudo failed in a headless context
-    (gateway session, delegate_task child or `alfred chat -q`); otherwise return *output* as is."""
+    (gateway session, delegate_task child or `plushuman chat -q`); otherwise return *output* as is."""
     is_gateway = env_var_enabled("HERMES_GATEWAY_SESSION")
     no_user = _no_sudo_user()
     if not (is_gateway or no_user) or not any(f in output for f in _SUDO_HEADLESS_FAILURES):
@@ -440,7 +440,7 @@ def _rewrite_compound_background(command: str) -> str:
 
 
 def _no_sudo_user() -> bool:
-    """A delegated child or a `alfred chat -q` run: nobody can answer a sudo prompt. Single-query only
+    """A delegated child or a `plushuman chat -q` run: nobody can answer a sudo prompt. Single-query only
     (not _no_user_can_answer): cron strips HERMES_INTERACTIVE and unattended platforms register no sudo callback."""
     from tools.approval_context import _is_single_query_approval_context
     return _in_delegated_child_context() or _is_single_query_approval_context()
@@ -478,7 +478,7 @@ def _transform_sudo_command(
     has_configured_password = _configured_password is not None
     sudo_password = _configured_password if has_configured_password else _get_cached_sudo_password()
 
-    # delegate_task children and `alfred chat -q` inherit HERMES_INTERACTIVE=1 and (for -q) the CLI
+    # delegate_task children and `plushuman chat -q` inherit HERMES_INTERACTIVE=1 and (for -q) the CLI
     # panel callback, but have no user on the other side — always headless; configured password and
     # session cache still apply.
     should_prompt_for_sudo = (

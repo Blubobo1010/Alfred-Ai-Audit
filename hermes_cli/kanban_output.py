@@ -1,4 +1,4 @@
-"""Text / ``--json`` output helpers shared by the ``alfred kanban`` CLI modules."""
+"""Text / ``--json`` output helpers shared by the ``plushuman kanban`` CLI modules."""
 
 from __future__ import annotations
 

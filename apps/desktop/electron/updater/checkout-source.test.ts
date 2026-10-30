@@ -117,11 +117,11 @@ function channelRecord(channel: 'stable' | 'canary', sequence: number): FixtureR
     nextSequence: sequence + 1,
     identity: {
       token: 'b'.repeat(16),
-      displayName: channel === 'stable' ? 'Alfred Stable' : 'Alfred Canary',
-      appNamePascal: 'Alfred',
-      artifactNamePascal: 'Alfred',
+      displayName: channel === 'stable' ? '+Human Stable' : '+Human Canary',
+      appNamePascal: 'Hermes',
+      artifactNamePascal: 'Hermes',
       appId: 'chat.nous.hermes',
-      msixAppIdWithOrg: 'NousResearch.Alfred',
+      msixAppIdWithOrg: 'NousResearch.Hermes',
       cliName: 'hermes',
       windowsExecutableName: 'hermes'
     },
@@ -143,11 +143,11 @@ function buildManifest(
 ): FixtureManifest {
   const identity: FixtureIdentity = {
     token: 'b'.repeat(16),
-    displayName: channel === 'stable' ? 'Alfred Stable' : 'Alfred Canary',
-    appNamePascal: 'Alfred',
-    artifactNamePascal: 'Alfred',
+    displayName: channel === 'stable' ? '+Human Stable' : '+Human Canary',
+    appNamePascal: 'Hermes',
+    artifactNamePascal: 'Hermes',
     appId: 'chat.nous.hermes',
-    msixAppIdWithOrg: 'NousResearch.Alfred',
+    msixAppIdWithOrg: 'NousResearch.Hermes',
     cliName: 'hermes',
     windowsExecutableName: 'hermes'
   }
@@ -419,9 +419,9 @@ if not getattr(urllib.request, '_hermes_loopback', False):
         updateAvailable: true
       })
       fs.rmSync(scriptDirectory, { recursive: true, force: true })
-      expect(await strategy.apply()).toMatchObject({ manual: true, command: `alfred update --channel ${channel}` })
+      expect(await strategy.apply()).toMatchObject({ manual: true, command: `plushuman update --channel ${channel}` })
       deps.resolveUpdaterBinary = (): string => path.join(temporary, 'frozen-updater')
-      expect(await strategy.apply()).toMatchObject({ manual: true, command: `alfred update --channel ${channel}` })
+      expect(await strategy.apply()).toMatchObject({ manual: true, command: `plushuman update --channel ${channel}` })
       expect(spawned).toHaveLength(0)
       fs.mkdirSync(scriptDirectory, { recursive: true })
       fs.writeFileSync(script, '')
@@ -473,7 +473,7 @@ if not getattr(urllib.request, '_hermes_loopback', False):
     )
     fs.rmSync(markerPath(home), { force: true })
     fs.rmSync(scriptDirectory, { recursive: true, force: true })
-    expect(await strategy.apply()).toMatchObject({ manual: true, command: 'alfred update --branch feature/gui' })
+    expect(await strategy.apply()).toMatchObject({ manual: true, command: 'plushuman update --branch feature/gui' })
     // main IS the git branch: re-resolving it reads no channel record and makes no
     // GitHub or artifact request, so a WAF that 403s the record can't stop the update.
     expect(requests.slice(count)).toEqual([])

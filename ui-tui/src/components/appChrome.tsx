@@ -32,7 +32,7 @@ export const padVerb = (verb: string) => `${verb}…`.padEnd(VERB_PAD_LEN, ' ')
 
 // Compact alternates for the `emoji` and `ascii` indicator styles.
 // Each entry is a fixed-width (display-width) glyph.
-const EMOJI_FRAMES = ['🎩 ', '🌀', '🤔', '✨', '🍵', '🔮']
+const EMOJI_FRAMES = ['✚ ', '🌀', '🤔', '✨', '🍵', '🔮']
 const ASCII_FRAMES = ['|', '/', '-', '\\']
 
 // Faster tick for spinner-style indicators — they read as motion only
@@ -58,7 +58,7 @@ const renderIndicator = (style: IndicatorStyle, tick: number): IndicatorRender =
 
   if (style === 'emoji') {
     return {
-      frame: EMOJI_FRAMES[tick % EMOJI_FRAMES.length] ?? '🎩 ',
+      frame: EMOJI_FRAMES[tick % EMOJI_FRAMES.length] ?? '✚ ',
       intervalMs: SPINNER_TICK_MS * 6,
       showVerb: true
     }
@@ -474,7 +474,7 @@ function IdleSince({ endedAt }: { endedAt: number }) {
 }
 
 // `wire` is the level the route actually sends (session.info.reasoning_effort_wire):
-// a clamped Alfred step such as `ultra` reads `ultra→max`, like the CLI's
+// a clamped +Human step such as `ultra` reads `ultra→max`, like the CLI's
 // "ultra (sends max on this route)", never as a distinct wire level (#61634).
 const effortLabel = (effort?: string, wire?: string) => {
   const value = String(effort ?? '')

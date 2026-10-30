@@ -133,7 +133,7 @@ class CredentialPoolAdminMixin:
                 and _borrowed_single_use_pool_root() is not None
             )
             if borrowed_ids or profile_borrows:
-                # ``alfred -p <profile> auth add <single-use provider>``: a fresh
+                # ``plushuman -p <profile> auth add <single-use provider>``: a fresh
                 # login inside the profile is the profile's OWN credential, so
                 # it goes to the profile store, never to root. Only that row is
                 # written: the rest of this pool is root's (its rows, or its

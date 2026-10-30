@@ -1,4 +1,4 @@
-"""Once ``alfred update`` has committed the new code, the update never fails (contract C3).
+"""Once ``plushuman update`` has committed the new code, the update never fails (contract C3).
 
 One real HEAD install (``_git_world``: the real ``scripts/install.sh`` over real smart HTTP, every
 command in a ``bwrap`` sandbox) is shared by the cells. Each cell publishes a hostile upstream
@@ -21,15 +21,15 @@ release and breaks something that runs AFTER the checkout moved, for real:
     update runs in the shared namespace; once the slow build started, every process born after the
     update was spawned is SIGSTOPped then SIGKILLed (that is the whole update tree, including a
     completion child in its own session or reparented to the namespace init).
-(d) a sticky profile (``alfred profile use e2epost``) must not move update.log / update receipts off
-    the root hermes home, and ``alfred logs update`` under that profile reads the root's update.log;
+(d) a sticky profile (``plushuman profile use e2epost``) must not move update.log / update receipts off
+    the root hermes home, and ``plushuman logs update`` under that profile reads the root's update.log;
     pm's own sync receipts stay where pm writes them and ``hermes pm status`` there still shows them.
 (e) the dependency sync fails after the tree moved (contract amendment A6): the release's
     ``pm.client.ensure_tools_for_sync`` raises while ``$HOME/.e2e-break-deps-sync`` exists; it runs in
     the completion bootstrap from the NEW tree, after the checkout moved. Exit 0, a ``dependencies``
     follow-up, the tail obligation armed; the next update completes it.
 (f) Ctrl-C after the commit point: SIGINT (what a terminal's Ctrl-C delivers to the foreground
-    ``alfred update``; the completion child runs in its own session) while the slow web build runs.
+    ``plushuman update``; the completion child runs in its own session) while the slow web build runs.
     The user must read that the new code is in place and the rest is owed, never a failure.
 
 What is asserted is what the user sees: the exit code, ``⚠`` lines, the receipt at
@@ -253,7 +253,7 @@ def _publish_web_release(w: G.World, tag: str) -> str:
 
 
 def _publish_gateway_fault_release(w: G.World, tag: str) -> str:
-    """A release whose ``alfred gateway run`` refuses to boot while the toggle exists."""
+    """A release whose ``plushuman gateway run`` refuses to boot while the toggle exists."""
     text = _head_file(w, "hermes_cli/gateway.py")
     if _GATEWAY_MARK not in text:
         m = re.search(r"^def run_gateway\(.*?\):\n    \"\"\".*?\"\"\"\n", text, re.DOTALL | re.MULTILINE)
@@ -295,7 +295,7 @@ def _namespace(w: G.World) -> Iterator[NamespaceHost]:
 
 def _ns_cli(host: NamespaceHost, w: G.World, *args: str, timeout: float = 600):
     cp = host.run([w.sb.hermes, *args], timeout=timeout)
-    w.transcripts.append(f"$ alfred {' '.join(args)} -> rc={cp.returncode}\n{(cp.stdout or '')[-6000:]}\n"
+    w.transcripts.append(f"$ plushuman {' '.join(args)} -> rc={cp.returncode}\n{(cp.stdout or '')[-6000:]}\n"
                          f"{(cp.stderr or '')[-3000:]}")
     return cp
 
@@ -372,7 +372,7 @@ def test_failed_web_build_after_commit_is_a_followup_not_a_failed_update(w):
 
     assert w.head() == target, f"premise: the release never committed, so this is no post-commit cell:\n{diag}"
     assert WEB_FAULT_TEXT in out + log, f"premise: the hostile web build never ran (web UI not seen stale?):\n{diag}"
-    assert cp.returncode == 0, f"the code committed, yet a failed web build failed `alfred update`:\n{diag}"
+    assert cp.returncode == 0, f"the code committed, yet a failed web build failed `plushuman update`:\n{diag}"
     assert _warn_lines(out), f"the failed web build was not surfaced with a ⚠ line:\n{diag}"
     assert rec.get("outcome") == "success", f"receipt outcome is not success after the commit:\n{diag}"
     assert "build" in _followup_steps(rec), f"receipt followups do not name the failed `build` step:\n{diag}"
@@ -419,11 +419,11 @@ def test_gateway_that_cannot_reboot_is_an_owed_restart_not_a_failed_update(w):
             facts = _facts(w, cp, gateway_before=f"pid {ident.get('pid')} sha {before_sha[:12]} (spawned {gw})",
                            identify_after=_identify(w), obligation_after_update=obligation_after_update)
             diag = (facts + w.diag(cp) + "\n--- gateway logs ---\n" + _gateway_logs(w)[-6000:]
-                    + "\n--- sandbox ---\n" + host.ps_text() + "\n--- alfred status ---\n" + G.output(status)[-3000:])
+                    + "\n--- sandbox ---\n" + host.ps_text() + "\n--- plushuman status ---\n" + G.output(status)[-3000:])
 
             assert w.head() == target, f"premise: the release never committed:\n{diag}"
             assert not _serving(w, target), f"premise: a gateway serves the new commit; the restart fault never fired:\n{diag}"
-            assert cp.returncode == 0, f"the code committed, yet a failed gateway restart failed `alfred update`:\n{diag}"
+            assert cp.returncode == 0, f"the code committed, yet a failed gateway restart failed `plushuman update`:\n{diag}"
             assert _warn_lines(out), f"the failed gateway restart was not surfaced with a ⚠ line:\n{diag}"
             assert rec.get("outcome") == "success", f"receipt outcome is not success after the commit:\n{diag}"
             assert "gateway_restart" in _followup_steps(rec), \
@@ -443,7 +443,7 @@ def test_gateway_that_cannot_reboot_is_an_owed_restart_not_a_failed_update(w):
             status = _ns_cli(host, w, "status", timeout=300)
             diag = (_facts(w, cp, identify_after=_identify(w)) + w.diag(cp) + "\n--- gateway logs ---\n"
                     + _gateway_logs(w)[-6000:] + "\n--- sandbox ---\n" + host.ps_text()
-                    + "\n--- alfred status ---\n" + G.output(status)[-3000:])
+                    + "\n--- plushuman status ---\n" + G.output(status)[-3000:])
             assert cp.returncode == 0, f"the retrying update failed:\n{diag}"
             assert served, f"the retry did not relaunch the paused gateway on {target[:12]}:\n{diag}"
             assert OWED_RESTART not in G.output(status), \
@@ -554,10 +554,10 @@ def test_sticky_profile_update_logs_and_receipts_land_in_the_root_home(w):
         assert log1 > log0, f"the root update.log did not grow:\n{diag}"
         assert rec.get("update_id") != prev.get("update_id") and rec.get("outcome") == "success", \
             f"root latest.json is not this run's success:\n{diag}"
-        # The readers follow the writers: `alfred logs update` under the profile shows the root log.
+        # The readers follow the writers: `plushuman logs update` under the profile shows the root log.
         logs_cp = w.sb.cli("logs", "update", "-n", "400", timeout=300)
-        assert logs_cp.returncode == 0 and "alfred update started" in G.output(logs_cp), \
-            f"`alfred logs update` under the sticky profile does not show the root update.log:\n{H.describe(logs_cp)}\n{diag}"
+        assert logs_cp.returncode == 0 and "plushuman update started" in G.output(logs_cp), \
+            f"`plushuman logs update` under the sticky profile does not show the root update.log:\n{H.describe(logs_cp)}\n{diag}"
     finally:
         w.sb.cli("profile", "use", "default", timeout=300)
 
@@ -577,7 +577,7 @@ def test_dependency_sync_failure_after_commit_is_a_followup_not_a_failed_update(
 
     assert w.head() == target, f"premise: the release never committed, so this is no post-commit cell:\n{diag}"
     assert DEPS_FAULT_TEXT in out, f"premise: the hostile dependency sync never ran:\n{diag}"
-    assert cp.returncode == 0, f"the code committed, yet a failed dependency sync failed `alfred update`:\n{diag}"
+    assert cp.returncode == 0, f"the code committed, yet a failed dependency sync failed `plushuman update`:\n{diag}"
     assert any(DEPS_OWED in line for line in _warn_lines(out)), \
         f"no ⚠ line says the dependencies are not installed yet:\n{diag}"
     assert rec.get("outcome") == "success", f"receipt outcome is not success after the commit:\n{diag}"

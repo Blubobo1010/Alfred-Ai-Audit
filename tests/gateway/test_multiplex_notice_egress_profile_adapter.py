@@ -101,7 +101,7 @@ async def test_loop_wakeup_from_secondary_route_fires_through_its_own_bot(monkey
     route = {"platform": "telegram", "chat_id": "42", "chat_type": "dm", "user_id": "42", "profile": "sec"}
     state = SimpleNamespace(awaiting_response=False, next_due_at=0, route=route)
 
-    # `alfred pause`: loop wakeups are internal events that bypass the inbound estop gate, so the
+    # `plushuman pause`: loop wakeups are internal events that bypass the inbound estop gate, so the
     # watcher itself must hold the tick — unclaimed (fire_tick never runs), so it stays due for resume.
     estop.engage(reason="maintenance")
     try:

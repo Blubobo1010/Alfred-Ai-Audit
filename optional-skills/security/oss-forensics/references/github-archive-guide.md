@@ -163,7 +163,7 @@ ORDER BY event_count DESC
 
 ---
 
-## Accessing via Alfred
+## Accessing via +Human
 
 **Option A: BigQuery CLI** (if `gcloud` is installed)
 ```bash

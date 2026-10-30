@@ -38,7 +38,7 @@ DECLINE_DEDUPE_SECONDS = 24 * 3600  # One polite decline per (platform, sender) 
 
 # Default pairing directory override. Deliberately ``None``: an eagerly computed
 # path would freeze the HERMES_HOME/profile context at gateway boot, ignoring later
-# context-local overrides, so the gateway and ``alfred pairing`` CLI wrote different
+# context-local overrides, so the gateway and ``plushuman pairing`` CLI wrote different
 # directories. ``_default_pairing_dir()`` resolves fresh per call; tests patch this.
 PAIRING_DIR = None
 
@@ -48,7 +48,7 @@ PAIRING_DIR = None
 # computing the path eagerly freezes it to whatever HERMES_HOME/profile context existed at that exact import
 # moment for the rest of the process's lifetime -- even if a context-local override (see
 # hermes_constants.set_hermes_home_override) is established afterward. A freshly-started, short-lived
-# process (e.g. the ``alfred pairing`` CLI) re-imports this module later with the final environment already
+# process (e.g. the ``plushuman pairing`` CLI) re-imports this module later with the final environment already
 # in place, so it never observes the stale value -- the resulting asymmetry is what made pending pairing
 # codes issued by the gateway unrecoverable while CLI-side writes to the same directory kept working
 # (Blubobo1010/Alfred-Ai-Audit#93449). ``_default_pairing_dir()`` below resolves this fresh on every call in
@@ -264,7 +264,7 @@ def _load_json_file(path: Path) -> dict:
     except PermissionError as e:
         try:
             # Surface this loudly: a 0600 file owned by a different user (classic Docker symptom: `docker
-            # exec` runs as root and writes the file, then the gateway process — running as `alfred` after
+            # exec` runs as root and writes the file, then the gateway process — running as `plushuman` after
             # gosu drop — can't read it) would otherwise be swallowed by the generic OSError branch below,
             # silently leaving the user marked unauthorized. See issue #10270.
             st = path.stat()
@@ -274,8 +274,8 @@ def _load_json_file(path: Path) -> dict:
         euid = os.geteuid() if hasattr(os, "geteuid") else "n/a"  # no geteuid on Windows
         logger.warning(
             "Pairing file %s exists but is not readable as uid=%s (%s; %s). "
-            "If you ran `docker exec <container> alfred pairing approve ...` as root, "
-            "re-run with `docker exec -u alfred <container> ...` and "
+            "If you ran `docker exec <container> plushuman pairing approve ...` as root, "
+            "re-run with `docker exec -u plushuman <container> ...` and "
             "chown the existing file to the hermes user, or restart the "
             "container so the entrypoint can fix ownership.",
             path, euid, owner_info, e,
@@ -327,7 +327,7 @@ class PairingStore:
 
     Files per platform: ``{platform}-pending.json``, ``{platform}-approved.json``, plus
     shared ``_rate_limits.json``. With ``profile="<name>"`` storage resolves from that
-    profile's HERMES_HOME exactly as ``alfred -p <name> pairing ...`` does, so multiplex
+    profile's HERMES_HOME exactly as ``plushuman -p <name> pairing ...`` does, so multiplex
     gateways and profile-scoped CLI approvals share one whitelist.
     """
 

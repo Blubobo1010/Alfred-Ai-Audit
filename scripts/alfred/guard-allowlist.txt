@@ -33,3 +33,12 @@ line:(consent_charge|auto_reload_consent):
 line:billing\.(autoReload|confirm)\.authorization:
 line:^\s*authorization: '
 line:authorize Nous Research to charge
+
+# G1b (earlier brand "Alfred", see brand.toml legacy_*): identities installed systems keep, never product text.
+# `legacy:` = span exempt from the legacy-brand grep, `legacy-line:` = whole line exempt.
+legacy:Alfred-Ai-Audit
+legacy:Alfred-Vault
+legacy:Alfred\.app
+legacy:Logs/Alfred\b
+legacy:Application Support/Alfred\b
+legacy-line:^\s*(//|#)

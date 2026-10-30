@@ -1,4 +1,4 @@
-# Alfred CI (overlay from alfred-build). Runs on every generated commit: no secrets needed.
+# +Human CI (overlay from alfred-build). Runs on every generated commit: no secrets needed.
 name: alfred-ci
 
 on:
@@ -87,6 +87,10 @@ jobs:
             tests/gateway/test_relay*.py
             tests/scripts/install/*.py
             tests/compat/*.py
+            tests/hermes_cli/test_assistant_name.py
+            tests/hermes_cli/test_soul_upgrade_plushuman.py
+            tests/hermes_cli/test_plushuman_plugins.py
+            tests/hermes_cli/test_uninstall_leftovers.py
           )
           scripts/run_tests.sh "${files[@]}" -q
 
@@ -122,7 +126,9 @@ jobs:
             const id = require("./apps/desktop/product-identity.cjs")
             const cfg = require("./apps/desktop/electron-builder.config.cjs")
             if (!id.appId.endsWith(".alfred-bundled")) throw new Error("appId " + id.appId)
-            if (id.cliName !== "alfred") throw new Error("cliName " + id.cliName)
+            if (id.cliName !== "plushuman") throw new Error("cliName " + id.cliName)
+            if (id.displayName !== "+Human") throw new Error("displayName " + id.displayName)
+            if (id.artifactNamePascal !== "AlfredBundled") throw new Error("artifact " + id.artifactNamePascal)
             if (!cfg.mac.publish || cfg.mac.publish[0].provider !== "github") throw new Error("mac.publish " + JSON.stringify(cfg.mac.publish))
             console.log("ok", id.appId, id.displayName, cfg.mac.publish[0])
           '

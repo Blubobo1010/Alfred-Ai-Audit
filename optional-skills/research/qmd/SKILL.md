@@ -2,7 +2,7 @@
 name: qmd
 description: Hybrid local search over notes, docs, and transcripts.
 version: 1.0.0
-author: Alfred + Teknium
+author: +Human + Teknium
 license: MIT
 platforms: [macos, linux]
 metadata:
@@ -220,7 +220,7 @@ qmd multi-get "journals/*.md" --json  # Batch retrieve by glob
 ## MCP Integration (Recommended)
 
 qmd exposes an MCP server that provides search tools directly to
-Alfred via the native MCP client. This is the preferred
++Human via the native MCP client. This is the preferred
 integration — once configured, the agent gets qmd tools automatically
 without needing to load this skill.
 
@@ -254,7 +254,7 @@ qmd mcp --http --daemon
 # Runs on http://localhost:8181 by default
 ```
 
-Then configure Alfred to connect via HTTP:
+Then configure +Human to connect via HTTP:
 
 ```yaml
 mcp_servers:

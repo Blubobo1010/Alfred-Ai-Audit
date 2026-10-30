@@ -7,14 +7,14 @@ import pytest
 
 
 # ---------------------------------------------------------------------------
-# Helpers — set up a fake Alfred root with two profiles, monkeypatch the
+# Helpers — set up a fake +Human root with two profiles, monkeypatch the
 # resolver helpers so the classifier sees the test layout.
 # ---------------------------------------------------------------------------
 
 
 @pytest.fixture
 def fake_hermes(tmp_path, monkeypatch):
-    """Build a fake Alfred layout:
+    """Build a fake +Human layout:
 
         <tmp>/
           skills/foo/SKILL.md           # default profile

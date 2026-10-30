@@ -1,4 +1,4 @@
-"""``alfred completion`` subcommand parser."""
+"""``plushuman completion`` subcommand parser."""
 
 from __future__ import annotations
 

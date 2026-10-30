@@ -1,4 +1,4 @@
-"""Tests for the `alfred proxy` subcommand and its upstream adapters."""
+"""Tests for the `plushuman proxy` subcommand and its upstream adapters."""
 
 from __future__ import annotations
 

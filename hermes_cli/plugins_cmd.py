@@ -1,4 +1,4 @@
-"""``alfred plugins`` CLI subcommand — install, update, remove, and list plugins.
+"""``plushuman plugins`` CLI subcommand — install, update, remove, and list plugins.
 
 Facade: shared primitives (errors, console/config helpers, manifest reading, discovery, enable/disable
 selection) and the dispatch table live here; each verb family lives in a ``plugins_cmd_<topic>.py``
@@ -441,7 +441,7 @@ def _clone_failure_message(git_url: str, git_error: str) -> str:
     not parsed as markup."""
     from rich.markup import escape
     return (f"Could not download the plugin from {git_url}. Check the address (browse the catalog "
-            "with `alfred plugins search`), check your internet connection, or, if the repository "
+            "with `plushuman plugins search`), check your internet connection, or, if the repository "
             "is private, sign in first with `gh auth login` (or set GITHUB_TOKEN in your .env).\n"
             f"Details: {escape(git_error.strip())}")
 
@@ -463,9 +463,9 @@ def _unknown_plugin_message(name: str, *, downloaded_only: bool = False) -> str:
     """``No plugin named ...`` with the exact-name rule and the two commands that resolve it."""
     scope = (" This command only works on downloaded plugins; bundled ones can only be enabled or disabled."
              if downloaded_only else " Bundled plugins can only be enabled or disabled.")
-    return (f"[red]No plugin named '{name}'.[/red] Run `alfred plugins list` to see the exact names "
+    return (f"[red]No plugin named '{name}'.[/red] Run `plushuman plugins list` to see the exact names "
             f"(nested plugins use their full key, e.g. web/firecrawl).{scope} "
-            "To add one: `alfred plugins install <owner/repo>`.")
+            "To add one: `plushuman plugins install <owner/repo>`.")
 
 
 # ``plugins.disabled`` is an explicit deny-list that wins over the ``plugins.enabled`` allow-list.
@@ -528,7 +528,7 @@ _BASIC_AUTH_PLUGIN_KEYS = frozenset({"basic", "dashboard_auth/basic"})
 def ensure_basic_auth_plugin_enabled_in_config(cfg: dict) -> bool:
     """Drop the bundled basic dashboard-auth plugin from ``plugins.disabled`` in *cfg*.
 
-    ``alfred setup`` / ``alfred plugins disable basic`` can park it there while
+    ``plushuman setup`` / ``plushuman plugins disable basic`` can park it there while
     ``dashboard.basic_auth`` is configured, and password auth then silently fails.
     Returns True when modified.
     """
@@ -604,7 +604,7 @@ def _forget_plugin_config(aliases: set) -> dict[str, Any]:
     return result
 
 
-# One lock per Alfred home. The Desktop install card enables several plugins at once, each on its own
+# One lock per +Human home. The Desktop install card enables several plugins at once, each on its own
 # thread; without it every thread read the same config version and all but the first commit were
 # refused as stale. The version check in PM stays: it still catches an edit from another process.
 _SELECTION_LOCKS: dict[str, threading.Lock] = {}
@@ -700,7 +700,7 @@ def cmd_enable(name: str, allow_tool_override: Optional[bool] = None) -> None:
         if plugin in LEGACY_RELAY_PLUGIN_KEYS:
             _fail(console, (
                 f"[red]Plugin '{plugin}' was removed.[/red] Relay lifecycle is owned "
-                "by Alfred core; configure a standard user or system Relay plugins.toml, or use "
+                "by +Human core; configure a standard user or system Relay plugins.toml, or use "
                 f"{RELAY_PLUGINS_CONFIG_ENV} for an explicit user-file override."))
 
     _refuse_legacy_relay(name)
@@ -972,7 +972,7 @@ def _toggle_plugin_toolset(name: str, *, enable: bool, toolset_key: Optional[str
     platform_toolsets = _child_dict(config, "platform_toolsets")
     changed = False
     for platform, raw in list(platform_toolsets.items()):
-        # A list-literal string (older `alfred config set`) is the user's real selection; toggling
+        # A list-literal string (older `plushuman config set`) is the user's real selection; toggling
         # it re-saves the entry as a proper list so the string never persists.
         ts_list = parse_platform_toolsets_value(raw)
         if ts_list is not None and enable != (toolset_key in ts_list):
@@ -1100,7 +1100,7 @@ _PLUGIN_ACTIONS = {
 
 
 def plugins_command(args) -> None:
-    """Dispatch alfred plugins subcommands."""
+    """Dispatch plushuman plugins subcommands."""
     action = getattr(args, "plugins_action", None)
     handler = _PLUGIN_ACTIONS.get(action)
     if handler is None:

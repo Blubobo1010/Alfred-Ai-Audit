@@ -135,7 +135,7 @@ class TestDiscoverAllPlugins:
     def test_bundled_model_providers_skipped(self, mock_user_dir, mock_bundled_dir, tmp_path):
         """``plugins/model-providers/`` has its own provider registry loader.
 
-        Bundled providers should not appear in ``alfred plugins list`` as
+        Bundled providers should not appear in ``plushuman plugins list`` as
         general opt-in plugins, or users get a misleading enable/disable
         surface for providers selected via ``model.provider`` / ``--provider``.
         Same rationale as the existing bundled memory/context_engine skip.
@@ -175,7 +175,7 @@ class TestDiscoverAllPlugins:
     ):
         """The model-providers skip only applies to *bundled* — a user plugin
         at ``~/.hermes/plugins/model-providers/<x>/`` is still discovered so
-        ``alfred plugins list`` shows what the user installed."""
+        ``plushuman plugins list`` shows what the user installed."""
         from hermes_cli.plugins_cmd import _discover_all_plugins
 
         bundled = tmp_path / "bundled"

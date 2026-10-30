@@ -100,8 +100,8 @@ _PY_SKIP = ("docs/", "website/") + _FRONTEND
 # Python lane — otherwise dropping a redirect URI goes green here and breaks
 # every CIMD login on main.
 # website/docs/ and website/scripts/ are asserted about the same way. The docs
-# tree generates llms.txt — the index every LLM (Alfred included, via the
-# hermes-agent skill) reads to learn what Alfred can do — and
+# tree generates llms.txt — the index every LLM (+Human included, via the
+# hermes-agent skill) reads to learn what +Human can do — and
 # tests/website/test_generate_llms_txt.py holds every page to appearing in it.
 # Skipping Python on a docs-only PR is how the index drifted to 53% coverage.
 _PY_RELEVANT_SITE = (
@@ -233,7 +233,7 @@ _DESKTOP_E2E_SHARED = (
 # The Tauri updater (update.rs, its marker claim marker.rs, the paths.rs both resolve) is
 # compiled and tested by ``cargo test`` alone (the ``rust`` lane, via ``.rs``): no slow lane
 # builds the bootstrap installer, so none of the three starts one.
-# What `alfred update` runs outside the update_* module family: the steps of the
+# What `plushuman update` runs outside the update_* module family: the steps of the
 # pipeline (entry, lock, early recovery, completion tail, launchers, fleet
 # restart/verify, Windows pause/resume) and the lock / marker / recovery state
 # the update_* modules import. Editing any of these changes what a real update
@@ -275,10 +275,10 @@ _UPDATE_PIPELINE = (
     "gateway/host_rendezvous.py",
     "gateway/shutdown_forensics.py",
     "gateway/restart.py",
-    "scripts/desktop-update/",  # the hand-off scripts run `alfred update`
+    "scripts/desktop-update/",  # the hand-off scripts run `plushuman update`
 )
 # Selectors are owned by the import graph, not remembered. The update
-# transaction's own modules (what `alfred update` and the launch-time completion
+# transaction's own modules (what `plushuman update` and the launch-time completion
 # run between the lock and the receipt) are the entry points;
 # tests/ci/test_update_ci_routing.py reads every repo module they import (AST,
 # module level and lazy) and every build script they run, and fails until each
@@ -298,7 +298,7 @@ _UPDATE_ENTRY_POINTS = (
     "hermes_cli/subcommands/update",
 )
 # The entry points that build or verify the Desktop app inside an update
-# (`alfred desktop --build-only`, the source build/completion that feeds it).
+# (`plushuman desktop --build-only`, the source build/completion that feeds it).
 _DESKTOP_BUILD_ENTRY_POINTS = (
     "hermes_cli/source_build.py",
     "hermes_cli/source_completion.py",
@@ -457,7 +457,7 @@ _E2E_LANES: dict[str, tuple[str, ...]] = {
         *_DESKTOP_BUILD_ENTRY_POINTS,
         *_UPDATE_DEPENDENCIES,
         # Pipeline modules the Desktop build entry points import directly.
-        "hermes_cli/main.py",  # `alfred desktop --build-only`
+        "hermes_cli/main.py",  # `plushuman desktop --build-only`
         "hermes_cli/venv_sync.py",
         "hermes_cli/source_stamp.py",
         # Imported by the Desktop build's scripts (scripts/build/desktop.mjs closure).
@@ -523,7 +523,7 @@ def _py_irrelevant(p: str) -> bool:
 def _py_test_only(p: str) -> bool:
     """Is ``p`` inside the test suite (never shipped / imported by the product)?
 
-    Product jobs (Desktop E2E's ``alfred serve`` backend, the Docker image)
+    Product jobs (Desktop E2E's ``plushuman serve`` backend, the Docker image)
     run installed code — nothing under ``tests/`` is packaged or importable
     there. scripts/run_tests.sh and scripts/run_tests_parallel.py are deliberately
     NOT test-only: they are runner infrastructure, and a bad edit there can

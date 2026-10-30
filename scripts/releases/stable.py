@@ -847,7 +847,7 @@ def ensure_final_tag(tag: str, commit: str, claim: dict, *, candidate_manifest_s
         except subprocess.CalledProcessError:
             message = json.dumps(expected, sort_keys=True, separators=(",", ":"))
             run([
-                "git", "-c", "user.name=Alfred Release Automation",
+                "git", "-c", "user.name=+Human Release Automation",
                 "-c", "user.email=release-bot@users.noreply.github.com",
                 "tag", "-a", tag, commit, "-m", message,
             ])

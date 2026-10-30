@@ -93,7 +93,7 @@ export function createKickoffMachine(): KickoffMachine {
     }
 
     exitFailure = new KickoffFailure(
-      `The Alfred backend stopped before the welcome chat opened (code ${code ?? 'none'}, signal ${signal ?? 'none'}).`
+      `The +Human backend stopped before the welcome chat opened (code ${code ?? 'none'}, signal ${signal ?? 'none'}).`
     )
 
     for (const reject of exitWaiters) {

@@ -74,5 +74,5 @@ def test_restart_spec_normalizes_legacy_pythonw_argv(tmp_path):
     assert env["VIRTUAL_ENV"] == str(tmp_path / "venv")
 
 # ---------------------------------------------------------------------------
-# _refresh_windows_gateway_launchers: alfred update regenerates launchers
+# _refresh_windows_gateway_launchers: plushuman update regenerates launchers
 # ---------------------------------------------------------------------------

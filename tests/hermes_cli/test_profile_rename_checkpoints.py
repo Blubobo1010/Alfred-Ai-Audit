@@ -15,7 +15,7 @@ from tools import checkpoint_maintenance as maintenance
 
 @pytest.fixture()
 def profile_env(tmp_path, monkeypatch):
-    """Isolate profile paths and the process-level Alfred root."""
+    """Isolate profile paths and the process-level +Human root."""
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     default_home = tmp_path / ".hermes"
     default_home.mkdir(exist_ok=True)

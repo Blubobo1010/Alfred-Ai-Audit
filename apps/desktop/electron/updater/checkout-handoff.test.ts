@@ -169,7 +169,7 @@ it('a failed hand-off spawn keeps the app alive and reports the failure in plain
       await createCheckoutStrategy(deps).apply()
 
     expect(result).toMatchObject({ ok: false, error: 'updater-spawn-failed' })
-    expect(result.message).toMatch(/Alfred keeps running/)
+    expect(result.message).toMatch(/\+Human keeps running/)
     expect(result.message).toMatch(/Details: .*ENOENT/)
     expect(result.message?.indexOf('Details:')).toBeGreaterThan(0)
     expect(deps.quit).not.toHaveBeenCalled()
@@ -372,7 +372,7 @@ describe.skipIf(IS_WINDOWS)('protocol 2 hand-off', () => {
 
   // Review 5411223284 regression 1: a bridge the helper could not withdraw
   // stays adoptable by a late (setsid, unkillable) daemon. Reporting "did not
-  // start" and restarting the backend would run `alfred update` beside it.
+  // start" and restarting the backend would run `plushuman update` beside it.
   it.each(['busy', 'error'])(
     'a withdraw that stays `%s` keeps the bridge and quits instead of restarting the backend',
     async (answer: string): Promise<void> => {

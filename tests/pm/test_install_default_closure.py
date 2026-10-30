@@ -5,7 +5,7 @@ publish_launchers, hermes_cli/_launchers.py) that exec the pm STORE
 interpreter. The `python`
 package is marked optional (dev installs use their own venv; sealed bundles
 adopt a shipped one), so the old default closure — every non-optional
-lockfile package — skipped it and left `alfred` unbootable (audit C05).
+lockfile package — skipped it and left `plushuman` unbootable (audit C05).
 
 Behavioral: drive cmd_install with the real lockfile/registry and stub
 installers, asserting on the requested package names, not on script text.

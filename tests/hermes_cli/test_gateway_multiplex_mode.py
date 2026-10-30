@@ -1,6 +1,6 @@
 """``gateway.multiplex_profiles`` defaults to ON, but an UNSET flag is settled at boot by
 ``hermes_cli.gateway_multiplex_mode.resolve_multiplex_mode`` — the same preflight
-``alfred gateway migrate --multiplex`` runs — so flipping the default can never make a default
+``plushuman gateway migrate --multiplex`` runs — so flipping the default can never make a default
 gateway double-bind a fleet that still runs per-profile gateways.
 
 The service layer is faked through ``gateway_migrate``'s ``_installed_services`` / ``_live_gateway_pid``
@@ -151,7 +151,7 @@ def test_explicit_true_is_never_second_guessed_and_explicit_false_is_retired(fle
 
 
 def test_migration_plan_treats_the_unset_default_as_not_yet_multiplexed(fleet):
-    """The fleet the boot guard refuses is exactly the one ``alfred gateway migrate --multiplex`` folds:
+    """The fleet the boot guard refuses is exactly the one ``plushuman gateway migrate --multiplex`` folds:
     an unset flag must not read as "already multiplexed" or the migration would short-circuit."""
     _root, services, pids = fleet
     pids.update({"coder": 4101, "ops": 4102})
@@ -166,7 +166,7 @@ def test_live_record_outranks_the_raw_flag_for_other_processes(fleet, monkeypatc
     reading config; a gateway that stayed standalone recorded an empty served set."""
     root, _services, _pids = fleet
     from gateway import status
-    monkeypatch.setattr(status, "_read_process_cmdline", lambda pid: "alfred gateway run")
+    monkeypatch.setattr(status, "_read_process_cmdline", lambda pid: "plushuman gateway run")
     (root / "gateway.pid").write_text(json.dumps({"pid": os.getpid(), "hermes_home": str(root)}))
     record = {"pid": os.getpid(), "hermes_home": str(root), "gateway_state": "running", "served_profiles": []}
     (root / "gateway_state.json").write_text(json.dumps(record))
@@ -177,7 +177,7 @@ def test_live_record_outranks_the_raw_flag_for_other_processes(fleet, monkeypatc
 
 
 def test_guard_refusal_is_recorded_in_runtime_status_and_cleared_on_default(tmp_path, monkeypatch):
-    """A guard refusal must be visible to `alfred gateway status`, not only in the boot log; a later
+    """A guard refusal must be visible to `plushuman gateway status`, not only in the boot log; a later
     boot that multiplexes clears it (a stale reason would misdescribe the live gateway)."""
     from gateway import status as gw_status
     from hermes_cli.gateway_multiplex_mode import MultiplexDecision, record_multiplex_decision

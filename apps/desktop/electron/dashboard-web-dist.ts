@@ -18,7 +18,7 @@ function hasDashboardBundle(dir) {
 }
 
 /**
- * Resolve the web bundle served by `alfred dashboard` / `alfred serve` when it
+ * Resolve the web bundle served by `plushuman dashboard` / `plushuman serve` when it
  * is spawned by Desktop as the local backend.
  *
  * This must be the dashboard bundle (`hermes_cli/web_dist`), not the Electron
@@ -55,7 +55,7 @@ function resolveDashboardWebDist(options: any = {}) {
   }
 
   // Fall back to the canonical active install path even if it does not exist so
-  // the child `alfred dashboard --skip-build` fails with its explicit missing
+  // the child `plushuman dashboard --skip-build` fails with its explicit missing
   // dist error instead of silently serving the wrong Desktop bundle.
   if (options.activeHermesRoot) {
     return path.join(options.activeHermesRoot, 'hermes_cli', 'web_dist')

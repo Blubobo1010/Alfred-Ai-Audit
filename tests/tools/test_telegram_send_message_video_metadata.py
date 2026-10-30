@@ -1,4 +1,4 @@
-"""The standalone ``alfred send`` Telegram path must carry video metadata too.
+"""The standalone ``plushuman send`` Telegram path must carry video metadata too.
 
 Same root cause as the gateway adapter path (see
 ``tests/gateway/test_telegram_video_metadata.py``): Telegram stops processing a video upload once

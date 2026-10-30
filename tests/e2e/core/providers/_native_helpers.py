@@ -1,12 +1,12 @@
 """Shared harness for the native-dialect provider wire suites (``test_native_*.py``).
 
-Every scenario drives the REAL ``alfred`` CLI (``python -m hermes_cli.main chat -q ... -Q``) as a
+Every scenario drives the REAL ``plushuman`` CLI (``python -m hermes_cli.main chat -q ... -Q``) as a
 subprocess with a hermetic fake HOME / HERMES_HOME, a config.yaml that selects a native provider,
 and the provider's endpoint redirected to a loopback fake from ``tests/fakes/providers/``. Only the
 vendor boundary is faked; runtime resolution, the adapter, the agent loop, tools and SQLite are real.
 
-What a test asserts: the NEXT wire request Alfred sends (captured by the fake), the persisted
-``state.db`` rows, and the CLI's user-visible output — never Alfred source text.
+What a test asserts: the NEXT wire request +Human sends (captured by the fake), the persisted
+``state.db`` rows, and the CLI's user-visible output — never +Human source text.
 """
 
 from __future__ import annotations
@@ -119,7 +119,7 @@ class ChatResult:
 
 def run_chat(nh: NativeHome, prompt: str, *, resume: str | None = None, env: dict[str, str] | None = None,
              args: tuple[str, ...] = (), timeout: float = TURN_TIMEOUT) -> ChatResult:
-    """One real ``alfred chat -q`` turn (optionally ``--resume <id>``) against the fake provider."""
+    """One real ``plushuman chat -q`` turn (optionally ``--resume <id>``) against the fake provider."""
     argv = [sys.executable, "-m", "hermes_cli.main", "chat", "-q", prompt, "-Q", *args]
     if resume:
         argv += ["--resume", resume]

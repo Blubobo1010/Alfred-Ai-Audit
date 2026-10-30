@@ -464,7 +464,7 @@ def _apply_delete_for_wal_reset_bug(conn: sqlite3.Connection, *, db_label: str, 
 
 
 def _wal_reset_repair_hint() -> str:
-    """Repair hint matching what ``alfred update`` can actually do for this install type.
+    """Repair hint matching what ``plushuman update`` can actually do for this install type.
 
     See #75153.
     """
@@ -473,10 +473,10 @@ def _wal_reset_repair_hint() -> str:
         method = detect_install_method(get_project_root())
         cmd = recommended_update_command_for_method(method)
         if method in {"git", "unknown"}:
-            return f"Alfred-managed installs can repair the embedded runtime with `{cmd}`"
+            return f"+Human-managed installs can repair the embedded runtime with `{cmd}`"
         return f"update the container image with `{cmd}`" if method == "docker" else cmd  # else nix/nixos
     except Exception:
-        return "install a Python build bundled with SQLite 3.51.3+ (or backports 3.50.7 / 3.44.6) and restart Alfred"
+        return "install a Python build bundled with SQLite 3.51.3+ (or backports 3.50.7 / 3.44.6) and restart +Human"
 
 
 # Once-per-(process, db_label) log table. Levels are deliberate: falling back to DELETE and an ignored
@@ -493,7 +493,7 @@ _ONCE_LOGS = {
         # Install-type-aware so the warning never promises a repair path that doesn't exist for git/pip installs.
         "%s: linked SQLite %s (interpreter %s) is vulnerable to the WAL-reset corruption bug "
         "(https://sqlite.org/wal.html#walresetbug) — %s. Upgrade to SQLite 3.51.3+ (or backports 3.50.7 / 3.44.6); "
-        "%s. See `alfred doctor`. This warning fires once per process per database."),
+        "%s. See `plushuman doctor`. This warning fires once per process per database."),
     "journal_upgrade": (_journal_upgrade_warned_lock, "_journal_upgrade_warned_paths", logging.WARNING,
         # journal_mode is a property of the FILE: switching an existing DB to WAL rewrites its header and outlives
         # the process. Operators set DELETE on the file (the WAL-reset-bug mitigation) and nothing told them the
@@ -519,8 +519,8 @@ _ONCE_LOGS = {
     "delete_overridden": (_delete_overridden_warned_lock, "_delete_overridden_warned_paths", logging.ERROR,
         # Never-live-downgrade keeps WAL; without this the operator never learns their delete had no effect.
         "%s: database.journal_mode=delete is configured but the on-disk database is already WAL; keeping WAL (a live "
-        "downgrade under open connections can corrupt the DB). To apply journal_mode=DELETE, stop every Alfred "
-        "process using this database and run `alfred sessions set-journal-mode delete` (add `--db PATH` for a "
+        "downgrade under open connections can corrupt the DB). To apply journal_mode=DELETE, stop every +Human "
+        "process using this database and run `plushuman sessions set-journal-mode delete` (add `--db PATH` for a "
         "store other than state.db). This message fires once per process per database."),
     "wal_probe_unknown": (_wal_probe_unknown_lock, "_wal_probe_unknown_paths", logging.WARNING,
         # WARNING, not ERROR: the connection inherits the header's mode, so an already-WAL file (the common case)
@@ -540,8 +540,8 @@ _ONCE_LOGS = {
         # operator can fix it (a live downgrade under other openers would destroy their uncheckpointed commits).
         "%s: existing WAL-mode database is on a cross-VM filesystem (virtiofs/9p — typical for Docker Desktop / "
         "OrbStack / Podman host bind mounts). SQLite WAL shared-memory is not coherent across the VM boundary and "
-        "concurrent writers can silently corrupt the database. Alfred does not live-downgrade an on-disk WAL database. "
-        "Fix one of two ways: stop every Alfred process using this database and run `alfred sessions "
+        "concurrent writers can silently corrupt the database. +Human does not live-downgrade an on-disk WAL database. "
+        "Fix one of two ways: stop every +Human process using this database and run `plushuman sessions "
         "set-journal-mode delete` (set `database.journal_mode: delete` in config.yaml to keep it), "
         "or move the database onto a native volume (e.g. a named Docker volume). This message fires once per process "
         "per database."),

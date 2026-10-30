@@ -1,4 +1,4 @@
-"""CLI subcommand parser builders for ``alfred <subcommand>``.
+"""CLI subcommand parser builders for ``plushuman <subcommand>``.
 
 Each group owns a ``build_<group>_parser(subparsers, ...)`` in its own module; ``main()``
 calls them. ``cmd_*`` handlers are dependency-injected so no module imports ``main``

@@ -173,7 +173,7 @@ def _backend_dir_entries(search_dir: str, session_key: str | None) -> list[tuple
         # configured), and Desktop's ws reconnect loop turns that into model traffic from an
         # idle machine (#115478). The script is a constant and the search dir is quoted, so
         # nothing here needs an approval verdict.
-        with unmetered_backend_calls():  # Alfred' own listing, not the user's backend work
+        with unmetered_backend_calls():  # +Human' own listing, not the user's backend work
             result = json.loads(terminal_tool(
                 f"sh -c {shlex.quote(script)} sh {shlex.quote(search_dir)}", task_id=session_key, timeout=3,
                 force=True))
@@ -387,7 +387,7 @@ def _(rid, params: dict) -> dict:
     if not (pconfig := PROVIDER_REGISTRY.get(slug)):
         return _err(rid, 4002, f"unknown provider: {slug}")
     if pconfig.auth_type != "api_key":
-        return _err(rid, 4003, f"{pconfig.name} uses {pconfig.auth_type} auth — run `alfred model` to configure")
+        return _err(rid, 4003, f"{pconfig.name} uses {pconfig.auth_type} auth — run `plushuman model` to configure")
     if not pconfig.api_key_env_vars:
         return _err(rid, 4004, f"no env var defined for {pconfig.name}")
     # Save the key to ~/.hermes/.env via the unified credential lifecycle so any stale config.yaml mirror of

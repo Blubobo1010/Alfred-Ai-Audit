@@ -65,7 +65,7 @@ class TestApiModeRouting:
 
     def test_determine_api_mode_honors_the_model_for_nous(self):
         """Callers that skip resolve_runtime_provider (fallback, switch_model
-        empty-mode path) must still land Claude on Messages — the Alfred
+        empty-mode path) must still land Claude on Messages — the +Human
         overlay alone advertises openai_chat for every Nous model."""
         from hermes_cli.providers import determine_api_mode
 
@@ -204,7 +204,7 @@ class TestClientShape:
         self, monkeypatch
     ):
         """The Anthropic SDK fills api_key from ANTHROPIC_API_KEY when the
-        constructor omits it. Alfred loads that env from ~/.hermes/.env, so
+        constructor omits it. +Human loads that env from ~/.hermes/.env, so
         without an explicit clear every Portal request would dual-auth as
         X-Api-Key: sk-ant-… + Authorization: Bearer portal.jwt."""
         from agent.anthropic_adapter import build_anthropic_client

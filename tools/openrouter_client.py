@@ -1,4 +1,4 @@
-"""OpenRouter API key probe shared by Alfred tools."""
+"""OpenRouter API key probe shared by +Human tools."""
 
 import os
 

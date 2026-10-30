@@ -1,8 +1,8 @@
-"""Uninstall must not leave a dangling ``alfred`` command on Windows.
+"""Uninstall must not leave a dangling ``plushuman`` command on Windows.
 
 Every uninstall mode deletes the code checkout, but the launcher copies
-staged onto PATH in the managed binary dir (the default Alfred root's
-``bin``) live outside it. A surviving launcher makes ``alfred`` in a new
+staged onto PATH in the managed binary dir (the default +Human root's
+``bin``) live outside it. A surviving launcher makes ``plushuman`` in a new
 terminal resolve and then error on its missing venv target — worse than
 command-not-found. The dir is wholly hermes-owned (pm keeps uv in its own
 store entry), so the sweep takes everything in it.

@@ -1,8 +1,8 @@
-"""Private harness for ``test_profile_secret_scope.py``: one real ``alfred serve`` hosting two
+"""Private harness for ``test_profile_secret_scope.py``: one real ``plushuman serve`` hosting two
 profiles, a user dashboard plugin whose API route reads a credential through ``get_secret``, and a
 stdio MCP server per profile that dumps the environment it was spawned with.
 
-Everything here writes plain files into the fake home; no Alfred code is imported or patched.
+Everything here writes plain files into the fake home; no +Human code is imported or patched.
 """
 
 from __future__ import annotations

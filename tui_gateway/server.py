@@ -237,7 +237,7 @@ _detached_ws_transport = _DropTransport()
 
 def _prepend_tool_paths(env: dict[str, str]) -> dict[str, str]:
     """Prepend managed bin (managed-first policy for the Browser Use CLI), venv bin and
-    ~/.local/bin to PATH so slash_worker children resolve Alfred-managed CLIs under the Desktop's minimal PATH.
+    ~/.local/bin to PATH so slash_worker children resolve +Human-managed CLIs under the Desktop's minimal PATH.
     The PM store dirs go in front of all of them: a user's node/uv in ~/.local/bin never wins."""
     managed_bin = ""
     with contextlib.suppress(Exception):
@@ -270,7 +270,7 @@ class _SlashWorker:
             + (["--provider", provider] if provider else [])
         self._closed = False
         from hermes_cli._subprocess_compat import windows_hide_flags
-        # slash_worker runs the Alfred agent → needs provider credentials. Tier-1 secrets
+        # slash_worker runs the +Human agent → needs provider credentials. Tier-1 secrets
         # (gateway/GitHub/infra) are still stripped (#29157). Global-remote / multi-profile sessions: the
         # worker must resolve config/skills/state against the session's profile home, not the gateway's
         # launch HERMES_HOME (#40677).
@@ -280,7 +280,7 @@ class _SlashWorker:
         # The worker runs the agent → needs provider credentials; tier-1 secrets (gateway/GitHub/
         # infra) are still stripped. A served profile's worker gets THAT profile's home + secrets and
         # none of the launch profile's .env / TERMINAL_* residue, exactly what a standalone
-        # `alfred -p X` would load itself. The launch profile is a profile too: once the process hosts
+        # `plushuman -p X` would load itself. The launch profile is a profile too: once the process hosts
         # a second home (multiplex flipped), its worker must name its own home or the fail-closed
         # no-target/no-scope path raises UnscopedSecretError (#115427).
         env = _prepend_tool_paths(served_profile_child_env(
@@ -294,8 +294,8 @@ class _SlashWorker:
         # start_new_session: otherwise the worker inherits the gateway's pgid and mcp_tool's orphan
         # sweep, racing the spawn, killpg()s the TUI parent itself. errors="replace": bytes invalid
         # in the system locale (GBK Windows) must not raise UnicodeDecodeError in the drain threads.
-        # Prepend the Alfred venv bin dir and the user-local bin dir to PATH so slash_worker child processes
-        # can resolve Alfred-managed CLIs (browser-use, uvx) even when the parent gateway was launched with
+        # Prepend the +Human venv bin dir and the user-local bin dir to PATH so slash_worker child processes
+        # can resolve +Human-managed CLIs (browser-use, uvx) even when the parent gateway was launched with
         # a minimal PATH (e.g. by the Desktop/Dashboard app). See #83845.
         self.proc = subprocess.Popen(
             argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
@@ -531,7 +531,7 @@ def _canonical_profile_request(name: str) -> str:
     """Canonicalize profile basenames emitted by older session-info payloads.
 
     ``Path(default_home).name`` was historically sent as a profile id. Those basenames are
-    installation details — unless a real named profile of that name exists (``alfred`` is a legal
+    installation details — unless a real named profile of that name exists (``plushuman`` is a legal
     id), in which case it wins; other unknown names keep failing closed in ``_profile_home``.
     """
     if name.casefold() in {".hermes", "hermes"}:
@@ -723,7 +723,7 @@ _server_requests.bind_sinks(lambda frame: write_json(frame), lambda event, sid, 
 _live_transports: set[Transport] = set()
 _live_transports_lock = threading.Lock()
 # True only when real stdout IS the JSON-RPC client channel (``tui_gateway.entry.main``, the stdio TUI).
-# `alfred serve` / dashboard processes speak JSON-RPC over WS only: their stdout is captured into
+# `plushuman serve` / dashboard processes speak JSON-RPC over WS only: their stdout is captured into
 # desktop.log, so a peer-less global broadcast (the change watcher keeps ticking after the last WS client
 # leaves) must be dropped there, not printed.
 _stdio_is_rpc_channel = False
@@ -839,7 +839,7 @@ def _emit_approval_request(sid: str, data: dict | None) -> None:
             if request_id:
                 _approval.withdraw_gateway_approval(session_key, request_id,
                                                     "the attached client cannot answer approval requests "
-                                                    "(update the Alfred app)")
+                                                    "(update the +Human app)")
             return
         choice = str(result.get("choice") or "deny")
         _approval.resolve_gateway_approval(session_key, choice, resolve_all=bool(result.get("all")),
@@ -1435,9 +1435,9 @@ _TOUR_PROBE_TIMEOUT_S = 10
 
 _TOUR_BRIDGE_UNAVAILABLE = json.dumps({
     "success": False,
-    "error": ("No Alfred Desktop window answered the tour request. The tour is driven by the desktop app's "
+    "error": ("No +Human Desktop window answered the tour request. The tour is driven by the desktop app's "
               "renderer, which updates separately from this backend, so an app build older than the tour tool "
-              "has nothing listening. Update the Alfred Desktop app and start a new session. Do not retry tour "
+              "has nothing listening. Update the +Human Desktop app and start a new session. Do not retry tour "
               "in this session.")})
 
 
@@ -1478,10 +1478,10 @@ _PREVIEW_ACTION_REPROBE_COOLDOWN_S = 30
 
 _PREVIEW_ACTION_BRIDGE_UNAVAILABLE = json.dumps({
     "success": False,
-    "error": ("No Alfred Desktop window answered the preview action request. The drive_preview / "
+    "error": ("No +Human Desktop window answered the preview action request. The drive_preview / "
               "annotate_preview bridge is served by the desktop app's renderer, which updates "
               "separately from this backend, so an app build older than the tool has nothing "
-              "listening. Update the Alfred Desktop app, open a page with open_preview, and try "
+              "listening. Update the +Human Desktop app, open a page with open_preview, and try "
               "again in this session after a short cooldown.")})
 
 # One in-flight cooldown-expiry reprobe per session: concurrent callers fail fast.
@@ -1542,7 +1542,7 @@ def _clear_pending(sid: str | None = None) -> None:
 
 
 def _env_model_seed() -> str:
-    """The launch-scoped model seed (``alfred --tui -m``, hosted provisioning); "" when unset."""
+    """The launch-scoped model seed (``plushuman --tui -m``, hosted provisioning); "" when unset."""
     return (os.environ.get("HERMES_MODEL", "") or os.environ.get("HERMES_INFERENCE_MODEL", "")).strip()
 
 
@@ -1563,7 +1563,7 @@ def _resolve_model() -> str:
 
 def _resolve_session_platform() -> str:
     """``HERMES_DESKTOP=1`` without ``HERMES_DESKTOP_TERMINAL`` → "desktop" (chat panel; the agent then
-    suggests TUI-only slash commands), else "tui" (embedded terminal pane or standalone ``alfred --tui``)."""
+    suggests TUI-only slash commands), else "tui" (embedded terminal pane or standalone ``plushuman --tui``)."""
     desktop = is_truthy_value(os.environ.get("HERMES_DESKTOP"))
     return "desktop" if desktop and not is_truthy_value(os.environ.get("HERMES_DESKTOP_TERMINAL")) else "tui"
 
@@ -2391,7 +2391,7 @@ def _session_info(agent, session: dict | None = None) -> dict:
     model = pending_model or mirror.get("model", getattr(agent, "model", ""))
     # The level the route's entry clamp actually sends (== reasoning_effort when verbatim), so the
     # Desktop can say "ultra sends max on this route" like `/reasoning` does instead of presenting a
-    # Alfred-internal step (#61634) as a wire level the route does not have.
+    # +Human-internal step (#61634) as a wire level the route does not have.
     reasoning_effort_wire = ""
     if reasoning_effort and reasoning_effort != "none":
         reasoning_effort_wire = str(clamp_effort(reasoning_effort, route_supported_efforts(
@@ -2626,7 +2626,7 @@ def _startup_system_prompt(cfg: dict, task_id: str) -> str:
     if missing_skills:
         if not loaded_skills:
             raise ValueError(format_missing_skills(missing_skills))
-        logger.warning("Skipping %s. Continuing with: %s. List available skills with `alfred skills list`.",
+        logger.warning("Skipping %s. Continuing with: %s. List available skills with `plushuman skills list`.",
                        format_missing_skills(missing_skills), ", ".join(loaded_skills))
     if skills_prompt:
         system_prompt = "\n\n".join(part for part in (system_prompt, skills_prompt) if part).strip()
@@ -2757,7 +2757,7 @@ def _hydrate_session_cwd(sid: str, key: str, session_db, profile_home: str | Non
             elif not (row and row.get("cwd")) and hasattr(db, "update_session_cwd") and not _is_remote_launch_cwd(
                 _sessions.get(sid)
             ):
-                # A stored cwd that was set aside (Alfred's own host tree) stays as stored: only an empty row is filled.
+                # A stored cwd that was set aside (+Human's own host tree) stays as stored: only an empty row is filled.
                 try:
                     _persist_session_cwd_and_schedule_git_meta(_sessions[sid], _sessions[sid]["cwd"], db=db)
                 except Exception:
@@ -3621,17 +3621,17 @@ def _rank_slash_completions(items: list[dict], usage, origin_of, *, browsing: bo
 
 # argv shapes that must not run headless in the gateway process → user hint.
 _CLI_EXEC_BLOCKED = {
-    ("setup",): "`alfred setup` needs a full terminal — run it outside the TUI",
-    ("gateway",): "`alfred gateway` is long-running — run it in another terminal",
-    ("sessions", "browse"): "`alfred sessions browse` is interactive — use /resume here, or run browse in another terminal",
-    ("config", "edit"): "`alfred config edit` needs $EDITOR in a real terminal",
+    ("setup",): "`plushuman setup` needs a full terminal — run it outside the TUI",
+    ("gateway",): "`plushuman gateway` is long-running — run it in another terminal",
+    ("sessions", "browse"): "`plushuman sessions browse` is interactive — use /resume here, or run browse in another terminal",
+    ("config", "edit"): "`plushuman config edit` needs $EDITOR in a real terminal",
 }
 
 
 def _cli_exec_blocked(argv: list[str]) -> str | None:
     """Return user hint if this argv must not run headless in the gateway process."""
     if not argv:
-        return "bare `alfred` is interactive — use `/hermes chat -q …` or run `alfred` in another terminal"
+        return "bare `plushuman` is interactive — use `/hermes chat -q …` or run `plushuman` in another terminal"
     head = tuple(a.lower() for a in argv[:2])
     return _CLI_EXEC_BLOCKED.get(head[:1]) or _CLI_EXEC_BLOCKED.get(head)
 

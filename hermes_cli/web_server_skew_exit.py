@@ -1,7 +1,7 @@
-"""Code-skew retirement for Desktop-owned ``alfred serve --isolated`` backends reached over SSH.
+"""Code-skew retirement for Desktop-owned ``plushuman serve --isolated`` backends reached over SSH.
 
 Such a backend belongs to a Desktop on another machine: the host's updater never restarts it (only
-the remote client holds its token and owner nonce), so after ``alfred update`` it keeps serving the
+the remote client holds its token and owner nonce), so after ``plushuman update`` it keeps serving the
 code it imported at startup against a tree that has moved on, and lazily imports new modules into
 an old process. The idle watchdog (``web_server_idle_exit``) only fires once every client has left,
 which a connected Desktop never does.

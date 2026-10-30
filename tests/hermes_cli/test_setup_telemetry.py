@@ -26,7 +26,7 @@ def test_setup_telemetry_enables_shared_metrics(monkeypatch):
 
 
 def test_disabling_collection_closes_the_send_consent_window(monkeypatch, tmp_path):
-    """`alfred tools` -> disable shared metrics must withdraw send consent.
+    """`plushuman tools` -> disable shared metrics must withdraw send consent.
 
     The not-enabled branch returned early without recording anything, so the
     consent window stayed open and re-enabling later would release every
@@ -90,7 +90,7 @@ def test_no_answer_survives_the_callers_later_config_save(monkeypatch):
     monkeypatch.setattr("hermes_cli.setup.prompt_yes_no", lambda _question, default: False)
     config = load_config()
     setup_telemetry(config)
-    save_config(config)  # what the wizard and `alfred tools` do afterwards
+    save_config(config)  # what the wizard and `plushuman tools` do afterwards
 
     assert read_raw_config()["telemetry"]["shared_metrics"] == {"enabled": False, "send": False, "offer_version": 2}
 
@@ -116,7 +116,7 @@ def test_chat_offer_asks_an_undecided_profile_once(monkeypatch):
 
 
 def test_offer_drops_keys_typed_before_it_appeared(monkeypatch):
-    """An Enter typed while Alfred booted answered "No thanks" before the offer was on screen."""
+    """An Enter typed while +Human booted answered "No thanks" before the offer was on screen."""
     from hermes_cli.observability import shared_metrics_consent as consent
 
     events = []

@@ -1,6 +1,6 @@
 """Gateway subcommand for hermes CLI.
 
-Handles: alfred gateway [run|start|stop|restart|status|install|uninstall|setup]
+Handles: plushuman gateway [run|start|stop|restart|status|install|uninstall|setup]
 """
 
 import asyncio
@@ -302,7 +302,7 @@ def _wait_for_pid_exit(pid: int, timeout: float, *, on_progress=None) -> bool:
 
 # --- Wedged-gateway detection + bounded escalation ---------------------------
 # A gateway whose asyncio loop is stalled cannot handle SIGTERM/SIGUSR1, so the drain wait burns
-# its full budget and `alfred update` can deadlock. Two witnesses classify the loop BEFORE any
+# its full budget and `plushuman update` can deadlock. Two witnesses classify the loop BEFORE any
 # drain wait: the heartbeat file ``state/gateway.heartbeat`` (rewritten every 30s on a thread, so
 # staleness alone is not proof) and the loop-tick socket ``state/gateway.loop-tick.<pid>.sock``
 # answered by the loop itself; the payload records whether the socket is armed (``loop_tick_socket``).
@@ -316,7 +316,7 @@ def _wait_for_pid_exit(pid: int, timeout: float, *, on_progress=None) -> bool:
 # --- Wedged-gateway detection + bounded escalation (#81642) ----------------- A gateway whose asyncio loop
 # is stalled (e.g. an in-loop compression pass, #72707) cannot process SIGTERM/SIGUSR1 shutdown: the drain
 # wait then burns the full drain budget (180s by default), warns "still running after 180.0s — restart may
-# fail", and `alfred update` can deadlock behind it. The loop publishes a liveness signal precisely for this
+# fail", and `plushuman update` can deadlock behind it. The loop publishes a liveness signal precisely for this
 # case: an asyncio task rewrites ``state/gateway.heartbeat`` every 30s (#66892), so a frozen loop stops
 # refreshing the file while a busy-but-alive loop keeps refreshing it. Since #90502 the heartbeat write runs
 # on a thread (a stalling filesystem must not be able to block the loop the watchdog watches), which costs
@@ -525,11 +525,11 @@ def _escalate_wedged_gateway(pid: int, *, term_grace: float = 5.0, kill_wait: fl
 
 
 def _get_ancestor_pids() -> set[int]:
-    """PIDs of this process and its ancestors, so scans never count the invoking ``alfred`` CLI as a gateway.
+    """PIDs of this process and its ancestors, so scans never count the invoking ``plushuman`` CLI as a gateway.
 
     Walks from the current PID up to PID 1 (init) so that process-table scans never match the calling CLI
-    process or any of its parents. This prevents ``alfred gateway status`` from falsely counting the
-    ``alfred`` CLI that invoked it as a running gateway instance (see #13242).
+    process or any of its parents. This prevents ``plushuman gateway status`` from falsely counting the
+    ``plushuman`` CLI that invoked it as a running gateway instance (see #13242).
     """
     ancestors: set[int] = set()
     pid = os.getpid()
@@ -568,7 +568,7 @@ def _scan_gateway_pids(
     exclude_pids: set[int], all_profiles: bool = False, include_restart_managers: bool = False
 ) -> list[int]:
     """Best-effort process-table scan for gateway PIDs (backs up a stale/missing PID file; ``--all`` sweeps)."""
-    # Exclude the whole ancestor chain: the invoking CLI (``alfred gateway status``) is not a gateway (#13242).
+    # Exclude the whole ancestor chain: the invoking CLI (``plushuman gateway status``) is not a gateway (#13242).
     exclude_pids = exclude_pids | _get_ancestor_pids()
     pids: list[int] = []
     # Strict matcher shared with gateway.status: requires a real ``gateway run`` argv, so
@@ -701,7 +701,7 @@ def _windows_process_listing() -> str | None:
     hides the console window this windowless pythonw backend would flash."""
     # Prefer wmic when present (fast, stable output format). On modern Windows 11 / Win 10 late builds, wmic
     # has been removed as part of the WMIC deprecation — fall back to PowerShell's Get-CimInstance. A spawn
-    # failure or timeout (result is None) trips the fallback. ``alfred update`` hung exactly there on
+    # failure or timeout (result is None) trips the fallback. ``plushuman update`` hung exactly there on
     # slow-WMI machines where the full Win32_Process scan exceeds its budget (#87134). bounded_probe_run
     # also hides the console window: this scan runs inside the windowless pythonw.exe gateway/desktop
     # backend, so a bare wmic/powershell spawn would flash a conhost window on every watchdog probe.
@@ -750,7 +750,7 @@ def _filter_venv_launcher_stubs(pids: list[int]) -> list[int]:
 
 
 def find_gateway_pids(exclude_pids: set | None = None, all_profiles: bool = False) -> list:
-    """Find running gateway PIDs for the current profile, or every profile with ``all_profiles`` (``alfred update``)."""
+    """Find running gateway PIDs for the current profile, or every profile with ``all_profiles`` (``plushuman update``)."""
     _exclude = set(exclude_pids or set())
     pids: list[int] = []
     if not all_profiles:
@@ -771,7 +771,7 @@ def find_gateway_pids(exclude_pids: set | None = None, all_profiles: bool = Fals
 
 
 def find_profile_gateway_processes(exclude_pids: set | None = None, *, strict: bool = False) -> list[ProfileGatewayProcess]:
-    """Return running gateway PIDs mapped to Alfred profiles via PID files."""
+    """Return running gateway PIDs mapped to +Human profiles via PID files."""
     _exclude = set(exclude_pids or set())
     processes: list[ProfileGatewayProcess] = []
     try:
@@ -818,9 +818,9 @@ def _scm_service_field(service, field: str):
 def find_windows_gateway_services(
     *, psutil_module=None, profile_processes: list[ProfileGatewayProcess] | None = None
 ) -> list[WindowsGatewayService]:
-    """Profile gateways supervised by real, Alfred-owned Windows services. Service-logon processes may
-    hide their command lines, so identity = Alfred's own PID file + a parent chain ending at a running
-    SCM service PID whose name or binary path is Alfred's (``gateway_windows.hermes_owns_windows_service``).
+    """Profile gateways supervised by real, +Human-owned Windows services. Service-logon processes may
+    hide their command lines, so identity = +Human's own PID file + a parent chain ending at a running
+    SCM service PID whose name or binary path is +Human's (``gateway_windows.hermes_owns_windows_service``).
     The whole service subtree is returned so the Desktop preflight exempts exactly what the updater stops
     through the SCM; a gateway under any other service (a Scheduled Task's svchost) is a plain process."""
     if sys.platform != "win32":
@@ -842,10 +842,10 @@ def find_windows_gateway_services(
                     raise RuntimeError("SCM service has an empty name")
                 # Ownership before state: an OS service above the gateway (Task Scheduler's svchost for a
                 # task-launched gateway, BITS mid-transition) is never its supervisor, so neither its
-                # PID nor its status may steer the pause. Only Alfred-owned services reach the guards below.
-                # The name alone settles Alfred-named services; binpath (QueryServiceConfig) is asked only
+                # PID nor its status may steer the pause. Only +Human-owned services reach the guards below.
+                # The name alone settles +Human-named services; binpath (QueryServiceConfig) is asked only
                 # for the rest, and a service that refuses even that to this user is one this user could
-                # not `sc stop` either — never Alfred's, never a reason to abort the enumeration.
+                # not `sc stop` either — never +Human's, never a reason to abort the enumeration.
                 owned = hermes_owns_windows_service(service_name, "", hermes_roots)
                 if not owned:
                     try:
@@ -958,7 +958,7 @@ def _capture_gateway_argv(pid: int) -> list[str] | None:
 
 
 def _prepare_profile_gateway_update_restart(profile: str, pid: int) -> str | None:
-    """Choose who relaunches a profile gateway after ``alfred update``: ``--external-supervisor`` gateways
+    """Choose who relaunches a profile gateway after ``plushuman update``: ``--external-supervisor`` gateways
     exit back to their manager (a detached watcher would race its replacement); otherwise arm the
     profile-derived detached watcher, falling back to replaying the captured command line.
 
@@ -996,7 +996,7 @@ def launch_detached_profile_gateway_restart(profile: str, old_pid: int) -> bool:
 GATEWAY_RESTART_WATCHER_TIMEOUT_S = 120
 """How long the detached restart watcher waits for the old PID to exit before giving up.
 
-``alfred update``'s post-relaunch liveness check budgets against this: the watcher spawns the new
+``plushuman update``'s post-relaunch liveness check budgets against this: the watcher spawns the new
 gateway only AFTER the old PID is gone, so a verification window shorter than this can expire
 before the relaunch it is verifying has even started (#107002).
 """
@@ -1358,7 +1358,7 @@ def _wait_for_systemd_service_restart(
                 if gateway_state == "degraded":
                     # Serving, but a configured platform is parked or retrying: a real restart, not a
                     # failure — say so instead of waiting out the timeout and reporting one.
-                    print(f"⚠ {scope_label} gateway is DEGRADED — see `alfred gateway status`")
+                    print(f"⚠ {scope_label} gateway is DEGRADED — see `plushuman gateway status`")
                 return True
             if gateway_state == "startup_failed":
                 reason = (runtime_state or {}).get("exit_reason") or "startup failed"
@@ -1383,7 +1383,7 @@ def _wait_for_systemd_service_restart(
     sudo, _, user_flag = _systemd_cli_bits(system)
     print(
         f"⚠ {scope_label} service did not become active within {int(timeout)}s.\n"
-        f"  Check status: {sudo}alfred gateway status\n"
+        f"  Check status: {sudo}plushuman gateway status\n"
         f"  Check logs:   journalctl {user_flag}-u {svc} -l --since '2 min ago'"
     )
     return False
@@ -1426,7 +1426,7 @@ def _print_systemd_start_limit_wait(system: bool = False) -> None:
     sudo, scope_flag, user_flag = _systemd_cli_bits(system)
     print(f"⏳ {scope_label} service is temporarily rate-limited by systemd.")
     print("  systemd is refusing another immediate start after repeated exits.")
-    print(f"  Wait for the start-limit window to expire, then run: {sudo}alfred gateway restart{scope_flag}")
+    print(f"  Wait for the start-limit window to expire, then run: {sudo}plushuman gateway restart{scope_flag}")
     print(f"  Or clear the failed state manually: systemctl {user_flag}reset-failed {svc}")
     print(f"  Check logs: journalctl {user_flag}-u {svc} -l --since '5 min ago'")
 
@@ -1608,11 +1608,11 @@ def _print_gateway_process_mismatch(snapshot: GatewayRuntimeSnapshot) -> None:
         print("⚠ Gateway is running as a detached fallback process — launchd cannot supervise it")
         print(pids_line)
         print("  Auto-start at login and auto-restart on crash are NOT available.")
-        print("  Stop it with: alfred gateway stop")
+        print("  Stop it with: plushuman gateway stop")
     else:
         print("⚠ Gateway process is running for this profile, but the service is not active")
         print(pids_line)
-        print("  This is usually a manual foreground/tmux/nohup run, so `alfred gateway`")
+        print("  This is usually a manual foreground/tmux/nohup run, so `plushuman gateway`")
         print("  can refuse to start another copy until this process stops.")
 
 
@@ -1657,7 +1657,7 @@ def _print_unserved_shared_ingress(profile: str | None) -> None:
 
 
 def _print_other_profiles_gateway_status() -> None:
-    """Print other profiles' running gateways at the bottom of ``alfred gateway status``."""
+    """Print other profiles' running gateways at the bottom of ``plushuman gateway status``."""
     try:
         from hermes_cli.profiles import get_active_profile_name
         current = get_active_profile_name()
@@ -2195,7 +2195,7 @@ def _windows_gateway_breakaway_state() -> bool | None:
 # =============================================================================
 
 _SERVICE_BASE = "hermes-gateway"
-SERVICE_DESCRIPTION = "Alfred Gateway - Messaging Platform Integration"
+SERVICE_DESCRIPTION = "+Human Gateway - Messaging Platform Integration"
 
 _SYSTEM_UNIT_DIR = Path("/etc/systemd/system")
 
@@ -2268,7 +2268,7 @@ def _profile_suffix() -> str:
     naming basis moves MID-COMMAND — sudo strips HERMES_HOME and sets HOME=/root, then
     ``_sync_hermes_home_from_systemd_unit()`` adopts the unit's own HERMES_HOME into ``os.environ`` — so a
     basis derived from the process alone names one unit before the adoption and another after it. The
-    unit-pinned check must precede the profile branch: ``sudo alfred gateway install --system`` resolves
+    unit-pinned check must precede the profile branch: ``sudo plushuman gateway install --system`` resolves
     the BARE name from root's default, then pins the invoking user's remapped home, so the bare unit
     legitimately carries a ``<root>/profiles/<name>`` home.
 
@@ -2521,7 +2521,7 @@ def _raise_user_systemd_unavailable(username: str, *, reason: str, fix_hint: str
         "\n"
         "  Alternative: run the gateway in the foreground (stays up until\n"
         "  you exit / close the terminal):\n"
-        "    alfred gateway run"
+        "    plushuman gateway run"
     )
     raise UserSystemdUnavailableError(msg)
 
@@ -2569,7 +2569,7 @@ _LEGACY_UNIT_EXECSTART_MARKERS: tuple[str, ...] = (
     "hermes_cli.main gateway",
     "hermes_cli/main.py gateway",
     "gateway/run.py",
-    " alfred gateway ",
+    " plushuman gateway ",
     "/hermes gateway ",
 )
 
@@ -2584,7 +2584,7 @@ def _find_legacy_hermes_units() -> list[tuple[str, Path, bool]]:
     fight the current unit for the bot token (SIGTERM flap loop). Explicit name allowlist + ExecStart
     marker check so profile/third-party units never match; no mutation.
 
-    Detects unit files installed by older Alfred versions that used a different service name (e.g. When both
+    Detects unit files installed by older +Human versions that used a different service name (e.g. When both
     a legacy unit and the current ``hermes-gateway.service`` are active, they fight over the same bot token
     — the PR #5646 signal-recovery change turns this into a 30-second SIGTERM flap loop.
     """
@@ -2604,7 +2604,7 @@ def _find_legacy_hermes_units() -> list[tuple[str, Path, bool]]:
 
 
 def has_legacy_hermes_units() -> bool:
-    """Return True when any legacy Alfred gateway unit files exist."""
+    """Return True when any legacy +Human gateway unit files exist."""
     return bool(_find_legacy_hermes_units())
 
 
@@ -2613,13 +2613,13 @@ def print_legacy_unit_warning() -> None:
     legacy = _find_legacy_hermes_units()
     if not legacy:
         return
-    print_warning("Legacy Alfred gateway unit(s) detected from an older install:")
+    print_warning("Legacy +Human gateway unit(s) detected from an older install:")
     for name, path, is_system in legacy:
         print_info(f"    {path}  ({_service_scope_label(is_system)} scope)")
     print_info("  These run alongside the current hermes-gateway service and")
     print_info("  cause SIGTERM flap loops — both try to use the same bot token.")
     print_info("  Remove them with:")
-    print_info("    alfred gateway migrate-legacy")
+    print_info("    plushuman gateway migrate-legacy")
 
 
 def remove_legacy_hermes_units(interactive: bool = True, dry_run: bool = False) -> tuple[int, list[Path]]:
@@ -2627,11 +2627,11 @@ def remove_legacy_hermes_units(interactive: bool = True, dry_run: bool = False) 
     only lists. Returns ``(removed_count, remaining_paths)`` (remaining: e.g. system-scope when not root)."""
     legacy = _find_legacy_hermes_units()
     if not legacy:
-        print("No legacy Alfred gateway units found.")
+        print("No legacy +Human gateway units found.")
         return 0, []
 
     print()
-    print("Legacy Alfred gateway unit(s) found:")
+    print("Legacy +Human gateway unit(s) found:")
     for name, path, is_system in legacy:
         print(f"  {path}  ({_service_scope_label(is_system)} scope)")
     print()
@@ -2641,7 +2641,7 @@ def remove_legacy_hermes_units(interactive: bool = True, dry_run: bool = False) 
         return 0, [p for _, p, _ in legacy]
 
     if interactive and not prompt_yes_no("Remove these legacy units?", True):
-        print("Skipped. Run again with: alfred gateway migrate-legacy")
+        print("Skipped. Run again with: plushuman gateway migrate-legacy")
         return 0, [p for _, p, _ in legacy]
 
     removed = 0
@@ -2672,7 +2672,7 @@ def remove_legacy_hermes_units(interactive: bool = True, dry_run: bool = False) 
         if os.geteuid() != 0:  # windows-footgun: ok — Linux systemd removal path, guarded by `if system == "Linux"` / systemd-only branch
             print()
             print_warning("System-scope legacy units require root to remove.")
-            print_info("  Re-run with: sudo alfred gateway migrate-legacy")
+            print_info("  Re-run with: sudo plushuman gateway migrate-legacy")
             remaining.extend(path for _, path in system_units)
         else:
             _remove_units(system_units, system=True)
@@ -2695,8 +2695,8 @@ def print_systemd_scope_conflict_warning() -> None:
     print_info("  This is confusing and can make start/stop/status behavior ambiguous.")
     print_info("  Default gateway commands target the user service unless you pass --system.")
     print_info("  Keep one of these:")
-    print_info("    alfred gateway uninstall")
-    print_info("    sudo alfred gateway uninstall --system")
+    print_info("    plushuman gateway uninstall")
+    print_info("    sudo plushuman gateway uninstall --system")
 
 
 def refuses_container_user_scope_install(system: bool) -> bool:
@@ -2716,11 +2716,11 @@ def refuses_container_user_scope_install(system: bool) -> bool:
         "starts the same unit, so a second gateway polls the same bot token outside the container",
         "(Telegram: 'Conflict: terminated by other getUpdates request').",
         "",
-        "  alfred gateway run                                # run as the container's main process",
+        "  plushuman gateway run                                # run as the container's main process",
         "  docker run --restart unless-stopped ...           # container restart policy",
         "",
         "If systemd manages this container (systemd as PID 1), install an isolated system service instead:",
-        "  sudo alfred gateway install --system --run-as-user <user>",
+        "  sudo plushuman gateway install --system --run-as-user <user>",
     )
     return True
 
@@ -2798,7 +2798,7 @@ def install_linux_gateway_from_setup(force: bool = False, enable_on_startup: boo
             # Unreachable from the wizard (system scope only offered to root); defensive guard for direct callers.
             print_warning(
                 "  System service install requires root. Re-run setup from a "
-                "root shell, or install a user service instead: alfred gateway install"
+                "root shell, or install a user service instead: plushuman gateway install"
             )
             return scope, False
 
@@ -2817,14 +2817,14 @@ def install_linux_gateway_from_setup(force: bool = False, enable_on_startup: boo
 
 
 def ensure_gateway_service(context: str = "setup") -> bool:
-    """Install and start a user-scope gateway service without prompting (``alfred setup``/``import``).
+    """Install and start a user-scope gateway service without prompting (``plushuman setup``/``import``).
     A zero-platform gateway is a supported degraded mode (cron runs), so this never gates on messaging
     config. Never raises; True when a service is installed and running."""
     from hermes_constants import is_container
     if is_container():
         # Containers use restart policies, not service managers.
         print_info("Start the gateway to bring your bots online:")
-        print_info("   alfred gateway run          # Run as container main process")
+        print_info("   plushuman gateway run          # Run as container main process")
         print_info("")
         print_info("For automatic restarts, use a Docker restart policy:")
         print_info("   docker run --restart unless-stopped ...")
@@ -2833,7 +2833,7 @@ def ensure_gateway_service(context: str = "setup") -> bool:
     supports_systemd = supports_systemd_services()
     if not (supports_systemd or is_macos() or is_windows()):
         print_info("  No supported service manager found on this host.")
-        print_info("  Run the gateway in the foreground with: alfred gateway")
+        print_info("  Run the gateway in the foreground with: plushuman gateway")
         return False
 
     try:
@@ -2872,10 +2872,10 @@ def ensure_gateway_service(context: str = "setup") -> bool:
     except SystemExit:
         # Some install/start paths sys.exit() on hard failures (temp-HOME guard); never abort setup/import.
         print_warning("  Gateway service install did not complete.")
-        print_info("  You can retry manually: alfred gateway install")
+        print_info("  You can retry manually: plushuman gateway install")
     except Exception as e:
         print_warning(f"  Gateway service install failed: {e}")
-        print_info("  You can retry manually: alfred gateway install")
+        print_info("  You can retry manually: plushuman gateway install")
     return False
 
 
@@ -3402,7 +3402,7 @@ def systemd_unit_is_current(system: bool = False) -> bool:
 
 
 def _retire_hermes_replace_dropin(system: bool = False) -> bool:
-    """Remove only the legacy ``--replace`` drop-in written by Alfred."""
+    """Remove only the legacy ``--replace`` drop-in written by +Human."""
     unit_path = get_systemd_unit_path(system=system)
     dropin = unit_path.parent / f"{unit_path.name}.d" / "20-replace.conf"
     try:
@@ -3430,7 +3430,7 @@ def refresh_systemd_unit_if_needed(system: bool = False) -> bool:
     current = systemd_unit_is_current(system=system)
     if _retire_hermes_replace_dropin(system=system):
         _run_systemctl(["daemon-reload"], system=system, check=True, timeout=30)
-        print(f"↻ Removed the stale Alfred --replace drop-in from the gateway {_service_scope_label(system)} service")
+        print(f"↻ Removed the stale +Human --replace drop-in from the gateway {_service_scope_label(system)} service")
         if current:
             return True
     elif current:
@@ -3451,7 +3451,7 @@ def refresh_systemd_unit_if_needed(system: bool = False) -> bool:
     _prepare_service_launcher(system=system, run_as_user=expected_user)
     unit_path.write_text(new_unit, encoding="utf-8")
     _run_systemctl(["daemon-reload"], system=system, check=True, timeout=30)
-    print(f"↻ Updated gateway {_service_scope_label(system)} service definition to match the current Alfred install")
+    print(f"↻ Updated gateway {_service_scope_label(system)} service definition to match the current +Human install")
     return True
 
 
@@ -3562,9 +3562,9 @@ def _print_system_scope_remediation(action: str) -> None:
     print_info(f"    1. {action.capitalize()} it this time:")
     print_info(f"         sudo systemctl {action} {get_service_name()}")
     print_info("    2. Switch to a per-user service (recommended for personal use):")
-    print_info("         sudo alfred gateway uninstall --system")
-    print_info("         alfred gateway install")
-    print_info("         alfred gateway start")
+    print_info("         sudo plushuman gateway uninstall --system")
+    print_info("         plushuman gateway install")
+    print_info("         plushuman gateway start")
 
 
 def _get_restart_drain_timeout() -> float:
@@ -3686,8 +3686,8 @@ def systemd_install(
     print(f"✓ {scope_label.capitalize()} service {'installed and enabled' if enable_on_startup else 'installed'}!")
     print()
     print("Next steps:")
-    print(f"  {sudo}alfred gateway start{scope_flag}              # Start the service")
-    print(f"  {sudo}alfred gateway status{scope_flag}             # Check status")
+    print(f"  {sudo}plushuman gateway start{scope_flag}              # Start the service")
+    print(f"  {sudo}plushuman gateway status{scope_flag}             # Check status")
     print(f"  journalctl {user_flag}-u {get_service_name()} -f  # View logs")
     print()
 
@@ -3752,7 +3752,7 @@ def systemd_uninstall(system: bool = False):
 def _print_service_not_installed(system: bool) -> None:
     sudo, scope_flag, _ = _systemd_cli_bits(system)
     print("✗ Gateway service is not installed")
-    print(f"  Run: {sudo}alfred gateway install{scope_flag}")
+    print(f"  Run: {sudo}plushuman gateway install{scope_flag}")
 
 
 def _require_service_installed(action: str, system: bool = False) -> None:
@@ -3778,7 +3778,7 @@ def systemd_stop(system: bool = False):
     except subprocess.TimeoutExpired:
         print(
             f"Gateway {_service_scope_label(system)} service is still stopping after 90s; "
-            "check `alfred gateway status` or logs for final shutdown state."
+            "check `plushuman gateway status` or logs for final shutdown state."
         )
         return
     print(f"✓ {_service_scope_label(system).capitalize()} service stopped")
@@ -3887,7 +3887,7 @@ def _systemd_reset_and_run(action: str, *, system: bool, previous_pid) -> None:
     except subprocess.TimeoutExpired:
         print(
             f"Gateway {_service_scope_label(system)} service is still restarting after 90s; "
-            "check `alfred gateway status` or logs for final state."
+            "check `plushuman gateway status` or logs for final state."
         )
         return
     _wait_for_systemd_service_restart(system=system, previous_pid=previous_pid)
@@ -3914,7 +3914,7 @@ def systemd_status(deep: bool = False, system: bool = False, full: bool = False)
 
     if not systemd_unit_is_current(system=system):
         print("⚠ Installed gateway service definition is outdated")
-        print(f"  Run: {sudo}alfred gateway restart{scope_flag}  # auto-refreshes the unit")
+        print(f"  Run: {sudo}plushuman gateway restart{scope_flag}  # auto-refreshes the unit")
         print()
 
     status_cmd = ["status", svc, "--no-pager"] + (["-l"] if full else [])
@@ -3924,7 +3924,7 @@ def systemd_status(deep: bool = False, system: bool = False, full: bool = False)
         print(f"✓ {scope_label} gateway service is running")
     else:
         print(f"✗ {scope_label} gateway service is stopped")
-        print(f"  Run: {sudo}alfred gateway start{scope_flag}")
+        print(f"  Run: {sudo}plushuman gateway start{scope_flag}")
 
     configured_user = _read_systemd_user_from_unit(unit_path) if system else None
     if configured_user:
@@ -3939,11 +3939,11 @@ def systemd_status(deep: bool = False, system: bool = False, full: bool = False)
         print("  ⏳ Restart pending: systemd is waiting to relaunch the gateway")
     elif _systemd_unit_is_start_limited(unit_props):
         print("  ⏳ Restart pending: systemd is temporarily rate-limiting starts")
-        print(f"  Run after the start-limit window expires: {sudo}alfred gateway restart{scope_flag}")
+        print(f"  Run after the start-limit window expires: {sudo}plushuman gateway restart{scope_flag}")
         print(f"  Or clear it manually: systemctl {user_flag}reset-failed {svc}")
     elif active_state == "failed" and unit_props.get("ExecMainStatus", "") == str(GATEWAY_SERVICE_RESTART_EXIT_CODE):
         print("  ⚠ Planned restart is stuck in systemd failed state (exit 75)")
-        print(f"  Run: systemctl {user_flag}reset-failed {svc} && {sudo}alfred gateway start{scope_flag}")
+        print(f"  Run: systemctl {user_flag}reset-failed {svc} && {sudo}plushuman gateway start{scope_flag}")
     elif active_state == "failed" and result_code:
         print(f"  ⚠ Systemd unit result: {result_code}")
 
@@ -4140,7 +4140,7 @@ def host_multiplexer_serving(profile_name: str | None = None):
         # "serving default" is a name collision, and the CLI guards refused on it with exit 78 (#121352).
         from gateway.host_attach import launched_by_other_tenant
         if launched_by_other_tenant(gateway.home, get_hermes_home()):
-            logger.debug("Host gateway %s belongs to another Alfred home; not ours", gateway.describe())
+            logger.debug("Host gateway %s belongs to another +Human home; not ours", gateway.describe())
             return None
         return gateway
     except Exception:
@@ -4152,7 +4152,7 @@ def _served_by_another_host_gateway(profile_name: str | None = None):
     """The host gateway serving ``profile_name`` when it is NOT this home's own process.
 
     The owner must never be guarded out of restarting itself: a refusal keyed on "something serves
-    you" would make `alfred gateway restart` impossible for the profile that launched the host
+    you" would make `plushuman gateway restart` impossible for the profile that launched the host
     process. Guards want "ANOTHER process already serves you", which is this.
     """
     gateway = host_multiplexer_serving(profile_name)
@@ -4203,7 +4203,7 @@ def named_profile_served_by_running_multiplexer(profile_name: str | None = None)
             return False
         from hermes_cli.profiles import normalize_profile_name
         # The live gateway's own record wins: the CLI process cannot see an env-only opt-in on the
-        # default profile (`alfred -p X` loads X's .env) and a config edit after start is not live yet.
+        # default profile (`plushuman -p X` loads X's .env) and a config edit after start is not live yet.
         # Only a record without the key (pre-multiplex writer) falls through to config derivation.
         recorded = recorded_served_profiles(default_root)
         if recorded is not None:
@@ -4222,11 +4222,11 @@ def _served_profile_needs_no_service() -> bool:
     """Print the "already served" note and return True when a setup flow must not install a standalone
     service: a live multiplexing default gateway already serves this named profile, so the unit/plist it
     would register can only sit dead (the start guard refuses it) or double-bind its platforms.
-    Shared by ``alfred setup gateway`` / ``alfred setup`` / ``alfred import`` (``ensure_gateway_service``)
-    and the ``alfred gateway setup`` wizard. See #111958."""
+    Shared by ``plushuman setup gateway`` / ``plushuman setup`` / ``plushuman import`` (``ensure_gateway_service``)
+    and the ``plushuman gateway setup`` wizard. See #111958."""
     if not named_profile_served_by_running_multiplexer():
         # Not served (yet): a named profile still gets no service of its own — same rule and text
-        # as `gateway install`, so `alfred -p X setup` cannot grow a fleet member the verb refuses.
+        # as `gateway install`, so `plushuman -p X setup` cannot grow a fleet member the verb refuses.
         return _named_profile_refused_under_multiplexer()
     from hermes_cli.profiles import profile_is_standalone
     if profile_is_standalone(get_hermes_home()):
@@ -4297,18 +4297,18 @@ def _named_profile_refused_under_multiplexer(force: bool = False) -> bool:
     if served:
         print("  Manage the host gateway instead:")
         print()
-        print(f"    alfred -p {owner.profile_label if owner is not None else 'default'} gateway restart")
+        print(f"    plushuman -p {owner.profile_label if owner is not None else 'default'} gateway restart")
     else:
         print("  Install or start the host gateway from the default profile; it serves this one too:")
         print()
-        print("    alfred gateway install")
+        print("    plushuman gateway install")
         print()
         print("  Or fold an existing per-profile fleet onto one host gateway:")
         print()
-        print("    alfred gateway migrate --multiplex")
+        print("    plushuman gateway migrate --multiplex")
     print()
     print("  A separate per-profile gateway (for a fleet split across UNIX users or a")
-    print(f"  HERMES_HOME outside profiles/) needs --force:  alfred -p {suffix} gateway install --force")
+    print(f"  HERMES_HOME outside profiles/) needs --force:  plushuman -p {suffix} gateway install --force")
     print()
     from hermes_constants import display_hermes_home
     from hermes_cli.gateway_multiplex_mode import STANDALONE_DEPRECATION_NOTICE
@@ -4417,7 +4417,7 @@ def _guard_supervised_gateway_conflict(force: bool = False) -> None:
         "  instead:"
     )
     print()
-    print("    alfred gateway restart")
+    print("    plushuman gateway restart")
     print()
     print(
         "  Pass --force to start a foreground gateway anyway (not recommended\n"
@@ -4455,9 +4455,9 @@ def _guard_existing_gateway_process_conflict(replace: bool = False) -> None:
         return
 
     print_error(f"A gateway is already running (PID {pid}), so your bots are most likely online already.")
-    print("  Check with `alfred gateway status`.")
-    print("  To restart it: `alfred gateway restart`. To stop it: `alfred gateway stop`.")
-    print("  To replace it from here: `alfred gateway run --replace`.")
+    print("  Check with `plushuman gateway status`.")
+    print("  To restart it: `plushuman gateway restart`. To stop it: `plushuman gateway stop`.")
+    print("  To replace it from here: `plushuman gateway run --replace`.")
     sys.exit(1)
 
 
@@ -4468,11 +4468,11 @@ def _guard_official_docker_root_gateway() -> None:
     if not _is_official_docker_checkout():
         return
 
-    print_error("Refusing to run the Alfred gateway as root inside the official Docker image.")
+    print_error("Refusing to run the +Human gateway as root inside the official Docker image.")
     print(
         "  The image entrypoint normally drops privileges to the 'hermes' user. "
         "If you override entrypoint in Docker Compose, include "
-        "/opt/hermes/docker/entrypoint.sh before the Alfred command."
+        "/opt/hermes/docker/entrypoint.sh before the +Human command."
     )
     print(
         "  Running the gateway as root can leave root-owned files in "
@@ -4627,7 +4627,7 @@ def run_gateway(verbose: int = 0, quiet: bool = False, replace: bool = False, fo
         _ensure_user_systemd_env()
 
     # Refresh the systemd unit on every boot so restart settings stay current even after an
-    # exit-code-75 respawn (stale-code or /restart), which bypasses `alfred gateway restart`.
+    # exit-code-75 respawn (stale-code or /restart), which bypasses `plushuman gateway restart`.
     if supports_systemd_services():
         try:
             refresh_systemd_unit_if_needed(system=False)
@@ -4636,7 +4636,7 @@ def run_gateway(verbose: int = 0, quiet: bool = False, replace: bool = False, fo
 
     from gateway.run import start_gateway
     print("┌─────────────────────────────────────────────────────────┐")
-    print("│           🎩 Alfred Gateway Starting...                 │")
+    print("│           ✚ +Human Gateway Starting...                 │")
     print("├─────────────────────────────────────────────────────────┤")
     print("│  Messaging platforms + cron scheduler                    │")
     print("│  Press Ctrl+C to stop                                   │")
@@ -5066,7 +5066,7 @@ def _refuse_from_inside_gateway(verb: str, reason: str) -> None:
         print_error(
             f"Refusing to {verb} the gateway from inside the gateway process.\n"
             f"This command was blocked to prevent {reason}.\n"
-            f"Use `alfred gateway {verb}` from a shell outside the running gateway."
+            f"Use `plushuman gateway {verb}` from a shell outside the running gateway."
         )
         sys.exit(1)
 
@@ -5101,40 +5101,40 @@ def _cmd_setup(args):
 
 
 _WSL_FOREGROUND_HINT = (
-    "", "  alfred gateway run                              # direct foreground",
-    "  tmux new -s hermes 'alfred gateway run'         # persistent via tmux",
-    "  nohup alfred gateway run > ~/.hermes/logs/gateway.log 2>&1 &  # background",
+    "", "  plushuman gateway run                              # direct foreground",
+    "  tmux new -s hermes 'plushuman gateway run'         # persistent via tmux",
+    "  nohup plushuman gateway run > ~/.hermes/logs/gateway.log 2>&1 &  # background",
 )
 # ``(exit_code, *lines)`` when a subcommand has no service backend, keyed by (subcommand, reason).
 # Reasons in check order: "termux", "wsl" (no operational systemd), "s6" / "container", "unsupported".
 # ``None`` exit code means plain return.
 _NO_BACKEND_MESSAGES = {
     ("install", "termux"): (1,
-        "Gateway service installation is not supported on Termux.", "Run manually: alfred gateway"),
+        "Gateway service installation is not supported on Termux.", "Run manually: plushuman gateway"),
     ("install", "wsl"): (1,
         "WSL detected but systemd is not running.",
         "Either enable systemd (add systemd=true to /etc/wsl.conf and restart WSL)",
         "or run the gateway in foreground mode:", *_WSL_FOREGROUND_HINT),
     ("install", "s6"): (None,
         "Per-profile gateways are auto-registered when you create a profile.", "",
-        "  alfred profile create <name>     # creates the s6 service slot",
-        "  alfred -p <name> gateway start   # bring it up via s6",
-        "  alfred status                    # see currently-supervised gateways"),
+        "  plushuman profile create <name>     # creates the s6 service slot",
+        "  plushuman -p <name> gateway start   # bring it up via s6",
+        "  plushuman status                    # see currently-supervised gateways"),
     ("install", "container"): (0,
         "Service installation is not needed inside a Docker container.",
         "The container runtime is your service manager — use Docker restart policies instead:", "",
         "  docker run --restart unless-stopped ...   # auto-restart on crash/reboot",
         "  docker restart <container>                # manual restart", "",
-        "To run the gateway: alfred gateway run"),
+        "To run the gateway: plushuman gateway run"),
     ("install", "unsupported"): (1,
-        "Service installation not supported on this platform.", "Run manually: alfred gateway run"),
+        "Service installation not supported on this platform.", "Run manually: plushuman gateway run"),
     ("uninstall", "termux"): (1,
         "Gateway service uninstall is not supported on Termux because there is no managed service to remove.",
-        "Stop manual runs with: alfred gateway stop"),
+        "Stop manual runs with: plushuman gateway stop"),
     ("uninstall", "s6"): (None,
         "Per-profile gateways are auto-unregistered when you delete the profile.", "",
-        "  alfred profile delete <name>     # tears down the s6 service slot",
-        "  alfred -p <name> gateway stop    # stop without deleting the profile"),
+        "  plushuman profile delete <name>     # tears down the s6 service slot",
+        "  plushuman -p <name> gateway stop    # stop without deleting the profile"),
     ("uninstall", "container"): (0,
         "Service uninstall is not applicable inside a Docker container.",
         "To stop the gateway, stop or remove the container:", "",
@@ -5142,10 +5142,10 @@ _NO_BACKEND_MESSAGES = {
     ("uninstall", "unsupported"): (1,
         "Running the gateway as a background service is not available on this platform "
         "(no systemd, launchd or Scheduled Tasks), so there is nothing to uninstall.",
-        "Stop a manually started gateway with: alfred gateway stop"),
+        "Stop a manually started gateway with: plushuman gateway stop"),
     ("start", "termux"): (1,
         "Gateway service start is not supported on Termux because there is no system service manager.",
-        "Run manually: alfred gateway"),
+        "Run manually: plushuman gateway"),
     ("start", "wsl"): (1,
         "WSL detected but systemd is not available.",
         "Run the gateway in foreground mode instead:", *_WSL_FOREGROUND_HINT, "",
@@ -5155,11 +5155,11 @@ _NO_BACKEND_MESSAGES = {
         "The gateway runs as the container's main process.", "",
         "  docker start <container>     # start a stopped container",
         "  docker restart <container>   # restart a running container", "",
-        "Or run the gateway directly: alfred gateway run"),
+        "Or run the gateway directly: plushuman gateway run"),
     ("start", "unsupported"): (1,
         "Running the gateway as a background service is not available on this platform "
         "(no systemd, launchd or Scheduled Tasks).",
-        "Run it directly with: alfred gateway run"),
+        "Run it directly with: plushuman gateway run"),
 }
 
 
@@ -5210,8 +5210,8 @@ def _install_systemd_from_cli(args, *, force: bool, system: bool, run_as_user) -
     if is_wsl():
         print_warning("WSL detected — systemd services may not survive WSL restarts.")
         _print_info_lines(
-            "  Consider running in foreground instead: alfred gateway run",
-            "  Or use tmux/screen for persistence: tmux new -s hermes 'alfred gateway run'",
+            "  Consider running in foreground instead: plushuman gateway run",
+            "  Or use tmux/screen for persistence: tmux new -s hermes 'plushuman gateway run'",
         )
         print()
     # Honor --start-now/--start-on-login; else prompt on a TTY, default True headless.
@@ -5315,7 +5315,7 @@ def _print_unfolded_gateway_note(owner) -> None:
         return
     print(f"  {len(others)} per-profile gateway process(es) still run beside it "
           f"(PIDs: {', '.join(str(p) for p in others)}).")
-    print("  They were left running; fold them in with: alfred gateway migrate --multiplex")
+    print("  They were left running; fold them in with: plushuman gateway migrate --multiplex")
 
 
 def _cmd_start(args):
@@ -5380,8 +5380,8 @@ def _cmd_stop(args):
         print("  Stop or restart the host gateway instead:")
         print()
         owner_flag = f"-p {owner.profile_label} " if owner is not None else ""
-        print(f"    alfred {owner_flag}gateway stop      # takes every served profile offline")
-        print(f"    alfred {owner_flag}gateway restart")
+        print(f"    plushuman {owner_flag}gateway stop      # takes every served profile offline")
+        print(f"    plushuman {owner_flag}gateway restart")
         sys.exit(GATEWAY_FATAL_CONFIG_EXIT_CODE)
     # Under s6 a bare pkill is seen as a crash and restarted; go through the supervisor.
     if stop_all and _dispatch_all_via_service_manager_if_s6("stop"):
@@ -5442,7 +5442,7 @@ def _restart_all(system: bool) -> None:
         print(f"  {owner.describe()}")
         print("  `--all` restarts the one host multiplexer, and this profile is not its owner.")
         print()
-        print(f"    alfred -p {owner.profile_label} gateway restart --all")
+        print(f"    plushuman -p {owner.profile_label} gateway restart --all")
         sys.exit(GATEWAY_FATAL_CONFIG_EXIT_CODE)
     # No live owner: stop/kill/start as the host root, not as the invoking profile (whose own
     # gateway the run-side guard would refuse — the host stayed down after a Desktop update).
@@ -5515,12 +5515,12 @@ def _refuse_restart_of_service_managed_gateway(pid: int | None) -> None:
     _print_lines(
         "",
         f"✗ Gateway (PID {pid}) is managed by systemd unit {unit}.",
-        "  `alfred gateway restart` cannot restart it from here: the fallback would",
+        "  `plushuman gateway restart` cannot restart it from here: the fallback would",
         "  kill a live gateway and spawn an unsupervised replacement in this shell's",
         "  cgroup while the unit keeps failing against the stolen lock.",
         "  Restart it through its unit instead:",
         *(f"    {c}" for c in cmds),
-        "  (Pre-convention `hermes.service` installs: `alfred gateway migrate-legacy`",
+        "  (Pre-convention `hermes.service` installs: `plushuman gateway migrate-legacy`",
         "  removes the legacy unit so the canonical one can own the gateway.)",
     )
     sys.exit(1)
@@ -5568,7 +5568,7 @@ def _cmd_restart(args):
             pass
 
     # Linger only explains a FAILED systemd unit restart. Without an installed unit the
-    # detached run below is the restart; bailing here left `alfred gateway restart` a
+    # detached run below is the restart; bailing here left `plushuman gateway restart` a
     # silent exit-0 no-op on any Linux login session (Desktop read it as success).
     if kind == "systemd" and supports_systemd_services():
         linger_ok, _detail = get_systemd_linger_status()
@@ -5578,7 +5578,7 @@ def _cmd_restart(args):
                 "", "⚠ Cannot restart gateway as a service — linger is not enabled.",
                 "  The gateway user service requires linger to function on headless servers.", "",
                 f"  Run:  sudo loginctl enable-linger {getpass.getuser()}", "",
-                "  Then restart the gateway:", "    alfred gateway restart",
+                "  Then restart the gateway:", "    plushuman gateway restart",
             )
             return
 
@@ -5586,7 +5586,7 @@ def _cmd_restart(args):
         _print_lines(
             "", "✗ Gateway service restart failed.",
             "  The service definition exists, but the service manager did not recover it.",
-            "  Fix the service, then retry: alfred gateway start",
+            "  Fix the service, then retry: plushuman gateway start",
         )
         sys.exit(1)
 
@@ -5611,30 +5611,30 @@ def _cmd_restart(args):
     run_gateway(verbose=0, force=force)
 
 
-# ``alfred gateway status`` hints for a manually-run / stopped gateway, keyed by host kind.
+# ``plushuman gateway status`` hints for a manually-run / stopped gateway, keyed by host kind.
 _STATUS_RUNNING_HINTS = {
     "termux": ("Termux note:", "  Android may stop background jobs when Termux is suspended"),
     "wsl": (
         "WSL note:", "  The gateway is running in foreground/manual mode (recommended for WSL).",
         "  Use tmux or screen for persistence across terminal closes.",
     ),
-    "windows": ("To install as a Windows Scheduled Task (auto-start on login):", "  alfred gateway install"),
+    "windows": ("To install as a Windows Scheduled Task (auto-start on login):", "  plushuman gateway install"),
     "other": (
-        "To install as a service:", "  alfred gateway install", "  sudo alfred gateway install --system",
+        "To install as a service:", "  plushuman gateway install", "  sudo plushuman gateway install --system",
     ),
 }
 _STATUS_STOPPED_HINTS = {
     "termux": (
-        "  nohup alfred gateway run > ~/.hermes/logs/gateway.log 2>&1 &  # Best-effort background start",
+        "  nohup plushuman gateway run > ~/.hermes/logs/gateway.log 2>&1 &  # Best-effort background start",
     ),
     "wsl": (
-        "  tmux new -s hermes 'alfred gateway run'         # persistent via tmux",
-        "  nohup alfred gateway run > ~/.hermes/logs/gateway.log 2>&1 &  # background",
+        "  tmux new -s hermes 'plushuman gateway run'         # persistent via tmux",
+        "  nohup plushuman gateway run > ~/.hermes/logs/gateway.log 2>&1 &  # background",
     ),
-    "windows": ("  alfred gateway install  # Install as Windows Scheduled Task (auto-start on login)",),
+    "windows": ("  plushuman gateway install  # Install as Windows Scheduled Task (auto-start on login)",),
     "other": (
-        "  alfred gateway install  # Install as user service",
-        "  sudo alfred gateway install --system  # Install as boot-time system service",
+        "  plushuman gateway install  # Install as user service",
+        "  sudo plushuman gateway install --system  # Install as boot-time system service",
     ),
 }
 
@@ -5669,7 +5669,7 @@ def _cmd_status(args):
     if not active_standalone and not snapshot.running and named_profile_served_by_running_multiplexer():
         # Satellite profile: the default multiplexer is the live inbound process for it.
         print("✓ Gateway is running via the default-profile multiplexer")
-        print("  Manage it from the default profile: alfred gateway status")
+        print("  Manage it from the default profile: plushuman gateway status")
         _print_served_ingress_urls(get_active_profile_name())
         _print_unserved_shared_ingress(get_active_profile_name())
     elif (kind := _installed_service_kind_for(lambda: _windows_service_installed)) is not None:
@@ -5704,7 +5704,7 @@ def _cmd_status(args):
             _print_runtime_health()
             print()
             print("To start:")
-            print("  alfred gateway run      # Run in foreground")
+            print("  plushuman gateway run      # Run in foreground")
             _print_lines(*_STATUS_STOPPED_HINTS[_status_host_kind()])
 
     _print_duplicate_credential_warnings()
@@ -5730,7 +5730,7 @@ def _cmd_list(args):
 
 
 def _cmd_migrate_legacy(args):
-    """Stop, disable, and remove legacy Alfred gateway unit files (e.g. hermes.service)."""
+    """Stop, disable, and remove legacy +Human gateway unit files (e.g. hermes.service)."""
     dry_run = getattr(args, "dry_run", False)
     yes = getattr(args, "yes", False)
     if not supports_systemd_services() and not is_macos():

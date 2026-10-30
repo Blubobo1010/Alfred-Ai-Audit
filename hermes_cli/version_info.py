@@ -1,4 +1,4 @@
-"""Canonical runtime identity for Alfred.
+"""Canonical runtime identity for +Human.
 
 Resolution order:
 1. Install stamp (``install-stamp.json``) — written at build time by

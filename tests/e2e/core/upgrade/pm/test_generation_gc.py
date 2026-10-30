@@ -8,8 +8,8 @@ command that superseded it, not only by a manual ``hermes pm gc``.
 
 The seeded state is the one a daily-updating user has: before each rebuild the existing
 generations' ``.lease-managed`` stamps are aged two days (as if they were built on earlier days),
-then the user runs ``alfred update`` / ``hermes pm repair``. After each rebuild the aged,
-unselected generations must be gone, the selected one kept and working (a real ``alfred -z`` turn
+then the user runs ``plushuman update`` / ``hermes pm repair``. After each rebuild the aged,
+unselected generations must be gone, the selected one kept and working (a real ``plushuman -z`` turn
 through the loopback provider). Two updates: the first one's leftover is the generation the updater
 itself ran from (leased, legitimately kept); the second shows whether anything reclaims it.
 Restarts are covered in ``test_restart_generations.py``. The generation the rebuilding process
@@ -98,11 +98,11 @@ def test_repeated_updates_collect_superseded_generations(home, provider):
     results = []
     for n in (1, 2):
         target = P.publish_dependency_release(home["origin"], home["root"], n)
-        results.append(_rebuild_collects(sb, provider, f"`alfred update` #{n}",
+        results.append(_rebuild_collects(sb, provider, f"`plushuman update` #{n}",
                                          lambda: P.update(sb, env=P.lazy_env(sb))))
         assert I.git("rev-parse", "HEAD", cwd=sb.checkout) == target
     for n, result in enumerate(results, 1):
-        _assert_collected(sb, f"`alfred update` #{n}", result)
+        _assert_collected(sb, f"`plushuman update` #{n}", result)
 
 
 def test_repeated_repairs_collect_superseded_generations(home, provider):

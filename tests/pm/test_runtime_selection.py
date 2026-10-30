@@ -65,8 +65,8 @@ def test_boot_uses_one_selected_dependency_tree_in_fresh_process(tmp_path, monke
 
 
 def test_boot_puts_the_checkout_launcher_ahead_of_the_venvs_own_console_script(tmp_path, monkeypatch):
-    """#124627: the venv's `alfred` console script is an editable install bound to the
-    build-time source snapshot. A child resolving `alfred` off PATH must reach the
+    """#124627: the venv's `plushuman` console script is an editable install bound to the
+    build-time source snapshot. A child resolving `plushuman` off PATH must reach the
     checkout's own launcher, never that stale copy."""
     import os
     import subprocess

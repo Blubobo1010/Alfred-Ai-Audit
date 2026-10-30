@@ -1,5 +1,5 @@
 /**
- * HERMES_DESKTOP_IGNORE_EXISTING=1 (`alfred desktop --ignore-existing`) keeps
+ * HERMES_DESKTOP_IGNORE_EXISTING=1 (`plushuman desktop --ignore-existing`) keeps
  * Desktop off installed runtimes (ACTIVE_HERMES_ROOT, or the install a
  * published user-bin launcher reports). Backend resolution
  * then falls through to bootstrap-needed, which shows the first-run choice

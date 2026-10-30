@@ -59,7 +59,7 @@ class WhatsAppBehaviorMixin(OwnAccessPolicyMixin):
     ALLOW_ALL_ENV_PREFIX = "WHATSAPP"
     supports_code_blocks = True  # WhatsApp renders fenced code blocks (monospace)
 
-    DEFAULT_REPLY_PREFIX: str = "🎩 *Alfred*\n────────────\n"
+    DEFAULT_REPLY_PREFIX: str = "*+Human*\n────────────\n"
 
     _OUTBOUND_INVISIBLE_CHARS_RE = re.compile(r"[\u200b\u2060\u2063\ufeff]")
     _OUTBOUND_ODD_SPACE_RE = re.compile(r"[\u00a0\u1680\u180e\u2000-\u200a\u202f\u205f\u3000]")
@@ -81,7 +81,8 @@ class WhatsAppBehaviorMixin(OwnAccessPolicyMixin):
         env_prefix = _get_wsecret("WHATSAPP_REPLY_PREFIX")
         if env_prefix is not None:
             return env_prefix.replace("\\n", "\n")
-        return self.DEFAULT_REPLY_PREFIX
+        from hermes_cli.assistant_name import reply_prefix  # alfred:keep — signed with the assistant's name
+        return reply_prefix() or self.DEFAULT_REPLY_PREFIX
 
     def _outgoing_chunk_limit(self) -> int:
         """Reserve room for the reply prefix; floor keeps space for pagination/fence repair."""

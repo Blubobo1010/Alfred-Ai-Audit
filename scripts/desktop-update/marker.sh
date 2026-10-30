@@ -466,7 +466,7 @@ marker_custody() { # posix.sh's refresher (CUSTODIAN_PID/CT), once the hand-off 
   # An old packaged Desktop judges line 1 alone, and a SIGKILLed hand-off runs
   # no trap. So line 1 names this custodian, not the hand-off, from before the
   # update work starts (posix.sh hands it over): when the hand-off dies, the
-  # `alfred update` it started (line 4) or a completion survivor may still
+  # `plushuman update` it started (line 4) or a completion survivor may still
   # mutate the checkout, and the marker already names a live owner. Keep line
   # 2 young until both are gone (bounded like the R6 wait), then release. Had
   # the handover failed, take the claim over now. Only the hand-off ever wrote
@@ -495,7 +495,7 @@ marker_release_locked() { # A7 rule 5 / corpus "release"
   if [ "$M_PID" = "$MY_PID" ] && [ "$J_OWNER_STATE" -eq 0 ]; then
     if [ -n "$M_DPID" ] && [ "$M_DPID" != "$MY_PID" ] && [ "$J_DELEGATE_STATE" -eq 2 ]; then
       marker_replace "$(marker_canonical "$M_DPID" "$M_STARTED_DIGITS" "$M_DCT")"$'\n'
-      log "handed the update marker to its live delegate pid $M_DPID (alfred update)"
+      log "handed the update marker to its live delegate pid $M_DPID (plushuman update)"
     else
       rm -f "$MARKER" 2>/dev/null
     fi
@@ -542,7 +542,7 @@ checkout_lock_held() { # 0 iff some process holds the checkout kernel lock right
   # the file itself -- no process exit, wait or shell work in between. flock(1)
   # can only take it on a shell fd, so there the hold spans flock(1)'s exit and
   # our close. No tool, or a lock file that exists but cannot be opened (root-
-  # owned after `sudo alfred update`): held -- fail closed like the Desktop's
+  # owned after `sudo plushuman update`): held -- fail closed like the Desktop's
   # own probe (checkout_held): reclaim needs a provably free checkout.
   local path rc tool="$MARKER_LOCK_TOOL_FORCED"
   path="$(checkout_lock_path)"

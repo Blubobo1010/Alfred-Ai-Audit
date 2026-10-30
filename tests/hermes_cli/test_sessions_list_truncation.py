@@ -1,4 +1,4 @@
-"""``alfred sessions list`` tells the user when ``--limit`` cut the listing (#111989).
+"""``plushuman sessions list`` tells the user when ``--limit`` cut the listing (#111989).
 
 The cap is applied inside the SQL query, so the lister probes one row past it; the footer
 must appear only when that probe row exists.

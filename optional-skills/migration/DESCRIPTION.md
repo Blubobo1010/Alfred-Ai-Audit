@@ -1,2 +1,2 @@
 Optional migration workflows for importing user state and customizations from
-other agent systems into Alfred.
+other agent systems into +Human.

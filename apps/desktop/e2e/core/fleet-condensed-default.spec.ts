@@ -7,7 +7,7 @@
  * ACTIVE gateway's own, so on the usual setup the local default vanished
  * while the remote one stayed.
  *
- * Real app, real local backend, real second `alfred serve` registered as a
+ * Real app, real local backend, real second `plushuman serve` registered as a
  * remote connection; checked from both sides of a switch.
  */
 

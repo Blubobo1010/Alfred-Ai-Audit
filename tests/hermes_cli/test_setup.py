@@ -279,11 +279,11 @@ def test_python_setup_uses_declared_extras_and_reports_restart(extra, succeeds, 
     assert calls == [([extra], True)]
     output = capsys.readouterr().out
     if succeeds:
-        assert "Restart Alfred" in output
+        assert "Restart +Human" in output
         assert sys.modules[extra] is None  # installing never activates in this process
     else:
         assert "resolution refused" in output
-        assert "Retry with: alfred setup" in output
+        assert "Retry with: plushuman setup" in output
         assert "installed." not in output
 
 

@@ -1,4 +1,4 @@
-"""Relay/connector support package for the Alfred gateway.
+"""Relay/connector support package for the +Human gateway.
 
 EXPERIMENTAL gateway side of the "Gateway Gateway" relay design: a generic
 ``RelayAdapter`` plus the wire-serializable ``CapabilityDescriptor`` the connector
@@ -221,10 +221,10 @@ def relay_display_name() -> Optional[str]:
         except Exception:
             value = ""
         # The stock brand is identical on every default install: forwarding it would
-        # prefix every reply "**Alfred:**" and shadow the connector's
+        # prefix every reply "**+Human:**" and shadow the connector's
         # linked-owner fallback, which actually disambiguates. Only a customized
         # name is forwarded.
-        if value == "Alfred":
+        if value == "+Human":
             value = ""
     # Mirror the connector's ingest sanitization (trim + 64-char cap).
     return value[:64] or None
@@ -399,7 +399,7 @@ def _post_provision(
 def _resolve_relay_identity_token() -> str:
     """Resolve the caller-identity bearer token the connector introspects to a tenant.
 
-    Canonical resolver shared by runtime self-provision and ``alfred gateway enroll``.
+    Canonical resolver shared by runtime self-provision and ``plushuman gateway enroll``.
     Modes, in precedence order:
       1.  Generic OIDC client-credentials (self-hosted IdP): ``gateway.idp.token_url``
           (``GATEWAY_RELAY_IDP_TOKEN_URL``) set together with client id + secret ->

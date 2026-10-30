@@ -409,7 +409,7 @@ def read_json_or_empty(path: str | Path) -> dict:
 def warn_if_credential_file_broadly_readable(path: str | Path, *, label: str = "", log: logging.Logger | None = None) -> bool:
     """Warn when a credential file is group/world-readable; True when a warning was emitted.
 
-    Hand-made secret files (or ones older Alfred wrote without an explicit mode) commonly end up
+    Hand-made secret files (or ones older +Human wrote without an explicit mode) commonly end up
     0o644 under the default umask; call this before loading any token/credential file. No-op on
     non-POSIX (Windows ACLs don't map onto group/other bits; st_mode there is synthesized), when
     the file is missing, or when permissions are already tight.
@@ -468,7 +468,7 @@ def atomic_roundtrip_yaml_update(path: str | Path, key_path: str, value: Any) ->
     """
     from ruamel.yaml.comments import CommentedMap
     # Honor escaped dots and prefer existing literal dotted keys (model IDs like ``glm-5.3``) over
-    # blind splitting — same navigation as ``alfred config set``'s ``_set_nested``; otherwise
+    # blind splitting — same navigation as ``plushuman config set``'s ``_set_nested``; otherwise
     # /model + TUI persistence wrote ``glm-5: {'3': ...}`` phantom siblings.
     # See #91607.
     from hermes_cli.config import _greedy_literal_match, _split_key_path

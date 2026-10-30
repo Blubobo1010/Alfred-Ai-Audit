@@ -138,7 +138,7 @@ export function exposePluginSDK() {
       useConfirmDelete,
     },
 
-    // Alfred API client
+    // +Human API client
     api,
     // Raw fetchJSON for plugin-specific JSON endpoints
     fetchJSON,

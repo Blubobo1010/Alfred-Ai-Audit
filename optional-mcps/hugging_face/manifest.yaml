@@ -7,9 +7,9 @@ description: >-
   Models, datasets, Spaces, and papers from the Hugging Face Hub.
 source: https://huggingface.co/docs/hub/agents-mcp
 
-# Official vendor-hosted remote MCP (URL-only — Alfred never spawns a local
+# Official vendor-hosted remote MCP (URL-only — +Human never spawns a local
 # process for this entry). Native OAuth 2.1 + Dynamic Client Registration;
-# Alfred's MCP client + mcp_oauth_manager handle discovery, PKCE, token
+# +Human's MCP client + mcp_oauth_manager handle discovery, PKCE, token
 # exchange, and refresh.
 # Underscored name so UIs render "Hugging Face", not "Huggingface".
 transport:
@@ -29,6 +29,6 @@ suggest:
     - hf.co
 
 post_install: |
-  On first connection Alfred opens a browser to authorize with
-  Hugging Face (or run `alfred mcp login hugging_face`). Approve access,
+  On first connection +Human opens a browser to authorize with
+  Hugging Face (or run `plushuman mcp login hugging_face`). Approve access,
   then restart the session so tools load.

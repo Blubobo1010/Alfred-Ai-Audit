@@ -90,7 +90,7 @@ def _tick_admitted(
         return 0
 
     try:
-        # `alfred pause` ESTOP: skip dispatch, never touch in-flight runs; check_paused logs once.
+        # `plushuman pause` ESTOP: skip dispatch, never touch in-flight runs; check_paused logs once.
         with contextlib.suppress(ImportError):
             from agent.estop import check_paused as _estop_check_paused
             if _estop_check_paused("cron", _sched.logger):

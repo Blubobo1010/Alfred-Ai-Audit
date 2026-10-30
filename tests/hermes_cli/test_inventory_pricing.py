@@ -2,7 +2,7 @@
 
 feeds the desktop GUI model picker (and onboarding) so it can show $/Mtok
 columns + Free/Pro badges and gate paid models on free Nous accounts, the
-same way the `alfred model` CLI picker does.
+same way the `plushuman model` CLI picker does.
 """
 
 from threading import Event

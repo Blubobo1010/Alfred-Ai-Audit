@@ -1,4 +1,4 @@
-"""Behavior-contract compatibility tests for native Alfred plugins."""
+"""Behavior-contract compatibility tests for native +Human plugins."""
 
 from pathlib import Path
 import shutil

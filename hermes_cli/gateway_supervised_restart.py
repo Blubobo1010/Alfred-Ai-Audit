@@ -1,4 +1,4 @@
-"""``alfred gateway restart`` for a gateway whose supervisor Alfred did not install.
+"""``plushuman gateway restart`` for a gateway whose supervisor +Human did not install.
 
 A custom launchd agent / systemd unit / any KeepAlive-style manager running ``gateway run
 --external-supervisor`` owns the respawn. The manual fallback in ``_cmd_restart`` (SIGTERM, then a
@@ -98,6 +98,6 @@ def restart_externally_supervised_gateway(supervised_pid: int) -> None:
         "",
         "✗ Not stopping or foreground-running a supervisor-owned gateway.",
         "  Check the supervisor (it may be unloaded, wedged, or stopped retrying),",
-        "  then rerun once it is healthy: alfred gateway restart",
+        "  then rerun once it is healthy: plushuman gateway restart",
     )
     sys.exit(1)

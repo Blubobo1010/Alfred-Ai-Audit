@@ -3,7 +3,7 @@
 #
 # Nothing here touches your real ~/.hermes or checkout. Each mode builds (or
 # reuses) a disposable install under $TMPDIR and drives the REAL code path --
-# the actual installer, the actual orchestrator, the actual `alfred update`.
+# the actual installer, the actual orchestrator, the actual `plushuman update`.
 #
 #   repro.sh shim          shim UI only: success event after 6s
 #   repro.sh shim-fail     shim UI only: error event after 6s
@@ -107,7 +107,7 @@ case "$MODE" in
     }
     decide() { bash "$SCRIPT_DIR/posix.sh" --self-test-gate --install-root "$G/hermes-agent" "$@" | cut -d: -f1; }
 
-    expect "appimage (not under unpacked)"      skew     "$(decide --relaunch-target /opt/Alfred/hermes)"
+    expect "appimage (not under unpacked)"      skew     "$(decide --relaunch-target /opt/+Human/hermes)"
     expect "sibling-prefix dir not fooled"      skew     "$(decide --relaunch-target "$UNPACKED-evil/hermes")"
     expect "no chrome-sandbox (namespace)"      relaunch "$(decide --relaunch-target "$UNPACKED/hermes")"
 
@@ -134,7 +134,7 @@ case "$MODE" in
   launch)
     # Terminal-lifecycle matrix (gille round 2): launch acceptance is part
     # of the outcome. Each case runs the REAL orchestrator (--no-ui) against
-    # a fake install whose `alfred` stub exits 0 instantly, so the flow
+    # a fake install whose `plushuman` stub exits 0 instantly, so the flow
     # reaches finish() with FINAL_CODE=0 and exercises the launch leg.
     L="$(mktemp -d -t hermes-launch-test.XXXXXX)"
     fails=0
@@ -145,7 +145,7 @@ case "$MODE" in
         printf 'FAIL %s -> %s\n' "$1" "$(cat "$L/.hermes-update-result.json" 2>/dev/null)"; fails=$((fails+1))
       fi
     }
-    stub_install() { # creates a fake install whose alfred update succeeds
+    stub_install() { # creates a fake install whose plushuman update succeeds
       rm -rf "$L"; mkdir -p "$L/hermes-agent/venv/bin"
       printf '#!/bin/sh\nexit 0\n' > "$L/hermes-agent/venv/bin/hermes"
       chmod +x "$L/hermes-agent/venv/bin/hermes"
@@ -159,20 +159,20 @@ case "$MODE" in
     if [ "$(uname)" != "Darwin" ]; then
       bash "$SCRIPT_DIR/posix.sh" --no-ui --desktop-pid 0 --install-root "$L/hermes-agent" \
         --relaunch-target "$UNPACKED/hermes" >/dev/null 2>&1 || true
-      expect_msg "instant-exit relaunch downgrades to manual" "d['ok']==True and d['manual']==True and 'Reopen Alfred' in d['message']"
+      expect_msg "instant-exit relaunch downgrades to manual" "d['ok']==True and d['manual']==True and 'Reopen +Human' in d['message']"
     else
       # mac: a SUPPLIED target that is missing is a REJECTED launch and
       # must downgrade to manual — never a clean "Update complete."
       bash "$SCRIPT_DIR/posix.sh" --no-ui --desktop-pid 0 --install-root "$L/hermes-agent" \
         --relaunch-target "$L/NoSuch.app" >/dev/null 2>&1 || true
-      expect_msg "missing bundle downgrades to manual" "d['ok']==True and d['manual']==True and 'Reopen Alfred' in d['message']"
+      expect_msg "missing bundle downgrades to manual" "d['ok']==True and d['manual']==True and 'Reopen +Human' in d['message']"
     fi
 
     # 2. gated skew: success result carries the skew message (the manual
     #    event's payload), never a bare "Update complete."
     stub_install
     bash "$SCRIPT_DIR/posix.sh" --no-ui --desktop-pid 0 --install-root "$L/hermes-agent" \
-      --relaunch-target /opt/Alfred/hermes >/dev/null 2>&1 || true
+      --relaunch-target /opt/+Human/hermes >/dev/null 2>&1 || true
     if [ "$(uname)" != "Darwin" ]; then
       expect_msg "skew outcome surfaces in result message" "d['ok']==True and d['manual']==True and 'was not changed' in d['message']"
     fi

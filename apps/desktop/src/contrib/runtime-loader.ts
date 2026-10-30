@@ -691,7 +691,7 @@ async function readPluginSourceText(file: string): Promise<string> {
 
   if (result.truncated) {
     throw new PluginSourceOversizeError(
-      "plugin.js exceeds this shell's 512 KiB read limit — update Alfred Desktop to load larger plugins"
+      "plugin.js exceeds this shell's 512 KiB read limit — update +Human Desktop to load larger plugins"
     )
   }
 
@@ -997,7 +997,7 @@ export async function uninstallDiskPlugin(pluginId: string): Promise<{ ok: boole
   const remove = window.hermesDesktop?.removeDesktopPlugin
 
   if (!remove) {
-    return { ok: false, error: 'this Alfred Desktop build cannot remove desktop plugins — delete the folder by hand' }
+    return { ok: false, error: 'this +Human Desktop build cannot remove desktop plugins — delete the folder by hand' }
   }
 
   const result = await remove({ name: record.origin })

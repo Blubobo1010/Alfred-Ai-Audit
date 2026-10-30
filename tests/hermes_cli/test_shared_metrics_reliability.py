@@ -208,7 +208,7 @@ def _pre_pull_finalize(monkeypatch) -> None:
 def test_pre_pull_park_happens_only_while_opted_in_and_keeps_only_metric_fields(marks, monkeypatch):
     pending = update_metrics.pending_updates_dir(marks.home)
     pending.mkdir(parents=True)
-    (pending / "earlier.json").write_text(json.dumps({"update_id": "earlier", "argv": ["alfred", "update"]}))
+    (pending / "earlier.json").write_text(json.dumps({"update_id": "earlier", "argv": ["plushuman", "update"]}))
     marks.policy["on"] = False
     _pre_pull_finalize(monkeypatch)
     assert not pending.exists() or list(pending.iterdir()) == []  # nothing parked, the earlier one purged

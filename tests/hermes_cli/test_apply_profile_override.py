@@ -50,7 +50,7 @@ def _run_apply_profile_override(
     else:
         monkeypatch.delenv("HERMES_HOME", raising=False)
 
-    monkeypatch.setattr(sys, "argv", argv or ["alfred", "gateway", "start"])
+    monkeypatch.setattr(sys, "argv", argv or ["plushuman", "gateway", "start"])
 
     # Scrub supervisor markers the host environment may carry (systemd-run
     # CI runners export INVOCATION_ID) so each test controls them explicitly.
@@ -72,11 +72,11 @@ def _run_apply_profile_override(
 
 
 @pytest.mark.parametrize("argv", [
-    ["alfred", "profile", "list"],
-    ["alfred", "profile", "use", "default"],
-    ["alfred", "uninstall"],
-    ["alfred", "uninstall", "--dry-run"],
-    ["alfred", "uninstall", "--help"],
+    ["plushuman", "profile", "list"],
+    ["plushuman", "profile", "use", "default"],
+    ["plushuman", "uninstall"],
+    ["plushuman", "uninstall", "--dry-run"],
+    ["plushuman", "uninstall", "--help"],
 ])
 @pytest.mark.parametrize("exported_home", [False, True])
 def test_missing_sticky_profile_allows_recovery_commands(
@@ -101,13 +101,13 @@ def test_missing_sticky_profile_allows_recovery_commands(
 
 
 @pytest.mark.parametrize("argv, expect_hint", [
-    (["alfred", "chat"], True),
-    (["alfred", "uninstall", "--data"], True),
-    (["alfred", "uninstall", "--dat", "--yes"], True),
-    (["alfred", "uninstall", "--full", "--yes"], True),
-    (["alfred", "uninstall", "--fu"], True),
-    (["alfred", "uninstall", "--full", "--data"], True),
-    (["alfred", "-p", "ray", "uninstall"], False),  # explicit -p keeps the create hint
+    (["plushuman", "chat"], True),
+    (["plushuman", "uninstall", "--data"], True),
+    (["plushuman", "uninstall", "--dat", "--yes"], True),
+    (["plushuman", "uninstall", "--full", "--yes"], True),
+    (["plushuman", "uninstall", "--fu"], True),
+    (["plushuman", "uninstall", "--full", "--data"], True),
+    (["plushuman", "-p", "ray", "uninstall"], False),  # explicit -p keeps the create hint
 ])
 def test_missing_profile_still_blocks_other_or_explicit_commands(
     tmp_path, monkeypatch, capsys, argv, expect_hint,
@@ -118,7 +118,7 @@ def test_missing_profile_still_blocks_other_or_explicit_commands(
             active_profile="ray", create_active_profile=False, argv=argv,
         )
     assert exc.value.code == 1
-    assert ("alfred profile use default" in capsys.readouterr().err) is expect_hint
+    assert ("plushuman profile use default" in capsys.readouterr().err) is expect_hint
 
 
 class TestApplyProfileOverrideHermesHomeGuard:
@@ -136,7 +136,7 @@ class TestApplyProfileOverrideHermesHomeGuard:
         HERMES_HOME to .../profiles/coder.
 
         Bug scenario from #22502: systemd sets HERMES_HOME to the hermes root
-        and the user switches to a profile via `alfred profile use`.
+        and the user switches to a profile via `plushuman profile use`.
         Before the fix, the guard returned early and active_profile was ignored.
         """
         hermes_root = tmp_path / ".hermes"
@@ -173,7 +173,7 @@ class TestApplyProfileOverrideHermesHomeGuard:
         monkeypatch.setenv("SUDO_USER", "hermes")
         monkeypatch.delenv("HERMES_HOME", raising=False)
         monkeypatch.setattr(os, "geteuid", lambda: 0, raising=False)
-        monkeypatch.setattr(sys, "argv", ["alfred", "-p", "elias", "gateway", "install", "--system"])
+        monkeypatch.setattr(sys, "argv", ["plushuman", "-p", "elias", "gateway", "install", "--system"])
 
         import pwd
 
@@ -183,7 +183,7 @@ class TestApplyProfileOverrideHermesHomeGuard:
         _apply_profile_override()
 
         assert os.environ.get("HERMES_HOME") == str(profile_dir)
-        assert sys.argv == ["alfred", "gateway", "install", "--system"]
+        assert sys.argv == ["plushuman", "gateway", "install", "--system"]
         # Same identity gate as ``-p`` without sudo: a marker-less shell is not a profile.
         (user_home / ".hermes" / "profiles" / "ghost" / "cron").mkdir(parents=True)
         assert _resolve_sudo_user_profile_env("ghost") is None
@@ -195,7 +195,7 @@ class TestSupervisedChildIgnoresStickyProfile:
     """The reserved default gateway s6 slot must not follow active_profile.
 
     Inside the Docker s6 image the ``gateway-default`` service slot runs a
-    bare ``alfred gateway run`` (no ``-p``) to mean "the root HERMES_HOME
+    bare ``plushuman gateway run`` (no ``-p``) to mean "the root HERMES_HOME
     profile". The run-script exports ``HERMES_S6_SUPERVISED_CHILD=1``.
     Without a guard, ``_apply_profile_override`` would read the sticky
     ``active_profile`` file (set by e.g. the dashboard profile switcher) and
@@ -207,14 +207,14 @@ class TestSupervisedChildIgnoresStickyProfile:
     def test_non_supervised_run_still_follows_active_profile(
         self, tmp_path, monkeypatch
     ):
-        """Without the sentinel, a normal `alfred gateway run` still honors
+        """Without the sentinel, a normal `plushuman gateway run` still honors
         active_profile — the guard is scoped strictly to supervised children."""
         result = _run_apply_profile_override(
             tmp_path,
             monkeypatch,
             hermes_home=None,
             active_profile="briefer",
-            argv=["alfred", "gateway", "run"],
+            argv=["plushuman", "gateway", "run"],
         )
 
         assert result is not None
@@ -235,7 +235,7 @@ class TestSupervisedChildIgnoresStickyProfile:
         monkeypatch.setattr(Path, "home", lambda: tmp_path)
         monkeypatch.delenv("HERMES_HOME", raising=False)
         monkeypatch.setenv("HERMES_S6_SUPERVISED_CHILD", "1")
-        monkeypatch.setattr(sys, "argv", ["alfred", "-p", "coder", "gateway", "run"])
+        monkeypatch.setattr(sys, "argv", ["plushuman", "-p", "coder", "gateway", "run"])
 
         from hermes_cli.main import _apply_profile_override
         _apply_profile_override()
@@ -276,7 +276,7 @@ class TestGeneralizedSupervisorMarkers:
             monkeypatch,
             hermes_home=str(hermes_root),
             active_profile="telegram_nick",
-            argv=["alfred", "gateway", "run"],
+            argv=["plushuman", "gateway", "run"],
             extra_env={"HERMES_SUPERVISED_CHILD": "1"},
         )
         assert result == str(hermes_root), (
@@ -295,7 +295,7 @@ class TestGeneralizedSupervisorMarkers:
             monkeypatch,
             hermes_home=str(hermes_root),
             active_profile="telegram_nick",
-            argv=["alfred", "gateway", "run"],
+            argv=["plushuman", "gateway", "run"],
             extra_env={"INVOCATION_ID": "deadbeef" * 4},
         )
         assert result == str(hermes_root)
@@ -312,7 +312,7 @@ class TestGeneralizedSupervisorMarkers:
             monkeypatch,
             hermes_home=str(hermes_root),
             active_profile="coder",
-            argv=["alfred", "chat"],
+            argv=["plushuman", "chat"],
             extra_env={"INVOCATION_ID": "deadbeef" * 4},
         )
         assert result is not None
@@ -327,7 +327,7 @@ class TestGeneralizedSupervisorMarkers:
             monkeypatch,
             hermes_home=str(hermes_root),
             active_profile="telegram_nick",
-            argv=["alfred", "gateway", "run"],
+            argv=["plushuman", "gateway", "run"],
             extra_env={"HERMES_GATEWAY_EXTERNAL_SUPERVISOR": "1"},
         )
         assert result == str(hermes_root)
@@ -342,7 +342,7 @@ class TestGeneralizedSupervisorMarkers:
             monkeypatch,
             hermes_home=str(hermes_root),
             active_profile="telegram_nick",
-            argv=["alfred", "serve", "--isolated", "--host", "127.0.0.1", "--port", "0",
+            argv=["plushuman", "serve", "--isolated", "--host", "127.0.0.1", "--port", "0",
                   "--ssh-session-token-file", "/tmp/x/y.token"],
         )
         assert result == str(hermes_root)
@@ -382,7 +382,7 @@ class TestS6ContainerGatewayRun:
         root = tmp_path / ".hermes"
         result = _run_apply_profile_override(
             tmp_path, monkeypatch, hermes_home=str(root), active_profile="coder",
-            argv=["alfred", "gateway", "run"],
+            argv=["plushuman", "gateway", "run"],
         )
         assert result == str(root)
 
@@ -391,7 +391,7 @@ class TestS6ContainerGatewayRun:
     ):
         monkeypatch.setattr("hermes_cli.service_manager._s6_running", lambda: True)
         root = tmp_path / ".hermes"
-        for argv in (["alfred", "gateway", "run", "--no-supervise"], ["alfred", "chat"]):
+        for argv in (["plushuman", "gateway", "run", "--no-supervise"], ["plushuman", "chat"]):
             result = _run_apply_profile_override(
                 tmp_path, monkeypatch, hermes_home=str(root), active_profile="coder", argv=argv,
             )

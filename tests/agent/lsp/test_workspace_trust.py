@@ -5,7 +5,7 @@ interpreter), ``node_modules/typescript`` (typescript-language-server loads it),
 ``svelte.config.js``, Rust build scripts and Gradle builds (rust-analyzer, jdtls and
 kotlin-language-server evaluate them), and a ``node_modules/.bin/tsc`` or ``rust-toolchain.toml``
 the post-write shell linters would pick up.  Nothing here executes those files: the tests record
-which servers Alfred would start, the configuration it hands them, and the shell commands it runs.
+which servers +Human would start, the configuration it hands them, and the shell commands it runs.
 """
 from __future__ import annotations
 
@@ -67,7 +67,7 @@ def _strings(value):
 
 def _record_spawns(tmp_path, monkeypatch, launcher, roots, *, trusted_workspaces=()):
     """Config → service → spawn for every ``_SERVERS`` file in every root, cwd inside ``tmp/launch``.
-    Returns ``{(server_id, root): initialization_options}`` for the servers Alfred would start, and the status."""
+    Returns ``{(server_id, root): initialization_options}`` for the servers +Human would start, and the status."""
     _write(tmp_path / "home" / "config.yaml", json.dumps({"lsp": {
         "trusted_workspaces": [str(p) for p in trusted_workspaces],
         "servers": {sid: {"command": [launcher]} for sid in _SERVERS},
@@ -158,7 +158,7 @@ def test_only_operator_workspaces_and_listed_directories_are_trusted(tmp_path, m
         assert ("rust-analyzer", str(root)) not in handed
         assert shell_linted(root) == 0, root
 
-    # The workspace a surface points the session at is the operator's too (alfred -w, a Desktop project)...
+    # The workspace a surface points the session at is the operator's too (plushuman -w, a Desktop project)...
     monkeypatch.setenv("TERMINAL_CWD", str(sibling))
     assert shell_linted(sibling) == 2
     # ...but not one the model scheduled: a cron job's workdir or a kanban task's workspace...

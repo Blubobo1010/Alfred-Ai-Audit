@@ -1,4 +1,4 @@
-"""Shared ANSI color utilities for Alfred CLI modules."""
+"""Shared ANSI color utilities for +Human CLI modules."""
 
 import os
 import sys

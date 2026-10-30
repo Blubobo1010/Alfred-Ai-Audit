@@ -65,11 +65,11 @@ def test_repair_refuses_while_another_connection_holds_the_db(tmp_path):
 
     Gated on ``requires_wal``: repair admission
     (``hermes_state_holders.live_writer_holds_db``) first scans for foreign
-    holders — deleted sidecar generations, uninspectable Alfred processes —
+    holders — deleted sidecar generations, uninspectable +Human processes —
     and then probes SQLite with ``PRAGMA locking_mode=EXCLUSIVE`` +
     ``BEGIN IMMEDIATE``, which a concurrent connection makes fail with
     SQLITE_BUSY through the WAL index. This test exercises the probe leg: on
-    SQLite builds carrying the WAL-reset bug (and on NFS/SMB) Alfred runs
+    SQLite builds carrying the WAL-reset bug (and on NFS/SMB) +Human runs
     ``state.db`` in ``journal_mode=DELETE``, where a held reader takes only a
     SHARED lock and ``BEGIN IMMEDIATE`` still acquires RESERVED, so the probe
     alone cannot see the holder. The conftest auto-skips this test where WAL
@@ -199,7 +199,7 @@ def test_uninspectable_watched_descriptor_blocks_repair_before_sqlite(
 def test_uninspectable_unknown_descriptor_uses_hermes_identity_at_repair_boundary(
     tmp_path, monkeypatch, argv, should_block
 ):
-    """An unknown fd target blocks only when argv identifies Alfred."""
+    """An unknown fd target blocks only when argv identifies +Human."""
     db = _make_wal_db(tmp_path)
 
     def _listdir(path):
@@ -223,7 +223,7 @@ def test_uninspectable_unknown_descriptor_uses_hermes_identity_at_repair_boundar
     if should_block:
 
         def _unexpected_probe(*_args, **_kwargs):
-            pytest.fail("repair opened SQLite with an unproven Alfred descriptor")
+            pytest.fail("repair opened SQLite with an unproven +Human descriptor")
 
         monkeypatch.setattr(
             hermes_state_repair, "_connect_repair_durable",
@@ -302,7 +302,7 @@ def test_uninspectable_watched_identity_blocks_alias_before_sqlite(
 def test_uninspectable_alias_descriptor_for_hermes_blocks_before_sqlite(
     tmp_path, monkeypatch
 ):
-    """Alfred cannot make an aliased fd safe when its identity is unreadable."""
+    """+Human cannot make an aliased fd safe when its identity is unreadable."""
     db = _make_wal_db(tmp_path)
     alias = tmp_path / "namespace-alias" / "state.db"
 
@@ -332,7 +332,7 @@ def test_uninspectable_alias_descriptor_for_hermes_blocks_before_sqlite(
     )
 
     def _unexpected_probe(*_args, **_kwargs):
-        pytest.fail("repair opened SQLite with an unproven Alfred alias fd")
+        pytest.fail("repair opened SQLite with an unproven +Human alias fd")
 
     monkeypatch.setattr(hermes_state_repair, "_connect_repair_durable", _unexpected_probe)
 

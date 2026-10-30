@@ -1,7 +1,7 @@
-"""`alfred gateway install --no-start-now` and the setup wizard's "Start the gateway now?" = No on launchd.
+"""`plushuman gateway install --no-start-now` and the setup wizard's "Start the gateway now?" = No on launchd.
 
 The plist carries RunAtLoad, so loading it (`launchctl bootstrap`) starts the gateway on the spot. A
-no-start install must therefore write the plist without loading it; `alfred gateway start` loads it later.
+no-start install must therefore write the plist without loading it; `plushuman gateway start` loads it later.
 """
 import argparse
 import plistlib

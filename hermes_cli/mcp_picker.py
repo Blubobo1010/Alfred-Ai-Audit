@@ -1,4 +1,4 @@
-"""MCP picker — interactive `alfred mcp picker` (also the default `alfred mcp`)."""
+"""MCP picker — interactive `plushuman mcp picker` (also the default `plushuman mcp`)."""
 
 from __future__ import annotations
 
@@ -78,7 +78,7 @@ def _enable_disable(name: str, *, enable: bool) -> None:
     save_config(cfg)
     _say(
         f"  ✓ '{name}' {'enabled' if enable else 'disabled'}. "
-        "Start a new Alfred session for changes to take effect."
+        "Start a new +Human session for changes to take effect."
     )
 
 
@@ -159,7 +159,7 @@ def _handle_row(row: _Row) -> None:
 
 
 def _print_rows_text(rows: list[_Row]) -> None:
-    """Plain-text catalog dump: `alfred mcp catalog` output and the non-curses fallback."""
+    """Plain-text catalog dump: `plushuman mcp catalog` output and the non-curses fallback."""
     print()
     if not rows:
         _say("  No MCPs in the catalog or configured.", Colors.DIM)
@@ -173,24 +173,24 @@ def _print_rows_text(rows: list[_Row]) -> None:
     for row in rows:
         print(f"  {_format_row(row)}")
     print()
-    _say("  Install: alfred mcp install <name>    Picker: alfred mcp", Colors.DIM)
-    # Manifest-version warnings: the user's Alfred is too old to install everything listed.
+    _say("  Install: plushuman mcp install <name>    Picker: plushuman mcp", Colors.DIM)
+    # Manifest-version warnings: the user's +Human is too old to install everything listed.
     future = [d for d in catalog_diagnostics() if d[1] == "future_manifest"]
     if future:
         print()
         for name, _, _msg in future:
-            _say(f"  ⚠ '{name}' requires a newer Alfred — run `alfred update` to install this entry.", Colors.YELLOW)
+            _say(f"  ⚠ '{name}' requires a newer +Human — run `plushuman update` to install this entry.", Colors.YELLOW)
         print()
     print()
 
 
 def show_catalog() -> None:
-    """`alfred mcp catalog` — print the curated list + custom servers, no interaction."""
+    """`plushuman mcp catalog` — print the curated list + custom servers, no interaction."""
     _print_rows_text(_build_rows())
 
 
 def run_picker() -> None:
-    """`alfred mcp picker` (and default `alfred mcp`) — interactive selector; re-renders after each
+    """`plushuman mcp picker` (and default `plushuman mcp`) — interactive selector; re-renders after each
     action until ESC/q."""
     while True:
         rows = _build_rows()
@@ -207,13 +207,13 @@ def run_picker() -> None:
 
 
 def install_by_name(identifier: str) -> int:
-    """`alfred mcp install <name>` — non-interactive entry-point."""
+    """`plushuman mcp install <name>` — non-interactive entry-point."""
     from hermes_cli.mcp_catalog import get_entry
 
     entry = get_entry(identifier)
     if entry is None:
         _say(
-            f"  ✗ '{identifier}' is not in the catalog. Run `alfred mcp catalog` to see available entries.",
+            f"  ✗ '{identifier}' is not in the catalog. Run `plushuman mcp catalog` to see available entries.",
             Colors.RED,
         )
         return 1

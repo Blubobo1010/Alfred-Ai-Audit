@@ -1,4 +1,4 @@
-"""Tests for alfred tools disable/enable/list command (backend)."""
+"""Tests for plushuman tools disable/enable/list command (backend)."""
 from argparse import Namespace
 from unittest.mock import MagicMock, patch
 

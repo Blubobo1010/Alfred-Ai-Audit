@@ -731,7 +731,7 @@ export const opsCommands: SlashCommand[] = [
     run: (arg, ctx, cmd) => {
       // No argument → open the interactive Plugins Hub overlay. Any
       // subcommand (enable/disable/list/install/…) falls through to the
-      // text slash worker so it stays at parity with `alfred plugins`.
+      // text slash worker so it stays at parity with `plushuman plugins`.
       if (!arg.trim()) {
         return patchOverlayState({ pluginsHub: true })
       }

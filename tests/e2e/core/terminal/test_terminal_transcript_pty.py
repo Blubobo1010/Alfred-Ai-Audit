@@ -1,7 +1,7 @@
 """C2 on terminal surfaces: what the classic CLI and the Ink TUI finally show is the transcript,
 exactly once, unmangled, and matches what was persisted.
 
-Real chain: a real ``alfred chat --cli`` / ``alfred --tui`` process (the TUI spawns its real Node
+Real chain: a real ``plushuman chat --cli`` / ``plushuman --tui`` process (the TUI spawns its real Node
 frontend and real ``tui_gateway`` child) on a real PTY, a real AIAgent + SessionDB on disk, and the
 recording fake OpenAI-compatible provider streaming scripted multi-chunk replies, a tool-call turn
 and a reasoning turn. The byte stream is rendered through a VT emulator so assertions are made on

@@ -1,5 +1,5 @@
 """Invariants for the terminal-backend doctor lines (tools-runtime-30): each failure names the backend in
-plain words and points at `alfred setup terminal`, never at raw TERMINAL_* env vars."""
+plain words and points at `plushuman setup terminal`, never at raw TERMINAL_* env vars."""
 
 import pytest
 

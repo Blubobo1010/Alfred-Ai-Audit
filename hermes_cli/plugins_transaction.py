@@ -72,7 +72,7 @@ def _refresh_declared_dependencies(target: Path, staged: Path, manifest: dict, *
                 f"Node dependencies could not be refreshed: {reason}. "
                 "The installed plugin and active environment are unchanged.")
     if target.resolve() not in enabled_plugin_dirs(installing=target):
-        return  # a disabled plugin's deps are admitted (and consented) by `alfred plugins enable`
+        return  # a disabled plugin's deps are admitted (and consented) by `plushuman plugins enable`
     before, after = read_python_declaration(target), read_python_declaration(staged)
     added = tuple(spec for spec in after.install_requirements if spec not in before.install_requirements)
     if not added and not (after.is_member and not before.is_member):
@@ -80,7 +80,7 @@ def _refresh_declared_dependencies(target: Path, staged: Path, manifest: dict, *
     if not interactive:
         raise pc.PluginOperationError(
             f"The update declares new Python dependencies ({', '.join(added) or 'in its pyproject.toml'}); "
-            f"run `alfred plugins update {target.name}` in a terminal to review them.")
+            f"run `plushuman plugins update {target.name}` in a terminal to review them.")
     consented, reason = pc._consent_python_deps(manifest.get("name", target.name), added, pc._console())
     if not consented:
         raise pc.PluginOperationError(

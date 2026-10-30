@@ -1,4 +1,4 @@
-"""External-tool checks for alfred doctor: terminal backends, git/rg, Node + agent-browser, npm audit, tool availability.
+"""External-tool checks for plushuman doctor: terminal backends, git/rg, Node + agent-browser, npm audit, tool availability.
 Split out of ``hermes_cli/doctor.py``, which re-exports every name so ``hermes_cli.doctor.<name>`` keeps resolving (and monkeypatching)."""
 
 from __future__ import annotations
@@ -60,7 +60,7 @@ def _pm_package_for_command(command: str) -> str | None:
 
 
 def _doctor_tool(name: str) -> tuple[str | None, str]:
-    """Resolve the tool Alfred would actually run: the pm store first
+    """Resolve the tool +Human would actually run: the pm store first
     (pinned installs run tools out of the store, which nothing puts on
     PATH), then PATH. *name* is the command ("rg"); its pm package
     ("ripgrep") is resolved from pm's own definitions. Returns
@@ -89,7 +89,7 @@ def _termux_browser_setup_steps(node_installed: bool) -> list[str]:
 
 
 _TERMUX_INSTALL_ALL_FALLBACK_NOTES = (
-    "Termux uses the Alfred APT package: pkg install hermes-agent.",
+    "Termux uses the +Human APT package: pkg install hermes-agent.",
     "Matrix E2EE extra is excluded on Termux (python-olm currently fails to build).",
     "Local faster-whisper extra is excluded on Termux (ctranslate2/av build path unavailable).",
     "STT fallback: use Groq Whisper (set GROQ_API_KEY) or OpenAI Whisper (set VOICE_TOOLS_OPENAI_KEY).",
@@ -165,7 +165,7 @@ def _enabled_cli_toolsets_for_doctor() -> set[str] | None:
 # `requires_env`, so the generic branch would call a missing credential a "system dependency".
 # Name the real fix instead (#9516).
 _TOOLSET_SETUP_HINTS: dict[str, str] = {
-    "image_gen": "(image generation unavailable — check the provider selection and its key or SDK with 'alfred tools')",
+    "image_gen": "(image generation unavailable — check the provider selection and its key or SDK with 'plushuman tools')",
 }
 
 
@@ -198,7 +198,7 @@ def _check_docker_backend(terminal_env: str, running_in_container: bool, issues:
     if terminal_env == "docker":
         if not docker_exe:
             _fail_and_issue("Docker or Podman not installed", "(needed for the 'docker' terminal backend)",
-                            "Install Docker or Podman, or run `alfred setup terminal` to switch backend.", issues)
+                            "Install Docker or Podman, or run `plushuman setup terminal` to switch backend.", issues)
         else:
             runtime = docker_runtime_name(docker_exe)
             hint = docker_runtime_start_hint(docker_exe)
@@ -210,7 +210,7 @@ def _check_docker_backend(terminal_env: str, running_in_container: bool, issues:
             _require(_run_ok([docker_exe, "version"], timeout=10),
                      (runtime, "(daemon running)" if runtime == "Docker" else "(reachable)"),
                      (unreachable, "(needed for the 'docker' terminal backend)"),
-                     f"{hint[0].upper()}{hint[1:]}, or run `alfred setup terminal` to switch backend.", issues)
+                     f"{hint[0].upper()}{hint[1:]}, or run `plushuman setup terminal` to switch backend.", issues)
     elif docker_exe:
         check_ok(docker_runtime_name(docker_exe), "(optional)")
     elif _is_termux():
@@ -223,7 +223,7 @@ def _check_ssh_backend(issues: list[str]) -> None:
     ssh_host = os.getenv("TERMINAL_SSH_HOST")
     if not ssh_host:
         return _fail_and_issue("SSH host not configured", "(needed for the 'ssh' terminal backend)",
-                               "run `alfred setup terminal` and enter the SSH host and user.", issues)
+                               "run `plushuman setup terminal` and enter the SSH host and user.", issues)
     ssh_user, ssh_port, ssh_key = (os.getenv(f"TERMINAL_SSH_{k}") for k in ("USER", "PORT", "KEY"))
     cmd = ["ssh", "-o", "ConnectTimeout=5", "-o", "BatchMode=yes"]
     if ssh_port:
@@ -244,12 +244,12 @@ def _require(cond, ok, bad, issue: str, issues: list[str]) -> None:
 def _check_daytona_backend(issues: list[str]) -> None:
     _require(os.getenv("DAYTONA_API_KEY"), ("Daytona API key", "(configured)"),
              ("Daytona API key missing", "(needed for the 'daytona' terminal backend)"),
-             "run `alfred setup terminal` (Daytona) to enter it.", issues)
+             "run `plushuman setup terminal` (Daytona) to enter it.", issues)
     try:
         from daytona import Daytona
         check_ok("daytona SDK", "(installed)")
     except ImportError:
-        _fail_and_issue("daytona SDK not installed", "(run alfred setup terminal)", "Run alfred setup terminal and select Daytona, then restart Alfred", issues)
+        _fail_and_issue("daytona SDK not installed", "(run plushuman setup terminal)", "Run plushuman setup terminal and select Daytona, then restart +Human", issues)
 
 
 def _check_vercel_backend(issues: list[str]) -> None:
@@ -262,8 +262,8 @@ def _check_vercel_backend(issues: list[str]) -> None:
              ("Vercel disk setting", "(uses platform default)"), ("Vercel custom disk unsupported", "(reset terminal.container_disk to 51200)"),
              "Vercel Sandbox does not support custom container_disk; use the shared default 51200", issues)
     _require(importlib.util.find_spec("vercel") is not None, ("vercel SDK", "(installed)"),
-             ("vercel SDK not installed", "(run alfred setup terminal)"),
-             "Run alfred setup terminal and select Vercel Sandbox, then restart Alfred", issues)
+             ("vercel SDK not installed", "(run plushuman setup terminal)"),
+             "Run plushuman setup terminal and select Vercel Sandbox, then restart +Human", issues)
     auth_status = describe_vercel_auth()
     if auth_status.ok:
         check_ok("Vercel auth", f"({auth_status.label})")
@@ -388,7 +388,7 @@ def _check_lightpanda() -> None:
         used, reason = False, f"status check failed: {e}"
     if not used:
         check_warn("browser.engine=lightpanda is shadowed", f"({reason})")
-        check_info("Fix: pick Lightpanda in `alfred tools` → Browser Automation, or set browser.engine: auto")
+        check_info("Fix: pick Lightpanda in `plushuman tools` → Browser Automation, or set browser.engine: auto")
     elif not check_bool(find_lightpanda_binary(), ("Lightpanda", f"({reason})"),
                         ("Lightpanda selected but binary not found", "(browser tools will fail until it is installed)")):
         check_info(LIGHTPANDA_INSTALL_HINT)
@@ -419,7 +419,7 @@ def _audit_one(npm_bin: str, npm_dir, label: str, audit_extra: list[str], issues
 
     Every row here audits a tree whose versions come from a COMMITTED lockfile
     (`npm ci` in `_run_npm_install_deterministic` reifies exactly that state on
-    every `alfred update`), so a local `npm audit fix` never persists — the next
+    every `plushuman update`), so a local `npm audit fix` never persists — the next
     update's deterministic install restores the pinned (vulnerable) versions and
     the finding reappears. The durable remedy in every case is a lockfile bump
     on main (update `package-lock.json` and ship it); the doctor therefore never
@@ -442,7 +442,7 @@ def _audit_one(npm_bin: str, npm_dir, label: str, audit_extra: list[str], issues
         elif critical > 0 or high > 0:
             detail = "build-time tooling" if workspace_scoped else "runtime dependency tree"
             remedy = ("fix is an upstream lockfile bump — a local manual fix does not persist"
-                      " (the next `alfred update` reinstalls from the committed lockfile)")
+                      " (the next `plushuman update` reinstalls from the committed lockfile)")
             check_warn(f"{label} deps", f"({critical} critical, {high} high, {moderate} moderate — {remedy})")
             if workspace_scoped:
                 check_info("  ^ build-time tooling (not runtime); if manual npm remediation "
@@ -521,4 +521,4 @@ def _check_tool_availability(should_fix: bool, f: Finding) -> None:
     # disabled toolsets may warn above but must not pollute it.
     api_disabled = _missing_api_key_toolsets_for_summary(unavailable)
     if api_disabled or any(status != "ok" for status, _, _ in web_rows):
-        f.issues.append("Run 'alfred setup' to configure missing API keys for full tool access")
+        f.issues.append("Run 'plushuman setup' to configure missing API keys for full tool access")

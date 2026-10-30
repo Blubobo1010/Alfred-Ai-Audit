@@ -7,7 +7,7 @@ serving bytes that don't match the pinned digest.
 
 The contract for a failure (``_seed.assert_nothing_changed``): non-zero exit, a message naming
 what failed, no success banner, the checkout / selected PM environment / PM runtime / tool store
-exactly as before, and the next ``alfred`` still starts. For a transient fault the contract is
+exactly as before, and the next ``plushuman`` still starts. For a transient fault the contract is
 that the operation retries within bounds and then succeeds.
 
 Classes: offline update and offline PM provisioning; a release-host outage that ``main`` (which
@@ -30,7 +30,7 @@ from tests.e2e.core.upgrade.network import _seed as S
 
 pytestmark = [
     pytest.mark.platforms("linux"),
-    # Every `alfred update` here targets a throwaway sandboxed install, never the real checkout.
+    # Every `plushuman update` here targets a throwaway sandboxed install, never the real checkout.
     pytest.mark.live_system_guard_bypass,
     pytest.mark.skipif(H.sandbox_required_reason() is not None, reason=str(H.sandbox_required_reason())),
     pytest.mark.skipif(N.netns_required_reason() is not None, reason=str(N.netns_required_reason())),

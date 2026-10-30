@@ -56,7 +56,7 @@ describe("fetchJSON error contract", () => {
     const body = {
       detail: {
         error: "state_db_corrupt",
-        message: "state.db corrupt — run `alfred doctor` (then `alfred doctor --fix` or `alfred sessions repair`).",
+        message: "state.db corrupt — run `plushuman doctor` (then `plushuman doctor --fix` or `plushuman sessions repair`).",
         path: "/home/u/.hermes/state.db",
       },
     };
@@ -80,7 +80,7 @@ describe("fetchJSON error contract", () => {
     expect(err.message).not.toMatch(/^\d{3}/);
   });
 
-  it("turns a network failure into the 'is alfred dashboard running' sentence", async () => {
+  it("turns a network failure into the 'is plushuman dashboard running' sentence", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn<typeof fetch>(async () => {

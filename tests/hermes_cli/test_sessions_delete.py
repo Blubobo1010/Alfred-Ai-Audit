@@ -27,7 +27,7 @@ def test_sessions_delete_accepts_unique_id_prefix(monkeypatch, capsys):
     monkeypatch.setattr(
         sys,
         "argv",
-        ["alfred", "sessions", "delete", "20260315_092437_c9a6", "--yes"],
+        ["plushuman", "sessions", "delete", "20260315_092437_c9a6", "--yes"],
     )
 
     main_mod.main()
@@ -41,7 +41,7 @@ def test_sessions_delete_accepts_unique_id_prefix(monkeypatch, capsys):
     assert "Deleted session '20260315_092437_c9a6ff'." in output
 
 def _run_prune(monkeypatch, capsys, argv_tail, candidates=None, skipped_open=0):
-    """Run `alfred sessions prune <argv_tail>` against a FakeDB, capturing
+    """Run `plushuman sessions prune <argv_tail>` against a FakeDB, capturing
     the filter kwargs passed to list_prune_candidates. Auto-confirms."""
     import hermes_cli.main as main_mod
     import hermes_state
@@ -92,14 +92,14 @@ def _run_prune(monkeypatch, capsys, argv_tail, candidates=None, skipped_open=0):
 
     monkeypatch.setattr(hermes_state, "SessionDB", lambda *args, **kwargs: FakeDB())
     monkeypatch.setattr(
-        sys, "argv", ["alfred", "sessions", "prune", *argv_tail]
+        sys, "argv", ["plushuman", "sessions", "prune", *argv_tail]
     )
     monkeypatch.setattr("builtins.input", lambda _prompt="": "y")
     main_mod.main()
     return seen, capsys.readouterr().out
 
 def test_sessions_prune_bare_keeps_90_day_default(monkeypatch, capsys):
-    """A truly bare `alfred sessions prune` keeps the implicit 90-day cutoff."""
+    """A truly bare `plushuman sessions prune` keeps the implicit 90-day cutoff."""
     import time as _time
 
     filters, _out = _run_prune(monkeypatch, capsys, [])

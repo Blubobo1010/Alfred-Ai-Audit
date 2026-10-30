@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Alfred brand guard (standalone copy of alfred-build's G1 check, run by alfred-ci.yml).
+"""+Human brand guard (standalone copy of alfred-build's G1 and G1b checks, run by alfred-ci.yml).
 
 Fails when "Hermes" / "Nous Research" / the upstream repo slug / the caduceus survive on a
-user-visible surface, unless the match is covered by scripts/alfred/guard-allowlist.txt.
+user-visible surface (G1), or when the earlier product name "Alfred" or its top hat does (G1b),
+unless the match is covered by scripts/alfred/guard-allowlist.txt (`legacy:` entries for G1b).
 """
 
 from __future__ import annotations
@@ -40,14 +41,19 @@ SURFACES = (
 SKILL_INDEX = ("skills/**", "optional-skills/**")
 BRAND_RE = re.compile(r"\bHermes\b|Hermes Agent|Nous Research|NousResearch/hermes-agent|☤|setup\.hermes-agent|HermesSetupBot")
 FILE_SKIP = (".test.", "_test.", "/tests/", "/__tests__/", "/test_")
+LEGACY_RE = re.compile(r"\bAlfred\b|🎩")  # brand.toml legacy_names / legacy_glyphs
+LEGACY_SURFACES = SURFACES + ("README.md", ".github/workflows/**", "scripts/install.ps1")
 
 
-def load_allowlist() -> tuple[list[re.Pattern[str]], list[re.Pattern[str]]]:
+def load_allowlist(legacy: bool = False) -> tuple[list[re.Pattern[str]], list[re.Pattern[str]]]:
     spans, lines = [], []
     for raw in ALLOWLIST.read_text(encoding="utf-8").splitlines():
         raw = raw.strip()
-        if not raw or raw.startswith("#"):
+        if not raw or raw.startswith("#") or legacy != raw.startswith(("legacy:", "legacy-line:")):
             continue
+        if raw.startswith("legacy-line:"):
+            raw = "line:" + raw.removeprefix("legacy-line:")
+        raw = raw.removeprefix("legacy:")
         (lines if raw.startswith("line:") else spans).append(re.compile(raw.removeprefix("line:")))
     return spans, lines
 
@@ -56,20 +62,31 @@ def in_surface(rel: str, globs: tuple[str, ...]) -> bool:
     return any(rel.startswith(g[:-3] + "/") if g.endswith("/**") else fnmatch.fnmatch(rel, g) for g in globs)
 
 
-def allowed(line: str, spans: list[re.Pattern[str]]) -> bool:
+def allowed(line: str, spans: list[re.Pattern[str]], brand_re: re.Pattern[str] = BRAND_RE) -> bool:
     covered = [m.span() for p in spans for m in p.finditer(line)]
-    return all(any(a <= m.start() and m.end() <= b for a, b in covered) for m in BRAND_RE.finditer(line))
+    return all(any(a <= m.start() and m.end() <= b for a, b in covered) for m in brand_re.finditer(line))
 
 
 def main() -> int:
-    spans, line_pats = load_allowlist()
+    failures = scan(BRAND_RE, SURFACES, *load_allowlist())
+    failures += [f"legacy brand: {f}" for f in scan(LEGACY_RE, LEGACY_SURFACES, *load_allowlist(legacy=True))]
+    if failures:
+        print(f"brand guard: {len(failures)} line(s) still mention Hermes/Nous or the earlier brand on user-visible surfaces")
+        print("\n".join(failures[:200]))
+        return 1
+    print("brand guard: clean")
+    return 0
+
+
+def scan(brand_re: re.Pattern[str], surfaces: tuple[str, ...], spans: list[re.Pattern[str]],
+         line_pats: list[re.Pattern[str]]) -> list[str]:
     failures: list[str] = []
     for dirpath, dirnames, filenames in os.walk(ROOT):
         dirnames[:] = [d for d in dirnames if d not in (".git", "node_modules", ".venv")]
         for name in filenames:
             path = Path(dirpath) / name
             rel = path.relative_to(ROOT).as_posix()
-            surface = in_surface(rel, SURFACES)
+            surface = in_surface(rel, surfaces)
             skill = not surface and name == "SKILL.md" and in_surface(rel, SKILL_INDEX)
             if not (surface or skill) or (surface and any(k in "/" + rel for k in FILE_SKIP)):
                 continue
@@ -83,19 +100,14 @@ def main() -> int:
                     keeping = True
                 elif "alfred:keep-end" in line:
                     keeping = False
-                if keeping or "alfred:keep" in line or not BRAND_RE.search(line):
+                if keeping or "alfred:keep" in line or not brand_re.search(line):
                     continue
                 if skill and not line.lstrip().startswith("description:"):
                     continue
-                if any(p.search(line) for p in line_pats) or allowed(line, spans):
+                if any(p.search(line) for p in line_pats) or allowed(line, spans, brand_re):
                     continue
                 failures.append(f"{rel}:{i}: {line.strip()[:160]}")
-    if failures:
-        print(f"brand guard: {len(failures)} line(s) still mention Hermes/Nous on user-visible surfaces")
-        print("\n".join(failures[:200]))
-        return 1
-    print("brand guard: clean")
-    return 0
+    return failures
 
 
 if __name__ == "__main__":

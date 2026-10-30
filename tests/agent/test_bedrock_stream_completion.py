@@ -1,4 +1,4 @@
-"""Audit: actual boto3 HTTP/EventStream parsing before Alfred normalization."""
+"""Audit: actual boto3 HTTP/EventStream parsing before +Human normalization."""
 
 import json
 import struct

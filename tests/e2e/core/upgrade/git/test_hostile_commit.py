@@ -1,7 +1,7 @@
-"""The source swap of ``alfred update`` is one crash-safe commit point (lane LP-COMMIT).
+"""The source swap of ``plushuman update`` is one crash-safe commit point (lane LP-COMMIT).
 
 Each cell drives a real install (HEAD's own ``scripts/install.sh`` in a bwrap sandbox) through a
-real ``alfred update`` against a local origin, breaks it at one named point with a real SIGKILL or a
+real ``plushuman update`` against a local origin, breaks it at one named point with a real SIGKILL or a
 real git failure, and then judges the next real launch from the files the updater itself owns:
 
 * ``kill_after_tree_moved``: git finished the fast-forward of a release with NO dependency change

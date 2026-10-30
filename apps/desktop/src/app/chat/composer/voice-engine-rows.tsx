@@ -13,7 +13,7 @@ import { $voiceLiveStatus, selectedVoiceChatMode, setVoiceChatMode } from '@/sto
 
 /**
  * Which engine the next voice conversation mounts: the chained
- * speech-to-text → Alfred → speech loop, or GPT-Live delegating to Alfred.
+ * speech-to-text → +Human → speech loop, or GPT-Live delegating to +Human.
  *
  * Radio rows, not a toggle: the user is choosing between two named things and
  * the checked row tells them which one the next press starts. Rendered inside

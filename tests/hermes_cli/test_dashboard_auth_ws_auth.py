@@ -477,7 +477,7 @@ class TestWsHostOriginGuardOrigins:
 
 
     def test_explicit_non_loopback_file_origin_allowed(self, insecure_explicit_host_app):
-        """Packaged Alfred Desktop also uses file:// when connecting to a
+        """Packaged +Human Desktop also uses file:// when connecting to a
         Tailscale/LAN dashboard bind.
 
         The WebSocket route calls _ws_auth_ok before this guard, so in

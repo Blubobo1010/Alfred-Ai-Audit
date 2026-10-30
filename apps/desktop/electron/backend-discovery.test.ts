@@ -15,7 +15,7 @@ import { runPrimaryBackendStartup } from './primary-backend-startup'
 
 const LEDGER = JSON.stringify([
   {
-    argv: 'alfred serve --host 127.0.0.1 --port 0',
+    argv: 'plushuman serve --host 127.0.0.1 --port 0',
     create_time: 1_000,
     host: '127.0.0.1',
     install: 'abc',
@@ -451,7 +451,7 @@ test('a live pid still attaches (liveness gate must not break the hot path)', as
   assert.equal(attached?.pid, 4711)
 })
 
-// A real `alfred serve` stand-in: serves its session token at GET / and its
+// A real `plushuman serve` stand-in: serves its session token at GET / and its
 // boot commit on the public GET /api/health (omitted when `commit` is null,
 // i.e. a backend predating the field).
 const FAKE_BACKEND = `
@@ -517,7 +517,7 @@ const OLD_COMMIT = 'a'.repeat(40)
 const NEW_COMMIT = 'b'.repeat(40)
 
 /**
- * V15: a CLI/launchd `alfred serve` that survived an update keeps running the
+ * V15: a CLI/launchd `plushuman serve` that survived an update keeps running the
  * OLD code and answers 503 "Restart required"; re-attaching it on every
  * Restart wedges the app. Attach skips it — even as the newest record — and
  * takes the backend that booted from this Desktop's checkout.

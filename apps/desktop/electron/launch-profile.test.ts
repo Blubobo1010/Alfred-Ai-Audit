@@ -24,28 +24,28 @@ function withStoredProfile(profile: string, run: (target: string) => void) {
 }
 
 test('parses both --profile spellings and ignores a missing flag', () => {
-  assert.equal(parseLaunchProfile(['Alfred.exe', '--profile', 'desktop']), 'desktop')
-  assert.equal(parseLaunchProfile(['Alfred.exe', '--profile=desktop']), 'desktop')
-  assert.equal(parseLaunchProfile(['open', '-a', 'Alfred', '--args', '--profile', 'work']), 'work')
-  assert.equal(parseLaunchProfile(['Alfred.exe', '--local']), null)
-  assert.equal(parseLaunchProfile(['Alfred.exe']), null)
+  assert.equal(parseLaunchProfile(['+Human.exe', '--profile', 'desktop']), 'desktop')
+  assert.equal(parseLaunchProfile(['+Human.exe', '--profile=desktop']), 'desktop')
+  assert.equal(parseLaunchProfile(['open', '-a', '+Human', '--args', '--profile', 'work']), 'work')
+  assert.equal(parseLaunchProfile(['+Human.exe', '--local']), null)
+  assert.equal(parseLaunchProfile(['+Human.exe']), null)
 })
 
 test('normalizes a launch profile the same way the CLI does', () => {
-  assert.equal(parseLaunchProfile(['Alfred.exe', '--profile', '  Desktop  ']), 'desktop')
-  assert.equal(parseLaunchProfile(['Alfred.exe', '--profile=Work']), 'work')
-  assert.equal(parseLaunchProfile(['Alfred.exe', '--profile', 'default']), 'default')
-  assert.equal(parseLaunchProfile(['Alfred.exe', '--profile']), null)
-  assert.equal(parseLaunchProfile(['Alfred.exe', '--profile=']), null)
-  assert.equal(parseLaunchProfile(['Alfred.exe', '--profile', 'my profile']), null)
-  assert.equal(parseLaunchProfile(['Alfred.exe', '--profile', '-desktop']), null)
+  assert.equal(parseLaunchProfile(['+Human.exe', '--profile', '  Desktop  ']), 'desktop')
+  assert.equal(parseLaunchProfile(['+Human.exe', '--profile=Work']), 'work')
+  assert.equal(parseLaunchProfile(['+Human.exe', '--profile', 'default']), 'default')
+  assert.equal(parseLaunchProfile(['+Human.exe', '--profile']), null)
+  assert.equal(parseLaunchProfile(['+Human.exe', '--profile=']), null)
+  assert.equal(parseLaunchProfile(['+Human.exe', '--profile', 'my profile']), null)
+  assert.equal(parseLaunchProfile(['+Human.exe', '--profile', '-desktop']), null)
 })
 
 test('a launch --profile is persisted before the backend reads active-profile.json', () => {
   withStoredProfile('stored', target => {
     const preferences = createDesktopProfilePreferences(target)
 
-    const launched = applyLaunchProfileOverride(['Alfred.exe', '--profile', 'desktop'], name => {
+    const launched = applyLaunchProfileOverride(['+Human.exe', '--profile', 'desktop'], name => {
       preferences.remember(name)
     })
 
@@ -62,7 +62,7 @@ test('--profile=<name> persists the same profile the space spelling does', () =>
   withStoredProfile('stored', target => {
     const preferences = createDesktopProfilePreferences(target)
 
-    applyLaunchProfileOverride(['Alfred.exe', '--ozone-platform=wayland', '--profile=desktop'], name => {
+    applyLaunchProfileOverride(['+Human.exe', '--ozone-platform=wayland', '--profile=desktop'], name => {
       preferences.remember(name)
     })
 
@@ -72,11 +72,11 @@ test('--profile=<name> persists the same profile the space spelling does', () =>
 
 test('a missing or invalid flag does not change the stored profile', () => {
   for (const argv of [
-    ['Alfred.exe'],
-    ['Alfred.exe', '--local'],
-    ['Alfred.exe', '--profile'],
-    ['Alfred.exe', '--profile', 'Not a name'],
-    ['Alfred.exe', '--profile=../desktop']
+    ['+Human.exe'],
+    ['+Human.exe', '--local'],
+    ['+Human.exe', '--profile'],
+    ['+Human.exe', '--profile', 'Not a name'],
+    ['+Human.exe', '--profile=../desktop']
   ]) {
     withStoredProfile('stored', target => {
       const before = fs.readFileSync(target, 'utf8')

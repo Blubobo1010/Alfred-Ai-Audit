@@ -42,7 +42,7 @@ const emptySessionsResponse = {
   total: 0
 }
 
-describe('Alfred REST helpers', () => {
+describe('+Human REST helpers', () => {
   let api: ReturnType<typeof vi.fn>
 
   beforeEach(() => {

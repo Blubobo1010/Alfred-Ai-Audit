@@ -202,7 +202,7 @@ def _resolve_skill_commands_platform() -> Optional[str]:
 
 
 def _resolve_skill_commands_home() -> str:
-    """Effective Alfred home the scan is scoped to (profiles carry their own
+    """Effective +Human home the scan is scoped to (profiles carry their own
     ``skills.external_dirs``, so a profile switch must invalidate the cache).
 
     A gateway session can switch between profiles that each carry their own ``skills.external_dirs`` (via
@@ -464,7 +464,7 @@ def _scan_skill_md(skill_md: Path, disabled: set, seen_names: set, commands: dic
     # A collision with a core command (name or alias) skips auto-registration; the skill stays
     # loadable via /skill <name>. The same predicate feeds the /skills + palette notes.
     if skill_command_collision_note(name) is not None:
-        logger.warning("Skill %r generates slash command '/%s' which collides with a core Alfred command; "
+        logger.warning("Skill %r generates slash command '/%s' which collides with a core +Human command; "
                        "skipping auto-registration. Use '/skill %s' instead.", name, cmd_name, name)
         return
     # Dedup on the slug too: "git_helper" and "git-helper" normalize the same.
@@ -536,7 +536,7 @@ def get_skill_commands() -> dict[str, dict[str, Any]]:
 
 # Plugin projection cache. The projection re-parses every plugin SKILL.md and sits on the
 # per-keystroke completion path (94 ms per Tab measured with 60 plugin skills), so it is reused
-# while its tag holds: the resolved Alfred home (plugin managers are home-keyed, so profiles never
+# while its tag holds: the resolved +Human home (plugin managers are home-keyed, so profiles never
 # share a registry) plus the registered qualified names (a plugin enable/disable/install changes
 # them). ``reload_skills()`` drops it explicitly to pick up edited SKILL.md files.
 _plugin_skill_commands: dict[str, dict[str, Any]] = {}
@@ -831,7 +831,7 @@ def build_preloaded_skills_prompt(
 ) -> tuple[str, list[str], list[str]]:
     """Load skills for session-wide CLI/TUI preloading; returns (prompt_text,
     loaded_skill_names, missing_identifiers). Disabled skills count as missing:
-    this path bypasses the scan-time filter, and ``alfred -s <skill>`` must not
+    this path bypasses the scan-time filter, and ``plushuman -s <skill>`` must not
     force-load an operator-disabled skill. *excluded_loaded_names* are canonical
     names the session already carries (skills.auto_load): they resolve as loaded
     but are not rendered again.

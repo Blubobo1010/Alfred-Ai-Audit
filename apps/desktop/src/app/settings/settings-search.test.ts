@@ -13,7 +13,7 @@ import { envVar } from './test-utils'
 
 const searchCopy = {
   fieldDescriptions: {
-    'display.personality': 'Choose how Alfred sounds in conversation.',
+    'display.personality': 'Choose how +Human sounds in conversation.',
     'tts.edge.voice': 'Voice used by Edge TTS.'
   },
   fieldLabels: {
@@ -49,7 +49,7 @@ describe('settings search index', () => {
     ])
     expect(entries[0]).toMatchObject({
       context: 'Chat',
-      description: 'Choose how Alfred sounds in conversation.',
+      description: 'Choose how +Human sounds in conversation.',
       label: 'Personality',
       target: { field: 'display.personality', view: 'config:chat' }
     })

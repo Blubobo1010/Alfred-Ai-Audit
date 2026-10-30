@@ -1,4 +1,4 @@
-"""Drive a real ``alfred`` CLI / Ink TUI process under a real PTY, rendered through :mod:`._vt`.
+"""Drive a real ``plushuman`` CLI / Ink TUI process under a real PTY, rendered through :mod:`._vt`.
 
 The child runs with an isolated HOME/HERMES_HOME (only the fake LLM provider configured, no
 inherited credentials) as the session leader of its own PTY, so SIGWINCH from a resize reaches the
@@ -100,7 +100,7 @@ def cmdline(pid: int) -> str:
 
 
 class PtyHermes:
-    """One interactive ``alfred`` process on a PTY with an emulated screen."""
+    """One interactive ``plushuman`` process on a PTY with an emulated screen."""
 
     def __init__(self, root: Path, argv_tail: list[str], llm: FakeLLMServer, *, rows: int, cols: int,
                  extra_config: str = "") -> None:
@@ -109,7 +109,7 @@ class PtyHermes:
         self.hermes_home = self.home / ".hermes"
         operator = (_operator_home() / ".hermes").resolve()
         assert operator not in (self.hermes_home.resolve(), *self.hermes_home.resolve().parents), (
-            f"sandbox {self.hermes_home} sits inside the operator's Alfred home")
+            f"sandbox {self.hermes_home} sits inside the operator's +Human home")
         write_hermes_home(self.hermes_home, llm.base_url, extra_config=extra_config)
         self.llm = llm
         self.screen = Screen(rows, cols)

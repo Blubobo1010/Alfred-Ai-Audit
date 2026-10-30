@@ -28,7 +28,7 @@ def _h_gateway_enroll(args):  # pragma: no cover - identity only
 
 
 def _gateway_parser():
-    p = argparse.ArgumentParser(prog="alfred")
+    p = argparse.ArgumentParser(prog="plushuman")
     sub = p.add_subparsers(dest="command")
     build_gateway_parser(
         sub,

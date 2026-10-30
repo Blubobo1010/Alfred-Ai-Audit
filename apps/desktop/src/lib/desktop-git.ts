@@ -23,7 +23,7 @@ function desktopApi<T>(path: string, body?: Record<string, unknown>): Promise<T>
   const desktop = window.hermesDesktop
 
   if (!desktop) {
-    throw new Error('Alfred Desktop bridge is unavailable')
+    throw new Error('+Human Desktop bridge is unavailable')
   }
 
   return hermesApi<T>(

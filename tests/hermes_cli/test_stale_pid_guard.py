@@ -99,7 +99,7 @@ class TestPidIsHermes:
 
     @pytest.mark.platforms("windows")  # real probe is windows-only
     def test_missing_pid_real_probe_fails_closed(self):
-        # A PID that cannot exist must never be judged Alfred-owned.
+        # A PID that cannot exist must never be judged +Human-owned.
         assert _subprocess_compat.pid_is_hermes(2**24) is False
 
 
@@ -179,7 +179,7 @@ def test_stop_only_targets_the_invoking_hermes_home(monkeypatch):
 
     with mock.patch.object(
         dashboard_procs, "_scan_dashboard_processes",
-        return_value=[(12345, "alfred serve"), (12346, "alfred serve"), (12347, "alfred serve")],
+        return_value=[(12345, "plushuman serve"), (12346, "plushuman serve"), (12347, "plushuman serve")],
     ), mock.patch.object(dashboard_procs, "_caller_ancestor_pids", return_value=set()), mock.patch.object(
         dashboard_procs, "_hermes_home_for_pid",
         side_effect=lambda pid: {
@@ -208,7 +208,7 @@ class TestHermesHomeForPid:
         monkeypatch.setattr(dashboard_procs, "_pid_environ", lambda pid: {"HOME": home})
         from hermes_cli import main_dashboard
         monkeypatch.setattr(main_dashboard, "_dashboard_cmdline_for_pid",
-                            lambda pid: ["alfred", "--profile", "work", "serve"] if pid == 2 else ["alfred", "serve"])
+                            lambda pid: ["plushuman", "--profile", "work", "serve"] if pid == 2 else ["plushuman", "serve"])
 
         assert dashboard_procs._hermes_home_for_pid(1) == f"{home}/.hermes"
         # ``-p``/``--profile`` is applied to os.environ after exec, invisible in /proc environ.
@@ -217,7 +217,7 @@ class TestHermesHomeForPid:
 
     # REGRESSION (#116906): a systemd/launchd unit with a scrubbed environment exports no HOME.
     # The target resolves its own default home from the password database, so attributing it to
-    # the INSPECTING process's home named another user's directory — and `alfred update` /
+    # the INSPECTING process's home named another user's directory — and `plushuman update` /
     # `--stop` then acted on the wrong profile root.
     def _posix_scrubbed_unit(self, monkeypatch, tmp_path, passwd_home):
         """A unit whose environment carries neither HOME nor HERMES_HOME, on the POSIX branch."""
@@ -226,7 +226,7 @@ class TestHermesHomeForPid:
         monkeypatch.setattr(dashboard_procs, "_pid_passwd_home", lambda pid: passwd_home)
         monkeypatch.setattr(Path, "home", classmethod(lambda cls: tmp_path / "inspecting-user"))
         from hermes_cli import main_dashboard
-        monkeypatch.setattr(main_dashboard, "_dashboard_cmdline_for_pid", lambda pid: ["alfred", "serve"])
+        monkeypatch.setattr(main_dashboard, "_dashboard_cmdline_for_pid", lambda pid: ["plushuman", "serve"])
 
     def test_scrubbed_unit_env_resolves_to_the_owners_passwd_home(self, monkeypatch, tmp_path):
         service_home = tmp_path / "hermes-service"
@@ -242,14 +242,14 @@ class TestHermesHomeForPid:
 
     def test_root_shaped_hermes_home_follows_the_flag_and_the_sticky_active_profile(self, monkeypatch, tmp_path):
         """Mirror ``_apply_profile_override``: an exported root ``HERMES_HOME`` is the root, not the
-        home — ``-p work`` and ``alfred profile use work`` both land in ``<root>/profiles/work``."""
+        home — ``-p work`` and ``plushuman profile use work`` both land in ``<root>/profiles/work``."""
         root = tmp_path / ".hermes"
         root.mkdir()
         monkeypatch.setattr(dashboard_procs, "_pid_environ",
                             lambda pid: {"HOME": str(tmp_path), "HERMES_HOME": str(root)})
         from hermes_cli import main_dashboard
         monkeypatch.setattr(main_dashboard, "_dashboard_cmdline_for_pid",
-                            lambda pid: ["alfred", "-p", "work", "serve"] if pid == 2 else ["alfred", "serve"])
+                            lambda pid: ["plushuman", "-p", "work", "serve"] if pid == 2 else ["plushuman", "serve"])
 
         assert dashboard_procs._hermes_home_for_pid(2) == str(root / "profiles" / "work")
         assert dashboard_procs._hermes_home_for_pid(1) == str(root)  # no flag, no active_profile

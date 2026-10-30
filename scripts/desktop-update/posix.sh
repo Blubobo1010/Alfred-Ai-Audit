@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # posix.sh -- repo-owned macOS/Linux Desktop update hand-off.
 #
-# The whole job: wait for the Desktop to exit, run `alfred update`, tell the
+# The whole job: wait for the Desktop to exit, run `plushuman update`, tell the
 # shim how it went, reopen the app. The Desktop spawns this detached and
 # quits; because it lives in the checkout, every update refreshes the code
 # that drives the next one. Replaces the in-app updater
@@ -111,7 +111,7 @@ RESULT_RUN_ID="${HANDOFF_RUN:-posix-$$-${STARTED_AT}-${RANDOM}}"
 UI_SERVER_PID="" UI_BROWSER_PID="" UI_PANEL_PID="" UI_PROFILE_DIR="" FINAL_CODE=1
 FINAL_MSG="update did not complete"
 DONE_NOTE=""  # set when the update succeeded but the app will NOT reopen itself
-# Follow-up work that failed AFTER `alfred update` committed the new code. The
+# Follow-up work that failed AFTER `plushuman update` committed the new code. The
 # result stays ok:true (contract C3: ok:false only while still on the previous
 # version); each entry reaches the Desktop as a warning.
 WARNINGS=()
@@ -207,7 +207,7 @@ run_bounded() { # seconds cmd... -> cmd's stdout; 124 when it had to be killed
   shift
   out="$(mktemp "${TMPDIR:-/tmp}/hermes-update-probe.$$.XXXXXX")" || return 1
   # Its own process group (pgid = pid), so a timeout kills the probe's whole
-  # tree -- a hung `alfred` launcher's python child included, not just the shell.
+  # tree -- a hung `plushuman` launcher's python child included, not just the shell.
   if command -v perl >/dev/null 2>&1; then
     perl -e 'setpgrp(0, 0); exec { $ARGV[0] } @ARGV or exit 127' "$@" > "$out" 2>/dev/null < /dev/null &
   else
@@ -250,7 +250,7 @@ on_signal() {
     # Contract C3: the code is already updated, so the interruption is an owed
     # follow-up on an ok result, never "the update failed".
     FINAL_CODE=0
-    DONE_NOTE="Alfred was updated, but the update hand-off was interrupted by $sig before its remaining steps finished. The next launch or alfred update finishes them."
+    DONE_NOTE="+Human was updated, but the update hand-off was interrupted by $sig before its remaining steps finished. The next launch or plushuman update finishes them."
     add_warning "handoff" "interrupted by $sig after the update was committed"
     exit 0
   fi
@@ -265,7 +265,7 @@ on_signal() {
 }
 
 # ── the commit point (contract C3) ──────────────────────────────────────────
-# `alfred update` exits 0 once committed, except an interrupt (130) or a parked
+# `plushuman update` exits 0 once committed, except an interrupt (130) or a parked
 # autostash (1) after the commit point, and a crash of a committed run. Its
 # receipt says which: the run's own receipt -- matched by the correlation id we
 # hand it, finalized (finished_at set) -- with outcome success | partial (the
@@ -325,20 +325,20 @@ notify_fallback() { # status message — renderer-free recovery surface.
   # boot surfaces it in a dialog (handoff-result.ts + main.ts).
   case "$1" in manual|error) ;; *) return 0 ;; esac
   if [ "$(uname)" = "Darwin" ]; then
-    /usr/bin/osascript -e "display notification \"$(printf '%s' "$2" | sed 's/"/\\"/g')\" with title \"Alfred update\"" 2>/dev/null && return 0
+    /usr/bin/osascript -e "display notification \"$(printf '%s' "$2" | sed 's/"/\\"/g')\" with title \"+Human update\"" 2>/dev/null && return 0
   else
     if command -v notify-send >/dev/null 2>&1; then
-      notify-send -u critical "Alfred update" "$2" 2>/dev/null && return 0
+      notify-send -u critical "+Human update" "$2" 2>/dev/null && return 0
     fi
     local p
     if command -v zenity >/dev/null 2>&1; then
-      zenity --warning --title="Alfred update" --text="$2" 2>/dev/null &
+      zenity --warning --title="+Human update" --text="$2" 2>/dev/null &
       p=$!; sleep 1
       kill -0 "$p" 2>/dev/null && return 0
       wait "$p" 2>/dev/null
     fi
     if command -v kdialog >/dev/null 2>&1; then
-      kdialog --title "Alfred update" --sorry "$2" 2>/dev/null &
+      kdialog --title "+Human update" --sorry "$2" 2>/dev/null &
       p=$!; sleep 1
       kill -0 "$p" 2>/dev/null && return 0
       wait "$p" 2>/dev/null
@@ -371,7 +371,7 @@ find_browser() {
   # No Microsoft Edge and no Brave, on purpose. Edge's OS-level
   # Microsoft-account integration signs a fresh throwaway profile into the
   # user's MSA and renders its own "syncing your data" notification — MSA
-  # email included — inside this window that is titled "Alfred" (#88410).
+  # email included — inside this window that is titled "+Human" (#88410).
   # Brave paints its own P3A privacy-notice bar over the progress page in
   # the same window — cramped to unreadability at the shim's small size
   # (#88682). The throwaway --user-data-dir below cannot block either; the
@@ -457,7 +457,7 @@ start_ui() {
   # HTTP 200).  The Python wrapper immediately execs the real process, so $!
   # remains the PID that stop_ui can terminate.
   # TERM/HUP stay IGNORED in the server (SIG_IGN survives execv): a stray
-  # teardown TERM killed the shim ~1s into `alfred update` (2026-08-14 16:44,
+  # teardown TERM killed the shim ~1s into `plushuman update` (2026-08-14 16:44,
   # window showed ERR_CONNECTION_REFUSED for the whole run; upstream #66753).
   # stop_ui ends the server with SIGKILL instead — it is stateless HTTP.
   "$py" -c 'import os, signal, sys; os.setsid(); signal.signal(signal.SIGTERM, signal.SIG_IGN); signal.signal(signal.SIGHUP, signal.SIG_IGN); os.execv(sys.argv[1], sys.argv[1:])' \
@@ -568,12 +568,12 @@ linux_gate() {
     [ "$arg" = "--no-sandbox" ] && { GATE=relaunch; return; }
   done
 
-  GATE=manual GATE_MSG="Update complete, but the rebuilt app can't relaunch itself (its sandbox helper needs root ownership). Reopen Alfred to finish."
+  GATE=manual GATE_MSG="Update complete, but the rebuilt app can't relaunch itself (its sandbox helper needs root ownership). Reopen +Human to finish."
 }
 
 mac_bundle_recover() { # bundle path -- finish or roll back an interrupted swap
   # Start-of-run recovery for BOTH bundle swappers (this script's .old/.new and
-  # `alfred desktop`'s .hermes-update-old/-new). The update marker serialises
+  # `plushuman desktop`'s .hermes-update-old/-new). The update marker serialises
   # swappers, so anything left here belongs to a dead run. A missing bundle
   # with its aside copy present means the swap died between its two renames:
   # put the previous app back (the staged copy may be partial). A present
@@ -609,8 +609,8 @@ swap_checkpoint() { # step
 
 mac_swap() {
   local rebuilt="" c
-  for c in "$INSTALL_ROOT/apps/desktop/release/mac-arm64/Alfred.app" \
-           "$INSTALL_ROOT/apps/desktop/release/mac/Alfred.app"; do
+  for c in "$INSTALL_ROOT/apps/desktop/release/mac-arm64/+Human.app" \
+           "$INSTALL_ROOT/apps/desktop/release/mac/+Human.app"; do
     [ -d "$c" ] && { rebuilt="$c"; break; }
   done
 
@@ -626,7 +626,7 @@ mac_swap() {
     swap_checkpoint start
     if ! "$MAC_DITTO" "$rebuilt" "$RELAUNCH_TARGET.new"; then
       rm -rf "$RELAUNCH_TARGET.new" 2>/dev/null || true
-      DONE_NOTE="Alfred was updated, but the new app could not be staged; the previous app was kept. Run the update again."
+      DONE_NOTE="+Human was updated, but the new app could not be staged; the previous app was kept. Run the update again."
       add_warning "app-swap" "bundle copy failed; previous app kept"
       return
     fi
@@ -637,15 +637,15 @@ mac_swap() {
     swap_checkpoint staged
     if ! mv "$RELAUNCH_TARGET" "$RELAUNCH_TARGET.old"; then
       rm -rf "$RELAUNCH_TARGET.new" 2>/dev/null || true
-      DONE_NOTE="Alfred was updated, but the new app could not replace the old one; the previous app was kept. Run the update again."
+      DONE_NOTE="+Human was updated, but the new app could not replace the old one; the previous app was kept. Run the update again."
       add_warning "app-swap" "could not move the old bundle aside; previous app kept"
     elif swap_checkpoint aside; ! mv "$RELAUNCH_TARGET.new" "$RELAUNCH_TARGET"; then
       if mv "$RELAUNCH_TARGET.old" "$RELAUNCH_TARGET"; then
         rm -rf "$RELAUNCH_TARGET.new" 2>/dev/null || true
-        DONE_NOTE="Alfred was updated, but the new app could not be installed; the previous app was restored. Run the update again."
+        DONE_NOTE="+Human was updated, but the new app could not be installed; the previous app was restored. Run the update again."
         add_warning "app-swap" "bundle install failed; rolled back to the previous app"
       else
-        DONE_NOTE="Alfred was updated, but installing the new app failed and the previous app could not be restored. Reinstall Alfred (the rebuilt app is at $rebuilt)."
+        DONE_NOTE="+Human was updated, but installing the new app failed and the previous app could not be restored. Reinstall +Human (the rebuilt app is at $rebuilt)."
         add_warning "app-swap" "bundle install failed AND rollback failed"
       fi
     else
@@ -763,7 +763,7 @@ finish() {
       if ! launch_app; then
         # Even the kept bundle didn't come back: the durable message must
         # carry BOTH facts (update ok, previous app not reopened).
-        FINAL_MSG="$DONE_NOTE Alfred also could not reopen itself - open it manually."
+        FINAL_MSG="$DONE_NOTE +Human also could not reopen itself - open it manually."
         write_result
       fi
     fi
@@ -773,7 +773,7 @@ finish() {
   else
     # Launch was due and did not land. Downgrade: truthful result for the
     # next boot, manual state held on screen now.
-    FINAL_MSG="Update complete. Reopen Alfred to finish (it could not restart itself)."
+    FINAL_MSG="Update complete. Reopen +Human to finish (it could not restart itself)."
     MANUAL=1
     write_result
     publish "manual" "$FINAL_MSG"; stop_ui leave-window
@@ -796,7 +796,7 @@ trap finish EXIT
 # (hermes_cli/macos_tcc_anchor.ensure_tcc_anchor, which re-anchors whenever
 # `venv/bin/python` is a uv-managed symlink): this heal is gated on the
 # interpreter FAILING its boot probe, so a healthy anchored install is never
-# touched; and when it does restore symlinks, the very `alfred update` run it
+# touched; and when it does restore symlinks, the very `plushuman update` run it
 # unblocks re-installs a boot-gated healthy anchor — a one-shot convergence,
 # not a loop.
 
@@ -967,20 +967,20 @@ fi
 
 # ── the actual job ──────────────────────────────────────────────────────────
 # Everything below is ONE brace group: bash parses a compound command whole
-# before running it, so `alfred update` rewriting this very file (the script
+# before running it, so `plushuman update` rewriting this very file (the script
 # lives in the checkout it updates) can never feed the rest of the run from a
 # shifted offset of the new text.
 {
 # Electron's macOS quit teardown sends SIGTERM to its still-parented updater
 # child on this machine. `detached + unref` gives the child a process group but
 # does not re-parent it before `before-quit` runs, so the hand-off consistently
-# died two seconds after starting `alfred update`. Re-exec through a one-shot
+# died two seconds after starting `plushuman update`. Re-exec through a one-shot
 # setsid child and let this direct Electron child exit first. The real
 # orchestrator is then owned by launchd (PPID 1) and is outside Electron's quit
 # teardown, while retaining the same marker/result protocol.
 if [ "$HANDOFF_DAEMONIZED" -ne 1 ]; then
   # This launcher is disposable. In particular it must not run finish() on
-  # EXIT: that would publish a false failure and relaunch Alfred while the
+  # EXIT: that would publish a false failure and relaunch +Human while the
   # re-parented orchestrator is only just starting.
   trap - EXIT HUP INT QUIT TERM
   # --daemonized must precede ORIGINAL_ARGS, not follow it: ORIGINAL_ARGS may
@@ -990,7 +990,7 @@ if [ "$HANDOFF_DAEMONIZED" -ne 1 ]; then
   # every re-exec, causing this block to re-fire forever (self-exec loop,
   # unbounded argv growth) whenever relaunch args were present.
   # nohup leaves SIGHUP ignored, and an ignored-at-entry signal can never be
-  # re-trapped by bash, so every child (alfred update, gateways it starts, the
+  # re-trapped by bash, so every child (plushuman update, gateways it starts, the
   # relaunched app) inherited it. The daemon has no terminal after setsid:
   # restore the default before exec.
   /usr/bin/nohup /usr/bin/python3 -c '
@@ -1041,7 +1041,7 @@ if ! marker_claim; then
   # A4: this run changed nothing and owns no result -- the other update (or
   # the Desktop that gave up on this hand-off) reports its own. An older
   # Desktop quits right after spawning us, so bring one back if it is gone.
-  log "Another Alfred update is already running (process $MARKER_REFUSED_PID), or the Desktop gave up on this hand-off. Nothing was changed."
+  log "Another +Human update is already running (process $MARKER_REFUSED_PID), or the Desktop gave up on this hand-off. Nothing was changed."
   trap - EXIT
   [ "$(uname)" = "Darwin" ] || linux_gate
   launch_app || true
@@ -1093,7 +1093,7 @@ if [ "$DESKTOP_PID" -gt 0 ] 2>/dev/null; then
   _exit_deadline=$(( $(date +%s) + DESKTOP_EXIT_SECONDS ))
   while ident_alive "$DESKTOP_PID" "$DESKTOP_CT" && [ "$(date +%s)" -lt "$_exit_deadline" ]; do sleep 0.3; done
   if ident_alive "$DESKTOP_PID" "$DESKTOP_CT"; then
-    FINAL_CODE=4 FINAL_MSG="Update aborted: the Alfred window (pid $DESKTOP_PID) did not exit within ${DESKTOP_EXIT_SECONDS}s. Nothing was changed. Close Alfred fully and try again."
+    FINAL_CODE=4 FINAL_MSG="Update aborted: the +Human window (pid $DESKTOP_PID) did not exit within ${DESKTOP_EXIT_SECONDS}s. Nothing was changed. Close +Human fully and try again."
     log "$FINAL_MSG"; exit "$FINAL_CODE"
   fi
 fi
@@ -1142,7 +1142,7 @@ select_update_invoke() {
 }
 select_update_invoke || { FINAL_CODE=3 FINAL_MSG="Update aborted: the installation launcher at $HERMES_BIN is missing. Repair this installation."; log "$FINAL_MSG"; exit 3; }
 
-# Run FROM the install root: `alfred update` resolves the tree it mutates
+# Run FROM the install root: `plushuman update` resolves the tree it mutates
 # from the working directory, and we inherit the Desktop's cwd (which can be
 # an unrelated repo — updating THAT instead of the install is the failure
 # the sandbox repro caught). FAIL CLOSED: set -u without set -e means a
@@ -1153,18 +1153,18 @@ cd "$INSTALL_ROOT" || {
   log "$FINAL_MSG"; exit 3
 }
 export PYTHONUNBUFFERED=1
-# The takeover children (alfred update -> _update_takeover/update_finish and
+# The takeover children (plushuman update -> _update_takeover/update_finish and
 # the PM sync / build stages they drive) publish their stages back into the
 # shim's UI through this file; without a watching UI the variable is simply
 # absent and the helper no-ops.
 export HERMES_UPDATE_STATUS_FILE="$STATUS"
-# `alfred update` runs under OUR marker claim (contract C1 rule 4/6).
+# `plushuman update` runs under OUR marker claim (contract C1 rule 4/6).
 # The claim's owner is not this script. marker_refresher_start hands line 1 to a custodian
 # subshell that outlives us, so the owner is a *sibling* of this script: never our own pid,
-# and never an ancestor of the `alfred update` we spawn. update_lock._is_partner can only
+# and never an ancestor of the `plushuman update` we spawn. update_lock._is_partner can only
 # match it through this variable, so exporting `$$` left the custodian unrecognisable and
 # every desktop-initiated update refused its own claim with exit code 2
-# ("Another Alfred update is already running (started Ns ago, process <custodian>)").
+# ("Another +Human update is already running (started Ns ago, process <custodian>)").
 # $MY_PID is the custodian once the handover succeeded, and our own pid when it did not.
 export HERMES_UPDATE_HANDOFF_PID="$MY_PID"
 # The update's receipt carries this id (update_receipt._launcher_correlation_id),
@@ -1173,7 +1173,7 @@ export HERMES_UPDATE_CORRELATION_ID="$UPDATE_CORRELATION"
 # --keep-stash: never re-apply local source edits after the update (they stay
 # parked in git stash). Probe --help first: older installed backends don't
 # know the flag and argparse would abort with exit 2, which collides with the
-# "close all Alfred windows" sentinel. The probe is bounded: a hung launcher
+# "close all +Human windows" sentinel. The probe is bounded: a hung launcher
 # must not hold the marker forever.
 KEEP_STASH=""
 if run_bounded 60 "${UPDATE_INVOKE[@]}" update --help | grep -q -- '--keep-stash'; then
@@ -1235,11 +1235,11 @@ run_update() { # streams straight into the log (a killed run keeps its output);
 log "running: ${UPDATE_INVOKE[*]} update --yes $GATEWAY_FLAG $KEEP_STASH ${TARGET_ARGS[*]}"
 publish_stage "Updating code and dependencies"
 run_update
-log "alfred update exit code: $CODE"
+log "plushuman update exit code: $CODE"
 
 if [ "$LEGACY_INSTALL" -eq 1 ] && [ "$CODE" -ne 0 ] && [ "$CODE" -ne 2 ]; then
   # Retry once: update-boundary class (fresh code on disk, stale in memory).
-  # Exit 2 ("close all Alfred windows") is not retryable.
+  # Exit 2 ("close all +Human windows") is not retryable.
   #
   # A parked-branch SKIP (checkout on a feature branch with unmerged
   # commits) is also deterministic — the retry would hit the exact same
@@ -1248,7 +1248,7 @@ if [ "$LEGACY_INSTALL" -eq 1 ] && [ "$CODE" -ne 0 ] && [ "$CODE" -ne 2 ]; then
   # dedicated exit code (8) so callers can distinguish "skipped" from a
   # real failure.
   if printf '%s' "$OUT" | grep -q "CODE UPDATE SKIPPED"; then
-    log "alfred update skipped (checkout parked on a non-target branch); not retrying"
+    log "plushuman update skipped (checkout parked on a non-target branch); not retrying"
     FINAL_CODE=8
     FINAL_MSG="Update skipped: the git checkout is on a branch that isn't fully merged into $BRANCH. Switch to the target branch and update again (see the terminal output for the exact commands)."
     exit 8
@@ -1263,13 +1263,13 @@ trap 'on_signal TERM' TERM
 
 if [ "$CODE" -eq 0 ]; then FINAL_CODE=0 FINAL_MSG="Update complete." UPDATE_COMMITTED=1
   # Contract C3: a Desktop build that fails after the code committed is an owed
-  # follow-up (alfred update exits 0 and prints one whole "Desktop app build
+  # follow-up (plushuman update exits 0 and prints one whole "Desktop app build
   # owed:" line for it; the follow-up text itself is truncated). The user is on
-  # the new Alfred, but this app was not rebuilt: say so and say how to fix it,
+  # the new +Human, but this app was not rebuilt: say so and say how to fix it,
   # never "finished OK" and never "still on the previous version".
   if printf '%s\n' "$OUT" | grep -Eq '^[[:space:]]*Desktop app build owed: '; then
     APP_REBUILD_FAILED=1
-    DONE_NOTE="Alfred was updated, but the Desktop app could not be rebuilt, so it still runs its old build. Run alfred desktop --force-build in a terminal to rebuild it; the update log has the build error."
+    DONE_NOTE="+Human was updated, but the Desktop app could not be rebuilt, so it still runs its old build. Run plushuman desktop --force-build in a terminal to rebuild it; the update log has the build error."
     add_warning "build" "the Desktop app build is owed by the committed update"
   fi
   # Every other owed follow-up (a gateway still on the old code, a Windows
@@ -1278,28 +1278,28 @@ if [ "$CODE" -eq 0 ]; then FINAL_CODE=0 FINAL_MSG="Update complete." UPDATE_COMM
   # end as a plain "Update complete." (review regression 1).
   OWED_STEPS="$(owed_followup_steps)"
   if [ -n "$OWED_STEPS" ]; then
-    case " $OWED_STEPS " in *" gateway_restart "*) OWED_HINT=" Run alfred gateway restart to move the messaging gateway onto the new code now." ;; *) OWED_HINT="" ;; esac
+    case " $OWED_STEPS " in *" gateway_restart "*) OWED_HINT=" Run plushuman gateway restart to move the messaging gateway onto the new code now." ;; *) OWED_HINT="" ;; esac
     if [ -n "$DONE_NOTE" ]; then DONE_NOTE="$DONE_NOTE Follow-up steps still owed: $OWED_STEPS.$OWED_HINT"
-    else DONE_NOTE="Alfred was updated, but some follow-up steps did not finish ($OWED_STEPS). The next launch or alfred update retries them; the update log has the details.$OWED_HINT"; fi
+    else DONE_NOTE="+Human was updated, but some follow-up steps did not finish ($OWED_STEPS). The next launch or plushuman update retries them; the update log has the details.$OWED_HINT"; fi
     add_warning "followup" "owed by the committed update: $OWED_STEPS"
   fi
 elif [ "$CODE" -ne 2 ] && update_committed_after_exit; then
   # Past the commit point: installed, with an owed follow-up (contract C3).
   FINAL_CODE=0 FINAL_MSG="Update complete." UPDATE_COMMITTED=1
   case "$RECEIPT_OUTCOME" in
-    partial) DONE_NOTE="Alfred was updated, but one step is left for you: your local source changes may still be parked in git stash. Run alfred update in a terminal for the exact commands." ;;
-    interrupted) DONE_NOTE="Alfred was updated, but its post-update steps were interrupted. The next launch or alfred update finishes them." ;;
-    *) DONE_NOTE="Alfred was updated, but alfred update exited with code $CODE afterwards. Run alfred update in a terminal to finish any remaining steps." ;;
+    partial) DONE_NOTE="+Human was updated, but one step is left for you: your local source changes may still be parked in git stash. Run plushuman update in a terminal for the exact commands." ;;
+    interrupted) DONE_NOTE="+Human was updated, but its post-update steps were interrupted. The next launch or plushuman update finishes them." ;;
+    *) DONE_NOTE="+Human was updated, but plushuman update exited with code $CODE afterwards. Run plushuman update in a terminal to finish any remaining steps." ;;
   esac
-  add_warning "update" "alfred update exited $CODE after the commit point (receipt outcome: $RECEIPT_OUTCOME)"
+  add_warning "update" "plushuman update exited $CODE after the commit point (receipt outcome: $RECEIPT_OUTCOME)"
 else
-  FINAL_CODE="$CODE" FINAL_MSG="Update failed (exit $CODE). Run alfred debug share in a terminal to send a report."
+  FINAL_CODE="$CODE" FINAL_MSG="Update failed (exit $CODE). Run plushuman debug share in a terminal to send a report."
   # The bricked-venv class is fixable and must not read as a generic exit 1:
   # a dead interpreter with a failed/impossible heal means retrying can never
   # succeed — tell the user what is actually wrong (#95759).
   if [ "$LEGACY_INSTALL" -eq 1 ] && ! tcc_probe_python "$INSTALL_ROOT/venv/bin/python3" \
       && ! tcc_probe_python "$INSTALL_ROOT/venv/bin/python"; then
-    FINAL_MSG="Update failed: the Python interpreter inside $INSTALL_ROOT/venv cannot start (heal state: $TCC_HEAL_STATE). Reinstall the runtime with the Alfred installer, or run alfred doctor --fix from a terminal if any hermes command still works."
+    FINAL_MSG="Update failed: the Python interpreter inside $INSTALL_ROOT/venv cannot start (heal state: $TCC_HEAL_STATE). Reinstall the runtime with the +Human installer, or run plushuman doctor --fix from a terminal if any hermes command still works."
   fi
 fi
 
@@ -1308,12 +1308,12 @@ fi
 # The code already committed: a failed rebuild is a follow-up warning on an
 # ok:true result (contract C3), never "you're still on the previous version".
 if [ "$LEGACY_INSTALL" -eq 1 ] && [ "$CODE" -eq 0 ] && printf '%s' "$OUT" | grep -q "Desktop build failed"; then
-  log "desktop build failed inside alfred update; retrying build"
+  log "desktop build failed inside plushuman update; retrying build"
   publish_stage "Rebuilding Desktop"
   if ! ( trap - TERM; exec "${UPDATE_INVOKE[@]}" desktop --force-build --build-only ) >> "$LOG" 2>&1; then
     APP_REBUILD_FAILED=1
-    DONE_NOTE="Alfred was updated, but the Desktop app rebuild failed - you are running the previous app build. Run alfred desktop --force-build from a terminal to retry."
-    add_warning "desktop-rebuild" "alfred desktop --force-build --build-only failed"
+    DONE_NOTE="+Human was updated, but the Desktop app rebuild failed - you are running the previous app build. Run plushuman desktop --force-build from a terminal to retry."
+    add_warning "desktop-rebuild" "plushuman desktop --force-build --build-only failed"
   fi
 fi
 exit "$FINAL_CODE"

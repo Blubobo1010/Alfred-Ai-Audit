@@ -47,7 +47,7 @@ def _run_build(session):
 
 def test_provider_not_configured_is_named_in_the_error_event(monkeypatch, emitted):
     session = _fail_build(monkeypatch, ProviderNotConfiguredError(
-        "No LLM provider configured. Run `alfred model` to select a provider, or run `alfred setup` "
+        "No LLM provider configured. Run `plushuman model` to select a provider, or run `plushuman setup` "
         "for first-time configuration."))
 
     _run_build(session)
@@ -92,7 +92,7 @@ class TestAgentInitRaisesTheNamedError:
         agent = SimpleNamespace(provider="minimax-oauth", model="m", base_url=None, api_key=None,
                                 _fallback_activated=False, _explicit_provider="minimax-oauth")
 
-        with pytest.raises(ProviderNotConfiguredError, match=r"alfred auth add minimax-oauth"):
+        with pytest.raises(ProviderNotConfiguredError, match=r"plushuman auth add minimax-oauth"):
             _routed_client_kwargs(agent, None, 60)
 
     def test_the_type_is_a_runtime_error(self):

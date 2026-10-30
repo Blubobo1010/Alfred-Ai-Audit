@@ -1,4 +1,4 @@
-"""Entrypoint driver for the parity matrix: the ACP stdio server (``alfred acp``).
+"""Entrypoint driver for the parity matrix: the ACP stdio server (``plushuman acp``).
 
 Follows the driver contract in ``_drive_cli``. The client side speaks
 newline-delimited JSON-RPC 2.0 itself (no SDK client) so the driver controls

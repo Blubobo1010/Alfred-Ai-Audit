@@ -5,7 +5,7 @@ subdir: memory-rewind
 description: >-
   Automatic version history for the built-in memory (MEMORY.md, USER.md), SOUL.md and skills/
   (including curator-archived skills): browse, diff and restore any past version with
-  `alfred memory-rewind`, or view it from any chat with the read-only `/memory-history`.
+  `plushuman memory-rewind`, or view it from any chat with the read-only `/memory-history`.
   Works alongside the built-in memory; not a memory provider.
   Disclosure — runs the local git binary (isolated from the user's git config, hooks and
   signing) to keep a bare repository in $HERMES_HOME/plugin-data/memory-rewind/; reads only the

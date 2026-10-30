@@ -1,6 +1,6 @@
 """A peer DM into a Bot Chat that a Desktop holds open is answered BY that open chat.
 
-``alfred peer dm`` posts to ``/api/sessions/{id}/chat`` on the peer. When the peer's canonical Bot
+``plushuman peer dm`` posts to ``/api/sessions/{id}/chat`` on the peer. When the peer's canonical Bot
 Chat is open in its Desktop, the Desktop session holds the chat's single-writer lease; running the
 turn in the API server beside it made a second writer the open chat never saw. The message now goes
 through the owner's mailbox, like local and relayed DMs, and the owner's receipt carries the reply.

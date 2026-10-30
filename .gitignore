@@ -168,14 +168,14 @@ config/mcporter.json
 hermes_cli/tui_dist/*
 hermes_cli/scripts/
 docs/superpowers/*
-# Working directory for the Alfred's session state (~/.hermes/ at runtime;
+# Working directory for the +Human's session state (~/.hermes/ at runtime;
 # also created in-repo when an agent operates in this checkout). Plans, audit
 # logs, and per-session caches are never artifacts of the codebase.
 .hermes/
 
 # Desktop/bootstrap install marker written into the managed checkout root by the
-# bootstrap installer. It is Alfred-managed runtime state, never a code change —
-# ignore it so `alfred update`'s `git stash push --include-untracked` does not
+# bootstrap installer. It is +Human-managed runtime state, never a code change —
+# ignore it so `plushuman update`'s `git stash push --include-untracked` does not
 # treat it as a local edit and autostash it on every run (#38529).
 .hermes-bootstrap-complete
 
@@ -192,9 +192,9 @@ docs/superpowers/*
 # ones), gateway lock/pid/state files and per-launch markers, cache/spill
 # directories, and the profile's own config/credential/
 # memory/profile/pairing roots, the pre-update backups (the very copies a
-# swept state.db is restored from) and the secret vault are Alfred-managed
+# swept state.db is restored from) and the secret vault are +Human-managed
 # runtime state, never code changes. (`*-snapshots/` above already covers state-snapshots/.)
-# Ignore them so `alfred update`'s `git stash push --include-untracked` cannot
+# Ignore them so `plushuman update`'s `git stash push --include-untracked` cannot
 # sweep the live state.db/-wal into the stash and unlink it under the running
 # gateway (#110648). Nested installs keep all of this under $HERMES_HOME outside
 # the checkout, where the `.hermes/` rule above already applies.
@@ -261,11 +261,11 @@ docs/superpowers/*
 .hermes-sandbox-e2e*/
 
 # Interrupted-update breadcrumb + recovery lock written next to the shared venv
-# by `alfred update` / launch-time self-heal. Runtime state, never a code change
+# by `plushuman update` / launch-time self-heal. Runtime state, never a code change
 # — ignore so `git status` stays clean and update's autostash skips them.
 .update-incomplete
 .update-incomplete.lock
-# Kernel lock `alfred update` holds on the checkout (hermes_cli/update_lock.py).
+# Kernel lock `plushuman update` holds on the checkout (hermes_cli/update_lock.py).
 .hermes-update.lock
 .hermes-update-zip-swap.lock
 
@@ -276,7 +276,7 @@ docs/superpowers/*
 
 # Installer-written method stamp in the managed checkout root (scripts/install.sh).
 # Runtime metadata only — never a code change. Ignore so `git status` stays clean
-# and `alfred update`'s untracked autostash does not treat it as a local edit (#66189 / #54855).
+# and `plushuman update`'s untracked autostash does not treat it as a local edit (#66189 / #54855).
 /.install_method
 install-stamp.json
 
@@ -308,7 +308,7 @@ infographics/
 infograficos/
 infografico/
 native/fts5_cjk/*.so
-# Runtime marker written by alfred update when a lazy dependency refresh is
+# Runtime marker written by plushuman update when a lazy dependency refresh is
 # interrupted; consumed by launch-time recovery. Never commit it (was tracked
 # by accident via 3a69e34702, removed in the #72002 salvage).
 .lazy-refresh-incomplete

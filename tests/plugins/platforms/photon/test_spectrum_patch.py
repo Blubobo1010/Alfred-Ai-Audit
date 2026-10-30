@@ -1,4 +1,4 @@
-"""Regression tests for Alfred' Spectrum mixed text+attachment workaround."""
+"""Regression tests for +Human' Spectrum mixed text+attachment workaround."""
 
 from __future__ import annotations
 

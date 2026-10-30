@@ -116,19 +116,19 @@ test('exit line carries the buffered tail next to the exit code, preferring the 
   tail.append('Traceback (most recent call last):\n')
 
   assert.equal(
-    formatBackendExitLine('Ignoring stale Alfred backend exit', 1, null, tail),
-    'Ignoring stale Alfred backend exit (1)\nRecent backend output:\nTraceback (most recent call last):'
+    formatBackendExitLine('Ignoring stale +Human backend exit', 1, null, tail),
+    'Ignoring stale +Human backend exit (1)\nRecent backend output:\nTraceback (most recent call last):'
   )
   assert.equal(
-    formatBackendExitLine('Alfred backend exited', null, 'SIGTERM', tail),
-    'Alfred backend exited (SIGTERM)\nRecent backend output:\nTraceback (most recent call last):'
+    formatBackendExitLine('+Human backend exited', null, 'SIGTERM', tail),
+    '+Human backend exited (SIGTERM)\nRecent backend output:\nTraceback (most recent call last):'
   )
 })
 
 test('exit line stays byte-identical to the legacy shape when the tail is empty or missing', () => {
   assert.equal(
-    formatBackendExitLine('Alfred backend exited', 0, null, createBackendOutputTail(64)),
-    'Alfred backend exited (0)'
+    formatBackendExitLine('+Human backend exited', 0, null, createBackendOutputTail(64)),
+    '+Human backend exited (0)'
   )
-  assert.equal(formatBackendExitLine('Alfred backend exited', 1, null, null), 'Alfred backend exited (1)')
+  assert.equal(formatBackendExitLine('+Human backend exited', 1, null, null), '+Human backend exited (1)')
 })

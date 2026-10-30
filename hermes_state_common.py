@@ -293,7 +293,7 @@ AUTO_VACUUM_MIN_FREELIST_RATIO = 0.25
 # state_meta key ``fts_storage_version``. The main schema version advances
 # freely on open (so future migrations always land); the FTS *layout* only
 # reaches the current version when a DB is either born fresh or explicitly
-# optimized via ``alfred sessions optimize-storage``. A legacy DB sits at
+# optimized via ``plushuman sessions optimize-storage``. A legacy DB sits at
 # layout 0 (marker absent) with a working inline index until the user opts in.
 #   1 = v23 external-content layout with a tool-row-excluded trigram
 #   2 = trigram also excludes structured tool_calls JSON
@@ -962,7 +962,7 @@ END;
 _FTS_CJK_TRIGGERS = ("messages_fts_cjk_insert", "messages_fts_cjk_delete", "messages_fts_cjk_update")
 
 # Set when a tokenizer-less process dropped the cjk triggers to keep writes alive: the cjk index is missing rows
-# and must not serve reads until `alfred sessions optimize-storage` rebuilds it on a capable host.
+# and must not serve reads until `plushuman sessions optimize-storage` rebuilds it on a capable host.
 FTS_CJK_STALE_KEY = "fts_cjk_stale"
 
 # Set when a base/trigram FTS index was detached after runtime corruption; startup must rebuild the complete
@@ -1051,8 +1051,8 @@ END;
 # only when provably dead, indeterminate liveness defers.  `<db>.fts_rebuild.lock` is distinct from
 # `<db>.repair.lock` (offline schema surgery, minutes in VACUUM).  Lives here: mixins cannot import hermes_state.
 
-# ── Cross-process full-FTS-rebuild admission (single authority) ────────────── Several independent Alfred
-# processes routinely share one state.db (gateway service, the Desktop app's `alfred serve` backend,
+# ── Cross-process full-FTS-rebuild admission (single authority) ────────────── Several independent +Human
+# processes routinely share one state.db (gateway service, the Desktop app's `plushuman serve` backend,
 # interactive CLI sessions, the TUI slash worker). A full structural FTS rebuild — the FTS5 'rebuild'
 # command or the drop/recreate script in `_recover_stale_fts` — must only ever run in ONE of them at a time:
 # two concurrent rebuilds collide on write and have structurally corrupted state.db in production (PR
@@ -1233,7 +1233,7 @@ def _acquire_db_flock(lock_path, handle, timeout_seconds, poll_seconds, descript
 def _describe_lock_holder(record) -> str:
     """Human-readable holder identity for deferral warnings."""
     if not isinstance(record, dict) or "pid" not in record:
-        return "unknown (no holder record; pre-fix writer or non-Alfred)"
+        return "unknown (no holder record; pre-fix writer or non-+Human)"
     age = ""
     with contextlib.suppress(TypeError, ValueError):
         if record.get("acquired_at") is not None:

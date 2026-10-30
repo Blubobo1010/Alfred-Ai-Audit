@@ -1,8 +1,8 @@
 """Unopenable admission lock files must fail CLOSED (#100368).
 
 `state.db` has two cross-process admission authorities that gate destructive
-work on a file several Alfred processes share (gateway service, the Desktop
-app's `alfred serve` backend, CLI sessions, the TUI slash worker):
+work on a file several +Human processes share (gateway service, the Desktop
+app's `plushuman serve` backend, CLI sessions, the TUI slash worker):
 
 * `hermes_state_common.fts_rebuild_admission` — full structural FTS rebuilds
 * `hermes_state_repair._cross_process_repair_lock`   — writable_schema surgery / VACUUM

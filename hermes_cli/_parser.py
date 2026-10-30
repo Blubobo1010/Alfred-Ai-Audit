@@ -31,7 +31,7 @@ def _cfg_path() -> str:
 
     ``main._apply_profile_override`` builds this parser (via ``top_level_value_flag_sets``) BEFORE
     it re-homes the process to the sticky ``active_profile``; ``get_hermes_home()`` would emit the
-    "[HERMES_HOME fallback] ... wrong profile" warning on every ``alfred`` command for that
+    "[HERMES_HOME fallback] ... wrong profile" warning on every ``plushuman`` command for that
     throwaway help string. Read the process home directly: after the override it IS the profile home.
     """
     from hermes_constants import display_hermes_home, get_process_hermes_home
@@ -45,7 +45,7 @@ def top_level_value_flag_sets() -> tuple[frozenset[str], frozenset[str]]:
 
     Introspects ``build_top_level_parser()`` (every option with nargs != 0) so the argv scanners in
     ``main.py`` (``_first_positional_argv``, ``_apply_profile_override``) can never drift from the
-    argparse surface — the drift that made ``alfred --reasoning high chat …`` misread ``high`` as
+    argparse surface — the drift that made ``plushuman --reasoning high chat …`` misread ``high`` as
     the subcommand and forced eager plugin discovery.
 
     Mirrors the ``update_cmd._holder_value_flags`` precedent, including the handwritten-snapshot fallback
@@ -89,55 +89,55 @@ def _inherited_flag(parser, *args, **kwargs):
 
 _EPILOGUE = """
 Examples:
-    alfred                        Start interactive chat
-    alfred chat -q "Hello"        Single query mode
-    alfred --tui                  Launch the modern TUI (or set display.interface: tui)
-    alfred --cli                  Force the classic REPL (overrides display.interface: tui)
-    alfred -c                     Resume the most recent session
-    alfred -c "my project"        Resume a session by name (latest in lineage)
-    alfred --resume <session_id>  Resume a specific session by ID
-    alfred --resume latest        Resume the most recent session (same as -c)
-    alfred --tui --resume latest --in ./dir   Resume ./dir's latest session in the TUI
-    alfred setup                  Run setup wizard
-    alfred logout                 Clear stored authentication
-    alfred auth add <provider>    Add a pooled credential
-    alfred auth list              List pooled credentials
-    alfred auth remove <p> <t>    Remove pooled credential by index, id, or label
-    alfred auth reset <p> [t]     Clear exhaustion status for a provider, or one credential
-    alfred auth priority <p> <t> <n>  Move a pooled credential to priority n (0 = tried first)
-    alfred auth refresh <p> [t]   Refresh a pooled OAuth credential and clear its cooldown
-    alfred model                  Select default model
-    alfred fallback [list]        Show fallback provider chain
-    alfred fallback add           Add a fallback provider (same picker as `alfred model`)
-    alfred fallback remove        Remove a fallback provider from the chain
-    alfred config                 View configuration
-    alfred config edit            Edit config in $EDITOR
-    alfred config set model gpt-4 Set a config value
-    alfred gateway                Run messaging gateway
-    alfred gateway install        Install gateway background service
-    alfred gateway start          Start the installed gateway service
-    alfred gateway stop           Stop the gateway service
-    alfred gateway status         Show gateway status
-    alfred -p <profile> <cmd>     Run any command against a named profile's
-                                  home (also --profile) — e.g. alfred -p coder gateway stop
-    alfred -s hermes-agent-dev,github-auth
-    alfred -w                     Start in isolated git worktree
-    alfred sessions list          List past sessions
-    alfred sessions browse        Interactive session picker
-    alfred sessions rename ID T   Rename/title a session
-    alfred logs                   View agent.log (last 50 lines)
-    alfred logs -f                Follow agent.log in real time
-    alfred logs errors            View errors.log
-    alfred logs --since 1h        Lines from the last hour
-    alfred debug share             Upload debug report for support
-    alfred console                Open the safe Alfred command console
-    alfred update                 Update to latest version
-    alfred dashboard              Start web UI dashboard (port 9119)
-    alfred dashboard --stop       Stop running dashboard processes
-    alfred dashboard --status     List running dashboard processes
+    plushuman                        Start interactive chat
+    plushuman chat -q "Hello"        Single query mode
+    plushuman --tui                  Launch the modern TUI (or set display.interface: tui)
+    plushuman --cli                  Force the classic REPL (overrides display.interface: tui)
+    plushuman -c                     Resume the most recent session
+    plushuman -c "my project"        Resume a session by name (latest in lineage)
+    plushuman --resume <session_id>  Resume a specific session by ID
+    plushuman --resume latest        Resume the most recent session (same as -c)
+    plushuman --tui --resume latest --in ./dir   Resume ./dir's latest session in the TUI
+    plushuman setup                  Run setup wizard
+    plushuman logout                 Clear stored authentication
+    plushuman auth add <provider>    Add a pooled credential
+    plushuman auth list              List pooled credentials
+    plushuman auth remove <p> <t>    Remove pooled credential by index, id, or label
+    plushuman auth reset <p> [t]     Clear exhaustion status for a provider, or one credential
+    plushuman auth priority <p> <t> <n>  Move a pooled credential to priority n (0 = tried first)
+    plushuman auth refresh <p> [t]   Refresh a pooled OAuth credential and clear its cooldown
+    plushuman model                  Select default model
+    plushuman fallback [list]        Show fallback provider chain
+    plushuman fallback add           Add a fallback provider (same picker as `plushuman model`)
+    plushuman fallback remove        Remove a fallback provider from the chain
+    plushuman config                 View configuration
+    plushuman config edit            Edit config in $EDITOR
+    plushuman config set model gpt-4 Set a config value
+    plushuman gateway                Run messaging gateway
+    plushuman gateway install        Install gateway background service
+    plushuman gateway start          Start the installed gateway service
+    plushuman gateway stop           Stop the gateway service
+    plushuman gateway status         Show gateway status
+    plushuman -p <profile> <cmd>     Run any command against a named profile's
+                                  home (also --profile) — e.g. plushuman -p coder gateway stop
+    plushuman -s hermes-agent-dev,github-auth
+    plushuman -w                     Start in isolated git worktree
+    plushuman sessions list          List past sessions
+    plushuman sessions browse        Interactive session picker
+    plushuman sessions rename ID T   Rename/title a session
+    plushuman logs                   View agent.log (last 50 lines)
+    plushuman logs -f                Follow agent.log in real time
+    plushuman logs errors            View errors.log
+    plushuman logs --since 1h        Lines from the last hour
+    plushuman debug share             Upload debug report for support
+    plushuman console                Open the safe +Human command console
+    plushuman update                 Update to latest version
+    plushuman dashboard              Start web UI dashboard (port 9119)
+    plushuman dashboard --stop       Stop running dashboard processes
+    plushuman dashboard --status     List running dashboard processes
 
 For more help on a command:
-    alfred <command> --help
+    plushuman <command> --help
 """
 
 
@@ -164,7 +164,7 @@ def _add_top_level_flags(parser: argparse.ArgumentParser) -> None:
     inherited(parser, "--provider", default=None, help=(
         "Provider override for this invocation (e.g. openrouter, anthropic). "
         "Applies to -z/--oneshot and --tui. The persistent provider lives in config.yaml "
-        "under model.provider — use `alfred setup` or edit the file to change it."))
+        "under model.provider — use `plushuman setup` or edit the file to change it."))
     inherited(parser, "--reasoning", default=None, metavar="LEVEL", help=(
         "Reasoning effort for this invocation: none, minimal, low, medium, "
         "high, xhigh, max, or ultra. Overrides agent.reasoning_effort in "
@@ -217,7 +217,7 @@ def _build_chat_parser(subparsers) -> argparse.ArgumentParser:
     """The ``chat`` subparser (also the implicit default command).
 
     Flags ALSO declared on the top-level parser use ``default=argparse.SUPPRESS``: for
-    ``alfred -m foo chat`` argparse first sets ``args.model`` from the top-level parser, then
+    ``plushuman -m foo chat`` argparse first sets ``args.model`` from the top-level parser, then
     dispatches to the chat subparser, which shares the namespace and ``dest`` — a plain ``None``
     default would silently clobber the top-level value. SUPPRESS keeps the subparser action a no-op
     unless the flag is actually passed after the subcommand (tests/hermes_cli/
@@ -225,7 +225,7 @@ def _build_chat_parser(subparsers) -> argparse.ArgumentParser:
     """
     chat_parser = subparsers.add_parser(
         "chat", help="Interactive chat with the agent",
-        description="Start an interactive chat session with Alfred")
+        description="Start an interactive chat session with +Human")
     add, inherited, SUPPRESS = chat_parser.add_argument, _inherited_flag, argparse.SUPPRESS
     _query_group = chat_parser.add_mutually_exclusive_group()
     _query_group.add_argument("-q", "--query", help=(
@@ -305,7 +305,7 @@ def _build_chat_parser(subparsers) -> argparse.ArgumentParser:
     inherited(chat_parser, "--ignore-rules", action="store_true", default=SUPPRESS,
               help="Skip auto-injection of AGENTS.md, SOUL.md, .cursorrules, memory, and preloaded skills. Combine with --ignore-user-config for a fully isolated run.")
     inherited(chat_parser, "--safe-mode", action="store_true", default=SUPPRESS,
-              help="Troubleshooting mode: disable ALL customizations — user config, AGENTS.md/memory injection, plugins, and MCP servers (implies --ignore-user-config and --ignore-rules). Use to isolate whether a problem comes from your setup or from Alfred itself.")
+              help="Troubleshooting mode: disable ALL customizations — user config, AGENTS.md/memory injection, plugins, and MCP servers (implies --ignore-user-config and --ignore-rules). Use to isolate whether a problem comes from your setup or from +Human itself.")
     add("--source", default=None,
         help="Session source tag for filtering (default: cli). Use 'tool' for third-party integrations that should not appear in user session lists.")
     inherited(chat_parser, "--tui", action="store_true", default=SUPPRESS,
@@ -321,8 +321,8 @@ def _build_chat_parser(subparsers) -> argparse.ArgumentParser:
 
 def _plugin_command_install_hint(prog: str, value: str):
     """Install command when *value* names a catalog memory plugin that resolves nowhere: its
-    ``alfred <name>`` command exists only once the plugin is installed. Top level only; never raises."""
-    if prog != "alfred" or not re.fullmatch(r"[a-z0-9_-]{1,64}", value):
+    ``plushuman <name>`` command exists only once the plugin is installed. Top level only; never raises."""
+    if prog != "plushuman" or not re.fullmatch(r"[a-z0-9_-]{1,64}", value):
         return None
     try:
         from plugins.memory import find_provider_dir
@@ -335,7 +335,7 @@ def _plugin_command_install_hint(prog: str, value: str):
 
 
 def _moved_command_hint(prog: str, value: str) -> str:
-    """``alfred auth spotify`` / ``alfred spotify`` after Spotify left core: where the command went."""
+    """``plushuman auth spotify`` / ``plushuman spotify`` after Spotify left core: where the command went."""
     from hermes_cli.left_core_migration import moved_command_hint
     return moved_command_hint(prog, value)
 
@@ -351,14 +351,14 @@ class HermesArgumentParser(argparse.ArgumentParser):
 
     def _check_value(self, action, value):
         if isinstance(action, argparse._SubParsersAction) and value not in action.choices:
-            # ``self.prog`` is "hermes" at the top level and "alfred gateway" for a nested group
+            # ``self.prog`` is "hermes" at the top level and "plushuman gateway" for a nested group
             # (argparse hands add_parser() the parent's class), so the copy stays correct for both.
             lines = [f"{self.prog}: '{value}' is not a `{self.prog}` command."]
             close = difflib.get_close_matches(str(value), list(action.choices), n=3, cutoff=0.6)
             install = _plugin_command_install_hint(self.prog, str(value))
             moved = "" if install else _moved_command_hint(self.prog, str(value))
             if install:
-                # A provider that left core (``alfred honcho``) registers its command only once installed.
+                # A provider that left core (``plushuman honcho``) registers its command only once installed.
                 lines.append(f"The '{value}' memory plugin is not installed. Install it with: {install}")
             elif moved:
                 lines.append(moved)
@@ -377,10 +377,10 @@ def build_top_level_parser():
     ``subparsers.add_parser(...)``.
     """
     parser = HermesArgumentParser(
-        prog="alfred", description="Alfred - AI assistant with tool-calling capabilities",
+        prog="plushuman", description="+Human - AI assistant with tool-calling capabilities",
         formatter_class=argparse.RawDescriptionHelpFormatter, epilog=_EPILOGUE)
     _add_top_level_flags(parser)
     # metavar keeps the usage line to ``hermes [...] <command>`` instead of the brace list of
-    # every subcommand name; ``alfred --help`` still lists each command with its help row.
+    # every subcommand name; ``plushuman --help`` still lists each command with its help row.
     subparsers = parser.add_subparsers(dest="command", help="Command to run", metavar="<command>")
     return parser, subparsers, _build_chat_parser(subparsers)

@@ -3,7 +3,7 @@ name: osint-investigation
 description: Follow the money via public records and sanctions data.
 version: 0.1.0
 platforms: [linux, macos, windows]
-author: Alfred (adapted from ShinMegamiBoson/OpenPlanter, MIT)
+author: +Human (adapted from ShinMegamiBoson/OpenPlanter, MIT)
 license: MIT
 metadata:
   hermes:

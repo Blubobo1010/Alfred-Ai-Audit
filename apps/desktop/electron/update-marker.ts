@@ -525,7 +525,7 @@ export interface ClaimResult {
  * Pre-write for the staged Tauri updater (`hermes-setup.exe --update`): the
  * child IS the updater there, so the marker names its pid AND its creation
  * time. A v2 body takes this path off the v1 20-minute ceiling, lets the
- * updater adopt it as its own claim, and lets the `alfred update` it runs add
+ * updater adopt it as its own claim, and lets the `plushuman update` it runs add
  * its delegate line. Exclusive create ONLY (A7 rule 3): over any existing
  * marker — live or dead — the pre-write is skipped and the staged updater
  * claims (and reclaims) for itself.

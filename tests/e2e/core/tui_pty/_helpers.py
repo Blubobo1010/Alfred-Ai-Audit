@@ -1,4 +1,4 @@
-"""Drive a real ``alfred --tui`` inside a private tmux server and read what the user would see.
+"""Drive a real ``plushuman --tui`` inside a private tmux server and read what the user would see.
 
 tmux is the terminal emulator here: it owns the grid, reflows it on resize and keeps the
 scrollback, exactly as it does for a user running the TUI inside tmux. We read it back with
@@ -79,7 +79,7 @@ def require_tui() -> None:
 def private_tui_dir(root: Path) -> Path:
     """A private copy of the prebuilt bundle for ``HERMES_TUI_DIR``.
 
-    A checkout launch of ``alfred --tui`` re-runs esbuild on ``ui-tui/dist/entry.js`` every
+    A checkout launch of ``plushuman --tui`` re-runs esbuild on ``ui-tui/dist/entry.js`` every
     time, non-atomically, so a TUI started by another worker (or another e2e suite) while it
     rebuilds dies with a Node ``SyntaxError`` on a half-written bundle. The prebuilt-bundle path
     runs the same file without rebuilding; a copy that ``node --check`` accepts is immune to
@@ -219,7 +219,7 @@ def layout_problem(rows: list[str], cols: int, tag: str, slack: int | None = 12)
 
 
 class TmuxTui:
-    """One ``alfred --tui`` in a private tmux server."""
+    """One ``plushuman --tui`` in a private tmux server."""
 
     def __init__(self, root: Path, base_url: str, *, cols: int = 120, rows: int = 50,
                  extra_config: str = "", args: Iterable[str] = ("--yolo",), inline: bool = False,
@@ -395,7 +395,7 @@ class TmuxTui:
             raise AssertionError(f"{exc}\n{self.dump()}") from None
         state = self.pane_state()
         assert state.startswith("0 "), (
-            f"alfred --tui exited during startup (pane_dead pid status={state!r}, "
+            f"plushuman --tui exited during startup (pane_dead pid status={state!r}, "
             f"tmux server {'up' if state else 'gone'})\n{self.dump()}")
 
     def wait_ready(self, timeout: float = 120.0) -> None:
@@ -408,7 +408,7 @@ class TmuxTui:
                  what="the startup session (status bar 'ready')")
         except AssertionError as exc:
             raise AssertionError(f"{exc} (status {self.status()!r})\n{self.dump()}") from None
-        assert self.alive(), f"alfred --tui exited during startup\n{self.dump()}"
+        assert self.alive(), f"plushuman --tui exited during startup\n{self.dump()}"
         self.wait_quiet(1.5, timeout=timeout)
 
     # -- processes -------------------------------------------------------------------------------

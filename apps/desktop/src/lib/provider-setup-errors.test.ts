@@ -4,11 +4,11 @@ import { isProviderSetupErrorCode, isProviderSetupErrorMessage } from './provide
 
 describe('isProviderSetupErrorMessage', () => {
   it('matches generic missing-provider copy', () => {
-    expect(isProviderSetupErrorMessage('No inference provider configured. Run `alfred model` to choose one.')).toBe(
+    expect(isProviderSetupErrorMessage('No inference provider configured. Run `plushuman model` to choose one.')).toBe(
       true
     )
     expect(isProviderSetupErrorMessage('No inference provider is configured.')).toBe(true)
-    expect(isProviderSetupErrorMessage('No Alfred provider is configured.')).toBe(true)
+    expect(isProviderSetupErrorMessage('No +Human provider is configured.')).toBe(true)
     expect(isProviderSetupErrorMessage('set an API key (OPENROUTER_API_KEY) in ~/.hermes/.env')).toBe(true)
   })
 
@@ -16,7 +16,7 @@ describe('isProviderSetupErrorMessage', () => {
     // tui_gateway/user_messages.py::agent_init_failed_message wrapping agent/agent_init.py's raise.
     expect(
       isProviderSetupErrorMessage(
-        'Alfred could not start the assistant for this session. Details: No LLM provider configured. Run `alfred model` to select a provider, or run `alfred setup` for first-time configuration. Check the model and provider with /model, or run `alfred setup` in a terminal to reconfigure.'
+        '+Human could not start the assistant for this session. Details: No LLM provider configured. Run `plushuman model` to select a provider, or run `plushuman setup` for first-time configuration. Check the model and provider with /model, or run `plushuman setup` in a terminal to reconfigure.'
       )
     ).toBe(true)
   })
@@ -25,12 +25,12 @@ describe('isProviderSetupErrorMessage', () => {
     // agent/auxiliary_unavailable.py::missing_provider_credentials_message, both shapes.
     expect(
       isProviderSetupErrorMessage(
-        "Provider 'openai' is set in config.yaml but no API key was found. Set the OPENAI_API_KEY environment variable, or switch to a different provider with `alfred model`."
+        "Provider 'openai' is set in config.yaml but no API key was found. Set the OPENAI_API_KEY environment variable, or switch to a different provider with `plushuman model`."
       )
     ).toBe(true)
     expect(
       isProviderSetupErrorMessage(
-        "Provider 'anthropic' is set in config.yaml but no credentials were found. Run `alfred auth add anthropic` to sign in, or switch to a different provider with `alfred model`."
+        "Provider 'anthropic' is set in config.yaml but no credentials were found. Run `plushuman auth add anthropic` to sign in, or switch to a different provider with `plushuman model`."
       )
     ).toBe(true)
   })
@@ -49,10 +49,10 @@ describe('isProviderSetupErrorMessage', () => {
 
   it('does not match bare env var mentions from auxiliary warnings', () => {
     expect(isProviderSetupErrorMessage('OPENROUTER_API_KEY not set')).toBe(false)
-    expect(isProviderSetupErrorMessage('Run `alfred setup` or set OPENROUTER_API_KEY.')).toBe(false)
+    expect(isProviderSetupErrorMessage('Run `plushuman setup` or set OPENROUTER_API_KEY.')).toBe(false)
     expect(
       isProviderSetupErrorMessage(
-        '⚠ No auxiliary LLM provider configured — context compression will drop middle turns without a summary. Run `alfred setup` or set OPENROUTER_API_KEY.'
+        '⚠ No auxiliary LLM provider configured — context compression will drop middle turns without a summary. Run `plushuman setup` or set OPENROUTER_API_KEY.'
       )
     ).toBe(false)
     expect(isProviderSetupErrorMessage('OPENAI_API_KEY missing')).toBe(false)

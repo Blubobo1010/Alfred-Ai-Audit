@@ -1,5 +1,5 @@
 #!/usr/bin/env -S bash -c 'exec "$BASH" "$(dirname "$0")/run-in-hermes-env" python3 "$0" "$@"'
-"""Alfred release entrypoint.
+"""+Human release entrypoint.
 
 Stable releases use the ``release``, ``publish``, and ``abandon`` subcommands.
 Canary, commit, and dynamic-channel operations retain their top-level flags.
@@ -313,7 +313,7 @@ def generate_changelog(commits, tag_name, semver, repo_url="https://github.com/B
     # Header
     now = datetime.now()
     date_str = now.strftime("%B %d, %Y")
-    lines.append(f"# Alfred v{semver} ({tag_name})")
+    lines.append(f"# +Human v{semver} ({tag_name})")
     lines.append("")
     lines.append(f"**Release Date:** {date_str}")
     lines.append("")
@@ -330,7 +330,7 @@ def generate_changelog(commits, tag_name, semver, repo_url="https://github.com/B
 
     if first_release:
         lines.append("> 🎉 **First official release!** This marks the beginning of regular weekly releases")
-        lines.append("> for Alfred. See below for everything included in this initial release.")
+        lines.append("> for +Human. See below for everything included in this initial release.")
         lines.append("")
 
     all_authors = set()
@@ -444,7 +444,7 @@ def _resume_canary(tag: str, remote: str, repository: str, *, notes_file: Path |
         create = [
             "gh", "release", "create", tag, "--repo", repository,
             "--verify-tag", "--draft", "--prerelease",
-            "--title", f"Alfred canary {tag}",
+            "--title", f"+Human canary {tag}",
         ]
         create.extend(["--notes-file", str(notes_file)] if notes_file else ["--generate-notes"])
         created = subprocess.run(
@@ -541,7 +541,7 @@ def cmd_canary(args) -> None:
         return
 
     tag_result = git_result(
-        "tag", "-a", tag_name, "-m", f"Alfred canary {date_utc}"
+        "tag", "-a", tag_name, "-m", f"+Human canary {date_utc}"
     )
     if tag_result.returncode != 0:
         print(f"✗ Failed to create tag {tag_name}: {tag_result.stderr.strip()}")
@@ -615,7 +615,7 @@ def prune_old_canaries(args) -> None:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Alfred Release Tool")
+    parser = argparse.ArgumentParser(description="+Human Release Tool")
     parser.add_argument("--canary", action="store_true",
                         help="Tag + publish a stable-core canary "
                              "(v<stable>+canary.<YYYYMMDDTHHMMSSZ>); no-op when "

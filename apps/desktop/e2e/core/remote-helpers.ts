@@ -1,5 +1,5 @@
 /**
- * Remote-backend topology for the core suite: a real `alfred serve` the TEST
+ * Remote-backend topology for the core suite: a real `plushuman serve` the TEST
  * spawns (not the app) under its OWN sandbox HOME / HERMES_HOME / cwd, reached
  * by the Desktop only by URL + token (HERMES_DESKTOP_REMOTE_URL/_TOKEN). Paths
  * that exist on the client sandbox do not exist on the backend's filesystem
@@ -135,7 +135,7 @@ function hidingCommand(hide: string[], argv: string[]): null | string[] {
   ]
 }
 
-/** Spawn `alfred serve` for `sandbox` (its HOME/HERMES_HOME, cwd = its root). */
+/** Spawn `plushuman serve` for `sandbox` (its HOME/HERMES_HOME, cwd = its root). */
 export async function startRemoteBackend(
   sandbox: CoreSandbox,
   { hide = [] }: { hide?: string[] } = {}

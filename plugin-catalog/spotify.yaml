@@ -2,9 +2,9 @@ name: spotify
 repo: https://github.com/NousResearch/hermes-official-plugins
 sha: 682b22d019a1109421faa62efe43e16b23c2ebef
 subdir: spotify
-description: 'Spotify for Alfred: seven tools (playback, devices, queue, search, playlists, albums,
-  library) over the Spotify Web API, plus `alfred spotify login|status|logout` (loopback PKCE with your
-  own Spotify developer app; Premium needed for playback control). Formerly built into Alfred core;
+description: 'Spotify for +Human: seven tools (playback, devices, queue, search, playlists, albums,
+  library) over the Spotify Web API, plus `plushuman spotify login|status|logout` (loopback PKCE with your
+  own Spotify developer app; Premium needed for playback control). Formerly built into +Human core;
   existing users are migrated automatically.'
 maintainer: NousResearch
 tier: official

@@ -310,7 +310,7 @@ class TestFleetClassification:
         gateway_record = {
             "gateway_state": "running",
             "kind": "hermes-gateway",
-            "argv": ["alfred", "gateway", "run"],
+            "argv": ["plushuman", "gateway", "run"],
             **record,
         }
         (home / "gateway_state.json").write_text(
@@ -439,7 +439,7 @@ class TestFleetClassification:
             "pid": 4242,
             "gateway_state": "running",
             "kind": "hermes-gateway",
-            "argv": ["alfred", "gateway", "run"],
+            "argv": ["plushuman", "gateway", "run"],
             "code_sha": "a" * 40,
             "code_version": "1.0",
         }

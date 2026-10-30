@@ -350,7 +350,7 @@ def ensure_tcc_anchor(project_root: Path | None = None) -> Path | None:
 
 
 def tcc_anchor_state(project_root: Path | None = None) -> tuple[str, str]:
-    """Report the anchor state for ``alfred doctor`` as ``(status, detail)``.
+    """Report the anchor state for ``plushuman doctor`` as ``(status, detail)``.
 
     ``skip`` = not applicable; ``active`` = pinned at a stable real-file anchor; ``stale`` = pinned
     but the interpreter changed since the last copy; ``missing`` = uv-managed with no anchor.

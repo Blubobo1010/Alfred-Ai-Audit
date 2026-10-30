@@ -1,4 +1,4 @@
-"""Regression tests: `alfred dashboard` validates HERMES_WEB_DIST before serving.
+"""Regression tests: `plushuman dashboard` validates HERMES_WEB_DIST before serving.
 
 A custom HERMES_WEB_DIST without --skip-build previously skipped BOTH the
 build and any validation, so the server started and served 404s with no
@@ -143,9 +143,9 @@ def test_skip_build_missing_dist_attempts_one_recovery_build(
 
 def test_desktop_child_dashboard_drops_packaged_renderer(main_mod, monkeypatch):
     """#116107: every desktop-spawned process inherits HERMES_DESKTOP=1 with the
-    packaged dist; a browser `alfred dashboard` from it must not keep serving the
+    packaged dist; a browser `plushuman dashboard` from it must not keep serving the
     IPC-only desktop renderer."""
-    packaged = "/Applications/Alfred.app/Contents/Resources/app.asar.unpacked/dist"
+    packaged = "/Applications/+Human.app/Contents/Resources/app.asar.unpacked/dist"
     monkeypatch.setenv("HERMES_DESKTOP", "1")
     monkeypatch.setenv("HERMES_WEB_DIST", packaged)
     monkeypatch.setenv("HERMES_SERVE_HEADLESS", "1")
@@ -158,7 +158,7 @@ def test_desktop_child_dashboard_drops_packaged_renderer(main_mod, monkeypatch):
 
 def test_desktop_headless_serve_keeps_packaged_renderer(main_mod, monkeypatch):
     """The real Desktop backend remains distinguished by the `serve` entry path."""
-    packaged = "/Applications/Alfred.app/Contents/Resources/app.asar.unpacked/dist"
+    packaged = "/Applications/+Human.app/Contents/Resources/app.asar.unpacked/dist"
     monkeypatch.setenv("HERMES_DESKTOP", "1")
     monkeypatch.setenv("HERMES_WEB_DIST", packaged)
 
@@ -171,7 +171,7 @@ def test_desktop_owned_fallback_dashboard_keeps_packaged_renderer(main_mod, monk
     """The Desktop's own legacy `dashboard --no-open` fallback spawn (serve probe
     timed out) is not headless but carries the per-spawn session token; stripping
     its dist would send a packaged install into `_build_web_ui(fatal=True)`."""
-    packaged = "/Applications/Alfred.app/Contents/Resources/app.asar.unpacked/dist"
+    packaged = "/Applications/+Human.app/Contents/Resources/app.asar.unpacked/dist"
     monkeypatch.setenv("HERMES_DESKTOP", "1")
     monkeypatch.setenv("HERMES_DASHBOARD_SESSION_TOKEN", "desktop-spawn-token")
     monkeypatch.setenv("HERMES_WEB_DIST", packaged)

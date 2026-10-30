@@ -1,4 +1,4 @@
-"""Surfacing tests — managed scope shown in `config show` and `alfred doctor`."""
+"""Surfacing tests — managed scope shown in `config show` and `plushuman doctor`."""
 import pytest
 from hermes_cli import doctor_config
 

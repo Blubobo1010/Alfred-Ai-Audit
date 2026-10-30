@@ -77,11 +77,11 @@ class ParityHome:
     canaries: dict[str, str] = field(default_factory=dict)
 
     def env(self, extra: dict[str, str] | None = None) -> dict[str, str]:
-        """Hermetic env for a subprocess Alfred: fake HOME, no real credentials."""
+        """Hermetic env for a subprocess +Human: fake HOME, no real credentials."""
         import pwd  # POSIX-only; the suite is Linux-gated
 
         # Refuse only a home the real install would read as live state (its root or a profile).
-        # A tmp_path under ``~/.hermes/cache/scratch`` (TMPDIR when Alfred itself runs the suite)
+        # A tmp_path under ``~/.hermes/cache/scratch`` (TMPDIR when +Human itself runs the suite)
         # is fine: the child's HOME is the fixture home, so its ``~/.hermes`` never resolves there.
         real_root = Path(pwd.getpwuid(os.getuid()).pw_dir, ".hermes").resolve()
         fixture = self.hermes_home.resolve()
@@ -89,7 +89,7 @@ class ParityHome:
             f"fixture HERMES_HOME {self.hermes_home} is the real install's live home")
         assert fixture == (self.home / ".hermes").resolve(), (
             f"fixture HERMES_HOME {self.hermes_home} is not <fixture HOME>/.hermes")
-        # Allowlist, not denylist: the runner may itself be a Alfred process whose
+        # Allowlist, not denylist: the runner may itself be a +Human process whose
         # TERMINAL_CWD / HERMES_* / credential env would silently reroute the child.
         env = {
             k: v for k, v in os.environ.items()

@@ -1,8 +1,8 @@
-# 🎩 ASCII Video
+# ✚ ASCII Video
 
 Renders any content as colored ASCII character video. Audio, video, images, text, or pure math in, MP4/GIF/PNG sequence out. Full RGB color per character cell, 1080p 24fps default. No GPU.
 
-Built for [Alfred](https://github.com/Blubobo1010/Alfred-Ai-Audit). Usable in any coding agent. Canonical source lives here; synced to [`Blubobo1010/Alfred-Ai-Audit/skills/creative/ascii-video`](https://github.com/Blubobo1010/Alfred-Ai-Audit/tree/main/skills/creative/ascii-video) via PR.
+Built for [+Human](https://github.com/Blubobo1010/Alfred-Ai-Audit). Usable in any coding agent. Canonical source lives here; synced to [`Blubobo1010/Alfred-Ai-Audit/skills/creative/ascii-video`](https://github.com/Blubobo1010/Alfred-Ai-Audit/tree/main/skills/creative/ascii-video) via PR.
 
 ## What this is
 

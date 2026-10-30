@@ -181,7 +181,7 @@ def build_update_products(project_root: Path, *, desktop: bool) -> None:
                 failures.append(("desktop dependencies", failed[1]))
         desktop_reason = failures[-1][0] if failures else ""
         if desktop and (desktop_skipped or _headless_linux()):
-            print("  ⓘ If this host never runs the desktop app, `alfred uninstall --gui` removes it "
+            print("  ⓘ If this host never runs the desktop app, `plushuman uninstall --gui` removes it "
                   "and future updates stop building it.")
         if prepared:
             # An update that changed no TUI/web input reuses the receipted output, as the
@@ -240,7 +240,7 @@ def _build_desktop_product(project_root: Path, env: dict, publish_stage) -> None
         publish_stage("Building the desktop app")
         # The desktop build mutates checkout-scoped node_modules and
         # apps/desktop/release; serialize it against a concurrent manual
-        # `alfred desktop` (#93940). The update path waits rather than exits:
+        # `plushuman desktop` (#93940). The update path waits rather than exits:
         # the in-flight build it queues behind produces the same fresh tree
         # this update needs.
         from hermes_cli.desktop_build_lock import DesktopBuildLock

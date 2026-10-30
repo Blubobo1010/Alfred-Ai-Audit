@@ -43,9 +43,9 @@ export const deProjects: NonNullable<TranslationOverrides['sidebar']>['projects'
   undoHide: 'Rückgängig',
   createFailed: 'Projekt konnte nicht erstellt werden',
   staleBackend:
-    'Aktualisieren Sie das Alfred-Backend, um Projekte zu erstellen – Ihr Backend ist älter als diese Desktop-App (Einstellungen → Updates → Backend).',
+    'Aktualisieren Sie das +Human-Backend, um Projekte zu erstellen – Ihr Backend ist älter als diese Desktop-App (Einstellungen → Updates → Backend).',
   deleteConfirm:
-    'Das entfernt das gespeicherte Projekt aus Alfred. Dateien, Git-Repos und Worktrees bleiben unberührt.',
+    'Das entfernt das gespeicherte Projekt aus +Human. Dateien, Git-Repos und Worktrees bleiben unberührt.',
   startWork: 'Neuer Worktree',
   newWorktreeTitle: 'Neuer Worktree',
   newWorktreeDesc: 'Benennen Sie den Branch für diesen Worktree.',
@@ -55,7 +55,7 @@ export const deProjects: NonNullable<TranslationOverrides['sidebar']>['projects'
   baseBranchNone: 'Keine Branches gefunden',
   startWorkFailed: 'Worktree konnte nicht erstellt werden',
   worktreeStaleBackend:
-    'Aktualisieren Sie das Alfred-Backend, um Worktrees über diese Remote-Verbindung zu erstellen – es ist älter als die Git-Worktree-API.',
+    'Aktualisieren Sie das +Human-Backend, um Worktrees über diese Remote-Verbindung zu erstellen – es ist älter als die Git-Worktree-API.',
   worktreeProjectLabel: 'Projekt',
   worktreeProjectPlaceholder: 'Projekte durchsuchen…',
   worktreeProjectNone: 'Keine Projekte mit Ordner',

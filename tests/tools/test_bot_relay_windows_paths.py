@@ -109,7 +109,7 @@ def test_delivery_lock_recognizes_resolved_cli_paths(tmp_path, monkeypatch):
         stdin_file=False,
     ):
         pass
-    with bot_mode_dm._delivery_lock(["alfred", "-p", "ops", "chat"], stdin_file=False):
+    with bot_mode_dm._delivery_lock(["plushuman", "-p", "ops", "chat"], stdin_file=False):
         pass
     with bot_mode_dm._delivery_lock(
         ["C:\\venv\\Scripts\\hermes.exe", "-p", "ops", "chat"], stdin_file=False

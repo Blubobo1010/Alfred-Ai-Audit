@@ -1,4 +1,4 @@
-"""``alfred status`` subcommand parser."""
+"""``plushuman status`` subcommand parser."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ def build_status_parser(subparsers, *, cmd_status: Callable) -> None:
     """Attach the ``status`` subcommand to ``subparsers``."""
     status_parser = subparsers.add_parser(
         "status", help="Show status of all components",
-        description="Display status of Alfred components")
+        description="Display status of +Human components")
     status_parser.add_argument(
         "--full", "--all", dest="full", action="store_true",
         help="Show every section (keys redacted) instead of the one-screen summary")

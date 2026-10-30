@@ -1,4 +1,4 @@
-"""Tests for `alfred curator status` output.
+"""Tests for `plushuman curator status` output.
 
 Covers:
 - y0shualee's "least recently active" semantic (view/patch/use all count as activity).

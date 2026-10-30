@@ -128,7 +128,7 @@ def test_dependency_block_with_terminal_parents_parks_then_escalates(
         # The edge exists before the run: link_tasks refuses to gate a running child retroactively.
         child = _running_task(conn, title="child-of-done", parents=(parent,))
 
-        # `alfred kanban block <child> --kind dependency waiting on upstream`
+        # `plushuman kanban block <child> --kind dependency waiting on upstream`
         args = argparse.Namespace(task_id=child, ids=None, reason=["waiting", "on", "upstream"], kind="dependency")
         assert kanban_cli._cmd_block(args) == 0
         assert "needs_input" in capsys.readouterr().out

@@ -24,7 +24,7 @@ export interface LocalDeviceTarget {
   connectionId: string
   label: string
   profile?: string
-  /** The switch replaces the center with a fresh session, even when Alfred is already installed. */
+  /** The switch replaces the center with a fresh session, even when +Human is already installed. */
   replaceCenter?: boolean
 }
 

@@ -1,7 +1,7 @@
-"""Tests for IRC gateway configuration via `alfred setup gateway` UI.
+"""Tests for IRC gateway configuration via `plushuman setup gateway` UI.
 
 Covers the full plugin-platform discovery → status → configure flow so that
-a fresh Alfred install (no state, no env vars) can set up IRC through the
+a fresh +Human install (no state, no env vars) can set up IRC through the
 interactive setup menus.
 """
 
@@ -56,7 +56,7 @@ def _unregister_irc_platform():
 
 
 class TestIRCFreshInstallDiscovery:
-    """IRC appears in the setup menu on a brand-new Alfred install."""
+    """IRC appears in the setup menu on a brand-new +Human install."""
 
     def test_irc_appears_in_all_platforms(self, monkeypatch):
         """When the IRC plugin is registered, _all_platforms() surfaces it."""
@@ -137,7 +137,7 @@ class TestIRCInteractiveSetup:
 
 
 class TestIRCGatewaySetupFreshInstall:
-    """Simulate the full `alfred setup gateway` experience with IRC present."""
+    """Simulate the full `plushuman setup gateway` experience with IRC present."""
 
     def test_setup_gateway_shows_irc_in_platform_menu(self, monkeypatch, capsys, tmp_path):
         """The gateway setup menu lists IRC among the available platforms."""

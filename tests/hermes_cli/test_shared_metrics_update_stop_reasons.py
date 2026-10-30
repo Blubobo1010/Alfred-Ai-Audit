@@ -1,4 +1,4 @@
-"""Every `alfred update` exit before the apply step names its closed reason (hermes.update.run
+"""Every `plushuman update` exit before the apply step names its closed reason (hermes.update.run
 ``failure_class``), in-process and through the parked copy alike; exits that fire before the
 receipt opens still count once; a run that committed and owes work never reads ``failed``."""
 
@@ -131,7 +131,7 @@ def _marker(home, *lines: str) -> None:
 def test_an_exit_before_the_receipt_reads_desktop_only_under_its_own_hand_off(rows, monkeypatch):
     """Invariant: a pre-receipt exit carries the initiator its receipt would: ``desktop`` when the
     marker names this process as the hand-off's delegate or names its hand-off partner, ``cli`` when
-    the marker belongs to some other update (a terminal `alfred update` refused by a Desktop run)."""
+    the marker belongs to some other update (a terminal `plushuman update` refused by a Desktop run)."""
     import os
 
     from hermes_cli.update_cmd_common import _record_stop
@@ -327,7 +327,7 @@ def test_the_bare_bootstrap_interpreter_parks_and_the_next_start_applies_the_gat
     receipt = {
         "schema": 1, "pid": 0, "update_id": "0123456789abcdef0123456789abcdef", "outcome": "success",
         "started_at": "2026-10-07T10:00:00+00:00", "finished_at": "2026-10-07T10:01:00+00:00", "exit_code": 0,
-        "argv": ["alfred", "update", "/home/alice/private"], "pre_update": {"sha": "a" * 40},
+        "argv": ["plushuman", "update", "/home/alice/private"], "pre_update": {"sha": "a" * 40},
         "stages": [{"name": "apply", "outcome": "success", "mode": "git"}, {"name": "deps", "outcome": "failed"}],
     }
     tree = Path(update_receipt.__file__).resolve().parents[1]

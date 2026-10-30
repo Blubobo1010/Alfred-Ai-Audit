@@ -203,10 +203,10 @@ def has_vertex_credentials() -> bool:
 
 
 def has_explicit_vertex_config() -> bool:
-    """True only when the user deliberately pointed Alfred at Vertex.
+    """True only when the user deliberately pointed +Human at Vertex.
 
     Stricter than :func:`has_vertex_credentials`: an ambient ``GOOGLE_APPLICATION_CREDENTIALS``
-    must NOT gate the model picker open (unknowing spend). Only Alfred-scoped signals count.
+    must NOT gate the model picker open (unknowing spend). Only +Human-scoped signals count.
     """
     if _resolve_project_override():
         return True

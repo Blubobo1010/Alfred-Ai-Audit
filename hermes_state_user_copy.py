@@ -20,15 +20,15 @@ class StorageFailure:
     action: str     # what to do, one sentence naming the exact command
 
 
-_DOCTOR = "Run `alfred {profile_arg}doctor --fix` to diagnose and repair."
+_DOCTOR = "Run `plushuman {profile_arg}doctor --fix` to diagnose and repair."
 
 # cause -> (code, gloss, action). "disk" is split by is_disk_full_error at lookup time.
 _STORAGE_FAILURES: dict[str, tuple[str, str, str]] = {
     "locked": (
         "storage_locked",
-        "the session database is locked by another Alfred process",
-        "Wait a moment and try again; if it persists, stop the other Alfred process "
-        "(`alfred {profile_arg}gateway stop`).",
+        "the session database is locked by another +Human process",
+        "Wait a moment and try again; if it persists, stop the other +Human process "
+        "(`plushuman {profile_arg}gateway stop`).",
     ),
     "disk_full": (
         "disk_full",
@@ -43,32 +43,32 @@ _STORAGE_FAILURES: dict[str, tuple[str, str, str]] = {
     "corrupt": (
         "storage_corrupt",
         "the session database file is damaged",
-        _DOCTOR + " Recovery: `alfred {profile_arg}sessions recover --source <state.db> --inspect-only`.",
+        _DOCTOR + " Recovery: `plushuman {profile_arg}sessions recover --source <state.db> --inspect-only`.",
     ),
     "session_row_missing": (
         "storage_session_missing",
         "this session's database row was deleted while the chat was still open and could not be recreated",
-        "Try again; if it persists, run `alfred {profile_arg}doctor`.",
+        "Try again; if it persists, run `plushuman {profile_arg}doctor`.",
     ),
     "fts_index": (
         "storage_index_corrupt",
         "the session search index is damaged (the messages themselves are intact)",
-        "Run `alfred {profile_arg}doctor --fix` (or `alfred {profile_arg}sessions repair`) to rebuild it.",
+        "Run `plushuman {profile_arg}doctor --fix` (or `plushuman {profile_arg}sessions repair`) to rebuild it.",
     ),
     "replaced": (
         "storage_replaced",
-        "the session database file was replaced while Alfred was running",
-        "Stop Alfred (`alfred {profile_arg}gateway stop`), run `alfred {profile_arg}doctor`, then start it again.",
+        "the session database file was replaced while +Human was running",
+        "Stop +Human (`plushuman {profile_arg}gateway stop`), run `plushuman {profile_arg}doctor`, then start it again.",
     ),
     # Code stays `storage_replaced` (GUI clients key on it); the copy names the real remedy: every writer
     # on the profile must stop, doctor names the ones still holding the retired log (#110054).
     "deleted_wal": (
         "storage_replaced",
-        "another Alfred process still holds an old copy of the session database's write-ahead log, "
-        "so Alfred stopped writing to keep the file safe",
-        "Nothing is lost. Quit every Alfred process on this profile (Desktop app, "
-        "`alfred {profile_arg}gateway stop`, dashboard, cron), run `alfred {profile_arg}doctor` — it names "
-        "any process still holding the log — then start Alfred again. Do not run `doctor --fix` or delete "
+        "another +Human process still holds an old copy of the session database's write-ahead log, "
+        "so +Human stopped writing to keep the file safe",
+        "Nothing is lost. Quit every +Human process on this profile (Desktop app, "
+        "`plushuman {profile_arg}gateway stop`, dashboard, cron), run `plushuman {profile_arg}doctor` — it names "
+        "any process still holding the log — then start +Human again. Do not run `doctor --fix` or delete "
         "any state.db files while they run. Guide: " + STORAGE_RECOVERY_DOCS_URL,
     ),
     "compression": (
@@ -83,7 +83,7 @@ _STORAGE_FAILURES: dict[str, tuple[str, str, str]] = {
     ),
     "turn_lease": (
         "storage_busy",
-        "another Alfred process took over this session",
+        "another +Human process took over this session",
         "Wait for it to finish, then send your message again.",
     ),
     "unknown": (

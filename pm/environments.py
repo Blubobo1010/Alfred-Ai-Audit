@@ -51,7 +51,7 @@ def owning_home_root(project_root: Path) -> Path | None:
     tree -- so those keep today's behaviour (#123238).
 
     A borrowing launch's own sync leaves ``facts.json`` under the borrower too, so state alone
-    cannot name the owner. The checkout's ``alfred`` launcher can: only the owner publishes it,
+    cannot name the owner. The checkout's ``plushuman`` launcher can: only the owner publishes it,
     and it execs the owner's store Python. With no live launcher to ask, the root the checkout
     sits in outranks the platform default.
     """
@@ -198,7 +198,7 @@ def cli_command_name(project_root: Path) -> str:
     """The name a person types to run this install's CLI.
 
     A desktop channel build publishes its launcher under a qualified name
-    (``hermes-canary``) so it never shadows another install's ``alfred``.
+    (``hermes-canary``) so it never shadows another install's ``plushuman``.
     """
     command = _payload_hermes_command(Path(project_root).resolve())
     return command.name.removesuffix(".exe") if command else "hermes"
@@ -497,9 +497,9 @@ def activate_dependencies(project_root: Path) -> None:
                    *[entry for entry in sys.path if Path(entry).resolve() != selected.resolve()]]
     os.environ["PYTHONPATH"] = os.pathsep.join([str(project_root.resolve()), str(selected)])
     os.environ.pop("VIRTUAL_ENV", None)
-    # The venv's own `alfred`/`hermes-acp` console scripts are editable installs bound to
+    # The venv's own `plushuman`/`hermes-acp` console scripts are editable installs bound to
     # the build-time source snapshot, not this checkout (#124627): a child that resolves
-    # `alfred` off PATH must hit the checkout's own launcher first, never the venv's copy.
+    # `plushuman` off PATH must hit the checkout's own launcher first, never the venv's copy.
     # A sealed payload's launchers live in <payload>/bin instead.
     directories = [payload_command_dir(project_root) or project_root.resolve() / ".hermes" / "bin"]
     # A sealed payload's Windows venv redirectors never go on PATH: a shipped venv's still

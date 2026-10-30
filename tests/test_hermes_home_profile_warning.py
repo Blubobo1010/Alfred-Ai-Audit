@@ -102,7 +102,7 @@ class TestBootReadersBeforeProfileOverride:
     import, and ``main._apply_profile_override`` re-homes the process a few lines later. A
     caller that already resolved its home must not send the policy back through
     ``get_hermes_home()``: for a sticky-profile user with ``HERMES_HOME`` unset in a plain
-    shell that lookup falls back to the default profile and warns, on every ``alfred``
+    shell that lookup falls back to the default profile and warns, on every ``plushuman``
     command, while nothing lands in the wrong place. Same fix the parser's ``_cfg_path()``
     carries for the ``--no-config`` help string.
     """
@@ -125,7 +125,7 @@ class TestBootReadersBeforeProfileOverride:
     def test_explicit_home_scratch_dir_never_reads_the_effective_home(
         self, fresh_constants, tmp_path, capsys
     ):
-        """A caller that passes a home (`alfred doctor` for another profile) stays silent."""
+        """A caller that passes a home (`plushuman doctor` for another profile) stays silent."""
         hermes_dir = tmp_path / ".hermes"
         profile_dir = hermes_dir / "profiles" / "coder"
         profile_dir.mkdir(parents=True)

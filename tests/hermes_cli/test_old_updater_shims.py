@@ -62,7 +62,7 @@ from tests.compat.old_updater_support import (
         ("_insert_python_pin", (["uv", "pip", "install", "-e", "."],), {}),
         ("_interpreter_scripts_dir", (), {}),
         ("_load_installable_optional_extras", (), {"group": "termux-all"}),
-        ("_parse_pe_machine", (Path("Alfred.exe"),), {}),
+        ("_parse_pe_machine", (Path("+Human.exe"),), {}),
         ("_quarantine_running_hermes_exe", (Path("venv"),), {"max_attempts": 1, "failed_out": []}),
         ("_repair_broken_lazy_refresh_imports", (["uv", "pip"], ["certifi"]), {"env": {"VIRTUAL_ENV": "venv"}}),
         ("_run_install_with_heartbeat", (["uv", "pip", "install", "-e", "."],),
@@ -151,7 +151,7 @@ def test_current_updater_entrypoints_declare_the_handoff_sentinel():
     import sys
 
     # The sentinel local looks unused; deleting it would make a current
-    # `alfred update` frame hand off to the takeover child mid-run. Assert
+    # `plushuman update` frame hand off to the takeover child mid-run. Assert
     # against the shipped entrypoints in a fresh interpreter: importing
     # hermes_cli.main probes the checkout's payload manifest, which the
     # in-process home-I/O guard refuses for worktrees under ~/.hermes.

@@ -70,7 +70,7 @@ foreach ($key in $global:_hermesKeys) {
 foreach ($property in $composed.PSObject.Properties) {
     Set-Item -Path "env:$($property.Name)" -Value ([string]$property.Value)
 }
-# This checkout, not whichever `alfred` PATH finds. A function beats PATH,
+# This checkout, not whichever `plushuman` PATH finds. A function beats PATH,
 # an alias, and the MSIX execution alias. It runs only while the shell is
 # inside this worktree.
 $global:_hermesWorktree = $repo

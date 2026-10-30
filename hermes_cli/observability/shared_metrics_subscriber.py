@@ -1,4 +1,4 @@
-"""Relay subscriber for the persisted Alfred shared-metrics slice."""
+"""Relay subscriber for the persisted +Human shared-metrics slice."""
 
 from __future__ import annotations
 
@@ -66,7 +66,7 @@ def _named(metric_name: str, dimensions: dict | None) -> tuple[str, dict] | None
 
 
 class SharedMetricsSubscriber:
-    """Persist validated Alfred counters from Relay lifecycle events."""
+    """Persist validated +Human counters from Relay lifecycle events."""
 
     def __init__(
         self,
@@ -125,7 +125,7 @@ class SharedMetricsSubscriber:
             try:
                 engagement.record(self.store, self._client_resource, surface=surface, route=route)
             except Exception:
-                logger.warning("Unable to update the Alfred engagement rollup", exc_info=True)
+                logger.warning("Unable to update the +Human engagement rollup", exc_info=True)
 
     def _persist(self, metric_name: str, dimensions: dict, amount: int) -> None:
         store, resource = self.store, self._client_resource
@@ -182,7 +182,7 @@ class SharedMetricsSubscriber:
                 except Exception:
                     saved = False
                     logger.warning(
-                        "Unable to persist the Alfred shared metric: %s", metric_name, exc_info=True
+                        "Unable to persist the +Human shared metric: %s", metric_name, exc_info=True
                     )
         if ticket and saved:
             with self._lock:

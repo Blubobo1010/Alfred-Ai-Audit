@@ -148,7 +148,7 @@ class TestGatewayLifecyclePattern:
         'launchctl bootout gui/501/ai.hermes."gateway"',
         # Same class on the systemctl and hermes-CLI branches.
         'systemctl re"start" hermes-gateway',
-        'alfred gateway re"start"',
+        'plushuman gateway re"start"',
     ])
     def test_shell_token_spliced_lifecycle_verbs(self, text):
         assert _contains_gateway_lifecycle_command(text), f"Should match: {text!r}"
@@ -183,18 +183,18 @@ class TestGatewayLifecyclePattern:
 
     @pytest.mark.parametrize("text", [
         "restart the server application",
-        "alfred cron list",
-        "alfred update",
-        "alfred config set model claude",
+        "plushuman cron list",
+        "plushuman update",
+        "plushuman config set model claude",
         "echo 'just a normal cron job'",
         "run the backup script",
         "gateway is running fine",
-        # `alfred gateway start` is benign — starting a gateway from inside a
+        # `plushuman gateway start` is benign — starting a gateway from inside a
         # gateway is a no-op / "already running", and a legit cron job may
         # start a sibling profile's gateway. Only restart/stop/kill are the
         # foot-gun (#30719 lists only those).
-        "alfred gateway start",
-        "alfred gateway start --all",
+        "plushuman gateway start",
+        "plushuman gateway start --all",
         # Tightened launchctl/systemctl branches: ops on NON-gateway hermes
         # services must not be falsely blocked (the old `.*hermes` matched any
         # hermes token).
@@ -219,13 +219,13 @@ class TestGatewayLifecyclePattern:
         # #92372 Branch A: no trailing boundary meant ordinary prose matched —
         # "restarted" carries the "restart" prefix and the old pattern ended
         # exactly there. \b after the verb group fixes it.
-        "echo after the alfred gateway restarted cleanly",
-        "the alfred gateway stopped responding, please investigate",
+        "echo after the plushuman gateway restarted cleanly",
+        "the plushuman gateway stopped responding, please investigate",
         # #92372 Branch D: `p?kill` without a leading \b matched the "kill"
         # tail of "skill".
-        "hermes skill view gateway-notes && echo alfred gateway docs",
+        "hermes skill view gateway-notes && echo plushuman gateway docs",
         # #77173/#77536: a file path with embedded spaces containing the
-        # lifecycle words must not match — `alfred` is a path component
+        # lifecycle words must not match — `plushuman` is a path component
         # there, not a command.
         "cat '/docs/hermes gateway restart-notes.md'",
         "less /home/user/notes/hermes gateway restart runbook.txt",
@@ -235,15 +235,15 @@ class TestGatewayLifecyclePattern:
 
     @pytest.mark.parametrize("text", [
         # Trailing-boundary fix must not weaken real commands.
-        "alfred gateway restart",
-        "alfred gateway restart; echo done",
-        "alfred gateway stop && echo stopped",
+        "plushuman gateway restart",
+        "plushuman gateway restart; echo done",
+        "plushuman gateway stop && echo stopped",
         # #77173 command-position anchor must not weaken separator/subshell
         # forms either.
-        "true;alfred gateway restart",
-        "true && alfred gateway stop",
-        "echo $(alfred gateway restart)",
-        "echo `alfred gateway restart`",
+        "true;plushuman gateway restart",
+        "true && plushuman gateway stop",
+        "echo $(plushuman gateway restart)",
+        "echo `plushuman gateway restart`",
     ])
     def test_boundary_fix_still_blocks_real_commands(self, text):
         assert _contains_gateway_lifecycle_command(text), f"Should match: {text!r}"
@@ -272,7 +272,7 @@ class TestGatewayLifecyclePattern:
         # #68289: execute_code payloads carry the argv as a Python list —
         # brackets/commas separate the words the OS will exec.
         'import subprocess\nsubprocess.run(["launchctl", "bootout", "gui/501/ai.hermes.gateway"])',
-        'subprocess.run(["alfred", "gateway", "restart"])',
+        'subprocess.run(["plushuman", "gateway", "restart"])',
         'os.system("launchctl kickstart -k gui/501/ai.hermes.gateway")',
     ])
     def test_python_argv_list_forms_blocked(self, text):
@@ -291,7 +291,7 @@ class TestGatewayLifecyclePattern:
         # data — runbook prose inside it must not block.
         text = (
             "cat > /tmp/runbook.md <<'EOF'\n"
-            "If the box is wedged, a human can run: alfred gateway restart\n"
+            "If the box is wedged, a human can run: plushuman gateway restart\n"
             "EOF"
         )
         assert not _contains_gateway_lifecycle_command(text), f"Should NOT match: {text!r}"
@@ -307,7 +307,7 @@ class TestGatewayLifecyclePattern:
 
 
 class TestProfileFlagGatewayLifecycle:
-    """#78028: `alfred -p <profile> gateway restart|stop` bypasses Branch A's
+    """#78028: `plushuman -p <profile> gateway restart|stop` bypasses Branch A's
     literal adjacency, so it needs its own pattern. It is only the same
     self-termination foot-gun when the named profile IS the profile running
     the guard; sibling-profile restarts are legitimate fleet operations and
@@ -321,35 +321,35 @@ class TestProfileFlagGatewayLifecycle:
         monkeypatch.delenv("HERMES_PROFILE_NAME", raising=False)
 
     @pytest.mark.parametrize("text", [
-        "alfred -p zeus gateway stop",
-        "alfred -p zeus gateway restart",
-        "alfred --profile zeus gateway restart",
-        "alfred --profile zeus gateway stop",
-        "alfred --profile=zeus gateway restart",
+        "plushuman -p zeus gateway stop",
+        "plushuman -p zeus gateway restart",
+        "plushuman --profile zeus gateway restart",
+        "plushuman --profile zeus gateway stop",
+        "plushuman --profile=zeus gateway restart",
         # Global flags before/after the selector must not hide the shape.
-        "alfred -v -p zeus gateway restart",
-        "alfred -p zeus -v gateway restart",
-        "alfred --debug --profile zeus gateway stop",
+        "plushuman -v -p zeus gateway restart",
+        "plushuman -p zeus -v gateway restart",
+        "plushuman --debug --profile zeus gateway stop",
         # Shell quoting of the profile id is equivalent to the bare name.
-        "alfred -p 'zeus' gateway restart",
-        "alfred --profile \"zeus\" gateway stop",
+        "plushuman -p 'zeus' gateway restart",
+        "plushuman --profile \"zeus\" gateway stop",
     ])
     def test_self_target_blocked(self, text):
         assert _contains_gateway_lifecycle_command(text), f"Should block: {text!r}"
 
     @pytest.mark.parametrize("text", [
-        "alfred -p venus gateway stop",
-        "alfred -p venus gateway restart",
-        "alfred --profile venus gateway restart",
-        "alfred --profile=venus gateway stop",
-        "alfred -p venus -v gateway restart",
+        "plushuman -p venus gateway stop",
+        "plushuman -p venus gateway restart",
+        "plushuman --profile venus gateway restart",
+        "plushuman --profile=venus gateway stop",
+        "plushuman -p venus -v gateway restart",
     ])
     def test_sibling_allowed(self, text):
         assert not _contains_gateway_lifecycle_command(text), f"Should allow: {text!r}"
 
     @pytest.mark.parametrize("text", [
-        "alfred -p zeus gateway start",
-        "alfred -p zeus gateway start --all",
+        "plushuman -p zeus gateway start",
+        "plushuman -p zeus gateway start --all",
     ])
     def test_start_still_allowed(self, text):
         # `start` is intentionally excluded from the guard, with or without
@@ -366,8 +366,8 @@ class TestProfileFlagGatewayLifecycle:
         import hermes_cli.profiles as profiles_mod
 
         monkeypatch.setattr(profiles_mod, "get_active_profile_name", lambda: "zeus")
-        assert _contains_gateway_lifecycle_command("alfred -p zeus gateway restart")
-        assert not _contains_gateway_lifecycle_command("alfred -p venus gateway restart")
+        assert _contains_gateway_lifecycle_command("plushuman -p zeus gateway restart")
+        assert not _contains_gateway_lifecycle_command("plushuman -p venus gateway restart")
 
     def test_no_profile_context_conservative_allow(self, monkeypatch):
         # With no profile identity the guard cannot prove self-targeting, so
@@ -376,8 +376,8 @@ class TestProfileFlagGatewayLifecycle:
         from cron import lifecycle_guard
 
         monkeypatch.setattr(lifecycle_guard, "_current_profile_name", lambda: None)
-        assert not _contains_gateway_lifecycle_command("alfred -p zeus gateway restart")
-        assert _contains_gateway_lifecycle_command("alfred gateway restart")
+        assert not _contains_gateway_lifecycle_command("plushuman -p zeus gateway restart")
+        assert _contains_gateway_lifecycle_command("plushuman gateway restart")
 
 
 class TestCronCreateLifecycleBlock:
@@ -393,7 +393,7 @@ class TestCronCreateLifecycleBlock:
         args = Namespace(
             cron_command="create",
             schedule="30m",
-            prompt="Upgrade hermes then run alfred gateway restart",
+            prompt="Upgrade hermes then run plushuman gateway restart",
             name=None,
             deliver=None,
             repeat=None,
@@ -532,8 +532,8 @@ class TestTerminalToolGatewayLifecycleGuard:
         "systemctl restart hermes-gateway",
         "systemctl --user restart hermes-gateway",
         "systemctl stop hermes-gateway.service",
-        "alfred gateway restart",
-        "alfred gateway uninstall",
+        "plushuman gateway restart",
+        "plushuman gateway uninstall",
         "launchctl kickstart gui/501/ai.hermes.gateway",
         "launchctl bootout gui/501/ai.hermes.gateway",
         # #62891 exact reported shape and its bootstrap sibling.
@@ -677,10 +677,10 @@ class TestTerminalToolGatewayLifecycleGuard:
             tt, "_check_all_guards", lambda cmd, env, **kwargs: {"approved": True}
         )
 
-        result = json.loads(tt.terminal_tool(command="alfred gateway restart"))
+        result = json.loads(tt.terminal_tool(command="plushuman gateway restart"))
 
         assert result["exit_code"] == 0
-        assert calls == ["alfred gateway restart"]
+        assert calls == ["plushuman gateway restart"]
 
     def test_blocks_launchctl_submit_hidden_in_referenced_script(
         self, monkeypatch, tmp_path
@@ -954,7 +954,7 @@ class TestLifecycleGuardModule:
     def test_prompt_with_command_raises(self):
         from cron.lifecycle_guard import GatewayLifecycleBlocked, check_gateway_lifecycle
         with pytest.raises(GatewayLifecycleBlocked):
-            check_gateway_lifecycle("please run alfred gateway restart", None)
+            check_gateway_lifecycle("please run plushuman gateway restart", None)
 
 
     def test_script_with_command_raises(self, tmp_path, monkeypatch):
@@ -1034,7 +1034,7 @@ class TestLifecycleGuardModule:
         by the direct regex scan."""
         from cron.lifecycle_guard import GatewayLifecycleBlocked, check_gateway_lifecycle
         script = tmp_path / "evil.py"
-        script.write_text('import os\nos.system("alfred gateway restart")\n', encoding="utf-8")
+        script.write_text('import os\nos.system("plushuman gateway restart")\n', encoding="utf-8")
         with pytest.raises(GatewayLifecycleBlocked):
             check_gateway_lifecycle("clean prompt", str(script))
 
@@ -1217,7 +1217,7 @@ class TestLifecycleGuardModule:
         )
 
         def _remote_read(_path: str):
-            return "MZ\x00\x00\x90\x00 alfred gateway restart \x00\x00junk"
+            return "MZ\x00\x00\x90\x00 plushuman gateway restart \x00\x00junk"
 
         result = contains_gateway_lifecycle_command_or_referenced_script(
             "bash /nonexistent/dir/helper.sh",
@@ -1281,7 +1281,7 @@ class TestLifecycleGuardModule:
         monkeypatch.setattr(lg, "_contains_unsafe_gateway_action", _boom)
         # Direct scan still blocks a literal lifecycle command...
         assert lg.contains_gateway_lifecycle_command_or_referenced_script(
-            "alfred gateway restart"
+            "plushuman gateway restart"
         ) is True
         # ...and a benign command fails open instead of crashing.
         assert lg.contains_gateway_lifecycle_command_or_referenced_script(
@@ -1515,8 +1515,8 @@ class TestRelativePathDoesNotDisableDataExemption:
 
     @pytest.mark.parametrize("command", [
         "grep -r 'systemctl restart hermes-gateway' .",
-        "grep -rn 'alfred gateway restart' ./logs",
-        "rg 'alfred gateway restart' ../archive",
+        "grep -rn 'plushuman gateway restart' ./logs",
+        "rg 'plushuman gateway restart' ../archive",
         "grep -c 'systemctl stop hermes-gateway' ./var/log/syslog",
         "sqlite3 ./stats.db \"SELECT restart_reason FROM hermes_gateway_restarts\"",
     ])
@@ -1526,15 +1526,15 @@ class TestRelativePathDoesNotDisableDataExemption:
     @pytest.mark.parametrize("command", [
         # Narrowing the dot test must not open an execution route: every
         # escape hatch still fires with a relative-path operand present.
-        'sqlite3 ./db ".shell alfred gateway restart"',
+        'sqlite3 ./db ".shell plushuman gateway restart"',
         'sqlite3 ./db ".system systemctl restart hermes-gateway"',
         'psql ./x -c "\\! systemctl restart hermes-gateway"',
-        "grep -r 'alfred gateway restart' . | sh",
-        "grep -r 'alfred gateway restart' ./logs | bash",
-        "grep -r 'alfred gateway restart' . | sudo sh",
-        "grep -r 'x' . ; alfred gateway restart",
+        "grep -r 'plushuman gateway restart' . | sh",
+        "grep -r 'plushuman gateway restart' ./logs | bash",
+        "grep -r 'plushuman gateway restart' . | sudo sh",
+        "grep -r 'x' . ; plushuman gateway restart",
         "grep -r 'x' . && systemctl restart hermes-gateway",
-        'grep -r "$(alfred gateway restart)" .',
+        'grep -r "$(plushuman gateway restart)" .',
         "rg 'x' ./logs | xargs systemctl restart hermes-gateway",
     ])
     def test_relative_path_does_not_open_an_execution_route(self, command):
@@ -1557,7 +1557,7 @@ class TestCreateJobBlocksLifecycleCommands:
         from cron.jobs import create_job
         from cron.lifecycle_guard import GatewayLifecycleBlocked
         with pytest.raises(GatewayLifecycleBlocked):
-            create_job(prompt="then run alfred gateway restart", schedule="30m")
+            create_job(prompt="then run plushuman gateway restart", schedule="30m")
 
     def test_create_job_allows_benign_prompt(self):
         from cron.jobs import create_job
@@ -1573,7 +1573,7 @@ class TestCreateJobBlocksLifecycleCommands:
         from tools.cronjob_tools import cronjob
         result = json.loads(cronjob(
             action="create", schedule="0 9 * * *",
-            prompt="please run alfred gateway restart nightly",
+            prompt="please run plushuman gateway restart nightly",
         ))
         assert result.get("success") is False
         assert "#30719" in result.get("error", "")
@@ -1751,7 +1751,7 @@ class TestLifecycleGuardDataArgumentExemption:
         "'systemctl stop hermes-gateway'\"",
         # grep/rg pattern arguments hunting for the lifecycle string.
         "grep -c 'systemctl restart hermes-gateway' /var/log/syslog",
-        "rg 'alfred gateway restart' /home/user/.hermes/logs/",
+        "rg 'plushuman gateway restart' /home/user/.hermes/logs/",
         "journalctl -u hermes-gateway --grep 'systemctl restart hermes-gateway'",
         # SQL with stop/restart column/value words but no command shape.
         'sqlite3 stats.db "SELECT stop_time, restart_reason FROM '
@@ -1764,15 +1764,15 @@ class TestLifecycleGuardDataArgumentExemption:
 
     @pytest.mark.parametrize("command", [
         # Execution smuggled through or around a data sink must still block.
-        'sqlite3 db ".shell alfred gateway restart"',
+        'sqlite3 db ".shell plushuman gateway restart"',
         'psql -c "\\! systemctl restart hermes-gateway"',
         "grep 'systemctl restart hermes-gateway' cmds.txt | sh",
         "grep gateway f | xargs systemctl restart hermes-gateway",
         'grep "$(systemctl restart hermes-gateway)" f',
         "grep 'restart' log; systemctl restart hermes-gateway",
-        'sqlite3 db "SELECT 1"; alfred gateway stop',
+        'sqlite3 db "SELECT 1"; plushuman gateway stop',
         # Plain lifecycle commands are unaffected by the exemption.
-        "alfred gateway restart",
+        "plushuman gateway restart",
         "sudo systemctl stop hermes-gateway",
     ])
     def test_command_position_lifecycle_still_blocked(self, command):

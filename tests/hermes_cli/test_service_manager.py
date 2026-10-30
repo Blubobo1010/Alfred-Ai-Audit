@@ -190,7 +190,7 @@ def test_render_run_script_uses_replace_to_take_over_stale_holder() -> None:
     """NS-505: the supervised gateway must exec ``gateway run --replace``.
 
     Without ``--replace`` a gateway started OUTSIDE s6 (a stray shell
-    ``alfred gateway run``, an agent action, the Open WebUI helper) holds
+    ``plushuman gateway run``, an agent action, the Open WebUI helper) holds
     the per-HERMES_HOME PID lock; the supervised slot then execs a bare
     ``gateway run``, hits the "Another gateway instance is already
     running" guard, exits non-zero, and s6 restarts it — a restart loop
@@ -201,9 +201,9 @@ def test_render_run_script_uses_replace_to_take_over_stale_holder() -> None:
     render paths.
     """
     default_text = S6ServiceManager._render_run_script("default", {})
-    # Root profile: bare `alfred gateway run --replace` (no -p flag).
-    assert "alfred gateway run --replace" in default_text
-    assert "alfred -p default" not in default_text
+    # Root profile: bare `plushuman gateway run --replace` (no -p flag).
+    assert "plushuman gateway run --replace" in default_text
+    assert "plushuman -p default" not in default_text
     # Every exec line that launches the gateway must carry --replace, so
     # neither the non-root nor the privilege-drop branch can spin.
     gateway_execs = [
@@ -269,7 +269,7 @@ def test_render_finish_script_does_not_restart_on_clean_exit(tmp_path) -> None:
 # ---------------------------------------------------------------------------
 # S6 stop writes a planned-stop marker (issue #42675)
 #
-# `alfred gateway stop` inside a container dispatches through
+# `plushuman gateway stop` inside a container dispatches through
 # S6ServiceManager.stop() -> `s6-svc -d`, which SIGTERMs the gateway.
 # That SIGTERM is indistinguishable from the one s6/Docker sends on a
 # container restart unless we mark the intentional stop first. Without

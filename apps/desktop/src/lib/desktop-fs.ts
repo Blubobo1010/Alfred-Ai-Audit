@@ -61,7 +61,7 @@ function bridge() {
   const desktop = window.hermesDesktop
 
   if (!desktop) {
-    throw new Error('Alfred Desktop bridge is unavailable')
+    throw new Error('+Human Desktop bridge is unavailable')
   }
 
   return desktop

@@ -2,7 +2,7 @@ name: hermes-kame-provider
 repo: https://github.com/Kame696/kame-api-rotation-for-hermes
 sha: cab5372d18d233da905c9f84a343359d2bc26564
 subdir: hermes-kame-provider
-description: "Companion to hermes-kame-api-rotation (install both). A model-provider plugin that re-registers Alfred' bundled API-key profiles unchanged except for create_client and create_messages_client, which return the rotation plugin's key-rotating client; otherwise None and Alfred builds its own. Same endpoints as Alfred, no third-party service, no core override."
+description: "Companion to hermes-kame-api-rotation (install both). A model-provider plugin that re-registers +Human' bundled API-key profiles unchanged except for create_client and create_messages_client, which return the rotation plugin's key-rotating client; otherwise None and +Human builds its own. Same endpoints as +Human, no third-party service, no core override."
 maintainer: Kame696
 tier: community
 category: models

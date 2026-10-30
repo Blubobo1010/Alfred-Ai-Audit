@@ -682,7 +682,7 @@ describe('createGatewayEventHandler', () => {
   it('prefers raw text over Rich-rendered ANSI on message.complete (#16391)', () => {
     const appended: Msg[] = []
     const onEvent = createGatewayEventHandler(buildCtx(appended))
-    const raw = 'Alfred here.\n\nLine two.'
+    const raw = '+Human here.\n\nLine two.'
     // Rich-rendered ANSI (`final_response_markdown: render`) used to win,
     // which left visible escape codes in Ink output. Raw text must win.
     const rendered = '\u001b[33mHermes here.\u001b[0m\n\n\u001b[2mLine two.\u001b[0m'
@@ -924,7 +924,7 @@ describe('createGatewayEventHandler', () => {
     onEvent({
       payload: {
         message:
-          'agent init failed: No LLM provider configured. Run `alfred model` to select a provider, or run `alfred setup` for first-time configuration.'
+          'agent init failed: No LLM provider configured. Run `plushuman model` to select a provider, or run `plushuman setup` for first-time configuration.'
       },
       type: 'error'
     } as any)

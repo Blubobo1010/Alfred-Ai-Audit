@@ -1,5 +1,5 @@
 /**
- * Support f502bc6f: a "This device" profile's local `alfred serve` child was SIGTERM'd by the pool
+ * Support f502bc6f: a "This device" profile's local `plushuman serve` child was SIGTERM'd by the pool
  * idle reaper (60 min with nothing streamed), leaving "This device · Backend offline". A local
  * child hosts its profile's cron jobs and bot chats with nobody watching, so it is never retired
  * for being idle. The idle windows are pinned to their 60s floor so two reaper ticks fit the test.

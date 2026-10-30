@@ -1,4 +1,4 @@
-"""Regression test for #125112: `alfred update --check` on a narrow clone."""
+"""Regression test for #125112: `plushuman update --check` on a narrow clone."""
 
 import subprocess
 from pathlib import Path

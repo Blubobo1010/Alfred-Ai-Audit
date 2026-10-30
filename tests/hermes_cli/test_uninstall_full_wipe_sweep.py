@@ -31,7 +31,7 @@ def test_remove_dashboard_launchd_jobs_boots_out_and_deletes_matching_plists(
     dashboard = job("com.user.hermes-dashboard",
                     ["/Users/u/.hermes/hermes-agent/venv/bin/hermes", "dashboard", "--port", "9200"],
                     agents_dir)
-    serve = job("com.user.hermes-serve", ["alfred", "serve"], agents_dir)
+    serve = job("com.user.hermes-serve", ["plushuman", "serve"], agents_dir)
     unrelated = job("com.user.keep", ["/usr/bin/say", "hello"], agents_dir)
     daemon = job("io.nousresearch.hermes-agent.dashboard", ["hermes_cli.main", "dashboard"],
                  daemons_dir)
@@ -45,7 +45,7 @@ def test_remove_dashboard_launchd_jobs_boots_out_and_deletes_matching_plists(
 
     assert sorted(removed) == sorted([dashboard, serve, daemon])
     assert not dashboard.exists() and not serve.exists() and not daemon.exists()
-    assert unrelated.exists()  # non-Alfred job is never touched
+    assert unrelated.exists()  # non-+Human job is never touched
     domains = {tuple(cmd[2].rsplit("/", 1)) for cmd in booted}
     assert ("com.user.hermes-dashboard", "gui/501") in domains or \
         {d for d, _ in domains} >= {"gui/501", "user/501"} or booted  # bootout attempted per domain
@@ -79,7 +79,7 @@ def test_full_uninstall_sweeps_macos_caches_and_dashboard_launchd(monkeypatch, t
 
     removed_caches, removed_jobs = [], []
     cache_dirs = [tmp_path / "caches" / name for name in
-                  ("Alfred", "com.blubobo1010.alfred", "hermes-setup",
+                  ("+Human", "com.blubobo1010.alfred", "hermes-setup",
                    "com.blubobo1010.alfred.setup")]
     for d in cache_dirs:
         d.mkdir(parents=True)

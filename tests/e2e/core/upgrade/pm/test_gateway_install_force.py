@@ -1,19 +1,19 @@
 """The PM runtime lock is where PM commands look for it (PM lifecycle, class 6; #124075).
 
-The field report: after ``alfred gateway install --force`` the gateway crash-looped with "no
+The field report: after ``plushuman gateway install --force`` the gateway crash-looped with "no
 dependency environment is committed" and ``hermes pm repair`` / ``pm doctor`` / ``pm status`` all
 died on ``FileNotFoundError: <install>/environments/<env>/workspace/pm/uv.lock``.
 
 ``--force`` was incidental: every generation's ``workspace/`` copy was materialised without
 ``pm/uv.lock`` (the copy dropped every file named ``uv.lock``), so ANY ``hermes pm`` command run
-by the selected generation's own ``alfred`` (the one on PATH for every child a Alfred process
+by the selected generation's own ``plushuman`` (the one on PATH for every child a +Human process
 spawns, and the one a unit pointing at the managed environment runs) died before it started.
-After a dependency-changing ``alfred update``:
+After a dependency-changing ``plushuman update``:
 
-* ``alfred gateway install --force`` (service manager is a failing shim: the unit write is what
+* ``plushuman gateway install --force`` (service manager is a failing shim: the unit write is what
   is exercised) leaves the install bootable: ``hermes pm status`` / ``pm doctor`` run and
-  ``alfred gateway run`` reaches running;
-* ``hermes pm status`` / ``pm doctor`` also run from the managed environment's ``alfred``.
+  ``plushuman gateway run`` reaches running;
+* ``hermes pm status`` / ``pm doctor`` also run from the managed environment's ``plushuman``.
 """
 
 from __future__ import annotations
@@ -42,7 +42,7 @@ def _pm_failures(sb: I.Sandbox, hermes: str) -> list[str]:
         cp = sb.run([hermes, *args], timeout=300)
         if cp.returncode != 0 or I.TRACEBACK in cp.stdout + cp.stderr:
             tail = (cp.stdout + cp.stderr).strip().splitlines()[-1:] or [""]
-            bad.append(f"`alfred {' '.join(args)}` rc={cp.returncode}: {tail[0][:300]}\n{I.describe(cp)}")
+            bad.append(f"`plushuman {' '.join(args)}` rc={cp.returncode}: {tail[0][:300]}\n{I.describe(cp)}")
     return bad
 
 
@@ -59,7 +59,7 @@ def updated(tmp_path_factory, provider):
     P.configure(sb, provider.base_url)
     installed = P.selected_generation(sb)
     P.publish_dependency_release(origin, root, 1)
-    P.ok(P.update(sb, env=P.lazy_env(sb)), "alfred update failed")
+    P.ok(P.update(sb, env=P.lazy_env(sb)), "plushuman update failed")
     assert P.selected_generation(sb) != installed, "harness: the update did not select a new generation"
     return sb
 

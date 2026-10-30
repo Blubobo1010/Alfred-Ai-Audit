@@ -437,7 +437,7 @@ def _aux_task_summary(aux_rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 def _profile_cli_args(profile: Optional[str]) -> list[str]:
     """``["-p", <name>]`` for a validated named profile, else ``[]``. Hub actions run in
-    a fresh ``alfred`` subprocess whose ``_apply_profile_override()`` reads ``-p`` from argv —
+    a fresh ``plushuman`` subprocess whose ``_apply_profile_override()`` reads ``-p`` from argv —
     the only mechanism that reaches import-time-bound globals like ``skills_hub.SKILLS_DIR``.
     ``default`` is a real named target, not an alias for the dashboard's own profile:
     selector-less argv would make the child resolve the ambient ``HERMES_HOME`` (the launch

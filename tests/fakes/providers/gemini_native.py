@@ -1,7 +1,7 @@
 """Fake Google AI Studio ``generateContent`` / ``streamGenerateContent`` endpoint behind a real
 TLS boundary.
 
-Alfred routes to its native Gemini adapter only for the real Google host
++Human routes to its native Gemini adapter only for the real Google host
 (``generativelanguage.googleapis.com``), so the fake is reached the way any corporate egress
 proxy would be: an HTTPS ``CONNECT`` proxy on loopback that terminates TLS for the Google host
 with a leaf certificate signed by a throwaway CA. The child trusts that CA through the standard
@@ -45,7 +45,7 @@ MODEL_ID = "gemini-3-flash-preview"
 API_KEY = "AIzaFakeGeminiKeyForHermesE2E0000000000"
 # Documented dummy signatures that tell Gemini 3 to skip thought-signature validation.
 SKIP_SIGNATURES = frozenset({"skip_thought_signature_validator", "context_engineering_is_the_way_to_go"})
-# Alfred-side config for a home that talks to this fake: the user-facing provider id + model and the
+# +Human-side config for a home that talks to this fake: the user-facing provider id + model and the
 # key in ``.env`` (``model.base_url`` may pin another Google API version, e.g. ``.../v1``).
 HERMES_ENV = {"GEMINI_API_KEY": API_KEY}
 
@@ -473,7 +473,7 @@ class GeminiFake:
         return f"http://127.0.0.1:{self._server.server_address[1]}"
 
     def child_env(self) -> dict[str, str]:
-        """Env for the ``alfred`` child: route HTTPS through the proxy and trust the fake CA."""
+        """Env for the ``plushuman`` child: route HTTPS through the proxy and trust the fake CA."""
         ca = str(self.ca_pem)
         return {"HTTPS_PROXY": self.proxy_url, "https_proxy": self.proxy_url,
                 "HTTP_PROXY": self.proxy_url, "http_proxy": self.proxy_url,

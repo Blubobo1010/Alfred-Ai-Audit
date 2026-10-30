@@ -9,7 +9,7 @@ export const frNotices = {
   butterbar: {
     goTo: (index, total) => `Afficher l'avis ${index} sur ${total}`,
     legal: {
-      before: "L'utilisation de Alfred est soumise à nos ",
+      before: "L'utilisation de +Human est soumise à nos ",
       terms: "Conditions d'utilisation",
       between: ' et à notre ',
       privacy: 'Politique de confidentialité',

@@ -1,4 +1,4 @@
-"""Shared leaf helpers for the ``alfred update`` modules (no Alfred imports; no cycle)."""
+"""Shared leaf helpers for the ``plushuman update`` modules (no +Human imports; no cycle)."""
 
 import logging
 import sys

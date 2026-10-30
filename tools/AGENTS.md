@@ -64,7 +64,7 @@ Rules for tool code:
   `INLINE_TOOL_EXECUTORS` table (`agent/inline_tool_executors.py`; `agent/AGENTS.md`).
 - **`_last_resolved_tool_names`** is a process-global in `model_tools.py`; `_run_single_child()` in
   `delegate_tool.py` saves/restores it around child runs — readers may see it stale mid-delegation.
-- New tools integrate with existing setup UX (`alfred tools`, `alfred setup`, auto-install) rather
+- New tools integrate with existing setup UX (`plushuman tools`, `plushuman setup`, auto-install) rather
   than a raw env var; secrets go in `OPTIONAL_ENV_VARS` (`hermes_cli/AGENTS.md`).
 
 ## Toolsets (`toolsets.py`)
@@ -73,7 +73,7 @@ Single `TOOLSETS` dict. Keys today: `browser, clarify, code_execution, cronjob, 
 delegation, discord, discord_admin, feishu_doc, feishu_drive, file, image_gen,
 kanban, memory, messaging, moa, rl, safe, search, session_search, skills, terminal, todo,
 tts, video, vision, web, yuanbao` (don't assert the list in tests). Per-platform enable/disable via
-`alfred tools` (curses) or `tools.<platform>.enabled/disabled` in config.yaml. `browser_exec`
+`plushuman tools` (curses) or `tools.<platform>.enabled/disabled` in config.yaml. `browser_exec`
 replaces the other browser tools when `browser.backend` is `browser-use`.
 
 ## Backends and providers inside tools/
@@ -98,7 +98,7 @@ Put new embed-cost rules there, never a second counter in a tool.
 **Every spawn goes through one env builder.** `environments/local.py::build_subprocess_env` (+
 `hermes_constants.apply_subprocess_home_env`, `env_passthrough.py::resolve_passthrough_value`) is
 how a terminal, `execute_code`, background process, delegation child, ACP or MCP stdio child gets
-its environment; a child that acts FOR the served profile (`alfred -p X` workers, `key_cmd`
+its environment; a child that acts FOR the served profile (`plushuman -p X` workers, `key_cmd`
 helpers, browser drivers, Bot Chat relay turns) uses `environments/local.py::
 served_profile_child_env(target_home=, inherit_credentials=)`: launch-profile `.env` /
 `TERMINAL_*` residue dropped (`strip_launch_profile_env`), the target home pinned, only the
@@ -162,10 +162,10 @@ imports against a temp `HERMES_HOME` (see `tests/tools/test_approval_config_read
 A tool that works only because of *who is on the other end* (desktop panes, in-app browser,
 message reactions, Projects) must resolve availability from the **session's own source**, not
 from an env var on the backend. Client and backend are separate machines: the desktop app may
-drive a locally spawned backend, one over SSH, one behind URL + token, or Alfred Cloud, and
+drive a locally spawned backend, one over SSH, one behind URL + token, or +Human Cloud, and
 only the first two carry `HERMES_DESKTOP=1`. An env-keyed gate is a silent no-op on the other
 topologies — the tool is stripped from the schema while the platform hint tells the model it
-is "inside the Alfred desktop app". The pattern:
+is "inside the +Human desktop app". The pattern:
 
 - **The toolset is the surface gate.** Keep such tools off `_HERMES_CORE_TOOLS` and in a named
   toolset (`desktop_ui`, `project`); the GUI gateway's `_load_enabled_toolsets(platform)`
@@ -175,7 +175,7 @@ is "inside the Alfred desktop app". The pattern:
   (`tools/registry.py`); a per-session answer does not belong there.
 - **Ask which identity you mean.** `HERMES_DESKTOP=1` legitimately means "this backend was
   spawned by the app" (cron ticker, web-dist handling). It does NOT mean "a GUI is watching";
-  the embedded terminal pane (`alfred --tui` against that backend) is the counterexample.
+  the embedded terminal pane (`plushuman --tui` against that backend) is the counterexample.
 
 Test: if the capability still makes sense with the client on another machine, it is
 session-scoped. Assert the GUI session gets the tool **with the env var absent**.

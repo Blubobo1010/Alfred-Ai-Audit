@@ -5,7 +5,7 @@
  * maps, while this file owns the security-sensitive ordering and the remote
  * wire protocol:
  *
- *   gate dials -> drain every captured scope -> detached `alfred update`
+ *   gate dials -> drain every captured scope -> detached `plushuman update`
  *   -> correlated terminal marker + durable receipt -> restore every scope
  *   -> lift the gate
  *
@@ -227,7 +227,7 @@ function windowsChildPath(home: string, name: string): string {
  */
 function buildPosixManagedUpdateLaunch(target: RemoteUpdateTarget, correlationId: string): string {
   const correlation = validateCorrelationId(correlationId)
-  const home = validateRemoteValue(target.hermesHome, 'Alfred home')
+  const home = validateRemoteValue(target.hermesHome, '+Human home')
   const hermesPath = validateRemoteValue(target.hermesPath, 'launcher path')
   const statusPath = posixChildPath(home, `.update_exit_code.${correlation}`)
   const intentPath = posixChildPath(home, `.update_launch_intent.${correlation}`)
@@ -274,7 +274,7 @@ function buildPosixManagedUpdateLaunch(target: RemoteUpdateTarget, correlationId
 /** Windows equivalent of buildPosixManagedUpdateLaunch. */
 function buildWindowsManagedUpdateLaunch(target: RemoteUpdateTarget, correlationId: string): string {
   const correlation = validateCorrelationId(correlationId)
-  const home = validateRemoteValue(target.hermesHome, 'Alfred home')
+  const home = validateRemoteValue(target.hermesHome, '+Human home')
   const hermesPath = validateRemoteValue(target.hermesPath, 'launcher path')
   const statusPath = windowsChildPath(home, `.update_exit_code.${correlation}`)
   const readyPath = windowsChildPath(home, `.update_coordinator_ready.${correlation}`)
@@ -473,7 +473,7 @@ print(json.dumps({'marker':state['state'],'markerPid':state.get('pid'),'launchIn
 
 function buildRemoteUpdateObservationCommand(target: RemoteUpdateTarget, correlationId: string): string {
   const correlation = validateCorrelationId(correlationId)
-  const home = validateRemoteValue(target.hermesHome, 'Alfred home')
+  const home = validateRemoteValue(target.hermesHome, '+Human home')
 
   if (target.platform === 'Windows') {
     const python = validateRemoteValue(target.pythonPath || '', 'Python path')
@@ -517,7 +517,7 @@ function managedUpdateMessage(
 
   const status =
     outcome === 'updated'
-      ? 'Remote Alfred updated'
+      ? 'Remote +Human updated'
       : restoreOk
         ? 'The remote update failed, but every managed SSH profile was restored.'
         : 'The remote update transaction could not restore every managed SSH profile.'
@@ -536,7 +536,7 @@ function managedUpdateMessage(
     // Only follow-ups are finished by a rerun; a user action (e.g. a parked
     // stash) is the producer's exact manual instruction, shown verbatim.
     (followups.length
-      ? ` Re-run \`alfred update\` on the remote to finish ${followups.map(step => step.step).join(', ')}.`
+      ? ` Re-run \`plushuman update\` on the remote to finish ${followups.map(step => step.step).join(', ')}.`
       : '') +
     (userAction?.reason ? ` ${userAction.reason}` : '')
 
@@ -1043,8 +1043,8 @@ function managedSshDrainBlocker(
   return {
     reason: DARWIN_DRAIN_UNSUPPORTED,
     message:
-      `Skipped: Desktop cannot safely stop its running Alfred serve on this macOS remote (${blocked.join(', ')}). ` +
-      'Disconnect it, or run `alfred update` on the remote, then retry.'
+      `Skipped: Desktop cannot safely stop its running +Human serve on this macOS remote (${blocked.join(', ')}). ` +
+      'Disconnect it, or run `plushuman update` on the remote, then retry.'
   }
 }
 

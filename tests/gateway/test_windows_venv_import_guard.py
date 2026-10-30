@@ -47,7 +47,7 @@ def test_venv_import_setup_scopes_to_sys_path_not_global_environ(
     ``_ensure_windows_gateway_venv_imports`` patches the CURRENT process via
     ``sys.path``/``site.addsitedir`` only. Mutating ``os.environ["PYTHONPATH"]``
     there poisoned every child process spawned from the gateway session —
-    non-Alfred Python tools resolved Alfred' venv packages ahead of their own.
+    non-+Human Python tools resolved +Human' venv packages ahead of their own.
     """
     import gateway.run as gateway_run
 
@@ -70,7 +70,7 @@ def test_venv_import_setup_scopes_to_sys_path_not_global_environ(
     assert str(site_packages) in sys.path
     # VIRTUAL_ENV stays — standard, scoped, no cross-process poisoning.
     assert os.environ["VIRTUAL_ENV"] == str(venv.resolve())
-    # The inherited PYTHONPATH must be untouched — no Alfred paths prepended.
+    # The inherited PYTHONPATH must be untouched — no +Human paths prepended.
     assert os.environ["PYTHONPATH"] == "already-there"
     assert str(site_packages) not in os.environ["PYTHONPATH"]
     assert str(root) not in os.environ["PYTHONPATH"]

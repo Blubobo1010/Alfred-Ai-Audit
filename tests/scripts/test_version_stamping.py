@@ -15,7 +15,7 @@ def _tree(root: Path) -> None:
     (desktop / "package.json").write_text('{"version": "0.0.0"}\n', encoding="utf-8")
     (root / "package-lock.json").write_text(
         '{"version": "0.0.0", "packages": {'
-        '"apps/desktop": {"name": "alfred", "version": "0.0.0"}, '
+        '"apps/desktop": {"name": "plushuman", "version": "0.0.0"}, '
         '"apps/bootstrap-installer": {"name": "@hermes/bootstrap-installer", "version": "0.0.0"}}}\n',
         encoding="utf-8")
     (root / "uv.lock").write_text(
@@ -29,7 +29,7 @@ def _tree(root: Path) -> None:
     (root / "apps" / "bootstrap-installer" / "package.json").write_text(
         '{"name": "x", "version": "0.0.0"}\n', encoding="utf-8")
     (installer / "tauri.conf.json").write_text(
-        '{"productName": "Alfred", "version": "0.0.0"}\n', encoding="utf-8")
+        '{"productName": "+Human", "version": "0.0.0"}\n', encoding="utf-8")
     (installer / "Cargo.toml").write_text('[package]\nversion = "0.0.0"\n', encoding="utf-8")
     (installer / "Cargo.lock").write_text(
         '[[package]]\nname = "bootstrap-installer"\nversion = "0.21.1"\n', encoding="utf-8")

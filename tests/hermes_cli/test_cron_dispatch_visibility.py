@@ -1,7 +1,7 @@
 """CLI rendering of missed-run dispatch visibility (#99879).
 
-`alfred cron list` shows a Dispatch line (scheduled vs actual, lateness,
-disposition) and `alfred cron status` calls out jobs whose last dispatch
+`plushuman cron list` shows a Dispatch line (scheduled vs actual, lateness,
+disposition) and `plushuman cron status` calls out jobs whose last dispatch
 was a late/missed-fire catch-up.
 """
 

@@ -104,7 +104,7 @@ def register_from_config(cfg: Optional[dict[str, Any]]) -> list[WebhookTarget]:
 
 
 def iter_configured_targets(cfg: Optional[dict[str, Any]]) -> list[WebhookTarget]:
-    """Parse ``hooks.outbound`` without registering anything (``alfred hooks list``)."""
+    """Parse ``hooks.outbound`` without registering anything (``plushuman hooks list``)."""
     if not isinstance(cfg, dict):
         return []
     hooks_cfg = cfg.get("hooks")
@@ -254,7 +254,7 @@ def _serialize_payload(event: str, kwargs: dict[str, Any], delivery_id: str) -> 
 
 def _build_delivery(event: str, target: WebhookTarget, body: bytes, delivery_id: str) -> dict[str, Any]:
     headers = {
-        "Content-Type": "application/json", "User-Agent": "Alfred-Agent-Outbound-Webhook",
+        "Content-Type": "application/json", "User-Agent": "+Human-Agent-Outbound-Webhook",
         "X-Hermes-Event": event, "X-Hermes-Delivery": delivery_id,
     }
     if target.secret:

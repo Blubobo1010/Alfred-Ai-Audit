@@ -1148,7 +1148,7 @@ class SessionSessionsMixin:
                     merged[key] = tip_row[key]
             if merged.get("title") is None:
                 # The title is carried root->tip AFTER the publish transaction; a rotation cut off in
-                # between leaves it on the ended root, and exact-title lookups (`alfred peer dm` ->
+                # between leaves it on the ended root, and exact-title lookups (`plushuman peer dm` ->
                 # canonical "Bot Chat") must still see the lineage under its name (#106165).
                 merged["title"] = s.get("title")
             merged["_lineage_root_id"] = s["id"]
@@ -1551,7 +1551,7 @@ class SessionSessionsMixin:
         workspace_key: str | None = None,
     ) -> list[dict[str, Any]]:
         """Sessions MRU-first with a computed ``last_active``; ``workspace_key`` scopes to one workspace
-        so ``alfred -c``/``--resume`` picks its last session. ``source`` may be one label or several."""
+        so ``plushuman -c``/``--resume`` picks its last session. ``source`` may be one label or several."""
         where_clauses = []
         params: list = []
         if source:

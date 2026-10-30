@@ -409,7 +409,7 @@ def test_result_finished_at_is_stamped_after_the_r6_release_wait(tmp_path):
 
 def test_line_two_stays_young_through_the_r6_release_wait(tmp_path):
     """An old packaged Desktop deletes a marker whose line 2 is 20 minutes old, live owner or
-    not. The release wait can last hours, so the refresher must outlive `alfred update`."""
+    not. The release wait can last hours, so the refresher must outlive `plushuman update`."""
     home, install = _install(tmp_path, legacy=True)
     marker = home / ".hermes-update-in-progress"
     completion = tmp_path / "release-completion"
@@ -437,7 +437,7 @@ def test_line_two_stays_young_through_the_r6_release_wait(tmp_path):
 
 
 def test_checkout_lock_probe_never_makes_a_concurrent_acquire_fail(tmp_path):
-    """checkout_lock_held takes the REAL lock; a `alfred update` acquiring it non-blocking in a
+    """checkout_lock_held takes the REAL lock; a `plushuman update` acquiring it non-blocking in a
     tight loop meanwhile must (practically) never see it busy. A probe that holds it across a
     process exit and a shell close refused ~7% of such attempts."""
     lock = tmp_path / ".hermes-update.lock"
@@ -487,7 +487,7 @@ def test_script_killed_before_the_delegate_line_appears_runs_no_update(tmp_path)
             time.sleep(0.01)
         time.sleep(0.5)  # the update child is spawned and parked behind the go-file
         children = [int(p) for p in Path(f"/proc/{script.pid}/task/{script.pid}/children").read_text(encoding="utf-8").split()]
-        # The (sub)shell that will exec `alfred update`; the others are flock(1) waiting on us and
+        # The (sub)shell that will exec `plushuman update`; the others are flock(1) waiting on us and
         # the custodian (it outlives the script by design).
         gate = [p for p in children if Path(f"/proc/{p}/comm").read_text(encoding="utf-8").strip() == "bash"
                 and str(p) != _custodian(home)]
@@ -570,7 +570,7 @@ def test_line_two_is_refreshed_only_while_the_claim_is_still_ours(tmp_path, proc
 
 
 def test_old_desktop_stays_parked_after_the_orchestrator_is_killed_while_the_update_holds_the_lock(tmp_path):
-    """SIGKILL the hand-off once its delegate (`alfred update`) runs and a completion survivor holds
+    """SIGKILL the hand-off once its delegate (`plushuman update`) runs and a completion survivor holds
     the checkout lock. The old reader judges line 1 alone, so line 1 must name a live custodian at
     EVERY instant -- including the first read after the kill, made while this test holds the A7
     lock so nothing can take the marker over yet (review 5423056011: a takeover after the death

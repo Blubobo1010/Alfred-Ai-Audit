@@ -1,4 +1,4 @@
-"""Shared time/filter parsing for `alfred sessions prune` / `archive`."""
+"""Shared time/filter parsing for `plushuman sessions prune` / `archive`."""
 
 from __future__ import annotations
 

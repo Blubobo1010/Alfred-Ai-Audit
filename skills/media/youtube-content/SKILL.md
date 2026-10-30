@@ -2,7 +2,7 @@
 name: youtube-content
 description: "YouTube transcripts to summaries, threads, blogs."
 version: 1.0.0
-author: Teknium (teknium1), Alfred
+author: Teknium (teknium1), +Human
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
@@ -21,9 +21,9 @@ Extract transcripts from YouTube videos and convert them into useful formats.
 
 ## Setup
 
-Use `terminal` with the Python from a PM-prepared Alfred source checkout. The
+Use `terminal` with the Python from a PM-prepared +Human source checkout. The
 `youtube` extra declares the helper's dependency; do not install packages into
-Alfred with raw pip or project-discovering `uv run`.
++Human with raw pip or project-discovering `uv run`.
 
 From that checkout, first follow the isolated development-home setup in
 [Package Management](https://hermes-agent.nousresearch.com/docs/reference/package-management#developer-workflow),

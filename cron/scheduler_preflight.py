@@ -113,8 +113,8 @@ def _preflight_check_provider_key(job: dict, cfg: dict) -> Optional[str]:
             return None
         return (
             f"provider credential missing: {exc} {_credential_store_scope_label()}. "
-            "Set the provider API key in .env (or `alfred setup`) for that home, or pin a "
-            "working provider via `alfred cron edit "
+            "Set the provider API key in .env (or `plushuman setup`) for that home, or pin a "
+            "working provider via `plushuman cron edit "
             f"{job.get('id')} --provider <p>`."
         )
     except Exception:
@@ -288,7 +288,7 @@ def _preflight_check_delivery(job: dict) -> Optional[str]:
             return (
                 f"delivery platform '{platform_name}' has no gateway "
                 "credentials configured (not connected). Configure it via "
-                "`alfred setup` or change the job's `deliver` target."
+                "`plushuman setup` or change the job's `deliver` target."
             )
     return None
 

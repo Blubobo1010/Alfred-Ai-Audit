@@ -1,4 +1,4 @@
-"""Local HTTP contract probe; no vendor request or personal Alfred state.
+"""Local HTTP contract probe; no vendor request or personal +Human state.
 
 Run from the repository with its Python interpreter. JSON output identifies the
 loaded module, observed SDK error, request order, and preserved message payload.

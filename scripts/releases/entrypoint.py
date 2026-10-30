@@ -327,7 +327,7 @@ def release(commit: str, *, bump: str, repo: Path, remote: str, repository: str,
             url = (execute([
                 "gh", "release", "create", tag, "--repo", repository,
                 "--verify-tag", "--draft", "--notes-file", file.name,
-                "--title", f"Alfred v{version}",
+                "--title", f"+Human v{version}",
             ]) or "").strip()
         finally:
             os.unlink(file.name)

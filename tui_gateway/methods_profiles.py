@@ -280,7 +280,7 @@ def _profile_ui_meta_fields(row: dict, profile_dir) -> None:
 
 @_profile_handler("profiles.list", 5061)
 def _(rid, params: dict) -> dict:
-    """List Alfred profiles. ``include_sessions`` (default true) adds ``last_session`` /
+    """List +Human profiles. ``include_sessions`` (default true) adds ``last_session`` /
     ``worker_session`` / ``canonical_session`` so a roster paints previews without N calls."""
     from hermes_cli.profiles import list_profiles
     include_sessions = is_truthy_value(params.get("include_sessions", True))
@@ -562,7 +562,7 @@ def _mirror_launch_credentials(path, params: dict) -> dict:
 
 
 def _describe_toolsets(cfg):
-    """``(toolsets, pinned_set)`` as the `alfred tools` checklist presents them (the raw registry
+    """``(toolsets, pinned_set)`` as the `plushuman tools` checklist presents them (the raw registry
     leaks platform composites and reports everything enabled without a pin)."""
     from hermes_cli.tools_config import (
         _coerce_platform_toolsets_value, _get_effective_configurable_toolsets, _get_platform_tools,
@@ -671,7 +671,7 @@ def _clean_names(values) -> set:
 
 
 def _save_toolset_pin(cfg, enabled, save_config) -> None:
-    """Pin ``platform_toolsets.cli``: the key ``_load_enabled_toolsets`` reads and ``alfred tools`` writes.
+    """Pin ``platform_toolsets.cli``: the key ``_load_enabled_toolsets`` reads and ``plushuman tools`` writes.
     An empty selection clears the pin so the platform default applies again."""
     from hermes_cli.tools_config import _save_platform_tools
 

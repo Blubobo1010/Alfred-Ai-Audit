@@ -42,8 +42,8 @@ export const ruProjects: NonNullable<TranslationOverrides['sidebar']>['projects'
   undoHide: 'Отменить',
   createFailed: 'Не удалось создать проект',
   staleBackend:
-    'Обновите бэкенд Alfred, чтобы создавать проекты — ваш бэкенд старше этого desktop-приложения (Настройки → Обновления → Бэкенд).',
-  deleteConfirm: 'Это удалит сохранённый проект из Alfred. Файлы, git-репозитории и worktrees не пострадают.',
+    'Обновите бэкенд +Human, чтобы создавать проекты — ваш бэкенд старше этого desktop-приложения (Настройки → Обновления → Бэкенд).',
+  deleteConfirm: 'Это удалит сохранённый проект из +Human. Файлы, git-репозитории и worktrees не пострадают.',
   startWork: 'Новый worktree',
   newWorktreeTitle: 'Новый worktree',
   newWorktreeDesc: 'Назовите ветку для этого worktree.',
@@ -53,7 +53,7 @@ export const ruProjects: NonNullable<TranslationOverrides['sidebar']>['projects'
   baseBranchNone: 'Ветки не найдены',
   startWorkFailed: 'Не удалось создать worktree',
   worktreeStaleBackend:
-    'Обновите бэкенд Alfred, чтобы создавать worktrees по этому удалённому соединению — он старше git worktree API.',
+    'Обновите бэкенд +Human, чтобы создавать worktrees по этому удалённому соединению — он старше git worktree API.',
   worktreeProjectLabel: 'Проект',
   worktreeProjectPlaceholder: 'Поиск проектов…',
   worktreeProjectNone: 'Нет проектов с папкой',

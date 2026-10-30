@@ -46,7 +46,7 @@ MAX_REQUEST_BYTES = 10_000_000
 
 def _require_aiohttp() -> None:
     if not AIOHTTP_AVAILABLE:
-        raise RuntimeError("aiohttp is required for `alfred proxy`. Run `alfred setup` to install it.")
+        raise RuntimeError("aiohttp is required for `plushuman proxy`. Run `plushuman setup` to install it.")
 
 
 def _json_error(status: int, message: str, code: str = "proxy_error") -> web.Response:

@@ -5,7 +5,7 @@ JSON-RPC), and starts the ACP agent server.
 
 Usage::
 
-    python -m acp_adapter.entry   # or: alfred acp / hermes-acp
+    python -m acp_adapter.entry   # or: plushuman acp / hermes-acp
 """
 
 # IMPORTANT: hermes_bootstrap must be the very first import — UTF-8 stdio
@@ -13,15 +13,15 @@ Usage::
 try:
     import hermes_bootstrap
 except ModuleNotFoundError as exc:
-    # Partial ``alfred update`` (git-reset landed, ``uv pip install -e .`` did not).
+    # Partial ``plushuman update`` (git-reset landed, ``uv pip install -e .`` did not).
     if exc.name != "hermes_bootstrap":
         raise  # the bootstrap exists but cannot load: skipping it would skip PM activation
 else:
-    # Stop a ``utils/``/``proxy/``/``ui/`` package in the launch cwd from shadowing Alfred modules.
+    # Stop a ``utils/``/``proxy/``/``ui/`` package in the launch cwd from shadowing +Human modules.
     hermes_bootstrap.harden_import_path()
 
-# `hermes-acp` runs without hermes_cli.main: repair a `alfred update` killed mid-pull here, before
-# importing anything else from the checkout (a no-op under `alfred acp`, which already did).
+# `hermes-acp` runs without hermes_cli.main: repair a `plushuman update` killed mid-pull here, before
+# importing anything else from the checkout (a no-op under `plushuman acp`, which already did).
 from hermes_cli import _early_recovery
 
 if _early_recovery.restore_interrupted_pull():
@@ -92,11 +92,11 @@ def _load_env() -> None:
 
 
 def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(prog="hermes-acp", description="Run Alfred as an ACP stdio server.")
-    parser.add_argument("--version", action="store_true", help="Print Alfred version and exit")
+    parser = argparse.ArgumentParser(prog="hermes-acp", description="Run +Human as an ACP stdio server.")
+    parser.add_argument("--version", action="store_true", help="Print +Human version and exit")
     parser.add_argument("--check", action="store_true", help="Verify ACP dependencies and adapter imports, then exit")
     parser.add_argument("--setup", action="store_true",
-                        help="Run interactive Alfred provider/model setup for ACP terminal auth")
+                        help="Run interactive +Human provider/model setup for ACP terminal auth")
     parser.add_argument("--setup-browser", action="store_true",
                         help="Prepare PM's pinned browser tools and Chromium.")
     parser.add_argument("--yes", "-y", action="store_true", dest="assume_yes",
@@ -114,7 +114,7 @@ def _run_check() -> None:
     import acp
     from acp_adapter.server import HermesACPAgent
 
-    print("Alfred ACP check OK")
+    print("+Human ACP check OK")
 
 
 def _run_setup() -> None:
@@ -122,7 +122,7 @@ def _run_setup() -> None:
 
     old_argv = sys.argv[:]
     try:
-        sys.argv = [old_argv[0] if old_argv else "alfred", "model"]
+        sys.argv = [old_argv[0] if old_argv else "plushuman", "model"]
         hermes_main()
     finally:
         sys.argv = old_argv

@@ -9,7 +9,7 @@ export const ruNotices = {
   butterbar: {
     goTo: (index, total) => `Показать уведомление ${index} из ${total}`,
     legal: {
-      before: 'Использование Alfred регулируется нашими ',
+      before: 'Использование +Human регулируется нашими ',
       terms: 'Условиями обслуживания',
       between: ' и ',
       privacy: 'Политикой конфиденциальности',

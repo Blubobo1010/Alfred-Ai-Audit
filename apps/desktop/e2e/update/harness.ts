@@ -1,12 +1,12 @@
 /**
  * Harness for the Desktop install/update suite: a REAL local install (made by
- * scripts/install.sh + `alfred desktop --build-only` in the upgrade suite's
+ * scripts/install.sh + `plushuman desktop --build-only` in the upgrade suite's
  * sandbox, see seed.py), a local bare origin standing in for GitHub, the
  * packaged app that install built, and the core suite's scripted provider.
  *
  * The one fake per external edge: the git server (a local bare repo behind a
  * url.insteadOf rewrite) and the LLM provider (e2e/core/provider.ts). Nothing
- * inside Alfred is mocked.
+ * inside +Human is mocked.
  *
  * Synchronisation rule (same as e2e/core): wait on an observable fact — a log
  * line, a pid, a file, a DOM state — with a deadline, never a fixed sleep.
@@ -144,13 +144,13 @@ export function releaseDir(facts: InstallFacts): string {
   return path.join(facts.checkout, 'apps', 'desktop', 'release', 'linux-unpacked')
 }
 
-/** The packaged executable `alfred desktop` built into the install (electron-builder names it after productName). */
+/** The packaged executable `plushuman desktop` built into the install (electron-builder names it after productName). */
 export function packagedExe(facts: InstallFacts): string {
   const dir = releaseDir(facts)
   const name = fs.readdirSync(dir).find(entry => /^hermes$/i.test(entry))
 
   if (!name) {
-    throw new Error(`no packaged Alfred executable in ${dir}: ${fs.readdirSync(dir).join(', ')}`)
+    throw new Error(`no packaged +Human executable in ${dir}: ${fs.readdirSync(dir).join(', ')}`)
   }
 
   return path.join(dir, name)
@@ -274,7 +274,7 @@ export function desktopMainProcesses(facts: InstallFacts): ProcInfo[] {
   )
 }
 
-/** The `alfred serve` backend(s) of this install (children of the backend excluded). */
+/** The `plushuman serve` backend(s) of this install (children of the backend excluded). */
 export function backendServeProcesses(facts: InstallFacts): ProcInfo[] {
   const serve = installProcesses(facts).filter(
     proc =>
@@ -382,11 +382,11 @@ export async function waitFor<T>(
 
 /** Copy of the first-run chooser / bootstrap installer overlay (the screens a healthy install must never show). */
 export const FIRST_RUN_SCREENS = [
-  'Set up Alfred Desktop',
-  'Alfred needs a one-time install',
-  'Setting up Alfred',
-  'Install Alfred locally',
-  'Use Alfred on this computer'
+  'Set up +Human Desktop',
+  '+Human needs a one-time install',
+  'Setting up +Human',
+  'Install +Human locally',
+  'Use +Human on this computer'
 ]
 
 /**

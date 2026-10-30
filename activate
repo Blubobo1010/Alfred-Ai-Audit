@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ============================================================================
-# venv-style activation of the Alfred dev environment for an interactive shell.
+# venv-style activation of the +Human dev environment for an interactive shell.
 #
 #   source ./activate       (bash / zsh, repo root)
 #   source ./activate.fish  (fish)
@@ -9,7 +9,7 @@
 # Applies the composed pm env (PATH + tool vars) to the CURRENT shell, with
 # save/restore: `deactivate` undoes exactly what activation changed.
 #
-# `alfred` becomes a shell function for this checkout. It runs only while the
+# `plushuman` becomes a shell function for this checkout. It runs only while the
 # shell is inside this worktree and refuses outside it, so a sibling worktree
 # keeps its own command. A prompt prefix names the worktree.
 #
@@ -19,7 +19,7 @@
 # Sync through setup before selecting the environment. PM owns freshness;
 # activation does not maintain a second dependency stamp. It trusts the
 # recorded tool digest instead of re-hashing every entry. `hermes pm
-# install` and `alfred update` keep that check.
+# install` and `plushuman update` keep that check.
 # ============================================================================
 _HERMES_REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Options: `--test-extras a,b` selects the test environment's runtime extras
@@ -84,7 +84,7 @@ for _hermes_k in $_hermes_keys; do
 done
 hermes_apply_env "$_hermes_script"
 
-# This checkout, not whichever `alfred` PATH finds. A function beats PATH, an
+# This checkout, not whichever `plushuman` PATH finds. A function beats PATH, an
 # alias, and a hashed command, including the MSIX execution alias.
 __HERMES_WORKTREE="$_HERMES_REPO"
 # The branch names the worktree. A checkout cannot share a branch with another.

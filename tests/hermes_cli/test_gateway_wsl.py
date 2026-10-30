@@ -73,7 +73,7 @@ class TestGatewayCommandWSLMessages:
 
     @pytest.mark.platforms("linux")
     def test_install_wsl_no_systemd(self, monkeypatch, capsys):
-        """alfred gateway install on WSL without systemd shows guidance.
+        """plushuman gateway install on WSL without systemd shows guidance.
 
         Linux-gated: WSL *is* a Linux host, and the guidance branch sits after
         the macOS/Windows arms in ``gateway_command``. Reaching it on another
@@ -96,4 +96,4 @@ class TestGatewayCommandWSLMessages:
 
         out = capsys.readouterr().out
         assert "WSL detected" in out
-        assert "alfred gateway run" in out
+        assert "plushuman gateway run" in out

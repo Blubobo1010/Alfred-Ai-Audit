@@ -1,4 +1,4 @@
-"""``alfred profile create --clone`` leaves messaging channels behind (``hermes_cli.profile_channels``).
+"""``plushuman profile create --clone`` leaves messaging channels behind (``hermes_cli.profile_channels``).
 
 Invariant, not snapshot: the clone's credential fingerprint set — computed by the gateway's own
 ``_adapter_credential_fingerprint`` through the migrate preflight — is DISJOINT from the source's,

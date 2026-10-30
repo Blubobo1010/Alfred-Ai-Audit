@@ -16,15 +16,15 @@ FIXTURE_ANTHROPIC_401 = (
     "'message': 'Your API key is invalid, blocked or out of funds...'}}"
 )
 FIXTURE_NO_PROVIDER = (
-    "agent init failed: No LLM provider configured. Run `alfred model` to select "
-    "a provider, or run `alfred setup` for first-time configuration."
+    "agent init failed: No LLM provider configured. Run `plushuman model` to select "
+    "a provider, or run `plushuman setup` for first-time configuration."
 )
 FIXTURE_NO_TOKEN = "agent init failed: No access token found for Nous Portal login."
 # Target-scope spawn refusals, verbatim from a relay ledger (the named-secret spelling is built live).
 FIXTURE_TARGET_SCOPE = (
-    "Alfred could not read this profile's API key (an internal profile-scoping bug on the "
-    "multiplexed gateway, not your configuration). Run `alfred gateway restart`; if it keeps "
-    "happening, report it with `alfred debug share`."
+    "+Human could not read this profile's API key (an internal profile-scoping bug on the "
+    "multiplexed gateway, not your configuration). Run `plushuman gateway restart`; if it keeps "
+    "happening, report it with `plushuman debug share`."
 )
 FIXTURE_TARGET_SCOPE_DETAILED = (
     "served_profile_child_env(inherit_credentials=True) called with no target home and no profile "

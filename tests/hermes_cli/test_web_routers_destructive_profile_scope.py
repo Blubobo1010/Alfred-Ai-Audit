@@ -116,7 +116,7 @@ class _StubDB:
 def seams(monkeypatch):
     """Record the three off-process effects these routes have, and neutralise them.
 
-    ``spawn`` = the argv of every backgrounded ``alfred`` action, ``db`` = the profile every
+    ``spawn`` = the argv of every backgrounded ``plushuman`` action, ``db`` = the profile every
     session-store open names, ``pool_home`` = the home the credential-pool body resolves.
     A route that reaches any of them after a 400 shows up as a non-empty list.
     """
@@ -254,7 +254,7 @@ def test_named_profile_is_the_only_one_touched(client, homes, seams, tmp_path, r
     assert not happened(homes["launch"]), f"{route} also hit the launch profile"
 
 
-# Routes whose effect is a backgrounded ``alfred`` subprocess: the profile must reach its argv,
+# Routes whose effect is a backgrounded ``plushuman`` subprocess: the profile must reach its argv,
 # because nothing else in that process knows which home the request meant.
 SPAWNING = {
     "checkpoints-prune": DESTRUCTIVE["checkpoints-prune"],
@@ -313,7 +313,7 @@ def test_a_request_for_another_profile_arms_the_guard(client, homes):
 def test_unnamed_profile_still_means_the_launch_profile_on_a_single_profile_host(
     client, homes, monkeypatch, tmp_path
 ):
-    """A plain ``alfred serve`` has nothing to confuse: `curl` with no profile is unchanged."""
+    """A plain ``plushuman serve`` has nothing to confuse: `curl` with no profile is unchanged."""
     from agent.secret_scope import is_multiplex_active
     from hermes_cli import profiles
     from tui_gateway.launch_profile_policy import activate_multi_profile_hosting_eagerly

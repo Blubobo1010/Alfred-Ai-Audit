@@ -1157,7 +1157,7 @@ def _(rid, params: dict) -> dict:
         return err
     current = str(params.get("current_session_id") or "")
     # ``_finalized`` sessions linger until the reaper pops them (they inflated the footer). Do NOT filter on
-    # the WS-detached sentinel: detached is attachable until grace-reap, and ``alfred --tui`` rides stdio.
+    # the WS-detached sentinel: detached is attachable until grace-reap, and ``plushuman --tui`` rides stdio.
     # Keep insertion order (focused must not jump).
     rows = [_session_live_item(sid, session, current) for sid, session in snapshot if not session.get("_finalized")]
     return _ok(rid, {"sessions": rows})
@@ -1994,7 +1994,7 @@ def _(rid, params: dict, session: dict) -> dict:
     )
     project = _project_info_for_cwd(_display_session_cwd(session))
     lines = [
-        "Alfred TUI Status", "", *status_lines(fields, "session_id", "path"),
+        "+Human TUI Status", "", *status_lines(fields, "session_id", "path"),
         *([f"Project: {project['name']}"] if project else []),
         *status_lines(fields, "title", "model", "created", "last_activity", "tokens", "agent_running")]
     return _ok(rid, {"output": "\n".join(lines)})

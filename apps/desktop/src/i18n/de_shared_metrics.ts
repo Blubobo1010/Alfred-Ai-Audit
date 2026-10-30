@@ -2,7 +2,7 @@ export const deSharedMetrics = {
   consentTitle: 'Nutzungsstatistiken teilen?',
   dialogTitle: 'Nutzungsstatistiken',
   consentBody:
-    'Alfred kann zählen, wie Sie es nutzen: Sitzungsdauer, welche Modelle und Tools laufen und wann etwas fehlschlägt. Ihre Nachrichten, Dateien, Pfade oder Fehlertexte werden nie aufgezeichnet.',
+    '+Human kann zählen, wie Sie es nutzen: Sitzungsdauer, welche Modelle und Tools laufen und wann etwas fehlschlägt. Ihre Nachrichten, Dateien, Pfade oder Fehlertexte werden nie aufgezeichnet.',
   whatIsCollected: 'Was gezählt wird',
   collectedActivity: 'Sitzungen: Dauer, Ergebnis, Fehlertyp, aktive Zeit pro Tag',
   collectedModels: 'Modelle: welche, Token-Summen',
@@ -13,9 +13,9 @@ export const deSharedMetrics = {
   collectedReliability: 'App-Zustand: Abstürze, Start- und Antwortgeschwindigkeit, Updates, Messaging-Verbindungen',
   collectedUsage:
     'Agentenqualität: verfehlte Bearbeitungen, fehlerhafte Tool-Aufrufe, festgefahrene Schleifen, Kosten pro Aufgabe',
-  collectedMachine: 'Gerät: Betriebssystem, RAM-Bereich, GPU-Typ, Alfred-Version, Nutzung lokaler Modelle',
+  collectedMachine: 'Gerät: Betriebssystem, RAM-Bereich, GPU-Typ, +Human-Version, Nutzung lokaler Modelle',
   sending:
-    'Statistiken bleiben auf diesem Computer, sofern Sie nicht „Teilen“ wählen. Geteilte Statistiken gehen einmal täglich mit einer zufälligen ID für dieses Profil an Nous. Abgesehen von einem einmaligen Hinweis, dass Alfred installiert wurde (erst nach Ihrer Zustimmung gezählt), werden Statistiken von vor Ihrer Zustimmung nie gesendet. Sie können das jederzeit in den Einstellungen ändern.',
+    'Statistiken bleiben auf diesem Computer, sofern Sie nicht „Teilen“ wählen. Geteilte Statistiken gehen einmal täglich mit einer zufälligen ID für dieses Profil an Nous. Abgesehen von einem einmaligen Hinweis, dass +Human installiert wurde (erst nach Ihrer Zustimmung gezählt), werden Statistiken von vor Ihrer Zustimmung nie gesendet. Sie können das jederzeit in den Einstellungen ändern.',
   readDocs: 'Alle Details lesen',
   share: 'Mit Nous teilen',
   local: 'Auf diesem Computer behalten',
@@ -27,7 +27,7 @@ export const deSharedMetrics = {
   sendLabel: 'Nutzungsstatistiken mit Nous teilen',
   sendDesc:
     'Sendet Statistiken einmal täglich mit einer zufälligen ID für dieses Profil an Nous. Abgesehen vom einmaligen Installationshinweis werden Statistiken von vor Ihrer Zustimmung nie gesendet. Erfordert aktive Erfassung.',
-  unavailable: 'Aktualisieren Sie das Alfred-Backend, um diese Einstellung zu ändern.',
+  unavailable: 'Aktualisieren Sie das +Human-Backend, um diese Einstellung zu ändern.',
   stripBody: 'Nur Zählwerte. Niemals Ihre Nachrichten oder Dateien.',
   stripReaskBody:
     'Wir fragen noch einmal: Eine frühere Version konnte „Nein danke“ speichern, bevor Sie diese Frage gesehen haben.',

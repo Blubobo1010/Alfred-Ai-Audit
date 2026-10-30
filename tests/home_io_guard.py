@@ -15,13 +15,13 @@ _INTERPRETER_PREFIXES = tuple({
     Path(p).resolve() for p in (sys.prefix, sys.base_prefix, sys.exec_prefix, sys.base_exec_prefix)
 } | {
     # A PM-activated developer shell runs sys.prefix's python against a dependency generation
-    # whose site-packages sits under the (real) Alfred home; third-party imports from it are the
-    # interpreter's installation, not Alfred state.
+    # whose site-packages sits under the (real) +Human home; third-party imports from it are the
+    # interpreter's installation, not +Human state.
     Path(p).resolve() for p in sys.path if p and Path(p).name in ("site-packages", "dist-packages")
 } | {
     # The default install checks the repo out INSIDE the home (install.sh:
     # INSTALL_DIR=$HERMES_HOME/hermes-agent). Reading test data, sources for tracebacks, or the
-    # checkout's own .venv is not Alfred state; without this every run from a default install
+    # checkout's own .venv is not +Human state; without this every run from a default install
     # trips on its first traceback.
     Path(__file__).resolve().parent.parent,
 })
@@ -88,14 +88,14 @@ class HomeIOGuard:
                 return
             # ``shutil.which`` stats/accesses ``<PATH entry>/<name>``. A developer shell puts
             # PM's tool store (~/.hermes/tools/...) on PATH; probing an executable there is
-            # command lookup, not reading Alfred state. CI has no such entries.
+            # command lookup, not reading +Human state. CI has no such entries.
             if metadata:
                 path = os.environ.get("PATH", "")
                 cwd = os.getcwd() if self._relative_path_entries(path) else None
                 if os.path.dirname(absolute) in self._path_entries(path, cwd):
                     return
             # The interpreter's own installation (a PM-managed python under ~/.hermes/tools):
-            # stdlib source reads (linecache, traceback) are not Alfred state either, nor is
+            # stdlib source reads (linecache, traceback) are not +Human state either, nor is
             # realpath() walking up through its ancestors.
             for prefix in _INTERPRETER_PREFIX_STRS:
                 if _within(absolute, prefix) or (metadata and _contains(absolute, prefix)):
@@ -131,7 +131,7 @@ class HomeIOGuard:
                 import pytest
                 # pytest.fail, not AssertionError: removal helpers catch Exception and would log
                 # the refusal as a warning while the test passed.
-                pytest.fail(f"TEST BUG: changing the REAL installed Alfred desktop app: {value}\n"
+                pytest.fail(f"TEST BUG: changing the REAL installed +Human desktop app: {value}\n"
                             "Stub hermes_cli.gui_uninstall.packaged_gui_app_paths to a temporary path.")
         return resolved
 

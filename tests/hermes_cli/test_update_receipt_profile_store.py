@@ -54,6 +54,6 @@ def test_named_profile_sees_update_and_pm_receipts_in_both_directions(tmp_path):
 
     # The updater still writes the root store the Desktop and hand-off scripts read.
     assert any(result["update_id"] in name for name in result["root_archives"])
-    assert result["pm_sees_update"] == result["update_id"]  # `alfred -p foo pm status`
+    assert result["pm_sees_update"] == result["update_id"]  # `plushuman -p foo pm status`
     assert result["updater_sees_pm"] == "sync"  # read_latest_receipt() consumers
     assert result["old_archive"] == "old"  # receipts written to the profile store before the move

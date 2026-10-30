@@ -1,8 +1,8 @@
 name: spotify-desktop
 repo: https://github.com/cruzlxyz/hermes-spotify-desktop
 sha: 9b564d53c219f9962404dee5f84d3bbb47683897
-description: 'Spotify Connect remote for Alfred Desktop — status-bar mini player (now playing,
-  transport, volume, devices, search, playlists, queue) reusing the Alfred Spotify login
+description: 'Spotify Connect remote for +Human Desktop — status-bar mini player (now playing,
+  transport, volume, devices, search, playlists, queue) reusing the +Human Spotify login
   (Spotify Premium required for playback control). Unified agent+desktop
   package: Electron status-bar player plus a dashboard-API backend (desktop-focused, no web UI).
   No agent tools; config via plugins.entries.spotify-desktop.settings (poll intervals).'
@@ -18,4 +18,4 @@ capabilities:
   provides_middleware: []
   requires_env: []
 known_issues:
-  - "On Alfred releases where Spotify moved to the `spotify` plugin, the player needs spotify-desktop with cruzlxyz/hermes-spotify-desktop#2 plus `alfred plugins install spotify` (login: `alfred spotify login`); this pin predates that change."
+  - "On +Human releases where Spotify moved to the `spotify` plugin, the player needs spotify-desktop with cruzlxyz/hermes-spotify-desktop#2 plus `plushuman plugins install spotify` (login: `plushuman spotify login`); this pin predates that change."

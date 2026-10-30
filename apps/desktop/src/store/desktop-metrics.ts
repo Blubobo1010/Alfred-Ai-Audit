@@ -577,7 +577,7 @@ export function completeFlow(flow: DesktopFlowId): void {
 
 /** The primary gateway socket dropped after a healthy boot. Classified a few
  *  seconds later: a backend process exit around it makes it `backend_exit`, a
- *  gateway switch starting in the window (Restart Alfred recycles the backend
+ *  gateway switch starting in the window (Restart +Human recycles the backend
  *  before the switch flag rises) cancels it. */
 export function noteBackendDrop(reason: 'timeout' | null, now = Date.now()): void {
   if (pendingDrop || $desktopMetricsGate.get() !== 'on') {
@@ -738,7 +738,7 @@ export function noteMessageSent(mode: DesktopMode = $workspaceMode.get()): void 
   }
 }
 
-/** Configured bots (Bot Mode roster = Alfred profiles) — a count, never names. */
+/** Configured bots (Bot Mode roster = +Human profiles) — a count, never names. */
 export function setDesktopBotCount(count: number): void {
   botCount = Math.max(0, Math.floor(finite(count)))
   withState(current => {

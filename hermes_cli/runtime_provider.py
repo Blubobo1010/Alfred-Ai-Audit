@@ -304,7 +304,7 @@ def _maybe_apply_codex_app_server_runtime(*, provider: str, api_mode: str, model
 # ── base_url / credential helpers ──────────────────────────────────────────────────────────
 
 _ANTHROPIC_DEFAULT_BASE_URL = "https://api.anthropic.com"
-_NO_ANTHROPIC_CREDENTIALS_MSG = ("No Anthropic credentials found. Run 'alfred auth add anthropic' to sign in, "
+_NO_ANTHROPIC_CREDENTIALS_MSG = ("No Anthropic credentials found. Run 'plushuman auth add anthropic' to sign in, "
                                  "or set ANTHROPIC_TOKEN / ANTHROPIC_API_KEY.")
 
 
@@ -368,7 +368,7 @@ def _anthropic_token_or_raise(*, model: str | None = None) -> str:
         # user to re-authenticate would send them chasing a cooldown that lifts on its own.
         if model and resolve_anthropic_token():
             raise AuthError(f"Anthropic credentials are rate-limited for {model}; "
-                            "other Claude models remain available (see `alfred auth list`).")
+                            "other Claude models remain available (see `plushuman auth list`).")
         raise AuthError(_NO_ANTHROPIC_CREDENTIALS_MSG)
     return token
 
@@ -592,7 +592,7 @@ def _openrouter_should_use_pool(requested_provider, model_cfg, explicit_api_key,
     cfg_base_url = str(model_cfg.get("base_url") or "").strip()
     env_base_urls = get_secret_str("OPENAI_BASE_URL", "").strip() or get_secret_str("OPENROUTER_BASE_URL", "").strip()
     # A config base_url under provider: openrouter is a mirror only when it is NOT the canonical
-    # OpenRouter host — `alfred setup` persists https://openrouter.ai/api/v1 for plain installs,
+    # OpenRouter host — `plushuman setup` persists https://openrouter.ai/api/v1 for plain installs,
     # and treating that as custom would drop the auth.json pool (empty key).
     cfg_is_mirror = bool(cfg_base_url) and (
         _cfg_provider(model_cfg) in {"auto", "custom"}
@@ -604,7 +604,7 @@ def _openrouter_should_use_pool(requested_provider, model_cfg, explicit_api_key,
 
 def _refresh_nous_pool_entry(pool: CredentialPool, entry: Any, pool_api_key: str):
     """Nous pool entries carry the agent_key (an invoke JWT) which the pool does not refresh on
-    selection (avoids network calls in `alfred auth list`); refresh here before falling back to
+    selection (avoids network calls in `plushuman auth list`); refresh here before falling back to
     singleton auth resolution. Returns (entry, pool_api_key) — key "" when still unusable."""
     min_ttl = _nous_min_key_ttl()
     if _nous_entry_key_usable(entry, min_ttl):
@@ -927,7 +927,7 @@ def _resolve_vertex_runtime(requested_provider: str) -> dict[str, Any]:
         raise AuthError("Vertex AI credentials could not be resolved. Vertex uses OAuth2 (not a static API key): provide a "
                         "service-account JSON via GOOGLE_APPLICATION_CREDENTIALS (or VERTEX_CREDENTIALS_PATH) in ~/.hermes/.env, "
                         "or run 'gcloud auth application-default login' for ADC. Set the GCP project/region under vertex: in "
-                        "config.yaml if they aren't embedded in the credentials. Run `alfred setup` to install Vertex support.")
+                        "config.yaml if they aren't embedded in the credentials. Run `plushuman setup` to install Vertex support.")
     return _runtime("vertex", "chat_completions", base_url.rstrip("/"), token, source="vertex-oauth", requested_provider=requested_provider)
 
 

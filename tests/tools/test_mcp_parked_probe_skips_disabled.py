@@ -95,7 +95,7 @@ def test_parked_self_probe_skips_disabled_or_deleted_entry(monkeypatch, tmp_path
             f"(transport_calls={state['transport_calls']})"
         )
 
-        # An explicit reconnect (manual refresh, `alfred mcp login`) still revives
+        # An explicit reconnect (manual refresh, `plushuman mcp login`) still revives
         # regardless of the config gate.
         task._reconnect_event.set()
         revived_at = state["transport_calls"]

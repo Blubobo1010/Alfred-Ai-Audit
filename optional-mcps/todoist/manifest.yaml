@@ -7,10 +7,10 @@ connector_slug: todoist
 description: Manage Todoist tasks and projects.
 source: https://www.todoist.com/help/articles/todoist-mcp-server
 
-# Official vendor-hosted remote MCP (URL-only — Alfred never spawns a local
+# Official vendor-hosted remote MCP (URL-only — +Human never spawns a local
 # process for this entry). Native OAuth 2.1 + Dynamic Client Registration
 # (verified live: RFC 9728 protected-resource metadata -> AS metadata with
-# registration_endpoint); Alfred's MCP client + mcp_oauth_manager handle
+# registration_endpoint); +Human's MCP client + mcp_oauth_manager handle
 # discovery, PKCE, token exchange, and refresh.
 
 transport:
@@ -38,6 +38,6 @@ suggest:
     - todoist.com
 
 post_install: |
-  On first connection Alfred opens a browser to authorize with
-  Todoist (or run `alfred mcp login todoist`). Approve access,
+  On first connection +Human opens a browser to authorize with
+  Todoist (or run `plushuman mcp login todoist`). Approve access,
   then restart the session so tools load.

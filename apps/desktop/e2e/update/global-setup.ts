@@ -4,8 +4,8 @@ import * as path from 'node:path'
 import { seedInstall, UPDATE_ROOT } from './harness'
 
 /**
- * Refuse to run where an update could reach the developer's own Alfred. The
- * cells run `alfred update --gateway`, which stops gateways it can see; CI
+ * Refuse to run where an update could reach the developer's own +Human. The
+ * cells run `plushuman update --gateway`, which stops gateways it can see; CI
  * runners have none, and locally the suite must run in its own PID namespace
  * (e.g. `bwrap --dev-bind / / --unshare-pid --proc /proc ...` with the user
  * bus hidden), where PID 1 is not the host's init.
@@ -25,7 +25,7 @@ function assertIsolated(): void {
 
   if (init === 'systemd' || init === 'init') {
     throw new Error(
-      'The Desktop update suite runs real `alfred update --gateway` hand-offs. Run it on CI, or locally inside ' +
+      'The Desktop update suite runs real `plushuman update --gateway` hand-offs. Run it on CI, or locally inside ' +
         'its own PID namespace with the user bus hidden (PID 1 here is the host init).'
     )
   }

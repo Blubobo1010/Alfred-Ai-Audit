@@ -1,9 +1,9 @@
-"""``auth.adopt_external_logins: false`` keeps Alfred off the Claude Code login (#113023).
+"""``auth.adopt_external_logins: false`` keeps +Human off the Claude Code login (#113023).
 
-Claude Code's OAuth refresh token is single-use: once Alfred borrows and refreshes it, Alfred and
+Claude Code's OAuth refresh token is single-use: once +Human borrows and refreshes it, +Human and
 Claude Code hold one token family and whichever refreshes first logs the other out. With the opt-out
-set, Alfred must neither read nor refresh ``~/.claude/.credentials.json``, must drop the pool row an
-earlier adopting process persisted, and must say so in ``alfred auth list``.
+set, +Human must neither read nor refresh ``~/.claude/.credentials.json``, must drop the pool row an
+earlier adopting process persisted, and must say so in ``plushuman auth list``.
 """
 from __future__ import annotations
 

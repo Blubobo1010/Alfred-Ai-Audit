@@ -45,7 +45,7 @@ def catalog(request, monkeypatch):
 
 def test_cli_provider_search_finds_matches_beyond_global_window(catalog, capsys):
     source, others, wanted = catalog
-    parser = argparse.ArgumentParser(prog="alfred")
+    parser = argparse.ArgumentParser(prog="plushuman")
     build_skills_parser(parser.add_subparsers(dest="command"), cmd_skills=cli_hub.skills_command)
 
     for query in ("gpu", ""):

@@ -127,7 +127,7 @@ def _server_declarations(
 
 
 def _server_trust(manifest: Mapping[str, Any], mcp_servers: Mapping[str, dict[str, Any]]) -> dict[str, str]:
-    """Servers the package asks Alfred to gate: ``extensions.com.blubobo1010.alfred.servers.<name>.trust``.
+    """Servers the package asks +Human to gate: ``extensions.com.blubobo1010.alfred.servers.<name>.trust``.
 
     The package may only narrow access. ``untrusted`` makes every write-capable call to that server
     ask the user first (the native ``trust: untrusted`` gate); ``full`` is the default and so changes

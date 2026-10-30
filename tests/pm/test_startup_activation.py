@@ -107,7 +107,7 @@ def test_startup_uses_one_verdict(checked_store, monkeypatch, capsys, caplog, su
                      "_try_termux_fast_tui_launch", "_try_termux_fast_cli_launch",
                      "_try_fast_serve_launch", "_try_fast_chat_launch"):
             monkeypatch.setattr(main, name, lambda: None)
-        monkeypatch.setattr(sys, "argv", ["alfred", "--help"])
+        monkeypatch.setattr(sys, "argv", ["plushuman", "--help"])
 
         def start():
             with pytest.raises(SystemExit) as exit_info:

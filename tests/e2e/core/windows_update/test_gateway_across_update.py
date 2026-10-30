@@ -1,10 +1,10 @@
-"""A running gateway across ``alfred update`` on native Windows.
+"""A running gateway across ``plushuman update`` on native Windows.
 
 Failure class: gateway hand-off. A user (or the Desktop / login item) hosts
-``alfred gateway run`` through the published ``hermes.exe``; ``alfred update`` must stop
+``plushuman gateway run`` through the published ``hermes.exe``; ``plushuman update`` must stop
 it, update the checkout, relaunch it on the new commit, and leave it where every later
-command can find it: ``alfred gateway status``, ``alfred gateway stop`` and the next
-``alfred update``'s own pause step.
+command can find it: ``plushuman gateway status``, ``plushuman gateway stop`` and the next
+``plushuman update``'s own pause step.
 """
 
 from __future__ import annotations
@@ -87,7 +87,7 @@ def test_launcher_started_gateway_is_visible_before_update(journey: Journey) -> 
     m, state, status = journey.machine, journey["state_before"], journey["status_before"]
     line = _status_line(status.stdout)
     assert status.returncode == 0 and line.startswith("✓") and str(state.get("pid")) in line, fail_with(
-        m, f"the launcher-started gateway (pid {state.get('pid')}) is invisible to `alfred gateway status` "
+        m, f"the launcher-started gateway (pid {state.get('pid')}) is invisible to `plushuman gateway status` "
            f"before any update: {_status_line(status.stdout)!r}", status)
 
 
@@ -96,7 +96,7 @@ def test_update_with_running_gateway_succeeds(journey: Journey) -> None:
     journey["state_before"]  # the precondition: a gateway was running when the update began
     failure = _RESTART_FAILURE.search(run.stdout)
     assert run.returncode == 0 and failure is None, fail_with(
-        m, f"alfred update with a running gateway reported a failed gateway restart "
+        m, f"plushuman update with a running gateway reported a failed gateway restart "
            f"(rc={run.returncode}): {failure.group(0).strip() if failure else '<no restart message>'}", run)
 
 
@@ -112,7 +112,7 @@ def test_gateway_discoverable_after_update(journey: Journey) -> None:
     pid, pidfile = int(state.get("pid") or 0), journey["pidfile_after"]
     line = _status_line(status.stdout)
     assert status.returncode == 0 and str(pid) in line and pidfile, fail_with(
-        m, f"after update the serving gateway (pid {pid}) is invisible: `alfred gateway status` says "
+        m, f"after update the serving gateway (pid {pid}) is invisible: `plushuman gateway status` says "
            f"{line!r}; gateway.pid present={pidfile}", status)
 
 
@@ -121,7 +121,7 @@ def test_next_update_is_not_blocked(journey: Journey) -> None:
     journey["state_after"]  # a gateway was running (the relaunched one)
     blocked = "Could not map Windows gateway PIDs" in run.stdout
     assert run.returncode == 0 and not blocked, fail_with(
-        m, f"the next alfred update is blocked at the gateway pause step (rc={run.returncode}, "
+        m, f"the next plushuman update is blocked at the gateway pause step (rc={run.returncode}, "
            f"'Could not map Windows gateway PIDs' printed={blocked})", run)
 
 
@@ -130,5 +130,5 @@ def test_gateway_stop_after_update(journey: Journey) -> None:
     pid = int(state.get("pid") or 0)
     assert pid, fail_with(m, f"no gateway recorded before stop: {state}")
     assert journey["stopped"], fail_with(
-        m, f"after update `alfred gateway stop` left the serving gateway (pid {pid}) running", stop)
-    assert stop.returncode == 0, fail_with(m, f"alfred gateway stop exited {stop.returncode}", stop)
+        m, f"after update `plushuman gateway stop` left the serving gateway (pid {pid}) running", stop)
+    assert stop.returncode == 0, fail_with(m, f"plushuman gateway stop exited {stop.returncode}", stop)

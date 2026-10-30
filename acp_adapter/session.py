@@ -1,4 +1,4 @@
-"""ACP session manager — maps ACP sessions to Alfred AIAgent instances.
+"""ACP session manager — maps ACP sessions to +Human AIAgent instances.
 
 Sessions are persisted to the shared SessionDB (``~/.hermes/state.db``) so they
 survive process restarts and appear in ``session_search``; ``load_session`` /
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 def _translate_acp_cwd(cwd: str) -> str:
     """Translate Windows ACP cwd values (``E:\\Projects``, ``\\\\wsl.localhost\\``) to POSIX form
-    when Alfred runs in WSL so agents, tools, and persisted sessions agree; no-op elsewhere."""
+    when +Human runs in WSL so agents, tools, and persisted sessions agree; no-op elsewhere."""
     return translate_cwd_for_wsl_backend(str(cwd))
 
 
@@ -130,7 +130,7 @@ def _first_user_preview(history: list[dict[str, Any]], default: str) -> str:
 
 @dataclass
 class SessionState:
-    """Tracks per-session state for an ACP-managed Alfred agent."""
+    """Tracks per-session state for an ACP-managed +Human agent."""
 
     session_id: str
     agent: Any  # AIAgent instance
@@ -154,7 +154,7 @@ class SessionState:
 
 
 class SessionManager:
-    """Thread-safe manager for ACP sessions backed by Alfred AIAgent instances.
+    """Thread-safe manager for ACP sessions backed by +Human AIAgent instances.
 
     Sessions are held in-memory for fast access **and** persisted to the shared
     SessionDB so they survive restarts and are searchable via ``session_search``."""
@@ -570,7 +570,7 @@ class SessionManager:
         try:
             agent = AIAgent(**kwargs)
         except Exception as exc:
-            # The bare-AIAgent fallback dies with "No LLM provider configured. Run `alfred setup`" on a
+            # The bare-AIAgent fallback dies with "No LLM provider configured. Run `plushuman setup`" on a
             # machine that is configured and was working a call earlier; the swallowed resolution
             # failure (revoked OAuth, disabled provider, ...) is the actionable error (#91090).
             if resolve_error is not None:

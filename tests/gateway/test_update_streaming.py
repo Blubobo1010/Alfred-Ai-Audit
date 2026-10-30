@@ -1,6 +1,6 @@
 """Tests for /update live streaming, prompt forwarding, and gateway IPC.
 
-Tests the new --gateway mode for alfred update, including:
+Tests the new --gateway mode for plushuman update, including:
 - _gateway_prompt() file-based IPC
 - _watch_update_progress() output streaming and prompt detection
 - Message interception for update prompt responses
@@ -88,7 +88,7 @@ class TestGatewayPrompt:
 # ---------------------------------------------------------------------------
 
 class TestUpdateCommandGatewayFlag:
-    """Verify the gateway spawns alfred update --gateway."""
+    """Verify the gateway spawns plushuman update --gateway."""
 
     @pytest.mark.asyncio
     @pytest.mark.platforms("linux")

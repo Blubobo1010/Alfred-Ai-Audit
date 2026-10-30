@@ -1,6 +1,6 @@
-"""Driver-side spawn interception for alfred desktop E2E legs.
+"""Driver-side spawn interception for plushuman desktop E2E legs.
 
-Pre-PM ``alfred`` is a venv console script that imports this module at
+Pre-PM ``plushuman`` is a venv console script that imports this module at
 startup via ``PYTHONPATH``. PM launchers use -I and instead load it via
 the driver-side pm-launch.py before the installed bootstrap. With an
 explicit env-var opt-in the module wraps
@@ -32,7 +32,7 @@ tag's own hermes_cli/main.py):
 
   3ddf82fe249+ on Windows: the packaged launch is a detached
                subprocess.Popen(launch_command, creationflags=...) and
-               ``alfred desktop`` exits without waiting for it
+               ``plushuman desktop`` exits without waiting for it
 
 Every shape passes an explicit ``env=`` kwarg, so both ``subprocess.run``
 and ``subprocess.Popen`` are intercepted. npm BUILD calls (``npm run
@@ -72,8 +72,8 @@ if _SPEC_PATH:
                 return "source"
             return ""
         # Packaged shape: argv[0] is the packaged app executable under
-        # apps/desktop/release/ (win-unpacked/Alfred.exe, linux-unpacked/...,
-        # mac*/Alfred.app/Contents/MacOS/...).
+        # apps/desktop/release/ (win-unpacked/+Human.exe, linux-unpacked/...,
+        # mac*/+Human.app/Contents/MacOS/...).
         first = tokens[0].replace("\\", "/")
         if "apps/desktop/release/" in first:
             return "packaged"

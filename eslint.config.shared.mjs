@@ -1,5 +1,5 @@
 /**
- * Shared ESLint flat config for all Alfred TS workspaces.
+ * Shared ESLint flat config for all +Human TS workspaces.
  *
  * Usage in a workspace's eslint.config.mjs:
  *

@@ -195,7 +195,7 @@ def role_reader(a: dict, out: Out) -> int:
 
 
 def role_churn(a: dict, out: Out) -> int:
-    """`alfred sessions list` / doctor / cron-guard shape: open, read, close — ``iterations`` times in one
+    """`plushuman sessions list` / doctor / cron-guard shape: open, read, close — ``iterations`` times in one
     process, alternating the production SessionDB with a bare sqlite3 opener (sqlite3 shell, backup tool).
     The fd count must not grow with the number of cycles."""
     from hermes_state import SessionDB
@@ -355,7 +355,7 @@ def role_agent(a: dict, out: Out) -> int:
 
 
 def role_cli(a: dict, out: Out) -> int:
-    """``alfred <argv>``: ``hermes_cli.main`` run as ``__main__``, i.e. ``python -m hermes_cli.main <argv>``."""
+    """``plushuman <argv>``: ``hermes_cli.main`` run as ``__main__``, i.e. ``python -m hermes_cli.main <argv>``."""
     import runpy
 
     sys.argv = ["hermes", *a["argv"]]

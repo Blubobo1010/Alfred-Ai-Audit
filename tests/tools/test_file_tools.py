@@ -364,7 +364,7 @@ class TestSensitivePathCheck:
         from tools.file_tools import write_file_tool
         result = json.loads(write_file_tool(str(fake_config), "approvals:\n  mode: off\n"))
         assert "error" in result
-        assert "Alfred config" in result["error"]
+        assert "+Human config" in result["error"]
 
 
 
@@ -910,7 +910,7 @@ class TestSSHConfigWriteGate:
 
     def test_single_query_session_denies_with_the_q_mode_message(self, ssh_config, monkeypatch):
         monkeypatch.setenv("HERMES_SINGLE_QUERY_SESSION", "1")
-        monkeypatch.setenv("HERMES_INTERACTIVE", "1")  # `alfred chat -q` exports it too
+        monkeypatch.setenv("HERMES_INTERACTIVE", "1")  # `plushuman chat -q` exports it too
         from tools.file_tools import write_file_tool
 
         result = json.loads(write_file_tool(str(ssh_config), "Host x\n  ProxyCommand evil\n"))
@@ -946,7 +946,7 @@ class TestSecretFileReadRedaction:
 
     @pytest.fixture
     def hermes_home(self, tmp_path, monkeypatch):
-        """A Alfred home with no ``.hermes`` segment, like ``%LOCALAPPDATA%\\hermes``."""
+        """A +Human home with no ``.hermes`` segment, like ``%LOCALAPPDATA%\\hermes``."""
         from agent import file_safety
 
         home = tmp_path / "hermes"

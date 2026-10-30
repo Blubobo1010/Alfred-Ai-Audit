@@ -1,4 +1,4 @@
-"""``alfred gui`` under WSLg selects the installed Mesa D3D12 driver before Electron spawns
+"""``plushuman gui`` under WSLg selects the installed Mesa D3D12 driver before Electron spawns
 its GPU process (#106117) — and never overrides an explicit Mesa choice or fires off-WSL."""
 
 import argparse

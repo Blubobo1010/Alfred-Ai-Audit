@@ -27,7 +27,7 @@ logger = logging.getLogger("hermes_cli.plugins")
 _VALID_PLUGIN_KINDS: set[str] = {"standalone", "backend", "exclusive", "platform", "model-provider"}
 
 # Unknown plugin.yaml fields are forward-compat surface: warn (debug for v1 files, warning for v2+)
-# and continue loading. ``capabilities``/``emits``/``listens``/``alfred``/``depends`` are reserved.
+# and continue loading. ``capabilities``/``emits``/``listens``/``plushuman``/``depends`` are reserved.
 # ── Manifest v2 (#64165) parsing helpers ──────────────────────────────────
 _KNOWN_MANIFEST_FIELDS: set[str] = {
     "name", "version", "description", "author", "requires_env", "provides_tools", "provides_hooks",
@@ -38,7 +38,7 @@ _KNOWN_MANIFEST_FIELDS: set[str] = {
     "requires_hermes", "python_runtime", "provides_locales", "requires_auth",
 }
 
-# Highest manifest schema version this Alfred understands.
+# Highest manifest schema version this +Human understands.
 SUPPORTED_MANIFEST_VERSION = 2
 
 _CONFIG_SCHEMA_TYPES: dict[str, tuple] = {
@@ -136,7 +136,7 @@ def _parse_manifest_v2_fields(data: Mapping, key: str) -> dict[str, Any]:
                        "Plugin %s: manifest_version %r is not an integer; treating as 1", 1)
     if mv > SUPPORTED_MANIFEST_VERSION:
         logger.warning(
-            "Plugin %s: manifest_version %d is newer than this Alfred "
+            "Plugin %s: manifest_version %d is newer than this +Human "
             "supports (%d); loading anyway and ignoring unknown fields", key, mv, SUPPORTED_MANIFEST_VERSION,
         )
     raw_api = data.get("api_version")
@@ -240,7 +240,7 @@ def resolve_plugin_load_order(manifests: Mapping[str, PluginManifest]) -> list[s
                 logger.warning(
                     "Plugin %s requires plugin '%s' which is not enabled/"
                     "installed; loading anyway (probe availability at runtime "
-                    "via ctx.has_plugin). Run `alfred plugins enable %s` if it is installed.",
+                    "via ctx.has_plugin). Run `plushuman plugins enable %s` if it is installed.",
                     k, dep_id, dep_id,
                 )
             elif resolved == k:
@@ -356,10 +356,10 @@ class PluginManifest:
     # <category>.provider; own discovery, general scanner skips) | ``platform`` (gateway adapter; bundled
     # auto-load, user-installed gated as untrusted code).
     kind: str = "standalone"
-    # Path-derived registry key used by plugins.enabled/disabled and `alfred plugins list`: ``disk-cleanup``
+    # Path-derived registry key used by plugins.enabled/disabled and `plushuman plugins list`: ``disk-cleanup``
     # for a flat plugin, ``image_gen/openai`` for a category plugin. Empty -> name.
     key: str = ""
-    # Alfred version requirement (``">=0.19"``, comma-separated clauses allowed). Unsatisfied plugins are
+    # +Human version requirement (``">=0.19"``, comma-separated clauses allowed). Unsatisfied plugins are
     # recorded with an error and skipped before import — see ``requires_hermes_error``.
     requires_hermes: str = ""
     portable: bool = False
@@ -376,7 +376,7 @@ class PluginManifest:
     # Advisory deps [{"id", "version_range"}]: missing ones warn but load; they order the load.
     requires_plugins: list[dict[str, Any]] = field(default_factory=list)
     # Declared pip deps — VALIDATED AND SURFACED ONLY, never auto-installed.
-    # VALIDATED AND SURFACED ONLY — Alfred never auto-installs these (isolation design for the install seam
+    # VALIDATED AND SURFACED ONLY — +Human never auto-installs these (isolation design for the install seam
     # is a deferred follow-up; see #64165 round-2 review and #15220).
     python_dependencies: list[str] = field(default_factory=list)
     # Schema for plugins.entries.<id>.settings; mismatches warn, never fail.
@@ -435,7 +435,7 @@ _VERSION_COMPARATOR_RE = re.compile(r"^\s*(>=|<=|==|!=|>|<)\s*(.+?)\s*$")
 
 
 def running_hermes_version() -> str:
-    """Base release version of the Alfred code that is running."""
+    """Base release version of the +Human code that is running."""
     from hermes_cli.version_info import get_version_info
 
     return get_version_info().base_version
@@ -483,7 +483,7 @@ def requires_hermes_error(manifest: PluginManifest) -> Optional[str]:
     current = running_hermes_version()
     if version_satisfies(spec, current):
         return None
-    return f"requires alfred {spec}, running {current}"
+    return f"requires plushuman {spec}, running {current}"
 
 
 def portable_plugin_manifest(child: Path, source: str, prefix: str) -> PluginManifest:

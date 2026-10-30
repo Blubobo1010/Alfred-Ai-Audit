@@ -1,8 +1,8 @@
 """Tests for the Vue server registration.
 
 ``@vue/language-server`` 3.x only works behind a client-hosted tsserver tunnel
-(``tsserver/request`` notifications) that Alfred's generic client does not
-run, so it never publishes diagnostics.  Alfred pins the self-hosting 2.x line
+(``tsserver/request`` notifications) that +Human's generic client does not
+run, so it never publishes diagnostics.  +Human pins the self-hosting 2.x line
 and starts it with ``vue.hybridMode`` off plus an explicit JS TypeScript SDK.
 """
 from __future__ import annotations

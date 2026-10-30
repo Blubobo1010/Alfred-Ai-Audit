@@ -31,7 +31,7 @@ def map_fatal_config_exit_for_launchd(returncode: int) -> int:
         return 0
     return returncode
 
-# Set by ``alfred gateway run --external-supervisor``. Unlike systemd's INVOCATION_ID
+# Set by ``plushuman gateway run --external-supervisor``. Unlike systemd's INVOCATION_ID
 # and launchd's XPC_SERVICE_NAME, this survives wrappers that replace the child
 # environment (e.g. ``sudo env -i``).
 EXTERNAL_GATEWAY_SUPERVISOR_ENV = "HERMES_GATEWAY_EXTERNAL_SUPERVISOR"

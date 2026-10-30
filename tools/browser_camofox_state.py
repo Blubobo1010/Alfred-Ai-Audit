@@ -1,6 +1,6 @@
-"""Alfred-managed Camofox state helpers.
+"""+Human-managed Camofox state helpers.
 
-With managed persistence enabled, Alfred sends a deterministic userId derived from the
+With managed persistence enabled, +Human sends a deterministic userId derived from the
 active profile so Camofox maps it to the same persistent browser profile across restarts.
 """
 
@@ -19,7 +19,7 @@ def get_camofox_state_dir() -> Path:
 
 
 def get_camofox_identity(task_id: Optional[str] = None) -> dict[str, str]:
-    """Stable Alfred-managed Camofox identity: userId is profile-scoped, session key is
+    """Stable +Human-managed Camofox identity: userId is profile-scoped, session key is
     scoped to the logical browser task so new tabs in the same profile reuse it."""
     scope_root = str(get_camofox_state_dir())
     user_digest = uuid.uuid5(uuid.NAMESPACE_URL, f"camofox-user:{scope_root}").hex[:10]

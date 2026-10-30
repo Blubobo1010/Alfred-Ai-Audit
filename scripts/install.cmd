@@ -1,6 +1,6 @@
 @echo off
 REM ============================================================================
-REM Alfred Installer for Windows (CMD wrapper)
+REM +Human Installer for Windows (CMD wrapper)
 REM ============================================================================
 REM This batch file launches the PowerShell installer for users running CMD.
 REM
@@ -12,7 +12,7 @@ REM   iex (irm https://raw.githubusercontent.com/Blubobo1010/Alfred-Ai-Audit/mai
 REM ============================================================================
 
 echo.
-echo  Alfred Installer
+echo  +Human Installer
 echo  Launching PowerShell installer...
 echo.
 

@@ -19,7 +19,7 @@ test('the resolved dmgbuild uses its paired Python and preserves args, results a
   }
   const wrapped = wrapDmgbuildExecFile(original, chunk => output.push(chunk))
   const vendor = path.resolve('tool cache', 'dmgbuild bundle')
-  const args = ['-s', 'settings with spaces.json', 'Install Alfred', 'output.dmg']
+  const args = ['-s', 'settings with spaces.json', 'Install +Human', 'output.dmg']
   const options = { maxBuffer: 1024, env: { KEEP: 'value', PYTHONPATH: 'old' } }
   const callback = () => {}
 

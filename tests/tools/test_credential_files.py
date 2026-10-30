@@ -519,7 +519,7 @@ class TestMapCachePathToContainer:
 
 class TestToAgentVisiblePathPerBackend:
     """#76577 follow-up: translation covers every backend that relocates the
-    Alfred cache — not just docker — and skips the ones where the host path
+    +Human cache — not just docker — and skips the ones where the host path
     stays correct (local; singularity auto-binds the host home)."""
 
     def _staged(self, tmp_path, monkeypatch):

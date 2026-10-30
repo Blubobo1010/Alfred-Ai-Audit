@@ -1,4 +1,4 @@
-"""Resolve logical working directories for Alfred-owned Relay scopes."""
+"""Resolve logical working directories for +Human-owned Relay scopes."""
 
 from __future__ import annotations
 
@@ -31,7 +31,7 @@ def resolve_relay_scope_cwds(
     """Return logical ``(session_cwd, turn_cwd)`` for Relay scope input.
 
     A task may use a worktree distinct from its owning session. Preserve remote paths as
-    declared and omit unknown paths instead of substituting the Alfred host's cwd.
+    declared and omit unknown paths instead of substituting the +Human host's cwd.
     """
     try:
         task_cwd = _recorded_cwd(task_id)

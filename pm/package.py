@@ -57,7 +57,7 @@ class Package:
     deps: packages installed before this one.
     optional: not part of the root closure; installed on demand.
     default: an optional package the default install also carries (installers,
-        bare `pm install`, `alfred update`) unless the user declined it
+        bare `pm install`, `plushuman update`) unless the user declined it
         (pm/defaults.py). It stays optional: a failed download warns instead of
         failing the install, and its absence never blocks PATH activation.
     internal: tooling PM uses inside install/build steps — never on PATH

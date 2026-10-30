@@ -11,7 +11,7 @@ Two defects covered:
    It must now be rejected (404); only a self-referential prefix (naming the
    profile this gateway actually serves) falls through.
 
-E2E-style: real profile homes under a temp ALFRED root, real config.yaml
+E2E-style: real profile homes under a temp PLUSHUMAN root, real config.yaml
 files read through the canonical loaders, and real aiohttp request routing
 (TestClient) through the profile-prefix middleware. No mocked config reads.
 """

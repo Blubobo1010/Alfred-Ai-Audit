@@ -13,7 +13,7 @@ provider configured as ``web.extract_backend`` falls through):
    the historic ``tools.web_tools._get_backend()`` order, so installs that never
    set a config key keep landing on the same provider.
 4. Keyless free-tier walk (``_KEYLESS_PREFERENCE``), last resort.
-5. ``None`` — the tool points the user at ``alfred tools``.
+5. ``None`` — the tool points the user at ``plushuman tools``.
 """
 
 from __future__ import annotations
@@ -64,7 +64,7 @@ _LEGACY_PREFERENCE = ("firecrawl", "parallel", "tavily", "perplexity", "exa", "s
 
 # Anonymous public free tiers (see plugins/web/keyless_mcp.py); strictly last
 # resort, i.e. zero web credentials and no importable ddgs. Unpinned keyless
-# traffic round-robins across the ring per request; an explicit `alfred tools`
+# traffic round-robins across the ring per request; an explicit `plushuman tools`
 # pick bypasses this walk. Disable with ``web.keyless_fallback: false``.
 _KEYLESS_PREFERENCE = ("exa", "parallel", "firecrawl", "keenable")
 

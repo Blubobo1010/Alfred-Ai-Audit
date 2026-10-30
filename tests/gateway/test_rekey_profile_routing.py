@@ -1,4 +1,4 @@
-"""In-memory routing rekey for `alfred profile rename`.
+"""In-memory routing rekey for `plushuman profile rename`.
 
 The routing index lives in ``SessionStore._entries`` and is written back periodically, so a durable
 DB rewrite alone is clobbered — the live store must rekey its in-memory copy too. This is why a

@@ -1,4 +1,4 @@
-"""A failed ``alfred skills install|update|uninstall|snapshot import`` exits non-zero (#118301).
+"""A failed ``plushuman skills install|update|uninstall|snapshot import`` exits non-zero (#118301).
 
 The Desktop spawns these as detached actions and learns their outcome only from the
 exit code (``apps/desktop/src/store/hub-actions.ts`` toasts on non-zero), so a refused
@@ -55,7 +55,7 @@ def _scan_gate_env(monkeypatch, tmp_path, *, verdict="dangerous", installed=None
     return installs, audit
 
 
-# --- the process exit code, through the real `alfred` entry point ---
+# --- the process exit code, through the real `plushuman` entry point ---
 
 
 @pytest.mark.parametrize("argv, target, outcome, code", [
@@ -81,7 +81,7 @@ def test_cli_exit_code_follows_the_action_outcome(monkeypatch, tmp_path, capsys,
         monkeypatch.setattr(cli_hub, target, lambda *a, **k: outcome)
     if argv[1] == "update":
         # Never run hermes_cli.main with `update` in argv (it can turn into a real self-update): drive
-        # the same router `alfred skills` returns its exit code from.
+        # the same router `plushuman skills` returns its exit code from.
         from argparse import Namespace
         exit_code = cli_hub.skills_command(Namespace(skills_action="update", name=None, force=False)) or 0
     else:

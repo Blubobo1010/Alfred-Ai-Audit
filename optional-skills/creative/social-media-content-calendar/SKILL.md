@@ -2,7 +2,7 @@
 name: social-media-content-calendar
 description: "Plan multi-platform social campaigns: briefs to posting."
 version: 0.1.0
-author: Ben Barclay (benbarclay), Alfred
+author: Ben Barclay (benbarclay), +Human
 license: MIT
 platforms: [linux, macos, windows]
 metadata:

@@ -128,7 +128,7 @@ def test_icon_portrait_sits_on_the_plain_tile_inside_the_outer_silhouette(monkey
     # The commit badge rides inside the same clip, so its anti-aliased edge can
     # never add alpha outside the plate (visible at targetsize-16..30).
     assert [child.tag for child in group[:-1]] == [f"{{{ns['svg']}}}g"]
-    assert portrait.get("preserveAspectRatio") == "xMidYMax meet"
+    assert portrait.get("preserveAspectRatio") == "xMidYMid meet"  # alfred:keep — centred mark
     assert tuple(float(portrait.attrib[key]) for key in ("x", "y", "width", "height")) == module.GIRL_BOXES[name]
     clip_path = result.find("svg:defs/svg:clipPath", ns)
     assert clip_path is not None
@@ -136,13 +136,13 @@ def test_icon_portrait_sits_on_the_plain_tile_inside_the_outer_silhouette(monkey
     assert portrait.get("overflow") == "visible"
     assert len(result.findall(".//svg:path", ns)) == 2  # one badge and one portrait
     # The dragged bottom node lands below the tile: the clip, not a gap, ends her.
-    _x, y, width, height, _ = geometry
+    _x, _y, _width, _height, _ = geometry
     _, by, bw, bh = art.bboxes[girl]
     box_y, box_h = module.GIRL_BOXES[name][1], module.GIRL_BOXES[name][3]
     scale = min(module.GIRL_BOXES[name][2] / bw, box_h / bh)
     lowest_raw_y = max(float(v) for v in re.findall(r"[-+]?\d*\.?\d+", portrait[0].attrib["d"])[1::2])
-    lowest_tile_y = box_y + box_h - bh * scale + (lowest_raw_y - by) * scale  # xMidYMax: bottom-aligned
-    assert lowest_tile_y == pytest.approx(y + height + width * module.EDGE_OVERSHOOT)
+    lowest_tile_y = box_y + (box_h - bh * scale) / 2 + (lowest_raw_y - by) * scale  # alfred:keep — centred
+    assert lowest_tile_y == pytest.approx(box_y + (box_h + bh * scale) / 2)  # not dragged to the edge
 
 
 def test_bottom_node_drag_preserves_upper_geometry_and_path_transform(monkeypatch):

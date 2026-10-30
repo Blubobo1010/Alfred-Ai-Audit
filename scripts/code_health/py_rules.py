@@ -1,4 +1,4 @@
-"""Alfred-specific AST rules (the ``HX`` ids in ``config.RULES``).
+"""+Human-specific AST rules (the ``HX`` ids in ``config.RULES``).
 
 Each checker is a small function ``(tree, ctx) -> iterable of line numbers``; the table at the
 bottom maps rule ids to checkers. Checkers favour precision: a rule that cries wolf gets an

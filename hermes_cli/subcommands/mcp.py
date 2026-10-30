@@ -1,4 +1,4 @@
-"""``alfred mcp`` subcommand parser."""
+"""``plushuman mcp`` subcommand parser."""
 
 from __future__ import annotations
 
@@ -11,15 +11,15 @@ from hermes_cli.subcommands._shared import add_accept_hooks_flag
 def build_mcp_parser(subparsers, *, cmd_mcp: Callable) -> None:
     """Attach the ``mcp`` subcommand to ``subparsers``."""
     mcp_parser = subparsers.add_parser(
-        "mcp", help="Manage MCP servers and run Alfred as an MCP server",
-        description="Manage MCP server connections and run Alfred as an MCP server.\n\n"
+        "mcp", help="Manage MCP servers and run +Human as an MCP server",
+        description="Manage MCP server connections and run +Human as an MCP server.\n\n"
             "MCP servers provide additional tools via the Model Context Protocol.\n"
-            "Use 'alfred mcp add' to connect to a new server, or\n"
-            "'alfred mcp serve' to expose Alfred conversations over MCP.")
+            "Use 'plushuman mcp add' to connect to a new server, or\n"
+            "'plushuman mcp serve' to expose +Human conversations over MCP.")
     mcp_sub = mcp_parser.add_subparsers(dest="mcp_action")
 
     mcp_serve_p = mcp_sub.add_parser(
-        "serve", help="Run Alfred as an MCP server (expose conversations to other agents)")
+        "serve", help="Run +Human as an MCP server (expose conversations to other agents)")
     mcp_serve_p.add_argument(
         "-v", "--verbose", action="store_true", help="Enable verbose logging on stderr")
     add_accept_hooks_flag(mcp_serve_p)
@@ -69,10 +69,10 @@ def build_mcp_parser(subparsers, *, cmd_mcp: Callable) -> None:
 
     # Catalog (Nous-approved MCPs shipped with the repo)
     mcp_sub.add_parser(
-        "picker", help="Interactive catalog picker (also the default for `alfred mcp`)")
+        "picker", help="Interactive catalog picker (also the default for `plushuman mcp`)")
     mcp_sub.add_parser("catalog", help="List Nous-approved MCPs available for one-click install")
     mcp_install_p = mcp_sub.add_parser(
-        "install", help="Install a catalog MCP by name (e.g. `alfred mcp install deepwiki`)")
+        "install", help="Install a catalog MCP by name (e.g. `plushuman mcp install deepwiki`)")
     mcp_install_p.add_argument("identifier", help="Catalog entry name (or `official/<name>`)")
 
     add_accept_hooks_flag(mcp_parser)

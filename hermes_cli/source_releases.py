@@ -61,7 +61,7 @@ class SourceTarget:
     def label(self) -> str:
         if self.ahead:
             return (f"{self.channel} v{self.version}; this checkout is newer and waits for the next release"
-                    " (`alfred update --set-channel main` follows every commit)")
+                    " (`plushuman update --set-channel main` follows every commit)")
         return f"{self.channel} v{self.version} ({self.commit[:12]})" if self.commit else self.channel
 
 

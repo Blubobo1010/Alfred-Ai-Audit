@@ -2,7 +2,7 @@
  * Quick Entry — the global-hotkey mini composer.
  *
  * A small frameless always-on-top window that a global shortcut summons from
- * anywhere so the user can fire a prompt at Alfred without raising the whole
+ * anywhere so the user can fire a prompt at +Human without raising the whole
  * app. The window carries NO gateway connection of its own: it forwards the
  * text to the primary renderer, which sends it through the SAME prompt-submit
  * path the normal composer uses (see app/contrib/hooks/use-quick-entry-bridge).
@@ -89,7 +89,7 @@ export function createQuickEntrySubmitRelay(options: {
           reconcilable.add(correlationId)
           resolve({
             code: 'timeout',
-            message: 'Alfred has not confirmed the prompt yet — it may still be delivered.',
+            message: '+Human has not confirmed the prompt yet — it may still be delivered.',
             ok: false,
             retryable: false
           })

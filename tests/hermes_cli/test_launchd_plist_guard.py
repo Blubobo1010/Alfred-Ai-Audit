@@ -4,7 +4,7 @@
 malformed plists are skipped, but ``plistlib.load`` propagates
 ``xml.parsers.expat.ExpatError`` (which is NOT a ``ValueError`` subclass) for
 XML that is not well-formed, so one hand-edited LaunchAgent plist aborted the
-whole ``alfred update`` post-pull cleanup instead of being skipped.
+whole ``plushuman update`` post-pull cleanup instead of being skipped.
 """
 import os
 from unittest import mock

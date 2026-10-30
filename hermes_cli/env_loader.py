@@ -1,4 +1,4 @@
-"""Helpers for loading Alfred .env files consistently across entrypoints."""
+"""Helpers for loading +Human .env files consistently across entrypoints."""
 
 from __future__ import annotations
 
@@ -77,13 +77,13 @@ _DOTENV_PASSES = itertools.count()
 _DOTENV_LOCK = threading.RLock()
 
 # Per-process credentials a parent mints and injects into the child's environment (the Desktop shell /
-# a link-style launcher spawns `alfred dashboard` with a fresh HERMES_DASHBOARD_SESSION_TOKEN and keeps
+# a link-style launcher spawns `plushuman dashboard` with a fresh HERMES_DASHBOARD_SESSION_TOKEN and keeps
 # the same token for its own /api probes). They are never .env configuration, so a persisted value in
 # ~/.hermes/.env must not replace an injected one — the parent would then 401 against its own child
 # (#115955). A value an earlier dotenv pass published is still reloaded normally.
 _SPAWN_CREDENTIAL_KEYS: frozenset[str] = frozenset({"HERMES_DASHBOARD_SESSION_TOKEN"})
 
-# Behavioral routing keys a parent Alfred process injects into child env that silently redirect a profile
+# Behavioral routing keys a parent +Human process injects into child env that silently redirect a profile
 # onto the wrong provider path; these — and ONLY these — are scrubbed at startup when absent from the
 # profile's .env. Credentials are excluded: shell exports are a documented way to supply them, and
 # read-time secret-scope checks (agent/secret_scope.py) own cross-profile credential isolation.
@@ -315,7 +315,7 @@ def _sanitize_loaded_credentials() -> None:
             "rich-text editor, or web page that substituted lookalike\n"
             "  Unicode glyphs for ASCII letters. If authentication fails "
             "(e.g. \"API key not valid\"), re-copy the key from the\n"
-            "  provider's dashboard and run `alfred setup` (or edit the "
+            "  provider's dashboard and run `plushuman setup` (or edit the "
             ".env file in a plain-text editor).",
             file=sys.stderr,
         )
@@ -330,7 +330,7 @@ def _load_dotenv_with_fallback(
 
     ``load_pass`` groups the layered files of one ``load_hermes_dotenv`` call: within a pass a later layer
     (project, managed) still sees the earlier layer's output, as it always did; only OTHER passes' output
-    is peeled. A bare call (``alfred send``'s direct reload) is its own pass."""
+    is peeled. A bare call (``plushuman send``'s direct reload) is its own pass."""
     raw = path.read_bytes()
     try:
         # utf-8-sig strips a leading BOM (PowerShell 5.1 / Notepad); plain utf-8 would keep U+FEFF on the
@@ -457,7 +457,7 @@ def load_hermes_dotenv(
     project_env: str | os.PathLike | None = None,
     load_external_secrets: bool = True,
 ) -> list[Path]:
-    """Load Alfred env files: ``~/.hermes/.env`` overrides stale shell exports; project ``.env`` is a dev
+    """Load +Human env files: ``~/.hermes/.env`` overrides stale shell exports; project ``.env`` is a dev
     fallback that only fills gaps when the user env exists (and overrides shell vars when it does not)."""
     # Process home on purpose (never the per-turn override): a startup .env load must not follow a routed
     # profile — see the multiplex guard below.
@@ -536,7 +536,7 @@ def load_hermes_dotenv(
     # External secret sources are skipped in two updater situations: 1. ``load_external_secrets=False`` —
     # the caller is an ``update`` invocation that must not import optional secret-manager libraries
     # (Bitwarden → cryptography → ``_rust.pyd``) into the process that replaces that same environment on
-    # Windows (#73381, #86735). 2. A fresh ``alfred update`` retry just completed a deferred dependency
+    # Windows (#73381, #86735). 2. A fresh ``plushuman update`` retry just completed a deferred dependency
     # install before importing this module. Do not remap native secret-source dependencies in that same
     # updater process or the self-lock preflight will recreate the marker and exit 2 again. Dotenv and
     # managed env still load in both cases; only external source resolution is unnecessary for the updater.
@@ -549,7 +549,7 @@ def load_hermes_dotenv(
     # Re-apply the explicit terminal keys LAST, after the managed overlay, so the merged config lands.
     # config.yaml is the documented source of truth for terminal.* settings, but the dotenv loads above run
     # with override=True — so a stale TERMINAL_ENV=docker left in ~/.hermes/.env (e.g. written by an older
-    # `alfred setup` before the user switched terminal.backend in config.yaml) silently wins again on every
+    # `plushuman setup` before the user switched terminal.backend in config.yaml) silently wins again on every
     # reload. Startup launchers bridge config→env once, but long-lived processes (gateway per-turn reload,
     # cron standalone runs) call load_hermes_dotenv() repeatedly and used to flip the effective backend back
     # to the stale .env value mid-session (#29186, #67323).
@@ -631,7 +631,7 @@ def _revoke_secret_source_writes(home_path: Path, *, keep) -> None:
 
 def _apply_external_secret_sources(home_path: Path) -> None:
     """Pull secrets from every enabled external source into env — AFTER dotenv (sources need .env bootstrap
-    tokens), BEFORE Alfred reads credentials; failures never block startup. Precedence/conflicts/provenance
+    tokens), BEFORE +Human reads credentials; failures never block startup. Precedence/conflicts/provenance
     live in ``registry.apply_all``; this wrapper owns the once-per-home guard, the post-apply ASCII sweep,
     the ``_SECRET_SOURCES`` map and status lines."""
     home_key = str(Path(home_path).resolve())

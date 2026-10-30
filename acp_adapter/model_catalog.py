@@ -1,4 +1,4 @@
-"""ACP model picker: deduplicated ``provider:model`` rows from the Alfred inventory + named endpoints."""
+"""ACP model picker: deduplicated ``provider:model`` rows from the +Human inventory + named endpoints."""
 
 from __future__ import annotations
 

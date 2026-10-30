@@ -1,6 +1,6 @@
-"""Lease transitions made by ANOTHER process reach `alfred serve` clients as ``display.lease``.
+"""Lease transitions made by ANOTHER process reach `plushuman serve` clients as ``display.lease``.
 
-The agent lives in whatever process hosts it (messaging gateway, ``alfred chat``, a cron worker);
+The agent lives in whatever process hosts it (messaging gateway, ``plushuman chat``, a cron worker);
 ``lease.on_change`` is in-process only, so the serve backend must notice the file move itself.
 """
 

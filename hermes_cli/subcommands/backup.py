@@ -1,4 +1,4 @@
-"""``alfred backup`` subcommand parser."""
+"""``plushuman backup`` subcommand parser."""
 
 from __future__ import annotations
 
@@ -16,8 +16,8 @@ def _non_negative_keep(value: str) -> int:
 def build_backup_parser(subparsers, *, cmd_backup: Callable) -> None:
     """Attach the ``backup`` subcommand to ``subparsers``."""
     backup_parser = subparsers.add_parser(
-        "backup", help="Back up Alfred home directory to a zip file",
-        description="Create a zip archive of your entire Alfred configuration, "
+        "backup", help="Back up +Human home directory to a zip file",
+        description="Create a zip archive of your entire +Human configuration, "
         "skills, sessions, and data (excludes the hermes-agent codebase). "
         "Use --quick for a fast snapshot of just critical state files.")
     backup_parser.add_argument(

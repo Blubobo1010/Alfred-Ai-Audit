@@ -14,7 +14,7 @@ source_hermes() {
     }
     command="$root/venv/bin/hermes"
     [ -f "$command" ] && [ -x "$command" ] || {
-      printf 'no installed Alfred command under %s\n' "$root" >&2; return 1;
+      printf 'no installed +Human command under %s\n' "$root" >&2; return 1;
     }
   fi
   printf '%s\n' "$command"
@@ -38,7 +38,7 @@ accept_installer_marker() {
 # Hand out a command to DRIVE the next ordinary startup, even when the
 # published launcher is not there yet.
 #
-# A pre-handoff release cannot flip during `alfred update` -- there is no
+# A pre-handoff release cannot flip during `plushuman update` -- there is no
 # retired-hook seam on its update path to reach, so the update ends with the
 # tree at HEAD and no `.hermes/bin/*`. The NEXT ordinary startup is what
 # completes it: hermes_bootstrap calls prepare_launch() before importing
@@ -54,7 +54,7 @@ source_hermes_for_startup() {
   fi
   command="$root/venv/bin/hermes"
   [ -f "$command" ] && [ -x "$command" ] || {
-    printf 'no installed Alfred command under %s\n' "$root" >&2; return 1
+    printf 'no installed +Human command under %s\n' "$root" >&2; return 1
   }
   printf '%s\n' "$command"
 }

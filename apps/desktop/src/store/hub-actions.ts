@@ -185,13 +185,13 @@ export function closeHubLog(): void {
   $hubActiveLog.set(null)
 }
 
-// `alfred skills install` exits non-zero when the security scan gate refuses,
+// `plushuman skills install` exits non-zero when the security scan gate refuses,
 // and its printed tail is the only signal the Desktop gets, so parse it into a
 // structured failure the toast can explain (tools-runtime-21). `--force` has
 // no Desktop route, so the remedy offered is reading the scan, not overriding
 // it. Two CLI shapes exist (`hermes_cli/skills_hub.py::_scan_block_message`):
 //   current: "Not installed: the security scan found 2 high-risk pattern(s) in
-//            'org/skill' (listed above). Alfred never installs unverified
+//            'org/skill' (listed above). +Human never installs unverified
 //            skills with high-risk findings, even with --force. ..."
 //            (the "never installs unverified" sentence only appears for a
 //            non-official source; otherwise it says "Re-run with --force").

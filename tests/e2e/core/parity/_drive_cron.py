@@ -1,9 +1,9 @@
-"""Entrypoint driver for the parity matrix: cron run-now (``alfred cron run <id>``).
+"""Entrypoint driver for the parity matrix: cron run-now (``plushuman cron run <id>``).
 
-Follows the driver contract in ``_drive_cli``. ``alfred cron create`` writes the
+Follows the driver contract in ``_drive_cli``. ``plushuman cron create`` writes the
 job (``--deliver local``: no platform; ``--workdir``: cron's documented
-per-job cwd/context channel, see ``alfred cron create --help``), then
-``alfred cron run <id>`` executes it. With no gateway owning the store the CLI
+per-job cwd/context channel, see ``plushuman cron create --help``), then
+``plushuman cron run <id>`` executes it. With no gateway owning the store the CLI
 runs the job synchronously through ``cron.scheduler.run_job`` — the same agent
 build the ticker uses (``hermes_cli/cron.py::_job_action`` forces the
 synchronous path) — and prints ``Ran now: succeeded.``. The job's saved output
@@ -42,14 +42,14 @@ def drive_cron(ph: ParityHome, srv: FakeLLMServer, prompt: str) -> DriveResult:
                     "--workdir", str(ph.project))
     match = _JOB_ID.search(created.stdout)
     assert created.returncode == 0 and match, (
-        f"alfred cron create exited {created.returncode}: {created.stdout[-1000:]} {created.stderr[-2000:]}")
+        f"plushuman cron create exited {created.returncode}: {created.stdout[-1000:]} {created.stderr[-2000:]}")
     job_id = match.group(1)
 
     ran = _cron(ph, "run", job_id)
-    assert ran.returncode == 0, f"alfred cron run exited {ran.returncode}: {ran.stderr[-2000:]}"
+    assert ran.returncode == 0, f"plushuman cron run exited {ran.returncode}: {ran.stderr[-2000:]}"
     # Anything but a synchronous verdict means the run was handed to a ticker/background
     # worker this driver cannot observe — a harness problem, not a parity result.
-    assert "Ran now:" in ran.stdout, f"alfred cron run did not execute synchronously: {ran.stdout[-1000:]}"
+    assert "Ran now:" in ran.stdout, f"plushuman cron run did not execute synchronously: {ran.stdout[-1000:]}"
 
     outputs = sorted((ph.hermes_home / "cron" / "output" / job_id).glob("*.md"))
     final_text = None

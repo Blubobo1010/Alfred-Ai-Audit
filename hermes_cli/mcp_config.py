@@ -1,4 +1,4 @@
-"""MCP Server Management CLI — ``alfred mcp`` subcommand."""
+"""MCP Server Management CLI — ``plushuman mcp`` subcommand."""
 
 import asyncio
 import contextlib
@@ -440,7 +440,7 @@ def _probe_single_server(
     # Deep transport code (tools/mcp_tool_transport.py::_negotiate_session) reads its OWN
     # session.initialize() bound straight off config["connect_timeout"], independent of the
     # `connect_timeout` param above. Callers that extend the param to give a user time to finish
-    # an OAuth browser flow (e.g. `alfred mcp login`'s 315s) left that inner bound at the
+    # an OAuth browser flow (e.g. `plushuman mcp login`'s 315s) left that inner bound at the
     # (unrelated) 60s default, so the still-pending OAuth callback wait got cancelled mid-flow —
     # surfacing as a retry that re-opens a second authorization against the same callback port.
     config["connect_timeout"] = connect_timeout
@@ -643,9 +643,9 @@ def cmd_mcp_add(args):
     if not url and not command:
         _error("Must specify --url <endpoint>, --command <cmd>, or --preset <name>")
         _info("Examples:")
-        _info('  alfred mcp add ink --url "https://mcp.ml.ink/mcp"')
-        _info('  alfred mcp add github --command npx --args @modelcontextprotocol/server-github')
-        _info('  alfred mcp add myserver --preset mypreset')
+        _info('  plushuman mcp add ink --url "https://mcp.ml.ink/mcp"')
+        _info('  plushuman mcp add github --command npx --args @modelcontextprotocol/server-github')
+        _info('  plushuman mcp add myserver --preset mypreset')
         return
 
     # Overwriting an existing server is a re-add, not an install; cancels are not recorded either.
@@ -694,7 +694,7 @@ def cmd_mcp_add(args):
             saved = _save_mcp_server(name, server_config)
             if saved:
                 _success(f"Saved '{name}' to config (disabled)")
-                _info("Fix the issue, then: alfred mcp test " + name)
+                _info("Fix the issue, then: plushuman mcp test " + name)
         _record(saved, probe_failure_class(exc))
         return
 
@@ -732,7 +732,7 @@ def cmd_mcp_remove(args):
     _remove_mcp_server(name)
     _success(f"Removed '{name}' from config")
     # Route OAuth cleanup through MCPOAuthManager so any provider cached in this process (e.g. from
-    # an earlier `alfred mcp test`) is evicted too.
+    # an earlier `plushuman mcp test`) is evicted too.
     try:
         from tools.mcp_oauth_manager import get_manager
         get_manager().remove(name)
@@ -749,8 +749,8 @@ def cmd_mcp_list(args=None):
         _info("No MCP servers configured.")
         print()
         _info("Add one with:")
-        _info('  alfred mcp add <name> --url <endpoint>')
-        _info('  alfred mcp add <name> --command <cmd> --args <args...>')
+        _info('  plushuman mcp add <name> --url <endpoint>')
+        _info('  plushuman mcp add <name> --command <cmd> --args <args...>')
         print()
         return
 
@@ -824,13 +824,13 @@ def _probe_failure_next_step(name: str, exc: BaseException) -> str:
     from tools.mcp_tool_node_abi import NodeAbiMismatchError
     root = _unwrap_exception_group(exc)
     if _is_auth_error(root) or getattr(getattr(root, "response", None), "status_code", None) in (401, 403):
-        return f"The server rejected the sign-in. Run: alfred mcp login {name}"
+        return f"The server rejected the sign-in. Run: plushuman mcp login {name}"
     if isinstance(root, NodeAbiMismatchError):
-        return f"After rebuilding it under Alfred's Node as above, run: alfred mcp test {name}"
+        return f"After rebuilding it under +Human's Node as above, run: plushuman mcp test {name}"
     if "missing executable" in _format_connect_error(exc):
         return (f"Install that command, or set mcp_servers.{name}.command in {display_hermes_home()}/config.yaml "
                 "to its full path.")
-    return f"Check the server is running and the URL/command in its config, then run: alfred mcp test {name}"
+    return f"Check the server is running and the URL/command in its config, then run: plushuman mcp test {name}"
 
 
 def cmd_mcp_test(args):
@@ -892,7 +892,7 @@ def _reauth_oauth_server(name: str, server_config: dict, *, flow: str | None = N
         return False
     if server_config.get("auth") != "oauth":
         _error(f"Server '{name}' is not configured for OAuth (auth={server_config.get('auth')})")
-        _info("Use `alfred mcp remove` + `alfred mcp add` to reconfigure auth.")
+        _info("Use `plushuman mcp remove` + `plushuman mcp add` to reconfigure auth.")
         return False
 
     oauth_cfg = server_config.get("oauth") or {}
@@ -919,7 +919,7 @@ def _reauth_oauth_server(name: str, server_config: dict, *, flow: str | None = N
     # The probe triggers the OAuth flow (browser redirect + callback capture). Its bound must outlast
     # the oauth.timeout callback window (plus headroom for the token exchange), or a user who raised
     # oauth.timeout still gets cut off at the old fixed floor — matching the GUI re-auth path in
-    # web_server_mcp.py and tui_gateway/mcp_oauth_sessions.py. force_interactive_oauth: `alfred mcp
+    # web_server_mcp.py and tui_gateway/mcp_oauth_sessions.py. force_interactive_oauth: `plushuman mcp
     # login` is explicitly user-initiated even when stdin isn't a TTY (desktop / agent-spawned
     # terminals), where _is_interactive() alone would refuse to open a browser.
     try:
@@ -952,7 +952,7 @@ def _reauth_oauth_server(name: str, server_config: dict, *, flow: str | None = N
             ):
                 print(color(f"    {line}", Colors.DIM))
             print()
-            _info("Then re-run `alfred mcp login " + name + "`.")
+            _info("Then re-run `plushuman mcp login " + name + "`.")
             return False
         if tools:
             _success(f"Authenticated — {len(tools)} tool(s) available")
@@ -1004,7 +1004,7 @@ def cmd_mcp_reauth(args):
         return
     if not name:
         _error("Specify a server name, or use --all to re-auth every OAuth server.")
-        _info("Usage: alfred mcp reauth <name>   |   alfred mcp reauth --all")
+        _info("Usage: plushuman mcp reauth <name>   |   plushuman mcp reauth --all")
         return
     cfg = _lookup_server(name, servers)
     if cfg is not None:
@@ -1048,7 +1048,7 @@ def cmd_mcp_configure(args):
     """Reconfigure which tools are enabled for an existing MCP server."""
     import sys as _sys
     if not _sys.stdin.isatty():
-        print("Error: 'alfred mcp configure' requires an interactive terminal.", file=_sys.stderr)
+        print("Error: 'plushuman mcp configure' requires an interactive terminal.", file=_sys.stderr)
         _sys.exit(1)
     name = args.name
     cfg = _lookup_server(name, _get_mcp_servers(), "Available")
@@ -1121,24 +1121,24 @@ def cmd_mcp_configure(args):
 
 
 _MCP_USAGE = (
-    "alfred mcp                                    Open the catalog picker (default)",
-    "alfred mcp catalog                            List Nous-approved MCPs",
-    "alfred mcp install <name>                     Install a catalog MCP",
-    "alfred mcp serve                              Run as MCP server",
-    "alfred mcp add <name> --url <endpoint>        Add a custom MCP server",
-    "alfred mcp add <name> --command <cmd>         Add a stdio server",
-    "alfred mcp add <name> --preset <preset>       Add from a known preset",
-    "alfred mcp remove <name>                      Remove a server",
-    "alfred mcp list                               List configured servers",
-    "alfred mcp test <name>                        Test connection",
-    "alfred mcp configure <name>                   Toggle tools",
-    "alfred mcp login <name>                       Re-authenticate OAuth",
-    "alfred mcp reauth <name> | --all              Re-auth one or all OAuth servers",
+    "plushuman mcp                                    Open the catalog picker (default)",
+    "plushuman mcp catalog                            List Nous-approved MCPs",
+    "plushuman mcp install <name>                     Install a catalog MCP",
+    "plushuman mcp serve                              Run as MCP server",
+    "plushuman mcp add <name> --url <endpoint>        Add a custom MCP server",
+    "plushuman mcp add <name> --command <cmd>         Add a stdio server",
+    "plushuman mcp add <name> --preset <preset>       Add from a known preset",
+    "plushuman mcp remove <name>                      Remove a server",
+    "plushuman mcp list                               List configured servers",
+    "plushuman mcp test <name>                        Test connection",
+    "plushuman mcp configure <name>                   Toggle tools",
+    "plushuman mcp login <name>                       Re-authenticate OAuth",
+    "plushuman mcp reauth <name> | --all              Re-auth one or all OAuth servers",
 )
 
 
 def mcp_command(args):
-    """Main dispatcher for ``alfred mcp`` subcommands."""
+    """Main dispatcher for ``plushuman mcp`` subcommands."""
     action = getattr(args, "mcp_action", None)
     if action == "serve":
         from mcp_serve import run_mcp_server

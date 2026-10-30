@@ -24,13 +24,13 @@ export const frConnectorCard: TranslationOverrides['connectors'] = {
   ownerMissing: 'Rouvrez cette conversation pour gérer ses connexions.',
   search: 'Rechercher une application',
   empty: 'Aucune application correspondante',
-  disclaimer: "La connexion est facultative. N'autorisez que les applications que vous voulez confier à Alfred.",
+  disclaimer: "La connexion est facultative. N'autorisez que les applications que vous voulez confier à +Human.",
   execution: 'Outils des connecteurs',
   setup: server => `Configurer ${server}`,
   openInBrowser: 'Ouvrir dans le navigateur',
   setupCancel: 'Annuler',
   authorizedToolsUnavailable: 'Autorisé. Outils indisponibles.',
   required: 'Obligatoire',
-  namedAccount: (app: string, alias: string) => `Alfred a nommé ce compte ${app} ${alias}.`,
+  namedAccount: (app: string, alias: string) => `+Human a nommé ce compte ${app} ${alias}.`,
   renameAccount: 'Renommer'
 }

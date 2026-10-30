@@ -1,7 +1,7 @@
 """POSIX pre-swap gateway pause: what survives a killed updater, and what a paused update asks.
 
 Real processes and a real record; the live stop/restart of real gateways is proven by
-``tests/e2e/core/upgrade/git/test_hostile_pause.py`` (a real ``alfred update`` in a sandbox).
+``tests/e2e/core/upgrade/git/test_hostile_pause.py`` (a real ``plushuman update`` in a sandbox).
 """
 
 from __future__ import annotations
@@ -25,7 +25,7 @@ _UNIT = {"kind": "systemd", "scope": "user", "unit": "hermes-gateway-p2probe.ser
 @pytest.mark.platforms("posix")
 @pytest.mark.live_system_guard_bypass
 def test_a_killed_updaters_supervised_units_are_adopted_by_the_next_update(tmp_path):
-    """The updater stopped a systemd unit and was SIGKILLed: the next ``alfred update`` must own
+    """The updater stopped a systemd unit and was SIGKILLed: the next ``plushuman update`` must own
     restarting that unit (the record's only debt), never drop it."""
     owner = _child(f"""
         import time
@@ -76,7 +76,7 @@ _KILLED_AFTER_RECORDING = """
     if kind == "systemd":
         entry.update(kind="systemd", scope="user", unit="hermes-gateway-p2probe.service", cgroup=None)
     else:
-        entry["argv"] = ["alfred", "gateway", "run"]
+        entry["argv"] = ["plushuman", "gateway", "run"]
     # Discovery is the seam (no real unit or install here); recording is the code under test.
     m._discover_systemd = lambda: [entry] if kind == "systemd" else []
     m._discover_launchd = lambda: []
@@ -92,7 +92,7 @@ _KILLED_AFTER_RECORDING = """
 
 
 @pytest.mark.platforms("posix")
-@pytest.mark.live_system_guard_bypass  # the child imports the pause module; nothing runs `alfred update`
+@pytest.mark.live_system_guard_bypass  # the child imports the pause module; nothing runs `plushuman update`
 @pytest.mark.parametrize("asked", [False, True], ids=["never-asked", "asked"])
 @pytest.mark.parametrize("kind", ["bare", "systemd"])
 def test_a_killed_updates_record_owes_only_what_it_stopped(tmp_path, kind, asked):
@@ -138,7 +138,7 @@ def test_a_record_that_cannot_be_written_leaves_the_update_unpaused_and_ungated(
     home = tmp_path / "home"
     home.mkdir()
     monkeypatch.setenv("HERMES_HOME", str(home))
-    entry = {"pid": gateway.pid, "argv": ["alfred", "gateway", "run"], "home": str(home)}
+    entry = {"pid": gateway.pid, "argv": ["plushuman", "gateway", "run"], "home": str(home)}
     monkeypatch.setattr(m, "_discover_systemd", list)
     monkeypatch.setattr(m, "_discover_launchd", list)
     monkeypatch.setattr(m, "_discover_bare", lambda service_pids: ([dict(entry)], []))

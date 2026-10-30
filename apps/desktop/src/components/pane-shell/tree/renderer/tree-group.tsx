@@ -824,7 +824,7 @@ export function TreeGroup({
           {isEmpty ? (
             <div className="grid h-full place-items-center">
               {/* Same decode primitive as the CONNECTING boot overlay. */}
-              <DecodeText className="text-(--ui-text-quaternary)" cursor prefix={1} text="ALFRED" />
+              <DecodeText className="text-(--ui-text-quaternary)" cursor prefix={1} text="PLUSHUMAN" />
             </div>
           ) : (
             inlinePanes.map(paneId => {

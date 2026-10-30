@@ -6,7 +6,7 @@ export const deUpdateChannel = {
   main: 'Jeder Commit',
   stableConfirmTitle: 'Zu stabilen Releases wechseln?',
   stableConfirmBody:
-    'Alfred wechselt zum neuesten veröffentlichten Release, das älter sein kann als der Code, den du gerade nutzt. Von neuerem Code geschriebene Daten werden eventuell nicht korrekt gelesen – sichere sie vorher.',
+    '+Human wechselt zum neuesten veröffentlichten Release, das älter sein kann als der Code, den du gerade nutzt. Von neuerem Code geschriebene Daten werden eventuell nicht korrekt gelesen – sichere sie vorher.',
   stableConfirm: 'Zu Stabil wechseln',
   failed: 'Update-Kanal konnte nicht geändert werden',
   detailsLabel: 'Kanal',

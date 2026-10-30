@@ -1,4 +1,4 @@
-"""Skills Hub official sources: repo-shipped optional skills and the centralized Alfred index."""
+"""Skills Hub official sources: repo-shipped optional skills and the centralized +Human index."""
 
 import logging
 from pathlib import Path, PurePosixPath
@@ -155,7 +155,7 @@ class OptionalSkillSource(SkillSource):
 
     def _fetch_from_live_repo(self, rel: str) -> Optional[SkillBundle]:
         """Fetch an optional skill straight from the live default branch. Local installs lag
-        ``main``; rather than demanding ``alfred update`` first, resolve against the live repo.
+        ``main``; rather than demanding ``plushuman update`` first, resolve against the live repo.
         ``rel`` is ``category/skill`` (used verbatim) or a bare skill name (located via the repo tree)."""
         parts = _clean_rel_parts(rel.strip("/"))
         if parts is None:
@@ -280,7 +280,7 @@ class OptionalSkillSource(SkillSource):
 
 
 class HermesIndexSource(SkillSource):
-    """Skill source backed by the centralized Alfred Skills Index: a JSON catalog on the docs site,
+    """Skill source backed by the centralized +Human Skills Index: a JSON catalog on the docs site,
     rebuilt daily by CI, with metadata + resolved GitHub paths for every skill — search and path
     discovery cost zero GitHub API calls. When unavailable every method returns empty/None so
     downstream sources take over transparently."""

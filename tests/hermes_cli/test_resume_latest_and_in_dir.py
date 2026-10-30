@@ -1,6 +1,6 @@
 """Tests for `--resume latest` and `--in DIR` launch sugar.
 
-`alfred --tui --resume latest --in ./dir` (and the classic-CLI equivalents)
+`plushuman --tui --resume latest --in ./dir` (and the classic-CLI equivalents)
 resolve "latest" through the same workspace-scoped MRU lookup as `-c`, with
 `--in` re-homing the process before any session resolution happens.
 """
@@ -81,12 +81,12 @@ def test_chat_subparser_accepts_in_flag():
 
 
 def test_top_level_in_value_not_mistaken_for_subcommand(monkeypatch):
-    # `alfred --in chat` — "chat" is the flag's value, not the subcommand.
+    # `plushuman --in chat` — "chat" is the flag's value, not the subcommand.
     import sys
 
     import hermes_cli.main as mod
 
-    monkeypatch.setattr(sys, "argv", ["alfred", "--in", "chat", "--resume", "latest"])
+    monkeypatch.setattr(sys, "argv", ["plushuman", "--in", "chat", "--resume", "latest"])
     assert mod._first_positional_argv() is None
 
 
@@ -238,7 +238,7 @@ def test_in_dir_expands_user_home(main_mod, launched, monkeypatch, tmp_path):
 
 
 def test_in_dir_replaces_inherited_terminal_cwd(main_mod, monkeypatch, tmp_path):
-    """A parent Alfred surface, the shell or .env can export TERMINAL_CWD before
+    """A parent +Human surface, the shell or .env can export TERMINAL_CWD before
     the CLI starts. Every cwd consumer prefers that variable over the process
     cwd, so a bare chdir left the Codex app-server thread, the terminal tool and
     context-file discovery in the inherited directory."""

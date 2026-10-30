@@ -1,4 +1,4 @@
-"""`alfred sessions set-journal-mode delete|wal` — the offline self-service path for #100896.
+"""`plushuman sessions set-journal-mode delete|wal` — the offline self-service path for #100896.
 
 ``database.journal_mode: delete`` can never self-apply on a store that is already WAL:
 ``apply_wal_with_fallback`` deliberately never live-downgrades (#68545 — other gateway/cron/worker connections
@@ -30,7 +30,7 @@ def _header_mode(db_path: Path) -> str:
 def _refusal(target: str, current: str, *, on_cross_vm_fs: bool) -> Optional[str]:
     """Admission checks independent of holder discovery, which is enforced for every platform."""
     if current == "not-a-database" or current.startswith("unknown("):
-        return (f"its file header reads {current}, so it is not a Alfred SQLite store this command can convert "
+        return (f"its file header reads {current}, so it is not a +Human SQLite store this command can convert "
                 "(pass --db PATH to point at one).")
     if target == "wal" and on_cross_vm_fs:
         return ("WAL shared memory silently corrupts on cross-VM filesystems (virtiofs/9p — Docker Desktop, "

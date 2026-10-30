@@ -90,7 +90,7 @@ class TestResolveAzureFoundryRuntimeEntra:
 
 
     def test_entra_propagates_scope_only(self, fake_azure_identity):
-        """``model.entra.scope`` is the only Alfred-managed Azure SDK
+        """``model.entra.scope`` is the only +Human-managed Azure SDK
         setting. Identity selection (client ID, tenant, authority,
         service principal secret, federated token file) flows through
         standard ``AZURE_*`` env vars read by azure-identity directly.

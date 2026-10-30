@@ -166,7 +166,7 @@ const NOTICE_DISPLAY_KINDS = [
   'process_complete',
   'auto_continue',
   'personality_switch',
-  // Alfred closing a failed turn, not the model speaking.
+  // +Human closing a failed turn, not the model speaking.
   'failed_turn'
 ] as const
 

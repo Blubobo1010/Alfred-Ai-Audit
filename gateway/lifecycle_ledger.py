@@ -250,7 +250,7 @@ def _report_unclean_exit(evidence: dict[str, Any], home: Optional[Path]) -> None
     if verdict not in ("ok", "absent"):
         logger.error(
             "state.db FAILED integrity check after an unclean gateway exit: %s — sessions may read as "
-            "missing until it is repaired. Run `alfred doctor`.",
+            "missing until it is repaired. Run `plushuman doctor`.",
             verdict,
         )
     _append_exit_diag({"ts": _now_iso(), "tag": "gateway.previous_unclean_exit", "pid": os.getpid(), **evidence}, home)

@@ -1,12 +1,12 @@
 """Where third-party Python plugin code is allowed to run (``plugins.isolation``).
 
-``in_process`` (default) imports every plugin into the Alfred process, as always. ``host`` keeps
+``in_process`` (default) imports every plugin into the +Human process, as always. ``host`` keeps
 third-party plugin code OUT of it: general plugins load in one plugin-host process per profile
-(:mod:`hermes_cli.plugin_host`) and talk to Alfred only through ``ctx``; every other path that would
+(:mod:`hermes_cli.plugin_host`) and talk to +Human only through ``ctx``; every other path that would
 import a user-supplied module in-process (category providers, model-provider profiles, dashboard
-plugin APIs) refuses with a stated reason. Bundled plugins ship with Alfred and stay in-process.
+plugin APIs) refuses with a stated reason. Bundled plugins ship with +Human and stay in-process.
 
-That second half is the property a pooled deployment needs: one Alfred process serving many
+That second half is the property a pooled deployment needs: one +Human process serving many
 profiles must never share an interpreter with a profile's plugin code. The same boundary gives a
 single-user install crash isolation (a plugin that segfaults or hangs takes down its host, not the
 gateway), which is why it is a plain config value and not a cloud-only switch.
@@ -44,7 +44,7 @@ HOST_UNSUPPORTED_CTX_METHODS: dict[str, str] = {
 # Registered in-process only; skipped (with a warning, the plugin still loads) inside the host
 # because the surface they extend does not exist in a server process.
 HOST_SKIPPED_CTX_METHODS: dict[str, str] = {
-    "register_cli_command": "`alfred <command>` subcommands are wired into the local CLI parser",
+    "register_cli_command": "`plushuman <command>` subcommands are wired into the local CLI parser",
 }
 
 # Live ctx facades the host reaches by method call; each call returns plain data.
@@ -81,7 +81,7 @@ def _plugins_config(config: Optional[Mapping[str, Any]] = None) -> Mapping[str, 
     return section if isinstance(section, Mapping) else {}
 
 
-# Set in the plugin host's environment: inside the host, plugin code is already out of Alfred, so
+# Set in the plugin host's environment: inside the host, plugin code is already out of +Human, so
 # every loader there imports directly (a host must never spawn a host of its own).
 HOST_PROCESS_ENV = "HERMES_PLUGIN_HOST_PROCESS"
 
@@ -115,13 +115,13 @@ def in_process_import_refusal(what: str, *, source: str = "user",
                               config: Optional[Mapping[str, Any]] = None) -> Optional[str]:
     """Reason an in-process import of third-party code must not happen, or ``None`` when allowed.
 
-    Every loader that imports a user-supplied module into the Alfred process asks this first;
+    Every loader that imports a user-supplied module into the +Human process asks this first;
     bundled code always passes.
     """
     if source == "bundled" or isolation_mode(config) != ISOLATION_HOST:
         return None
     return (f"{what} runs only in-process, and plugins.isolation is 'host' (third-party plugin code "
-            f"never runs inside the Alfred process); set plugins.isolation: in_process to load it")
+            f"never runs inside the +Human process); set plugins.isolation: in_process to load it")
 
 
 def user_plugin_host() -> Any:

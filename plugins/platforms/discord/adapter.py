@@ -236,7 +236,7 @@ _DISCORD_NONCONVERSATIONAL_HISTORY_MESSAGE_PATTERNS = (
         re.IGNORECASE,
     ),
     re.compile(
-        r"^\s*(?:✅|❌)\s+Alfred update\s+"
+        r"^\s*(?:✅|❌)\s+\+Human update\s+"
         r"(?:finished|failed|timed out)[\s\S]*$",
         re.IGNORECASE,
     ),
@@ -418,7 +418,7 @@ def _format_privileged_intents_guidance(*, needs_members: bool) -> str:
     lines = [
         "Discord rejected the connection because privileged Gateway Intents "
         "are not enabled for this bot in the Developer Portal.",
-        "Alfred is requesting:",
+        "+Human is requesting:",
         "  - Message Content Intent (required to read message text)",
     ]
     if needs_members:
@@ -2746,7 +2746,7 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
         self._with_discord_recovery_db(_op)
 
     async def _should_backfill_discord_message(self, message: Any) -> bool:
-        """Return True when a recent Discord message still needs Alfred work."""
+        """Return True when a recent Discord message still needs +Human work."""
         if not self._client or not getattr(self._client, "user", None):
             return False
         if getattr(getattr(message, "author", None), "id", None) == getattr(self._client.user, "id", None):
@@ -2761,7 +2761,7 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
         return not await self._message_has_non_down_bot_response(message)
 
     def _is_down_notice_content(self, content: str) -> bool:
-        """Recognize only explicit Alfred/gateway outage notices."""
+        """Recognize only explicit +Human/gateway outage notices."""
         text = (content or "").lower()
         subject = r"(?:hermes|the agent|agent|the gateway|gateway|bmo)"
         state = r"(?:is|was|appears to be|is currently|was currently)"
@@ -3052,7 +3052,7 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
         return "safe"
 
     def _canonicalize_app_command_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
-        """Reduce command payloads to the semantic fields Alfred manages."""
+        """Reduce command payloads to the semantic fields +Human manages."""
         contexts = payload.get("contexts")
         integration_types = payload.get("integration_types")
         return {
@@ -4138,7 +4138,7 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
         return bool(channel_ids & allowed)
 
     def _is_pairing_approved_user(self, user_id: str) -> bool:
-        """True when the Discord user has an explicit Alfred pairing grant."""
+        """True when the Discord user has an explicit +Human pairing grant."""
         user_id = str(user_id or "").strip()
         if not user_id:
             return False
@@ -5108,7 +5108,7 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
         """Numeric IDs from connect-time username resolution.
         The env mirror of ``_allowed_user_ids`` doesn't survive the per-turn .env hot-reload, so the
         gateway authz layer unions these in. Only IDs resolved from username entries: numeric entries
-        are read live from the reloaded env, so one removed there (``alfred pairing revoke``, a hand
+        are read live from the reloaded env, so one removed there (``plushuman pairing revoke``, a hand
         edit) must not stay authorized from this connect-time snapshot until restart."""
         return set(self._username_resolved_ids)
 
@@ -5503,7 +5503,7 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
 
         Strip Discord mention syntax (users / roles / channels) so thread titles don't show raw <@id>,
         <@&id>, or <#id> markers — the ID isn't meaningful to humans glancing at the thread list (#6336).
-        Real semantic naming is done after the first agent turn, when Alfred has an LLM-generated session
+        Real semantic naming is done after the first agent turn, when +Human has an LLM-generated session
         title and can safely rename only this newly-created thread.
         """
         content = (content or "").strip()
@@ -5595,14 +5595,14 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
         edit = getattr(thread, "edit", None)
         if edit is None:
             return False
-        # Only the title lane's guarded rename is Alfred's own title (see adapter_thread_titles).
+        # Only the title lane's guarded rename is +Human's own title (see adapter_thread_titles).
         attempt = (
             self._semantic_thread_renames.attempt(str(thread_id_int), only_if_current_name, cleaned)
             if only_if_current_name is not None else nullcontext()
         )
         try:
             with attempt:
-                await edit(name=cleaned, reason="Alfred semantic session title")
+                await edit(name=cleaned, reason="+Human semantic session title")
             logger.info(
                 "[%s] Renamed Discord thread %s from %r to %r",
                 self.name, thread_id, current_name, cleaned,
@@ -5638,7 +5638,7 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
             )
             return None
         thread_name = (name or "handoff").strip()[:80] or "handoff"
-        reason = "Alfred session handoff"
+        reason = "+Human session handoff"
         try:
             create = getattr(parent, "create_thread", None)
             if create is not None:
@@ -5847,19 +5847,19 @@ class DiscordAdapter(DiscordMediaMixin, DiscordThreadTitlesMixin, DiscordVoiceIn
         self, chat_id: str, prompt: str, default: str = "", session_key: str = "",
         metadata: Optional[dict[str, Any]] = None,
     ) -> SendResult:
-        """Yes/No prompt for the gateway ``/update`` watcher when ``alfred update --gateway`` needs input."""
+        """Yes/No prompt for the gateway ``/update`` watcher when ``plushuman update --gateway`` needs input."""
         def _build(_channel):
             default_hint = t("platform.discord.prompt.default_hint", default=default) if default else ""
             update_title = t("platform.discord.prompt.update_title")
             embed = discord.Embed(
-                title=_truncate_discord_component_text(f"🎩 {update_title}", _DISCORD_EMBED_TITLE_LIMIT),
+                title=_truncate_discord_component_text(f"✚ {update_title}", _DISCORD_EMBED_TITLE_LIMIT),
                 description=f"{prompt}{default_hint}", color=discord.Color.gold(),
             )
             view = UpdatePromptView(
                 session_key=session_key, allowed_user_ids=self._allowed_user_ids,
                 allowed_role_ids=self._allowed_role_ids,
             )
-            content = self._self_contained_prompt_content(f"🎩 **{update_title}**", f"{prompt}{default_hint}")
+            content = self._self_contained_prompt_content(f"✚ **{update_title}**", f"{prompt}{default_hint}")
             return {"content": content, "embed": embed, "view": view}, view
         result = await self._send_prompt(chat_id, metadata, _build)
         if result.success and _metadata_marks_nonconversational(metadata):
@@ -6402,7 +6402,7 @@ def _define_discord_view_classes() -> None:
     global ExecApprovalView, SlashConfirmView, UpdatePromptView, ModelPickerView, ClarifyChoiceView, ChoicePickerView
 
     class _HermesView(discord.ui.View):
-        """Shared plumbing for Alfred component views: allowlist auth, single-use
+        """Shared plumbing for +Human component views: allowlist auth, single-use
         ``resolved`` flag, ``_message`` handle for timeout edits."""
 
         def __init__(self, allowed_user_ids: set, allowed_role_ids: Optional[set], *, timeout):
@@ -6621,7 +6621,7 @@ def _define_discord_view_classes() -> None:
             await self._resolve(interaction, "cancel", discord.Color.greyple(), "platform.discord.slash_confirm.resolved_cancel")
 
     class UpdatePromptView(_HermesView):
-        """Yes/No buttons for ``alfred update`` prompts; the answer is written to
+        """Yes/No buttons for ``plushuman update`` prompts; the answer is written to
         ``.update_response`` for the detached update process to pick up."""
 
         def __init__(self, session_key: str, allowed_user_ids: set, allowed_role_ids: Optional[set] = None):
@@ -7019,7 +7019,7 @@ if DISCORD_AVAILABLE:
 
 # ── Standalone (out-of-process) sender ────────────────────────────────────────
 # Used by ``tools/send_message_tool._send_via_adapter`` when no live DiscordAdapter is in this
-# process (e.g. standalone ``alfred cron``); same forum/thread/multipart logic via Discord REST.
+# process (e.g. standalone ``plushuman cron``); same forum/thread/multipart logic via Discord REST.
 
 # Process-local channel-type probe cache: avoids re-probing every send when the directory cache misses.
 _DISCORD_CHANNEL_TYPE_PROBE_CACHE: dict[str, bool] = {}
@@ -7420,7 +7420,7 @@ _is_connected = _env_is_connected("DISCORD_BOT_TOKEN")
 
 
 def register(ctx) -> None:
-    """Plugin entry point — called by the Alfred plugin system."""
+    """Plugin entry point — called by the +Human plugin system."""
     from plugins.platforms.discord.onboarding import interactive_setup
 
     ctx.register_platform(
@@ -7431,7 +7431,7 @@ def register(ctx) -> None:
         ensure_deps_fn=check_discord_requirements,
         is_connected=_is_connected,
         required_env=["DISCORD_BOT_TOKEN"],
-        install_hint="Run `alfred setup` to install Discord support.",
+        install_hint="Run `plushuman setup` to install Discord support.",
         setup_fn=interactive_setup,
         # YAML→env bridge: ``discord:`` config keys → ``DISCORD_*`` env vars read via os.getenv().
         # YAML→env config bridge — owns the translation of ``config.yaml`` ``discord:`` keys

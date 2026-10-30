@@ -9,7 +9,7 @@ pytestmark = pytest.mark.platforms("linux")
 
 
 def test_user_unit_dir_follows_the_account_home_not_a_profile_pinned_process_home(tmp_path, monkeypatch):
-    # ``alfred -p x gateway install`` launched from a process whose HOME profile isolation already
+    # ``plushuman -p x gateway install`` launched from a process whose HOME profile isolation already
     # pointed at the ACTIVE profile's ``{HERMES_HOME}/home``; the unit must land where
     # ``systemctl --user`` looks — under the account home — not under that profile dir.
     account_home = tmp_path / "account"

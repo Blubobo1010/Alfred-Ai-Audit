@@ -28,9 +28,9 @@ if (values.desktop === 'absent') {
   fs.rmSync(path.join(values.out, `desktop-chat-${values.phase}.json`), { force: true });
   const release = path.join(values.root, 'apps', 'desktop', 'release');
   const candidates = {
-    linux: ['linux-unpacked/Alfred', 'linux-unpacked/hermes'],
-    darwin: [process.arch === 'arm64' ? 'mac-arm64/Alfred.app/Contents/MacOS/Alfred' : 'mac/Alfred.app/Contents/MacOS/Alfred'],
-    win32: [process.arch === 'arm64' ? 'win-arm64-unpacked/Alfred.exe' : 'win-unpacked/Alfred.exe'],
+    linux: ['linux-unpacked/+Human', 'linux-unpacked/hermes'],
+    darwin: [process.arch === 'arm64' ? 'mac-arm64/+Human.app/Contents/MacOS/+Human' : 'mac/+Human.app/Contents/MacOS/+Human'],
+    win32: [process.arch === 'arm64' ? 'win-arm64-unpacked/+Human.exe' : 'win-unpacked/+Human.exe'],
   }[process.platform];
   if (!candidates) throw new Error(`unsupported source smoke host: ${process.platform}`);
   const executables = candidates.map(p => path.join(release, p)).filter(p => fs.existsSync(p));

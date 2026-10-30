@@ -165,7 +165,7 @@ class TestGenerate:
         assert post_url.endswith("/generate/image/krea/krea-2/large")
 
     def test_aspect_ratio_mapping(self):
-        """Alfred 'square' must map to Krea '1:1' in the wire payload."""
+        """+Human 'square' must map to Krea '1:1' in the wire payload."""
         from plugins.image_gen.krea import KreaImageGenProvider
 
         submit = _submit_response()

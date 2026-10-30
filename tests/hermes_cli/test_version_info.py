@@ -29,7 +29,7 @@ def test_derived_version_shows_plus_question_for_dirty_unknown_distance():
 
 def test_display_version_names_the_distance_without_the_commit():
     """Labels say how far past the release an install is; the commit is shown
-    beside them where there is room (`alfred --version` keeps `.g<sha>`)."""
+    beside them where there is room (`plushuman --version` keeps `.g<sha>`)."""
     ahead = VersionInfo("0.21.5", "0.21.5+1913.gf83a9e9", 1913, "f83a9e9" + "0" * 33, "main", "git")
     assert ahead.display_version == "0.21.5+1913"
     assert VersionInfo("0.21.5", "0.21.5", 0, None, None, "git").display_version == "0.21.5"
@@ -165,7 +165,7 @@ def test_get_version_info_derives_identity_from_reachable_release_tag(tmp_path, 
         return result.stdout.strip()
 
     git("init", "-q")
-    git("config", "user.name", "Alfred Test")
+    git("config", "user.name", "+Human Test")
     git("config", "user.email", "hermes@example.invalid")
     (repo / "tracked").write_text("release\n", encoding="utf-8")
     git("add", "tracked")
@@ -200,7 +200,7 @@ def test_get_version_info_takes_the_version_a_calver_only_release_shipped(tmp_pa
         return result.stdout.strip()
 
     git("init", "-q")
-    git("config", "user.name", "Alfred Test")
+    git("config", "user.name", "+Human Test")
     git("config", "user.email", "hermes@example.invalid")
     (repo / "pyproject.toml").write_text('[project]\nname = "hermes-agent"\nversion = "0.21.4"\n', encoding="utf-8")
     git("add", "pyproject.toml")

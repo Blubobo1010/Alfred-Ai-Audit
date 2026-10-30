@@ -307,7 +307,7 @@ test.skipIf(process.platform === 'win32')(
       const stagedUnixTerminal = await import(stagedUnixTerminalUrl.href)
       const unpackedHelper = join(
         tmp,
-        'Alfred.app',
+        '+Human.app',
         'Contents',
         'Resources',
         'app.asar.unpacked',

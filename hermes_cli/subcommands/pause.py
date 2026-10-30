@@ -1,4 +1,4 @@
-"""``alfred pause`` / ``alfred resume`` — the global emergency stop.
+"""``plushuman pause`` / ``plushuman resume`` — the global emergency stop.
 
 ``pause`` writes the ESTOP sentinel at ``$HERMES_HOME/ESTOP``; cron, kanban and new gateway
 turns halt on their next check (in-flight work is never killed). ``resume`` removes it and
@@ -18,13 +18,13 @@ def cmd_pause(args: argparse.Namespace) -> int:
     already = is_engaged()
     path = engage(reason=reason)
     state = get_state() or {}
-    verb = "Still paused" if already else "Alfred paused"
+    verb = "Still paused" if already else "+Human paused"
     detail = f" — reason: {state['reason']}" if state.get("reason") else ""
     print(f"⏸️  {verb}{detail}")
     print(f"    sentinel: {path}")
     print(
         "    Cron dispatch, kanban dispatch, and new gateway turns are on hold.\n"
-        "    In-flight work keeps running. Run `alfred resume` to lift the pause.")
+        "    In-flight work keeps running. Run `plushuman resume` to lift the pause.")
     return 0
 
 
@@ -33,9 +33,9 @@ def cmd_resume(args: argparse.Namespace) -> int:
     from agent.estop import disengage, sentinel_path
 
     if disengage():
-        print("▶️  Alfred resumed — dispatch picks up on the next tick.")
+        print("▶️  +Human resumed — dispatch picks up on the next tick.")
     else:
-        print(f"Alfred is not paused (no sentinel at {sentinel_path()}).")
+        print(f"+Human is not paused (no sentinel at {sentinel_path()}).")
     return 0
 
 
@@ -45,12 +45,12 @@ def build_pause_parser(subparsers) -> None:
         "pause", help="Emergency stop: pause cron/kanban dispatch and new gateway turns",
         description="Engage the global emergency stop. Halts NEW work only — cron "
             "dispatch, kanban dispatch, and new gateway turns — until "
-            "`alfred resume`. In-flight work is never killed.")
+            "`plushuman resume`. In-flight work is never killed.")
     pause_parser.add_argument(
         "--reason", default=None, help="Optional reason stored in the sentinel and shown to users")
     pause_parser.set_defaults(func=cmd_pause)
 
     resume_parser = subparsers.add_parser(
-        "resume", help="Lift the emergency stop set by `alfred pause`",
+        "resume", help="Lift the emergency stop set by `plushuman pause`",
         description="Remove the ESTOP sentinel; dispatch resumes on the next tick.")
     resume_parser.set_defaults(func=cmd_resume)

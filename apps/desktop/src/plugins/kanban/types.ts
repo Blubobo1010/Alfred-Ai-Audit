@@ -183,7 +183,7 @@ export interface BoardImportResult {
   warnings: string[]
 }
 
-/** GET /projects — first-class Alfred projects available to scope a board. */
+/** GET /projects — first-class \+Human projects available to scope a board. */
 export interface KanbanProject {
   id: string
   slug: string

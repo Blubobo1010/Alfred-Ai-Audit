@@ -35,7 +35,7 @@ import hermes_cli.plugins as plugins_mod
 from tools import transcription_tools
 
 
-PROMPT = "Alfred, Teknium, Nous Research, kanban"
+PROMPT = "+Human, Teknium, Nous Research, kanban"
 
 
 # ---------------------------------------------------------------------------

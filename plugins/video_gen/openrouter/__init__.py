@@ -172,7 +172,7 @@ class OpenRouterVideoGenProvider(VideoGenProvider):
 
     def _headers(self, api_key: str) -> dict[str, str]:
         return {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json",
-                "HTTP-Referer": "https://github.com/Blubobo1010/Alfred-Ai-Audit", "X-Title": "Alfred"}
+                "HTTP-Referer": "https://github.com/Blubobo1010/Alfred-Ai-Audit", "X-Title": "+Human"}
 
     def _session(self) -> Any:
         import requests
@@ -298,7 +298,7 @@ class OpenRouterVideoGenProvider(VideoGenProvider):
         except Exception as exc:
             return fail(f"Could not resolve OpenRouter credentials: {exc}", "missing_credentials")
         if not api_key:
-            return fail("No OpenRouter credential: set OPENROUTER_API_KEY or run `alfred auth add openrouter`",
+            return fail("No OpenRouter credential: set OPENROUTER_API_KEY or run `plushuman auth add openrouter`",
                         "missing_credentials")
         # Resolved once: a rotating pool must not submit under one key and poll or download under another.
         headers = self._headers(api_key)

@@ -1,6 +1,6 @@
 // The desktop product identity — THE single source for every name-shaped
-// value a variant owns. HERMES_DESKTOP_VARIANT=light builds "Alfred
-// Light", the remote-only client; everything else is full "Alfred".
+// value a variant owns. HERMES_DESKTOP_VARIANT=light builds "+Human
+// Light", the remote-only client; everything else is full "+Human".
 //
 // Consumed at build time by electron-builder.config.cjs (packaging
 // identity). electron/product-identity.ts is the typed runtime accessor.
@@ -9,16 +9,16 @@
 'use strict'
 
 const variants = {
-  '': { display: 'Alfred', kebab: 'alfred', pascal: 'Alfred' },
+  '': { display: '+Human', kebab: 'alfred', pascal: 'Alfred' },  // alfred:keep
   light: {
-    display: 'Alfred Light',
-    kebab: 'alfred-light',
-    pascal: 'AlfredLight'
+    display: '+Human Light',
+    kebab: 'alfred-light',  // alfred:keep
+    pascal: 'AlfredLight'  // alfred:keep
   },
   bundled: {
-    display: 'Alfred',
-    kebab: 'alfred-bundled',
-    pascal: 'AlfredBundled'
+    display: '+Human',
+    kebab: 'alfred-bundled',  // alfred:keep
+    pascal: 'AlfredBundled'  // alfred:keep
   }
 }
 
@@ -54,7 +54,7 @@ const displayName = buildCommit
 
 const kebabSuffix = buildCommit ? `-${buildCommit}` : canary ? '-canary' : ''
 const pascalSuffix = buildCommit ? `Commit${buildCommit}` : canary ? 'Canary' : ''
-const cliName = `${light ? 'alfred-light' : 'alfred'}${kebabSuffix}`
+const cliName = `${light ? 'plushuman-light' : 'plushuman'}${kebabSuffix}`
 if (store && (canary || buildCommit)) {
   throw new Error('Store packaging is only eligible for stable releases')
 }

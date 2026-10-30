@@ -1,6 +1,6 @@
 """Regression coverage for Windows updater self-locking native dependencies.
 
-External secret backends are useful during normal Alfred startup, but the
+External secret backends are useful during normal +Human startup, but the
 updater must not load them before replacing packages in its own environment.
 On Windows, importing Bitwarden's ``cryptography`` dependency maps
 ``_rust.pyd`` into the updater process and prevents ``uv`` from replacing it.
@@ -73,7 +73,7 @@ def test_complete_update_dispatch_does_not_import_cryptography(tmp_path):
     """Building every CLI parser used to re-import Bitwarden via secrets_cli."""
     loaded = _probe_startup_modules(
         tmp_path,
-        ["alfred", "update", "--check"],
+        ["plushuman", "update", "--check"],
         run_main=True,
     )
 
@@ -84,7 +84,7 @@ def test_complete_update_dispatch_does_not_import_cryptography(tmp_path):
 
 
 def test_normal_startup_still_loads_enabled_external_secret_source(tmp_path):
-    loaded = _probe_startup_modules(tmp_path, ["alfred", "chat"])
+    loaded = _probe_startup_modules(tmp_path, ["plushuman", "chat"])
 
     assert "agent.secret_sources.bitwarden" in loaded
 
@@ -128,7 +128,7 @@ def test_update_probe_children_skip_external_secret_sources(tmp_path):
     )
     result = subprocess.run(
         [sys.executable, "-c",
-         "import sys; sys.argv = ['alfred', 'update']\n"
+         "import sys; sys.argv = ['plushuman', 'update']\n"
          "from hermes_cli.update_cmd_validation import _validate_critical_modules_import\n"
          "print('PROBE=' + repr(_validate_critical_modules_import(__import__('os').getcwd())))"],
         capture_output=True, text=True, timeout=180, cwd=REPO_ROOT,

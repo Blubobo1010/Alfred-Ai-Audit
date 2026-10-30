@@ -1,23 +1,23 @@
 # Langfuse Observability Plugin
 
-This plugin ships bundled with Alfred but is **opt-in** — it only loads when
+This plugin ships bundled with +Human but is **opt-in** — it only loads when
 you explicitly enable it.
 
 ## Enable
 
 ```bash
 # Interactive: credentials + PM preparation of the langfuse extra + enable
-alfred tools  # → Langfuse Observability
+plushuman tools  # → Langfuse Observability
 ```
 
-Restart Alfred after setup. If dependency preparation fails, retry through
-`alfred tools`; do not inject the SDK into the selected environment with pip.
+Restart +Human after setup. If dependency preparation fails, retry through
+`plushuman tools`; do not inject the SDK into the selected environment with pip.
 For manual source-checkout setup, see the
 [plugin guide](../../../website/docs/user-guide/features/built-in-plugins.md#observabilitylangfuse).
 
 ## Required credentials
 
-Set these in `~/.hermes/.env` (or via `alfred tools`):
+Set these in `~/.hermes/.env` (or via `plushuman tools`):
 
 ```bash
 HERMES_LANGFUSE_PUBLIC_KEY=pk-lf-...
@@ -31,11 +31,11 @@ open.
 ## Verify
 
 ```bash
-alfred plugins list                 # observability/langfuse should show "enabled"
-alfred chat -q "hello"              # then check Langfuse for a "Alfred turn" trace
+plushuman plugins list                 # observability/langfuse should show "enabled"
+plushuman chat -q "hello"              # then check Langfuse for a "+Human turn" trace
 ```
 
-Generation observations include the Alfred system prompt when the provider
+Generation observations include the +Human system prompt when the provider
 uses a separate `system` param (Anthropic Messages API). Open an **LLM call**
 child span to inspect `role: system` (truncated via `HERMES_LANGFUSE_MAX_CHARS`).
 
@@ -55,7 +55,7 @@ HERMES_LANGFUSE_DEBUG=true           # verbose plugin logging
 and `full` modes, including tool arguments and JSON tool results. The root is
 depth 0; each dictionary value or array element adds one level. Values beyond
 the limit become `<max-depth>`, including scalars. For deeper MCP responses,
-set it to a higher non-negative integer (for example, `10`) in the Alfred
+set it to a higher non-negative integer (for example, `10`) in the +Human
 process environment. Unset or blank values default to `4`; invalid or negative
 values log a warning and fall back to `4`. `0` keeps only the root level.
 Increasing the depth exports more content and may produce larger traces;
@@ -90,5 +90,5 @@ For personal sessions or shared Langfuse projects, prefer `metadata`.
 ## Disable
 
 ```bash
-alfred plugins disable observability/langfuse
+plushuman plugins disable observability/langfuse
 ```

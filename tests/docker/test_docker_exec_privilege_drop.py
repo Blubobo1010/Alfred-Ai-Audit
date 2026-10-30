@@ -2,16 +2,16 @@
 
 The shim (docker/hermes-exec-shim.sh, installed at /opt/hermes/bin/hermes)
 exists to prevent the auth.json ownership-mismatch bug where
-`docker exec <c> alfred login` would write /opt/data/auth.json as
+`docker exec <c> plushuman login` would write /opt/data/auth.json as
 root:root mode 0600, leaving the supervised gateway (UID 10000) unable
 to read its own credentials and returning "Provider authentication
-failed: Alfred is not logged into Nous Portal" on every message.
+failed: +Human is not logged into Nous Portal" on every message.
 
 These tests verify:
 
 1. ``docker exec <c> hermes …`` (defaulting to root) gets dropped to the
    hermes user before the real binary runs.
-2. ``docker exec --user alfred <c> hermes …`` (already non-root) short-
+2. ``docker exec --user plushuman <c> hermes …`` (already non-root) short-
    circuits and doesn't try to drop again.
 3. Files written under $HERMES_HOME from a ``docker exec`` session land
    as hermes:hermes — the actual user-visible invariant.
@@ -108,16 +108,16 @@ def sleep_container(built_image: str, container_name: str) -> Iterator[str]:
 def test_shim_drops_root_to_hermes_uid(sleep_container: str) -> None:
     """docker exec defaults to root; the shim should drop to uid 10000.
 
-    We invoke `alfred` with a Python-style `-c` shim equivalent — there's no
+    We invoke `plushuman` with a Python-style `-c` shim equivalent — there's no
     pure-hermes "print my uid" command, so we use the venv's python directly
     via the shim's PATH lookup: `python -c 'print(os.getuid())'` is resolved
     through the venv. But that bypasses the shim. Instead, we exploit the
-    fact that the venv's `alfred` is a console_scripts entry — under the
+    fact that the venv's `plushuman` is a console_scripts entry — under the
     hood it's a tiny Python wrapper. We can't easily inject "print my uid"
-    into it without forking subcommands. Simplest approach: have `alfred`
+    into it without forking subcommands. Simplest approach: have `plushuman`
     do anything that writes to disk, then check the file's owner.
 
-    Use `alfred config set` which writes config.yaml under HERMES_HOME.
+    Use `plushuman config set` which writes config.yaml under HERMES_HOME.
     The resulting file ownership tells us what UID the shim ended up at.
     """
     # Wipe any prior state.
@@ -130,7 +130,7 @@ def test_shim_drops_root_to_hermes_uid(sleep_container: str) -> None:
     # Default docker exec (root) — should be dropped by the shim.
     r = subprocess.run(
         ["docker", "exec", sleep_container,
-         "alfred", "config", "set", "_test.shim_marker", "1"],
+         "plushuman", "config", "set", "_test.shim_marker", "1"],
         capture_output=True, text=True, timeout=30,
         check=False,
     )
@@ -163,32 +163,32 @@ def test_e2e_login_then_supervised_gateway_can_read_auth(
 ) -> None:
     """End-to-end regression for the original bug.
 
-    Pre-shim: ``docker exec <c> alfred login`` (root) wrote
+    Pre-shim: ``docker exec <c> plushuman login`` (root) wrote
     /opt/data/auth.json as root:root 0600. The supervised gateway (UID
     10000) couldn't read it, _load_auth_store swallowed PermissionError
     as a parse failure, and resolve_nous_runtime_credentials raised
-    "Alfred is not logged into Nous Portal" on every message.
+    "+Human is not logged into Nous Portal" on every message.
 
     We can't do a real OAuth login in a unit test, but we can stand in
-    for it by writing the same file shape via `alfred config set`-style
+    for it by writing the same file shape via `plushuman config set`-style
     writes — what matters is the *file ownership invariant* downstream
     of `_save_auth_store`. If the shim works, every file the
     `docker exec` path produces is hermes-readable.
 
-    Specifically: pretend the operator ran `alfred login` (writes
+    Specifically: pretend the operator ran `plushuman login` (writes
     auth.json) and verify (a) the file exists and (b) it's readable by
-    the hermes UID. We use `alfred auth list` since that touches the
+    the hermes UID. We use `plushuman auth list` since that touches the
     auth store on the read side and would fail with the same
     'not logged in' shape if the file was unreadable to uid 10000.
     """
     # Have the shim-protected `docker exec` write the auth store.
-    # `alfred auth list` is read-only but still exercises _load_auth_store
-    # under the shim's UID. We invoke `alfred config set` first to
+    # `plushuman auth list` is read-only but still exercises _load_auth_store
+    # under the shim's UID. We invoke `plushuman config set` first to
     # provoke a write into HERMES_HOME so we have something concrete to
     # owner-check.
     r = subprocess.run(
         ["docker", "exec", sleep_container,
-         "alfred", "config", "set", "_test.e2e_marker", "1"],
+         "plushuman", "config", "set", "_test.e2e_marker", "1"],
         capture_output=True, text=True, timeout=30,
         check=False,
     )

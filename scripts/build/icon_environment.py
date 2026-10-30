@@ -1,7 +1,7 @@
-"""Prepare an interpreter that can run the icon generator without a Alfred install.
+"""Prepare an interpreter that can run the icon generator without a +Human install.
 
 Pillow and resvg-py are core runtime dependencies, so builders that have no
-Alfred runtime environment (desktop bundles, product staging) render icons on
++Human runtime environment (desktop bundles, product staging) render icons on
 the locked runtime dependencies alone, without installing the application.
 """
 from __future__ import annotations

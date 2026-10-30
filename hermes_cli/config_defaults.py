@@ -1,4 +1,4 @@
-"""Default configuration data for Alfred: DEFAULT_CONFIG and OPTIONAL_ENV_VARS.
+"""Default configuration data for +Human: DEFAULT_CONFIG and OPTIONAL_ENV_VARS.
 
 Pure-data leaf module — must not import from hermes_cli.config. Comments are the user-facing
 docs of config.yaml.
@@ -40,7 +40,7 @@ DEFAULT_CONFIG = {
     "fallback": {"min_switch_reset_seconds": 0},
     "credential_pool_strategies": {},
     "toolsets": ["hermes-cli"],
-    # journal_mode: SQLite journal mode for every Alfred DB. "wal" default; use "delete" on
+    # journal_mode: SQLite journal mode for every +Human DB. "wal" default; use "delete" on
     # weak-fsync/shared filesystems where WAL is not crash-safe (macOS virtiofs, NFS, SMB).
     "database": {
         "journal_mode": "wal",
@@ -57,7 +57,7 @@ DEFAULT_CONFIG = {
     # 0/null disables.
     "max_live_sessions": 16,
     "session": {
-        # Per-terminal `alfred -c`: each CLI session writes a breadcrumb under
+        # Per-terminal `plushuman -c`: each CLI session writes a breadcrumb under
         # $HERMES_HOME/terminal-sessions/<terminal-id>, so bare -c/--continue resumes THIS
         # terminal's session (tmux/kitty/wezterm pane, tty). false = resume globally most-recent.
         "terminal_continue": True,
@@ -81,7 +81,7 @@ DEFAULT_CONFIG = {
         "budget_warning_ratio": None,
         # Wall-clock budget (seconds) per run. null = off. When set: one-time wrap-up notice at 80%
         # elapsed; implicit provider stale timeouts capped to remaining budget. CLI equivalent:
-        # `alfred chat --run-budget N`.
+        # `plushuman chat --run-budget N`.
         "run_budget_seconds": None,
         # Gateway inactivity timeout (seconds). Only fires when the agent is completely idle — not
         # while calling tools or receiving API responses. 0 = unlimited.
@@ -127,7 +127,7 @@ DEFAULT_CONFIG = {
         # many slow/unreachable MCP servers.
         # See #63078.
         "build_wait_timeout": 600,
-        # Alfred-level retry attempts for API errors (connection drops, timeouts, 5xx) wrapping the
+        # +Human-level retry attempts for API errors (connection drops, timeouts, 5xx) wrapping the
         # whole call; the OpenAI SDK also retries transient errors (max_retries=2). Set 1 for fast
         # failover to fallback providers; raise to tolerate longer provider hiccups.
         "api_max_retries": 3,
@@ -193,7 +193,7 @@ DEFAULT_CONFIG = {
         # Bot Mode teammate-messaging protocol section (silent unless desktop Bot Mode manages it).
         "bot_mode_protocol": True,
         # Embedder-supplied text appended to the system prompt's environment-hints block, so a host
-        # wrapping Alfred (sandbox runner, managed platform) can describe proxy/credential/ mount
+        # wrapping +Human (sandbox runner, managed platform) can describe proxy/credential/ mount
         # layout without editing SOUL.md. Env HERMES_ENVIRONMENT_HINT overrides it.
         "environment_hint": "",
         # Coding posture: on interactive coding surfaces (CLI, TUI, desktop, ACP) in a code
@@ -241,12 +241,12 @@ DEFAULT_CONFIG = {
         "session_stall_timeout": 300,
         # Transcript-sanitiser heal escalation: after this many pre-send heal passes within a
         # 10-minute window, log one ERROR and queue a ONE-TIME out-of-band notice pointing at /debug
-        # share or `alfred doctor` (status channel only; prompt cache untouched). 0 = no escalation
+        # share or `plushuman doctor` (status channel only; prompt cache untouched). 0 = no escalation
         # (per-window WARNINGs still fire).
         # See #96870.
         "sanitizer_heal_escalation_threshold": 3,
         # Seconds of continuous reconnect failure before a platform gets needs_attention flagged in
-        # gateway status (`alfred status` / fleet monitoring). Retries never stop — a signal, not a
+        # gateway status (`plushuman status` / fleet monitoring). Retries never stop — a signal, not a
         # circuit breaker. 0 = disable.
         "reconnect_attention_after": 7200,
         # Freshness window (seconds) for the auto-continue note. After a crash/restart mid-run the
@@ -377,8 +377,8 @@ DEFAULT_CONFIG = {
         "docker_shm_size": "1g",
         # Run the container as the host uid:gid (`--user`) so files written to bind mounts
         # (docker_volumes, persistent workspace, mounted cwd) are owned by you, not root. Off by
-        # default for images whose entrypoints must start as root (e.g. the bundled Alfred image,
-        # which drops to `alfred` via s6-setuidgid). When on, SETUID/SETGID caps are omitted.
+        # default for images whose entrypoints must start as root (e.g. the bundled +Human image,
+        # which drops to `plushuman` via s6-setuidgid). When on, SETUID/SETGID caps are omitted.
         "docker_run_as_host_user": False,
         # Snap-packaged Docker under AppArmor (Ubuntu cloud images; LP#1908448) refuses to exec
         # anything under `--init` or `--security-opt no-new-privileges` ("operation not
@@ -406,8 +406,8 @@ DEFAULT_CONFIG = {
         # keyless_fallback is false.
         "keyless_rescue": True,
         # Per-vendor tier for vendors with both a keyless free endpoint and a keyed paid path (exa,
-        # parallel, firecrawl, keenable; tavily is opt-in keyless via `alfred tools`, not a ring
-        # member). Set by the `alfred tools` picker. "free" = always anonymous endpoint even with a
+        # parallel, firecrawl, keenable; tavily is opt-in keyless via `plushuman tools`, not a ring
+        # member). Set by the `plushuman tools` picker. "free" = always anonymous endpoint even with a
         # key; "paid" = always keyed (missing key = error; vendor excluded from the ring); unset =
         # keyed when the key is present, else the ring.
         "provider_tier": {},
@@ -444,9 +444,9 @@ DEFAULT_CONFIG = {
         # With a cloud provider, auto-spawn local Chromium for LAN/localhost URLs instead
         "auto_local_for_private_urls": True,
         "cdp_url": "",  # persistent CDP endpoint for attaching to an existing Chromium/Chrome
-        # Consent to browse with the user's REAL logins locally: runs on a Alfred-managed SNAPSHOT
+        # Consent to browse with the user's REAL logins locally: runs on a +Human-managed SNAPSHOT
         # of the ACTIVE default-Chromium profile (Local State -> profile.last_used; cookies, logins,
-        # prefs copied and re-synced per fresh session) driven by Alfred' packaged Chromium. The
+        # prefs copied and re-synced per fresh session) driven by +Human' packaged Chromium. The
         # snapshot dir sidesteps Chrome 136+'s default-profile debugging block and never contends
         # with the running browser. Turning off deletes ~/.hermes/browser-profile/ so credentials
         # don't outlive consent. Chromium-family only (Chrome, Edge, Brave, Brave Origin, Chromium);
@@ -455,7 +455,7 @@ DEFAULT_CONFIG = {
         "use_real_profile": False,
         # Windows only: a running Chrome/Edge/Brave locks its cookie DB, so the profile can't be
         # copied. When on, a locked profile still blocks and the agent ASKS first; on approval it
-        # runs `alfred browser close-profile` (kills that profile's browser tree, unsaved tabs lost)
+        # runs `plushuman browser close-profile` (kills that profile's browser tree, unsaved tabs lost)
         # and retries once; still locked -> stays blocked, no auto-kill. No effect on macOS/Linux,
         # where a running browser instead makes the Login Data / Web Data SQLite backups miss
         # their deadline; quit the browser by hand there.
@@ -494,7 +494,7 @@ DEFAULT_CONFIG = {
         "extension_control": {"enabled": False, "developer_mode": False},
     },
     # Filesystem checkpoints: snapshot the working directory once per turn (on the first
-    # write_file/patch call); restore with /rollback. Opt-in via `alfred chat --checkpoints` or
+    # write_file/patch call); restore with /rollback. Opt-in via `plushuman chat --checkpoints` or
     # enabled=True (most users never use /rollback). Single shared shadow store with real pruning.
     "checkpoints": {
         "enabled": False,
@@ -511,7 +511,7 @@ DEFAULT_CONFIG = {
         # refs moved, enforces max_total_size_mb, deletes legacy-* archives older than retention_days.
         # It NEVER deletes orphans (workdir missing on
         # disk) — a missing workdir may just be an unmounted volume/VPN, and an unattended sweep
-        # must not guess. Orphans: `alfred checkpoints prune` (`--keep-orphans` to skip).
+        # must not guess. Orphans: `plushuman checkpoints prune` (`--keep-orphans` to skip).
         "auto_prune": True,
         "retention_days": 7,
         "min_interval_hours": 24,
@@ -532,7 +532,7 @@ DEFAULT_CONFIG = {
     # up by the between-turns refresh (agent/turn_context.py), so keep it small — a dead server adds
     # this much to first-response latency.
     "mcp_discovery_timeout": 1.5,
-    # Same bound for single-query mode (``alfred -q/-z``). With only ONE turn there is no
+    # Same bound for single-query mode (``plushuman -q/-z``). With only ONE turn there is no
     # between-turns refresh, so a server that misses the window is invisible for the whole session;
     # the larger bound lets slow cold-start servers (npx, uvx, remote HTTP) land. Reachable servers
     # still only wait their real handshake time.
@@ -669,7 +669,7 @@ DEFAULT_CONFIG = {
         # Show the one-time autoraise banner; False keeps the autoraise, hides the notice.
         "codex_gpt55_autoraise_notice": True,
         # Codex app-server thread compaction mode. The codex agent owns the thread context, so
-        # Alfred' summarizer cannot shrink it. native = codex decides; hermes = Alfred' threshold
+        # +Human' summarizer cannot shrink it. native = codex decides; hermes = +Human' threshold
         # triggers thread/compact/start; off = never auto-trigger.
         "codex_app_server_auto": "native",
         # Opt in to OpenAI server-side compaction on the Responses API. Only gpt-5.6-family on
@@ -795,7 +795,7 @@ DEFAULT_CONFIG = {
         "profile_describer": _aux(60),   # 1-2 sentence profile blurb; short, cheap
         "goal_judge": _aux(60),          # /goal satisfaction + contract drafting; JSON calls
         # Curator skill-usage review can take minutes on reasoning models (umbrellas over hundreds
-        # of skills); route cheaper via `alfred model` → auxiliary → Curator.
+        # of skills); route cheaper via `plushuman model` → auxiliary → Curator.
         "curator": _aux(600),
         "monitor": _aux(60),   # important-mail 0-10 scorer; high-volume, small model fine
         # Post-turn self-improvement fork (save memory / patch skill). "auto" = main model replaying
@@ -816,6 +816,7 @@ DEFAULT_CONFIG = {
     },
 
     "display": {
+        "assistant_name": "",  # alfred:keep — the assistant's own name, chosen by the customer
         "compact": False,
         "personality": "",
         "resume_display": "full",
@@ -835,13 +836,13 @@ DEFAULT_CONFIG = {
         # continues, Shift+Enter reported distinctly. False restores the c-j submit fallback for
         # POSIX PTYs whose plain Enter arrives as LF.
         "cli_multiline_shortcuts": True,
-        # Interface bare `alfred`/`alfred chat` launches: "cli" (prompt_toolkit REPL) | "tui" (Ink).
+        # Interface bare `plushuman`/`plushuman chat` launches: "cli" (prompt_toolkit REPL) | "tui" (Ink).
         # Flags win: `--cli` forces the REPL, `--tui` / HERMES_TUI=1 forces the TUI.
         "interface": "cli",
         # Native TUI uses the terminal's primary buffer and scrollback instead of the custom
         # alternate-screen viewport. Flags win: `--native` / `--tui-native` and `--cli`.
         "tui_native": False,
-        # `alfred --tui` auto-resumes the most recent human-facing session (like `alfred -c`).
+        # `plushuman --tui` auto-resumes the most recent human-facing session (like `plushuman -c`).
         # HERMES_TUI_RESUME=<id> always wins.
         "tui_auto_resume_recent": False,
         # Desktop reopens the last chat/page on cold start (also in Settings → Appearance).
@@ -968,7 +969,7 @@ DEFAULT_CONFIG = {
         "runtime_footer": {
             "enabled": False,
             # order shown; drop any to hide. Opt-in extras: latency, served_model (alias → the
-            # deployment a routing proxy reported / Alfred' fallback route).
+            # deployment a routing proxy reported / +Human' fallback route).
             "fields": ["model", "context_pct", "cwd"],
         },
         # CLI/TUI status bar fields. Non-empty = only listed fields show (built-in order kept,
@@ -983,7 +984,7 @@ DEFAULT_CONFIG = {
         },
         "copy_shortcut": "auto",  # "auto" (platform default) | ctrl_c | ctrl_shift_c | disabled
         # Petdex animated mascot (github.com/crafter-station/petdex): cosmetic sprite across
-        # CLI/TUI/desktop, managed with `alfred pets`. No effect on prompt caching.
+        # CLI/TUI/desktop, managed with `plushuman pets`. No effect on prompt caching.
         "pet": {
             "enabled": False,
             "slug": "",   # active pet slug in get_hermes_home()/pets/; empty → first installed
@@ -1213,9 +1214,9 @@ DEFAULT_CONFIG = {
 
     "voice": {
         # How the Desktop voice conversation is wired:
-        #   chained  — STT → Alfred turn → TTS (the stt.* / tts.* providers below)
+        #   chained  — STT → +Human turn → TTS (the stt.* / tts.* providers below)
         #   gpt-live — one full-duplex voice model (OpenAI GPT-Live) owns the mic and speaker and
-        #              DELEGATES every real request to Alfred (any model / provider you have
+        #              DELEGATES every real request to +Human (any model / provider you have
         #              selected); needs an OpenAI API key. $0.05/min voice layer billing.
         "voice_chat_mode": "chained",
         "gpt_live": {
@@ -1380,7 +1381,7 @@ DEFAULT_CONFIG = {
         # Orchestrator role controls. Depth floored at 1, no ceiling; each level multiplies cost.
         "max_spawn_depth": 1,  # 1 = flat, 2 = orchestrator→leaf, 3+ = deeper
         "orchestrator_enabled": True,  # kill switch for role="orchestrator"
-        # Total subagents a finite one-shot run (alfred chat -q / --oneshot) may spawn; 0 = unlimited.
+        # Total subagents a finite one-shot run (plushuman chat -q / --oneshot) may spawn; 0 = unlimited.
         # Each child re-pays a cold system prompt and re-explores the repo, and one-shot spawns are mostly
         # "review my own work" rather than parallel work (agent/oneshot_footprint.py).
         "oneshot_max_children": 2,
@@ -1455,7 +1456,7 @@ DEFAULT_CONFIG = {
         # highest-precedence tier — ONLY if the root is in trusted_project_dirs. false = no scan, no
         # untrusted-skills notice.
         "project_discovery": True,
-        # Trusted project roots; managed by `alfred skills trust` / `untrust`.
+        # Trusted project roots; managed by `plushuman skills trust` / `untrust`.
         "trusted_project_dirs": [],
         # Skill names pinned as fully loaded in every new session (CLI, TUI, gateway, cron, API).
         # Resolved once when the agent's prompt is first built; missing/disabled names warn and
@@ -1471,7 +1472,7 @@ DEFAULT_CONFIG = {
         # code via terminal() ungated, so it mostly blocks prose with risky keywords. On: a
         # dangerous verdict is a tool error the agent can retry. Hub installs are always scanned.
         "guard_agent_created": False,
-        # Advisory NVIDIA SkillEvaluator Tier 1 scan on `alfred skills install` (alongside the
+        # Advisory NVIDIA SkillEvaluator Tier 1 scan on `plushuman skills install` (alongside the
         # enforcing built-in guard), only if `skillevaluator` is on PATH (uv tool install
         # "skillevaluator @ git+https://github.com/NVIDIA/SkillEvaluator.git"). Informational, never
         # blocking; secrets-class findings shown red. No-op without it.
@@ -1494,7 +1495,7 @@ DEFAULT_CONFIG = {
     # Curator — background maintenance of AGENT-CREATED skills (never hub-installed): marks
     # long-unused skills stale, archives (never deletes) obsolete ones, optionally consolidates
     # overlaps via a forked aux-model agent. Inactivity-triggered from session start, no cron
-    # daemon. `alfred curator status` shows the last run.
+    # daemon. `plushuman curator status` shows the last run.
     "curator": {
         "enabled": True,
         "interval_hours": 24 * 7,  # hours between runs
@@ -1502,18 +1503,18 @@ DEFAULT_CONFIG = {
         "stale_after_days": 14,  # mark "stale" after this many unused days
         "archive_after_days": 30,  # move to skills/.archive/ (recoverable) after this many
         # LLM consolidation (umbrella-building) pass. OFF = deterministic inactivity prune only, no
-        # aux-model cost. `alfred curator run --consolidate` overrides once.
+        # aux-model cost. `plushuman curator run --consolidate` overrides once.
         "consolidate": False,
-        # Also prune bundled built-ins (a suppression list stops `alfred update` restoring them);
+        # Also prune bundled built-ins (a suppression list stops `plushuman update` restoring them);
         # hub-installed skills are NEVER pruned. OFF by default: shipped skills vanishing from
         # `skills_list` because nobody loaded them for 30 days surprised people (57 gone in one
         # startup tick). true = built-ins age out like agent-created skills.
         "prune_builtins": False,
-        # TTL purge of skills/.archive/: 0 = never; > 0 lets the explicit `alfred curator purge`
+        # TTL purge of skills/.archive/: 0 = never; > 0 lets the explicit `plushuman curator purge`
         # delete older archived skills (never automatic; logged in the ledger).
         "archive_ttl_days": 0,
         # Before a consolidation pass (the only one that rewrites skill content in place), snapshot
-        # ~/.hermes/skills/ to ~/.hermes/skills/.curator_backups/<utc-iso>/skills.tar.gz (`alfred curator
+        # ~/.hermes/skills/ to ~/.hermes/skills/.curator_backups/<utc-iso>/skills.tar.gz (`plushuman curator
         # rollback`). The prune-only pass just moves directories into .archive/ and takes none.
         "backup": {
             "enabled": True,
@@ -1620,7 +1621,7 @@ DEFAULT_CONFIG = {
     },
 
     "whatsapp": {
-        # reply_prefix: None = built-in "🎩 *Alfred*" header; "" disables; \n allowed.
+        # reply_prefix: None = built-in "✚ *+Human*" header; "" disables; \n allowed.
     },
 
     "telegram": {
@@ -1708,7 +1709,7 @@ DEFAULT_CONFIG = {
     # substitutes it; a bare string is shorthand for append. `replace` wins over `append` if both
     # are given.
     "platform_hints": {},
-    # Plugin system. `enabled`/`disabled` lists are written by `alfred plugins enable|disable` and
+    # Plugin system. `enabled`/`disabled` lists are written by `plushuman plugins enable|disable` and
     # deliberately omitted here so an empty default never clobbers a user allow-list.
     "plugins": {
         # Deadline (seconds) for one plugin Git clone, fetch or checkout. Slow repositories may
@@ -1722,16 +1723,16 @@ DEFAULT_CONFIG = {
         # abandoned. 0 = no deadline (load inline). Max 600.
         "load_timeout_seconds": 10,
         # Read-only plugin update-check cadence, hours (gateway tick; 0 disables). Applying stays
-        # explicit: `alfred plugins update <name>`, or auto_apply below (git-class plugins only,
+        # explicit: `plushuman plugins update <name>`, or auto_apply below (git-class plugins only,
         # scan-gated by that same pipeline).
         "auto_update_check_hours": 24,
         # Opt-in unattended apply for the cadence check. Git-row plugins ONLY; every apply runs the
         # same security scan / consent pipeline as the manual update command.
         "auto_apply": False,
-        # Where third-party Python plugins run. in_process: imported into Alfred (default).
-        # host: one plugin-host process per profile runs them and they reach Alfred only through
-        # ctx (a crashing or hanging plugin takes down its host, which restarts; Alfred keeps
-        # running). Bundled plugins stay in-process; `alfred plugins validate` says whether a
+        # Where third-party Python plugins run. in_process: imported into +Human (default).
+        # host: one plugin-host process per profile runs them and they reach +Human only through
+        # ctx (a crashing or hanging plugin takes down its host, which restarts; +Human keeps
+        # running). Bundled plugins stay in-process; `plushuman plugins validate` says whether a
         # plugin can run in the host.
         "isolation": "in_process",
         "host": {
@@ -1753,16 +1754,16 @@ DEFAULT_CONFIG = {
     "personalities": {},
     "auth": {  # Login policy (credentials themselves live in auth.json / .env).
         # Borrow and refresh the Codex CLI (~/.codex/auth.json) and Claude Code (~/.claude/.credentials.json)
-        # logins automatically when Alfred has no usable login of its own. Their refresh tokens are single-use
-        # and rotate, so two programs on one login can log each other out; set false to make Alfred use only
-        # its own logins (`alfred auth add <provider>`). `alfred auth add openai-codex` still offers the import
+        # logins automatically when +Human has no usable login of its own. Their refresh tokens are single-use
+        # and rotate, so two programs on one login can log each other out; set false to make +Human use only
+        # its own logins (`plushuman auth add <provider>`). `plushuman auth add openai-codex` still offers the import
         # interactively.
         "adopt_external_logins": True,
-        # How `alfred auth add openai-codex` / `alfred model` sign in to OpenAI Codex.
+        # How `plushuman auth add openai-codex` / `plushuman model` sign in to OpenAI Codex.
         # "device_code" (default): open a URL, enter a code. "browser": authorization-code + PKCE on
         # the loopback listener http://localhost:1455/auth/callback (the redirect OpenAI registered
         # for the Codex client) — for organizations that disable the device-code grant. Falls back
-        # to device code when that port is busy. `alfred auth add openai-codex --browser` opts in
+        # to device code when that port is busy. `plushuman auth add openai-codex --browser` opts in
         # for one login without changing this key.
         "codex_login_flow": "device_code",
     },
@@ -1788,7 +1789,7 @@ DEFAULT_CONFIG = {
         "protected_instruction_extra_patterns": [],
         "website_blocklist": {"enabled": False, "domains": [], "shared_files": []},
         # IDs of supply-chain advisories the user has read and acted on; acked ones stop the startup
-        # banner. Add via `alfred doctor --ack <id>`; remove by editing the list. Catalog:
+        # banner. Add via `plushuman doctor --ack <id>`; remove by editing the list. Catalog:
         # hermes_cli/security_advisories.py.
         "acked_advisories": [],
         # Lazy-install opt-in backend packages from PyPI when a backend that needs them is first
@@ -1874,14 +1875,14 @@ DEFAULT_CONFIG = {
         # fails closed with the enable-linger remedy. Kanban always requires a scope.
         "require_restart_safe_scope": False,
         # A job failing with the SAME error alerts once, then stays silent for this many hours
-        # before one reminder ping (the run is still recorded; `alfred cron incidents` shows it).
-        # A green run or a different error alerts again immediately; `alfred cron incidents ack`
+        # before one reminder ping (the run is still recorded; `plushuman cron incidents` shows it).
+        # A green run or a different error alerts again immediately; `plushuman cron incidents ack`
         # silences a signature for good. 0 = re-alert on every failing run. Keep in sync with
         # cron.scheduler.DEFAULT_FAILURE_REPEAT_ALERT_HOURS.
         "failure_repeat_alert_hours": 6,
     },
     # Kanban multi-agent coordination. The dispatcher ticks every N seconds, reclaims stale claims,
-    # promotes dependency-satisfied todos to ready, and fires `alfred -p <assignee> chat -q ...` per
+    # promotes dependency-satisfied todos to ready, and fires `plushuman -p <assignee> chat -q ...` per
     # claimable task. Run ONE dispatcher per profile; two on the same kanban.db race for claims.
     "kanban": {
         # Auto-subscribe the originating gateway/TUI session to completion + block events when
@@ -1930,13 +1931,13 @@ DEFAULT_CONFIG = {
         # fan-out workflows that would otherwise saturate one profile's local model / API quota / browser
         # pool while leaving other profiles idle. See #21582.
         "max_in_progress_per_profile": None,
-        # Per-home claim allowlist for boards shared across Alfred homes (#110995): profile names
+        # Per-home claim allowlist for boards shared across +Human homes (#110995): profile names
         # this home's dispatcher may claim (list or comma-separated string). None = any existing
         # profile is claimable. Set = fail-closed (an empty list claims nothing). Every home has a
         # root profile named "default", so on a shared kanban.db every home can otherwise claim
         # default-assigned cards.
         "dispatch_profiles": None,
-        # Auto-run the decomposer on Triage tasks every tick. False = manual via `alfred kanban
+        # Auto-run the decomposer on Triage tasks every tick. False = manual via `plushuman kanban
         # decompose <id>` or the dashboard's Decompose button.
         "auto_decompose": True,
         # Max triage tasks decomposed per tick, bounding the aux-LLM burst from a bulk load. Excess
@@ -2041,7 +2042,7 @@ DEFAULT_CONFIG = {
         "enabled": True,
         "url": "https://hermes-agent.nousresearch.com/docs/api/model-catalog.json",
         # Disk cache TTL in minutes. The gateway refreshes in the background on this cadence; the
-        # CLI refetches on the next /model or `alfred model` once the cache is older. Network
+        # CLI refetches on the next /model or `plushuman model` once the cache is older. Network
         # failures silently use the stale cache. Legacy `ttl_hours` is honoured if set.
         "ttl_minutes": 20,
         # Per-provider override URLs for self-hosted curation lists using the same schema, e.g.
@@ -2055,7 +2056,7 @@ DEFAULT_CONFIG = {
     # the catalog does not know, so they never clamp known models. Unknown ids start from safe
     # defaults (200K context, tools on) and get patched; supports_vision / supports_reasoning stay
     # UNKNOWN (fail-open) unless the override sets them — a context_window-only entry must not turn
-    # into "text-only" and hide vision_analyze / reasoning controls (#112649). Provider keys: Alfred
+    # into "text-only" and hide vision_analyze / reasoning controls (#112649). Provider keys: +Human
     # or models.dev id; model ids match case-insensitively. Example: {"custom:my-local-vllm":
     # {"my-llava-model": {"context_window": 8192}}}
     # Semantics: 1. NOTE: an explicit model.context_length (global) and a custom_providers per-model
@@ -2147,7 +2148,7 @@ DEFAULT_CONFIG = {
         # stamps the profile into session keys. This is the ONLY supported topology — there is no
         # `false` opt-out any more: an explicit `false` still parses (it is the runtime mode flag
         # every scoped code path reads) but is warned about and IGNORED for process topology, and
-        # `alfred gateway migrate --multiplex` folds any per-profile fleet that is left.
+        # `plushuman gateway migrate --multiplex` folds any per-profile fleet that is left.
         # An UNSET key is a request, not a verdict: at boot the gateway runs the migration
         # preflight and stays standalone (logging why) while a secondary still runs its own
         # gateway or a blocker exists, then converges once that is resolved.
@@ -2164,15 +2165,15 @@ DEFAULT_CONFIG = {
         #     `Environment=` (no .env) disappears from file-built scopes. A genuinely
         #     single-profile host never activates and is byte-identical.
         # Two profiles configuring the same bot token cannot be served together — the duplicate
-        # adapter is parked; `alfred profile create --clone` therefore leaves messaging channels
+        # adapter is parked; `plushuman profile create --clone` therefore leaves messaging channels
         # behind unless --clone-channels is passed.
         "multiplex_profiles": True,
-        # May `alfred update` fold this install onto a multiplexed default gateway by itself?
+        # May `plushuman update` fold this install onto a multiplexed default gateway by itself?
         # True (the default) keeps today's behaviour: a multi-profile install whose secondaries run
         # their own gateways is migrated automatically after an update when nothing blocks it.
         # Set to False to choose WHEN you converge, not whether: the fold is left to you to run by
         # hand (it is not an opt-out from the one-gateway-per-host model, which has none). Only the
-        # AUTOMATIC path reads this: `alfred gateway migrate --multiplex` is explicit and proceeds.
+        # AUTOMATIC path reads this: `plushuman gateway migrate --multiplex` is explicit and proceeds.
         "auto_multiplex_migration": True,
         # Route inbound chats of the default profile's bots to another profile
         # (gateway/profile_routing.py): [{profile, platform, chat_id|user_id|guild_id|...}].
@@ -2212,12 +2213,12 @@ DEFAULT_CONFIG = {
         "trust_env": True,
         # Media delivery. False: any emitted file path is delivered natively unless under the
         # credential/system denylist (/etc, /proc, ~/.ssh, ~/.aws, ~/.hermes/.env, auth.json). True:
-        # files must be under the Alfred cache, media_delivery_allow_dirs, or fresher than
+        # files must be under the +Human cache, media_delivery_allow_dirs, or fresher than
         # trust_recent_files_seconds — recommended for public-facing gateways so prompt injection
         # can't exfiltrate host secrets. Bridged to HERMES_MEDIA_DELIVERY_STRICT.
         "strict": False,
         # Extra roots (project/scratch dirs, mounted shares) from which bare file paths may be
-        # uploaded; the Alfred cache is always trusted. List of absolute paths or one
+        # uploaded; the +Human cache is always trusted. List of absolute paths or one
         # os.pathsep-separated string; tildes expanded. Bridged to HERMES_MEDIA_ALLOW_DIRS. Honored
         # in both modes.
         "media_delivery_allow_dirs": [],
@@ -2267,7 +2268,7 @@ DEFAULT_CONFIG = {
         # are never deleted; stale automation sessions whose process died are *closed*, then get a
         # full retention window before removal.
         "auto_prune": True,
-        # Inactive days of ended-session history to keep (= `alfred sessions prune`).
+        # Inactive days of ended-session history to keep (= `plushuman sessions prune`).
         # When true, prune ENDED sessions inactive for retention_days once per (roughly) min_interval_hours
         # at CLI/gateway/cron startup. Activity is the freshest of live activity (last_activity_at) / latest
         # message timestamp / creation time. Sessions that are still open, pinned, or mid-turn are never deleted — the
@@ -2297,8 +2298,8 @@ DEFAULT_CONFIG = {
         "min_interval_hours": 24,
 
         # Notice about the compact FTS layout (reclaims ~60%+ of state.db). OPT-IN: legacy indexes
-        # stay until `alfred sessions optimize-storage` runs, since the rebuild is disk-heavy on
-        # large DBs. advise = `alfred update` prints a one-line notice with reclaimable size when a
+        # stay until `plushuman sessions optimize-storage` runs, since the rebuild is disk-heavy on
+        # large DBs. advise = `plushuman update` prints a one-line notice with reclaimable size when a
         # legacy index is detected; require = shown as a REQUIRED upgrade (tooling may gate on it);
         # off = none.
         "fts_optimize_notice": "advise",
@@ -2315,7 +2316,7 @@ DEFAULT_CONFIG = {
         # once; 0 disables). Max active messages (across the compression lineage) for interactive
         # resume.
         "max_resume_messages": 20000,
-        # Max active messages per session for in-memory export (`alfred sessions export`); checked
+        # Max active messages per session for in-memory export (`plushuman sessions export`); checked
         # per session, so full-DB backups of small sessions work.
         "max_export_messages": 20000,
     },
@@ -2342,17 +2343,17 @@ DEFAULT_CONFIG = {
     },
 
     "doctor": {
-        # Per-probe timeout (seconds) for `alfred doctor --live` real-call probes.
+        # Per-probe timeout (seconds) for `plushuman doctor --live` real-call probes.
         "live_probe_timeout": 10,
     },
 
     "updates": {
-        # Passive version/banner checks only; explicit `alfred update --check` remains enabled.
+        # Passive version/banner checks only; explicit `plushuman update --check` remains enabled.
         "check": True,
         # Pre-update backup. quick = snapshot small critical state (pairing JSONs, cron jobs,
         # config.yaml, .env, auth.json, profile DBs) into <HERMES_HOME>/state-snapshots/, skipping
-        # files >1 GiB; restore via ``/snapshot``. full = quick PLUS a ``alfred backup`` zip in
-        # <HERMES_HOME>/backups/ (``alfred import`` restores; slow on large homes; ``--backup``
+        # files >1 GiB; restore via ``/snapshot``. full = quick PLUS a ``plushuman backup`` zip in
+        # <HERMES_HOME>/backups/ (``plushuman import`` restores; slow on large homes; ``--backup``
         # forces once). off = none (``--no-backup`` forces once). Legacy booleans: true -> full,
         # false -> off.
         # Pre-update safety backup — ONE consolidated mechanism, three modes: Files over 1 GiB (e.g. a
@@ -2375,9 +2376,9 @@ DEFAULT_CONFIG = {
         # Clean parked branch with unmerged commits: switch = move to the update target, commits
         # stay on the branch (never conflicts). update_in_place = for a maintained custom branch:
         # merge origin/<target> INTO it after leaving a pre-update-<stamp> tag; a conflict stops the
-        # update cleanly. `alfred update --switch-branch` overrides to switch for one run.
+        # update cleanly. `plushuman update --switch-branch` overrides to switch for one run.
         "parked_branch_strategy": "switch",
-        # Refresh an installed cua-driver during `alfred update` (best-effort, macOS only). Turn off
+        # Refresh an installed cua-driver during `plushuman update` (best-effort, macOS only). Turn off
         # e.g. on non-admin accounts where /Applications isn't writable.
         "refresh_cua_driver": True,
     },
@@ -2395,7 +2396,7 @@ DEFAULT_CONFIG = {
         # minute). Once the client is up, wait_timeout applies again. 0 = same as wait_timeout.
         "warmup_timeout": 0.0,
         # After a server fails (spawn error or outer timeout) its (server, workspace root) pair is
-        # skipped. 0 = for the process lifetime (until `alfred lsp restart`); N = retried after N
+        # skipped. 0 = for the process lifetime (until `plushuman lsp restart`); N = retried after N
         # seconds, so one transient stall does not silence a workspace forever.
         "broken_retry_seconds": 0.0,
         # Workspace roots (glob patterns, ~ expanded; a bare path also matches everything under
@@ -2406,9 +2407,9 @@ DEFAULT_CONFIG = {
         # Directories (~ expanded; everything under an entry counts) whose projects a language
         # server may load code from: the project's own .venv/venv interpreter, node_modules
         # TypeScript SDK, svelte.config.js, build files (cargo, Gradle, mix, ...). The worktree of
-        # the launch dir or the session's workspace (alfred -w, a Desktop project, terminal.cwd) is
+        # the launch dir or the session's workspace (plushuman -w, a Desktop project, terminal.cwd) is
         # always trusted; in any other checkout (a clone the agent made) only servers that run no
-        # project code start, pinned to Alfred-side tools, and the npx tsc / rustfmt lint fallbacks
+        # project code start, pinned to +Human-side tools, and the npx tsc / rustfmt lint fallbacks
         # are skipped.
         "trusted_workspaces": [],
         # Missing server binaries: auto = install via npm/go/pip into <HERMES_HOME>/lsp/bin/ on
@@ -2432,7 +2433,7 @@ DEFAULT_CONFIG = {
         "servers": {},
     },
     # X (Twitter) Search via xAI's x_search Responses tool. Registers when xAI creds exist
-    # (SuperGrok OAuth or XAI_API_KEY) AND the toolset is enabled in `alfred tools`.
+    # (SuperGrok OAuth or XAI_API_KEY) AND the toolset is enabled in `plushuman tools`.
     "x_search": {
         # xAI model for the Responses call; any Grok model with x_search access works.
         "model": "grok-4.5",
@@ -2446,7 +2447,7 @@ DEFAULT_CONFIG = {
     # External secret sources — pull credentials from secret managers at startup instead of storing
     # them in ~/.hermes/.env.
     # Browser credential vault: which login sources browser_vault_list/fill may draw from. The local
-    # encrypted vault (`alfred vault add`, Desktop → Settings → Credential Vault) is always on.
+    # encrypted vault (`plushuman vault add`, Desktop → Settings → Credential Vault) is always on.
     # External password managers are unlocked per session with a masked master-password prompt;
     # headless sessions (cron, webhook, API) never prompt and see them as locked.
     "vault": {
@@ -2512,13 +2513,13 @@ DEFAULT_CONFIG = {
     "paste_collapse_threshold_fallback": 5,
     "paste_collapse_char_threshold": 2000,
 
-    # Bot Desktop: a headless Xfce screen per profile on the gateway host (Linux), streamed to Alfred
-    # Desktop where a human can watch, take over (logins, 2FA, CAPTCHAs) and hand back. `alfred computer-use screen`.
+    # Bot Desktop: a headless Xfce screen per profile on the gateway host (Linux), streamed to +Human
+    # Desktop where a human can watch, take over (logins, 2FA, CAPTCHAs) and hand back. `plushuman computer-use screen`.
     "bot_desktop": {
         "geometry": "1440x900",
         # Opt-in: start the screen automatically the first time computer_use needs a display on a headless
         # host. Off by default so installing TigerVNC for other reasons never yields a screen nobody asked
-        # for; Alfred Desktop's Screen pane offers Start and this toggle.
+        # for; +Human Desktop's Screen pane offers Start and this toggle.
         "auto_start": False,
         # Refuse to start below this much free memory (MB), measured on the host or its container cgroup,
         # whichever is tighter. Xvnc + Xfce idle at ~220 MB and a takeover's browser adds 0.5-1 GB, so a
@@ -2542,7 +2543,7 @@ DEFAULT_CONFIG = {
         "placement": "auto",
     },
     "computer_use": {
-        # cua-driver's upstream PostHog telemetry defaults ON; Alfred sets
+        # cua-driver's upstream PostHog telemetry defaults ON; +Human sets
         # CUA_DRIVER_RS_TELEMETRY_ENABLED=0 in every child env unless this is true.
         "cua_telemetry": False,
         # Windows only: opt IN to the per-boot cua-driver-serve logon task. False (default)
@@ -2573,7 +2574,7 @@ DEFAULT_CONFIG = {
         # Linux/WSL2 idle spin). None = auto (off on macOS + headless/ WSL2 Linux, on elsewhere);
         # True = always disable; False = always enable.
         # The overlay shows where agent actions land but can peg a core when idle (macOS vImage redraw loop
-        # #47032; Linux/WSL2 idle spin #28152). cua-driver ≥ 0.6.x supports --no-overlay; Alfred also calls
+        # #47032; Linux/WSL2 idle spin #28152). cua-driver ≥ 0.6.x supports --no-overlay; +Human also calls
         # set_agent_cursor_enabled(false) after start_session when this is on.
         "no_overlay": None,
         # standard = cua-driver's own approval boundary; bounded = no runtime prompts, anything
@@ -2591,7 +2592,7 @@ DEFAULT_CONFIG = {
     # Egress credential-injection proxy (iron-proxy) for remote terminal sandboxes (Docker today):
     # the sandbox sees opaque tokens and iron-proxy swaps in real credentials at egress, so a
     # compromised sandbox leaks only tokens that work behind the trusted proxy. Configure with
-    # `alfred egress setup`.
+    # `plushuman egress setup`.
     "proxy": {
         "enabled": False,  # When false, nothing starts, no docker mounts, no binary installs.
         # Tunnel listener port; sandboxes get HTTPS_PROXY=http://<host>:<port>.
@@ -2615,7 +2616,7 @@ DEFAULT_CONFIG = {
         # (`*.foo.com`) supported.
         "extra_allowed_hosts": [],
     },
-    "desktop": {  # Alfred Desktop (Electron) launch options; only affect `alfred desktop`.
+    "desktop": {  # +Human Desktop (Electron) launch options; only affect `plushuman desktop`.
         # CSS font-family for the app's chat and UI text (e.g. "OpenDyslexic"). Layered in front
         # of the active theme's own sans stack so missing glyphs still fall through. Empty = the
         # theme's face. The terminal pane is terminal.font_family.
@@ -2688,9 +2689,9 @@ DEFAULT_CONFIG = {
         # 14-20% of consecutive calls in concurrent tool loops (measured 2026-09-06;
         # NousResearch/api#227), so chat is the default until that is fixed.
         "anthropic_wire": "chat",
-        # Nous free tier: with no other provider configured, Alfred sets up a free Nous identity on
+        # Nous free tier: with no other provider configured, +Human sets up a free Nous identity on
         # first use (inference on nous/welcome + connectors) and offers `/login` (terminal:
-        # `alfred auth upgrade`) to sign in. false turns the free tier off entirely: nothing is set
+        # `plushuman auth upgrade`) to sign in. false turns the free tier off entirely: nothing is set
         # up and nothing is used.
         "guest": True,
     },
@@ -2707,7 +2708,7 @@ DEFAULT_CONFIG = {
     # Managed llama.cpp runtime (docs: user-guide/local-models): official binaries, one supervised
     # llama-server in router mode. No context/VRAM knobs by design.
     "local_runtime": {
-        # Off = detection-only (Alfred still finds an external llama-server you run).
+        # Off = detection-only (+Human still finds an external llama-server you run).
         "enabled": False,
         # Engine versions and every dependent library are pinned by pm/lock.json.
         # auto = CUDA on NVIDIA, Metal on macOS, Vulkan on other GPUs, else CPU. Explicit:
@@ -2783,7 +2784,7 @@ OPTIONAL_ENV_VARS = {
     "GEMINI_BASE_URL": _base_url("Google AI Studio", "Gemini"),
     "VERTEX_CREDENTIALS_PATH": _prov(
         "Path to a Google Cloud service account JSON for Vertex AI (Gemini). Vertex uses "
-        "OAuth2, not a static API key — this points at the credentials Alfred mints short-lived "
+        "OAuth2, not a static API key — this points at the credentials +Human mints short-lived "
         "tokens from. Falls back to GOOGLE_APPLICATION_CREDENTIALS, then to ADC (gcloud auth "
         "application-default login). Set project/region under vertex: in config.yaml.",
         "Vertex service account JSON path (leave empty to use ADC / "
@@ -2874,7 +2875,7 @@ OPTIONAL_ENV_VARS = {
     "AZURE_FOUNDRY_API_KEY": _prov("Azure Foundry API key for custom Azure endpoints",
         "Azure Foundry API Key", "https://ai.azure.com/", advanced=False),
     "AZURE_FOUNDRY_BASE_URL": _prov(
-        "Azure Foundry base URL (set via 'alfred model' for endpoint-specific config)",
+        "Azure Foundry base URL (set via 'plushuman model' for endpoint-specific config)",
         "Azure Foundry base URL", None, password=False),
     # ── Tool API keys ──
     "EXA_API_KEY": _tool("Exa API key for AI-native web search and contents", "Exa API key",
@@ -2907,7 +2908,7 @@ OPTIONAL_ENV_VARS = {
         None, password=False, advanced=True),
     "TOOL_GATEWAY_USER_TOKEN": _tool(
         "Explicit Nous Subscriber access token for tool-gateway requests (optional; otherwise "
-        "read from the Alfred auth store)", "Tool-gateway user token", None, advanced=True),
+        "read from the +Human auth store)", "Tool-gateway user token", None, advanced=True),
     "TAVILY_API_KEY": _tool(
         "Tavily API key for AI-native web search and extract (optional — keyless works when "
         "Tavily is selected)", "Tavily API key", "https://app.tavily.com/home",
@@ -3060,7 +3061,7 @@ OPTIONAL_ENV_VARS = {
         help=("In your Slack app, enable Socket Mode, then create Basic Information > App-Level "
         "Tokens with the connections:write scope."), password=True),
     "SLACK_ALLOWED_USERS": _msg(
-        "Comma-separated Slack member IDs allowed to use Alfred, e.g. U01ABC2DEF3. Without "
+        "Comma-separated Slack member IDs allowed to use +Human, e.g. U01ABC2DEF3. Without "
         "this, Slack may connect but deny messages by default.", "Allowed Slack member IDs",
         "https://api.slack.com/apps",
         help=("In Slack, open your profile, choose More or the three-dot menu, then Copy member "
@@ -3157,13 +3158,13 @@ OPTIONAL_ENV_VARS = {
         "for the default profile). Useful for multi-user setups with OpenWebUI.",
         "API server model name", None, advanced=True),
     "GATEWAY_PROXY_URL": _msg(
-        "URL of a remote Alfred API server to forward messages to (proxy mode). When set, the "
+        "URL of a remote +Human API server to forward messages to (proxy mode). When set, the "
         "gateway handles platform I/O only — all agent work is delegated to the remote server. "
         "Use for Docker E2EE containers that relay to a host agent. Also configurable via "
         "gateway.proxy_url in config.yaml.",
-        "Remote Alfred API server URL (e.g. http://192.168.1.100:8642)", None, advanced=True),
+        "Remote +Human API server URL (e.g. http://192.168.1.100:8642)", None, advanced=True),
     "GATEWAY_PROXY_KEY": _msg(
-        "Bearer token for authenticating with the remote Alfred API server (proxy mode). Must "
+        "Bearer token for authenticating with the remote +Human API server (proxy mode). Must "
         "match the API_SERVER_KEY on the remote host.", "Remote API server auth key", None,
         password=True, advanced=True),
     "WEBHOOK_ENABLED": _msg(

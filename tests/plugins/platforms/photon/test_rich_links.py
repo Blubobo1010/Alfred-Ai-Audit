@@ -1,7 +1,7 @@
 """Rich-link handling tests for PhotonAdapter.
 
 Photon's spectrum-ts SDK exposes a ``richlink()`` content builder for native
-URL previews. Alfred routes URL-only outbound messages to the sidecar's
+URL previews. +Human routes URL-only outbound messages to the sidecar's
 rich-link endpoint and preserves inbound rich-link URLs when Spectrum emits
 that content type.
 """

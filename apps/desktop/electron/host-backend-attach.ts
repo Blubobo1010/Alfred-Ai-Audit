@@ -1,4 +1,4 @@
-// Attach to the host's running Alfred backend (multiplex-only, Desktop half).
+// Attach to the host's running +Human backend (multiplex-only, Desktop half).
 //
 // `backend-discovery.ts` owns the pure decision; this module performs the IO
 // ladder around it: read the machine-root ledger, validate a candidate at the
@@ -58,7 +58,7 @@ export interface HostBackendAttachDeps {
   isPidAlive?: (pid: number) => boolean
   /**
    * Commit this Desktop would spawn its own backend from (the checkout HEAD).
-   * A backend that booted from other code — a CLI/launchd `alfred serve` that
+   * A backend that booted from other code — a CLI/launchd `plushuman serve` that
    * outlived an update — answers 503 "Restart required" forever, and Restart
    * would re-attach it, so it is skipped. Absent or null (packaged/non-git
    * install): the token-only handshake, as before.
@@ -264,7 +264,7 @@ async function findHostBackend(
       unconfirmed = true
     } else if (attached) {
       deps.log(
-        `[attach] attached to the running Alfred backend on ${attached.baseUrl} ` +
+        `[attach] attached to the running +Human backend on ${attached.baseUrl} ` +
           `(pid ${attached.pid}, registered by profile "${record.profile || 'default'}"); spawning nothing`
       )
 

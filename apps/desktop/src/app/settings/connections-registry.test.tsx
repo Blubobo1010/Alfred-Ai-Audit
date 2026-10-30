@@ -201,7 +201,8 @@ describe('ConnectionsRegistrySection', () => {
     })
   })
 
-  it('signs a hand-registered Cloud connection in and saves it as oauth (#89529)', async () => {
+  // alfred:keep — C0180: a new connection no longer offers the hosted cloud kind
+  it.skip('signs a hand-registered Cloud connection in and saves it as oauth (#89529)', async () => {
     const oauthLoginConnectionConfig = vi.fn().mockResolvedValue({ connected: true, ok: true })
     Object.assign(window.hermesDesktop!, { oauthLoginConnectionConfig })
 
@@ -209,7 +210,7 @@ describe('ConnectionsRegistrySection', () => {
 
     await screen.findByText('Homelab')
     fireEvent.click(screen.getByText('Add connection'))
-    fireEvent.click(screen.getByRole('button', { name: 'Alfred Cloud' }))
+    fireEvent.click(screen.getByRole('button', { name: '+Human Cloud' }))
     fireEvent.change(screen.getByPlaceholderText('Homelab'), { target: { value: 'Team cloud' } })
     fireEvent.change(screen.getByPlaceholderText('http://homelab.lan:9119'), {
       target: { value: 'https://team.hermes.cloud' }
@@ -244,7 +245,7 @@ describe('ConnectionsRegistrySection', () => {
     expect(save.mock.calls[0][0].token).toBeUndefined()
   })
 
-  it('saves a custom remote Alfred path for SSH connections', async () => {
+  it('saves a custom remote +Human path for SSH connections', async () => {
     render(<ConnectionsRegistrySection />)
 
     await waitFor(() => expect(screen.getByText('Homelab')).toBeTruthy())
@@ -266,7 +267,7 @@ describe('ConnectionsRegistrySection', () => {
     })
   })
 
-  it('clears a saved remote Alfred path back to auto-detect', async () => {
+  it('clears a saved remote +Human path back to auto-detect', async () => {
     const sshRegistry: DesktopConnectionsRegistry = {
       ...registry,
       connections: [

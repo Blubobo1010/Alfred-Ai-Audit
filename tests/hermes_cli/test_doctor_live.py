@@ -1,4 +1,4 @@
-"""Tests for ``alfred doctor --live`` — opt-in bounded real-call tool-backend probes.
+"""Tests for ``plushuman doctor --live`` — opt-in bounded real-call tool-backend probes.
 
 All probes are mocked at the HTTP/client layer; no real network calls are made.
 """

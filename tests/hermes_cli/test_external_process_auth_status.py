@@ -317,7 +317,7 @@ def test_cli_command_reflects_configured_executable(tmp_path, monkeypatch, _clea
 def test_cli_command_untouched_for_non_external_providers(_clean_copilot_env):
     from hermes_cli.web_server_oauth import _external_process_cli_command
 
-    assert _external_process_cli_command("nous", "alfred auth add nous") == "alfred auth add nous"
+    assert _external_process_cli_command("nous", "plushuman auth add nous") == "plushuman auth add nous"
 
 
 def test_cli_command_default_when_no_override(monkeypatch, _clean_copilot_env):

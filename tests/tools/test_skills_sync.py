@@ -741,9 +741,9 @@ class TestResetBundledSkill:
 class TestNoBundledSkillsOptOut:
     """The .no-bundled-skills marker makes sync_skills() a no-op.
 
-    This is what `alfred profile create --no-skills` (named profiles) and the
+    This is what `plushuman profile create --no-skills` (named profiles) and the
     installer's `--no-skills` flag (default ~/.hermes) rely on so bundled
-    skills are never seeded at install time NOR re-injected by `alfred update`.
+    skills are never seeded at install time NOR re-injected by `plushuman update`.
     """
 
     def test_marker_skips_sync_and_removal_seeds_normally(self, tmp_path):
@@ -789,7 +789,7 @@ class TestNoBundledSkillsOptOut:
 
 
 class TestOptOutToggleAndRemove:
-    """`alfred skills opt-out/opt-in` core: marker toggle + safe removal."""
+    """`plushuman skills opt-out/opt-in` core: marker toggle + safe removal."""
 
     def _setup_bundled(self, tmp_path):
         bundled = tmp_path / "bundled"

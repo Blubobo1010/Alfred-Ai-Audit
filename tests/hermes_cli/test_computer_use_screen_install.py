@@ -1,4 +1,4 @@
-"""`alfred computer-use screen install` shares the Desktop pane's installer (one lock, list-form spawn)."""
+"""`plushuman computer-use screen install` shares the Desktop pane's installer (one lock, list-form spawn)."""
 
 from __future__ import annotations
 

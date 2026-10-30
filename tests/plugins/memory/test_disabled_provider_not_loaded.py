@@ -1,6 +1,6 @@
 """A user-installed memory provider parked in ``plugins.disabled`` must not load.
 
-The Plugins hub / `alfred plugins disable` write the deny-list; ``plugins/memory`` never read it, so
+The Plugins hub / `plushuman plugins disable` write the deny-list; ``plugins/memory`` never read it, so
 the UI said "disabled" while the provider kept loading at every agent init.
 """
 

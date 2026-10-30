@@ -96,7 +96,7 @@ export function SkillsTab({ onRefresh, profile, query, skills }: SkillsTabProps)
 
   // Learned/local skills are editable + archivable, mirroring the memory
   // graph (same /api/learning/node endpoints — delete archives, restorable
-  // via `alfred curator restore`).
+  // via `plushuman curator restore`).
   const [skillEditor, setSkillEditor] = useState<null | { content: string; name: string }>(null)
   const [skillDraft, setSkillDraft] = useState('')
   const [skillSaving, setSkillSaving] = useState(false)

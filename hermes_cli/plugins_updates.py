@@ -99,7 +99,7 @@ def check_local_provenance(prov: Provenance) -> CheckResult:
         )
         return result
     if prov.klass is ProvenanceClass.SELF_CLONED:
-        result.reason = "self-cloned; run `alfred plugins adopt` first"
+        result.reason = "self-cloned; run `plushuman plugins adopt` first"
         return result
 
     row = prov.row or {}
@@ -117,13 +117,13 @@ def check_local_provenance(prov: Provenance) -> CheckResult:
         # threat class as a swap; never adopt silently
         result.needs_fixing = (
             f"manifest declares update_url {claimed!r} but no url was saved "
-            "at install; run `alfred plugins trust-update-url` after review"
+            "at install; run `plushuman plugins trust-update-url` after review"
         )
         return result
     if saved is not None and claimed != saved:
         result.needs_fixing = (
             f"update_url mismatch: saved {saved!r}, manifest declares "
-            f"{claimed!r}; run `alfred plugins trust-update-url` after review"
+            f"{claimed!r}; run `plushuman plugins trust-update-url` after review"
         )
         return result
 
@@ -362,7 +362,7 @@ def https_update_url(url: object) -> str:
 def default_fetch(url: str) -> str:
     """The real feed fetcher: url -> text (raises on failure).
 
-    ONE implementation shared by the manual ``alfred plugins
+    ONE implementation shared by the manual ``plushuman plugins
     check-updates`` and the cadence tick — callers never re-derive it.
     """
     import urllib.request

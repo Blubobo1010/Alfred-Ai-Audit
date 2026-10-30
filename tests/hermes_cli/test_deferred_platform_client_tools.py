@@ -1,13 +1,13 @@
 """Deferred platform plugins must still register their *client* tools.
 
 Issue #78050: a bundled ``kind: platform`` plugin is registered as a deferred
-loader so ``alfred chat`` doesn't import ~20 gateway SDKs. The a2a plugin ships
+loader so ``plushuman chat`` doesn't import ~20 gateway SDKs. The a2a plugin ships
 two independent things behind that one deferral — an inbound adapter (heavy)
 and five outbound client tools (``a2a_call``, ``a2a_discover``, ``a2a_list``,
 ``a2a_history``, ``a2a_orchestrate``). Deferring the plugin deferred both, so
 in a CLI/TUI process the client tools never registered at all:
 ``resolve_toolset("a2a")`` returned ``[]`` and the toolset was absent from the
-``alfred tools`` checklist. The same tools worked in gateway/web processes only
+``plushuman tools`` checklist. The same tools worked in gateway/web processes only
 because those materialize every platform at startup.
 
 Client tools that live in a dedicated ``tools`` submodule are now registered at
@@ -196,7 +196,7 @@ class TestA2AClientToolsInCliProcess:
         from hermes_cli.plugins import discover_plugins, get_plugin_toolsets
 
         # get_plugin_toolsets() reads the process-wide manager, which is what
-        # the `alfred tools` checklist does.
+        # the `plushuman tools` checklist does.
         discover_plugins()
 
         assert "a2a" in {key for key, _, _ in get_plugin_toolsets()}
@@ -309,7 +309,7 @@ class TestDeferredPlatformToolPreregistration:
     def test_tools_stay_attributed_after_materialization(
         self, tmp_path, probe, clean_registry
     ):
-        """`alfred plugins list` must still credit the pre-registered tools.
+        """`plushuman plugins list` must still credit the pre-registered tools.
 
         ``_load_plugin`` attributes tools by diffing the registry around
         ``register()``. Tools registered at discovery are already in the
@@ -364,7 +364,7 @@ class TestDeferredPlatformToolPreregistration:
 
         `register_tools` is not transactional: whatever it registered before
         raising stays in the registry. Leaving those unattributed makes
-        `alfred plugins list` under-report what the process is carrying, and
+        `plushuman plugins list` under-report what the process is carrying, and
         `_load_plugin`'s own diff cannot recover them later because they are
         already inside its "before" snapshot.
         """
@@ -457,7 +457,7 @@ class TestDeferredPlatformToolPreregistration:
             m.setattr("hermes_cli.plugins_discovery._get_disabled_plugins", lambda: {"probeplat-platform"})
             mgr._gate_manifest(manifest, {"probeplat-platform"}, None)
             assert mgr.rearm_failed_platform("probeplat") is False
-        with monkeypatch.context() as m:  # nor one built for another Alfred version
+        with monkeypatch.context() as m:  # nor one built for another +Human version
             m.setattr("hermes_cli.plugins_manifest.requires_hermes_error", lambda _manifest: "needs newer hermes")
             assert mgr.rearm_failed_platform("probeplat") is False
 

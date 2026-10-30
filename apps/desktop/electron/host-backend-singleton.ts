@@ -1,9 +1,9 @@
-// Multiplex-only, Desktop half: ONE `alfred serve` per HOST serves every
+// Multiplex-only, Desktop half: ONE `plushuman serve` per HOST serves every
 // profile, so a local profile never gets a backend process of its own.
 //
 // `backend-discovery.ts` + `host-backend-attach.ts` made the PRIMARY backend
 // attach to a backend the host is already running. This module removes the
-// other producer of `alfred serve` children: the per-profile backend pool.
+// other producer of `plushuman serve` children: the per-profile backend pool.
 // Every local profile now resolves onto the same host backend and carries its
 // own `profile` on the wire — the server binds a SESSION to a profile home
 // (`session.create {profile}` -> `profile_home`) and a sessionless RPC to the
@@ -55,7 +55,7 @@ export class SecondLocalBackendError extends Error {
 
   constructor(poolKey: string) {
     super(
-      `Refusing to start a second local Alfred backend for "${poolKey}": one backend serves every profile on this host. ` +
+      `Refusing to start a second local +Human backend for "${poolKey}": one backend serves every profile on this host. ` +
         'Set HERMES_DESKTOP_ISOLATED_BACKEND=1 for a private backend.'
     )
     this.name = 'SecondLocalBackendError'
@@ -67,7 +67,7 @@ export class SecondLocalBackendError extends Error {
  * The single enforcement point for "never spawn a second backend".
  *
  * Routing is what normally prevents a pooled local spawn; this guard sits at
- * the one place a local `alfred serve` child is actually started, so a future
+ * the one place a local `plushuman serve` child is actually started, so a future
  * caller that reaches it through a path routing does not cover fails loudly
  * instead of quietly reintroducing a process per profile.
  */

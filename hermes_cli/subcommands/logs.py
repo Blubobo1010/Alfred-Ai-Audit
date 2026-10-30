@@ -1,4 +1,4 @@
-"""``alfred logs`` subcommand parser."""
+"""``plushuman logs`` subcommand parser."""
 
 from __future__ import annotations
 
@@ -10,25 +10,25 @@ def build_logs_parser(subparsers, *, cmd_logs: Callable) -> None:
     """Attach the ``logs`` subcommand to ``subparsers``."""
     logs_parser = subparsers.add_parser(
         "logs",
-        help="View and filter Alfred log files",
+        help="View and filter +Human log files",
         description="View, tail, and filter agent.log / errors.log / gateway.log / gui.log / desktop.log / update.log / desktop-update-handoff.log",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""\
 Examples:
-    alfred logs                    Show last 50 lines of agent.log
-    alfred logs -f                 Follow agent.log in real time
-    alfred logs errors             Show last 50 lines of errors.log
-    alfred logs gateway -n 100     Show last 100 lines of gateway.log
-    alfred logs gui -f             Follow gui.log in real time
-    alfred logs desktop -f         Follow desktop.log (Electron app boot/backend)
-    alfred logs update             Show last 50 lines of update.log (alfred update mirror)
-    alfred logs handoff            Show last 50 lines of desktop-update-handoff.log
-    alfred logs --level WARNING    Only show WARNING and above
-    alfred logs --session abc123   Filter by session ID
-    alfred logs --component tools  Only show tool-related lines
-    alfred logs --since 1h         Lines from the last hour
-    alfred logs --since 30m -f     Follow, starting from 30 min ago
-    alfred logs list               List available log files with sizes
+    plushuman logs                    Show last 50 lines of agent.log
+    plushuman logs -f                 Follow agent.log in real time
+    plushuman logs errors             Show last 50 lines of errors.log
+    plushuman logs gateway -n 100     Show last 100 lines of gateway.log
+    plushuman logs gui -f             Follow gui.log in real time
+    plushuman logs desktop -f         Follow desktop.log (Electron app boot/backend)
+    plushuman logs update             Show last 50 lines of update.log (plushuman update mirror)
+    plushuman logs handoff            Show last 50 lines of desktop-update-handoff.log
+    plushuman logs --level WARNING    Only show WARNING and above
+    plushuman logs --session abc123   Filter by session ID
+    plushuman logs --component tools  Only show tool-related lines
+    plushuman logs --since 1h         Lines from the last hour
+    plushuman logs --since 30m -f     Follow, starting from 30 min ago
+    plushuman logs list               List available log files with sizes
 """)
     logs_parser.add_argument(
         "log_name",

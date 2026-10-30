@@ -1,5 +1,5 @@
 """
-Tests for mcp_serve — Alfred MCP server.
+Tests for mcp_serve — +Human MCP server.
 
 Three layers of tests:
 1. Unit tests — helpers, content extraction, attachment parsing

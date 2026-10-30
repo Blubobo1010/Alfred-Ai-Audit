@@ -102,15 +102,9 @@ def tile_color(image):
     # tile that is the fill colour, on a stable tile every candidate is grey.
     x0, y0, x1, y1 = image.getchannel("A").point(lambda a: 255 if a >= 128 else 0).getbbox()
     pixels = [rgba[:3] for rgba in image.crop((x0, (y0 + y1) // 2, x1, y1)).getdata() if rgba[3] >= 128]
-    if COLOUR_ART:  # alfred:keep — a colour bust out-saturates a dark plate: read the plate beside its head
-        strip = (x0, y0 + (y1 - y0) // 5, x0 + max(1, (x1 - x0) * 2 // 25), y0 + (y1 - y0) * 9 // 20)
-        pixels = [rgba[:3] for rgba in image.crop(strip).getdata() if rgba[3] >= 128]
     # Saturation weighted by chroma: a near-black anti-aliased edge pixel has high HSV
     # saturation but almost no colour, the fill has both.
     return max(pixels, key=lambda rgb: max(rgb) - min(rgb))
-
-
-COLOUR_ART = (ROOT / "assets/alfred-icon-art.png").exists()  # alfred:keep — Alfred's full-colour icon art
 
 
 def is_dark_tile(path):
@@ -292,17 +286,14 @@ def test_layered_macos_icon_mono_layer_and_flavor_stays_in_the_fill(generate, mo
         layer = Image.open(stable / "Assets" / name).convert("RGBA")
         assert layer.size == (canvas, canvas)
         bottom_row = layer.crop((0, canvas - 1, canvas, canvas)).getchannel("A").getbbox()
-        assert bottom_row is not None, f"{name}: the girl must reach the plate edge"
+        assert bottom_row is None, f"{name}: the plus floats centred, clear of the plate edge"  # alfred:keep
     mono = Image.open(stable / "Assets" / "mono.png").convert("RGBA")
     ink_tone = round(module.MONO_INK[0] * 255)
     tones = {px[0] for px in mono.getdata() if px[3] > 127}
-    if COLOUR_ART:  # alfred:keep — the colour bust's luminance, grey and never below the ink tone
-        assert min(tones) >= ink_tone and all(px[0] == px[1] == px[2] for px in mono.getdata()), sorted(tones)[:3]
-    else:
-        assert tones == {ink_tone, 255}, tones
+    assert 255 in tones and tones <= {ink_tone, 255}, tones  # alfred:keep — a solid plus has no ink-only part
     light_art = Image.open(stable / "Assets" / "art-light.png").convert("RGBA")
     dark_art = Image.open(stable / "Assets" / "art-dark.png").convert("RGBA")
-    for x, y in (() if COLOUR_ART else ((canvas // 2, canvas // 2), (canvas // 3, canvas // 3), (2 * canvas // 3, canvas // 2))):  # alfred:keep
+    for x, y in ((canvas // 2, canvas // 2), (canvas // 3, canvas // 3), (2 * canvas // 3, canvas // 2)):
         px = mono.getpixel((x, y))
         if dark_art.getpixel((x, y))[3] > 200:      # the girl's white parts stay white and opaque
             assert px[:3] == (255, 255, 255) and px[3] == 255, (x, y, px)
@@ -388,12 +379,7 @@ def test_msix_logos_resolve_every_slot_windows_draws(generate, monkeypatch):
         light = Image.open(appx / f"Square44x44Logo.targetsize-{size}_altform-lightunplated.png").convert("RGBA")
         assert plain.size == dark.size == light.size == (size, size)
         edge = (max(1, size // 24), size // 2)  # on the plate, left of the girl
-        if COLOUR_ART:  # alfred:keep — the gradient plate: light and plain agree, near the gradient's left colour
-            left = tuple(int(module.ALFRED_GRADIENT[0].lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))
-            assert light.getpixel(edge)[:3] == plain.getpixel(edge)[:3], size
-            assert all(abs(a - b) <= 24 for p in (light.getpixel(edge)[:3], light_plate) for a, b in zip(p, left)), size
-        else:
-            plate_rgb = tuple(int(module.PLATE_LIGHT.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))  # alfred:keep
-            assert light.getpixel(edge)[:3] == plain.getpixel(edge)[:3] == light_plate == plate_rgb, size
+        plate_rgb = tuple(int(module.PLATE_LIGHT.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4))  # alfred:keep
+        assert light.getpixel(edge)[:3] == plain.getpixel(edge)[:3] == light_plate == plate_rgb, size
         dark_plate = dark.getpixel(edge)
         assert dark_plate[3] == 255 and max(dark_plate[:3]) < 60, (size, dark_plate)

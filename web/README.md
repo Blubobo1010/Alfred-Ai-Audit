@@ -1,6 +1,6 @@
-# Alfred — Web UI
+# +Human — Web UI
 
-Browser-based dashboard for managing Alfred configuration, API keys, and monitoring active sessions.
+Browser-based dashboard for managing +Human configuration, API keys, and monitoring active sessions.
 
 ## Stack
 
@@ -23,7 +23,7 @@ npm run dev
 
 Open the **Vite URL** printed in the terminal (usually `http://localhost:5173`). That is the live-reload UI.
 
-`alfred dashboard` on port 9119 serves the **built** bundle from `hermes_cli/web_dist/`, not the Vite dev server — changes in `web/src/` will not appear there until you run `npm run build` and restart the dashboard (or use `web --no-open` + Vite as above).
+`plushuman dashboard` on port 9119 serves the **built** bundle from `hermes_cli/web_dist/`, not the Vite dev server — changes in `web/src/` will not appear there until you run `npm run build` and restart the dashboard (or use `web --no-open` + Vite as above).
 
 The Vite dev server proxies `/api` requests to `http://127.0.0.1:9119` (the FastAPI backend).
 

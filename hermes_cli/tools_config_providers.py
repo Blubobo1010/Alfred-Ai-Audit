@@ -1,4 +1,4 @@
-"""Provider rows, active-provider detection, model pickers and provider-selection persistence for `alfred tools`."""
+"""Provider rows, active-provider detection, model pickers and provider-selection persistence for `plushuman tools`."""
 
 from __future__ import annotations
 
@@ -1007,7 +1007,7 @@ def _reconfigure_provider(provider: dict, config: dict, *, force_fresh: bool = T
 
 def _configure_vision_backend() -> None:
     """Interactive vision-backend configuration (``auxiliary.vision.{provider,model,base_url}``).
-    Offers any authenticated provider + model (same surface as ``alfred model``) or a custom endpoint
+    Offers any authenticated provider + model (same surface as ``plushuman model``) or a custom endpoint
     rather than forcing OpenRouter. "Auto" leaves the keys empty so the resolver uses the main-model
     fallback chain."""
     from hermes_cli.tools_config import _cfg_section, _prompt_choice
@@ -1062,7 +1062,7 @@ def _configure_vision_backend() -> None:
 
 def _configure_vision_provider_model(config: dict, vision_cfg: dict) -> None:
     """Provider + model picker for vision, mirroring the ``/model`` surface.
-    Rows come from ``build_aux_picker_rows()`` so this lists exactly what the ``alfred model`` aux-task
+    Rows come from ``build_aux_picker_rows()`` so this lists exactly what the ``plushuman model`` aux-task
     picker lists, including user-defined ``providers:`` / ``custom_providers:`` endpoints. Persists
     ``auxiliary.vision.provider`` + ``.model``."""
     from hermes_cli.tools_config import _prompt_choice
@@ -1086,7 +1086,7 @@ def _configure_vision_provider_model(config: dict, vision_cfg: dict) -> None:
 
     if not providers:
         _print_warning("  No authenticated providers found. Configure a provider first "
-                       "with `alfred model`, then re-run this.")
+                       "with `plushuman model`, then re-run this.")
         return
 
     provider_labels = [label for _slug, label, _models in format_aux_picker_entries(

@@ -189,7 +189,7 @@ rm -rf "$ASSEMBLY"
 
 # The install-method stamp (code-scoped, next to hermes_cli/): the deb IS
 # the Termux apt distribution, and detect_install_method reads this marker
-# to route alfred update -> pkg upgrade remediation.
+# to route plushuman update -> pkg upgrade remediation.
 printf 'apt\n' > "$PAYLOAD_ABS/app/.install_method"
 
 # The shared stamp writer records the apt-termux update owner.
@@ -234,7 +234,7 @@ Package: $PKG
 Version: $DEB_VERSION
 Architecture: aarch64
 Maintainer: Nous Research
-Description: Alfred CLI for Termux (self-contained bundled python/node/venv)
+Description: +Human CLI for Termux (self-contained bundled python/node/venv)
 Installed-Size: $(du -sk "$STAGE/$ROOT_IN_DEB" | cut -f1)
 EOF
 # Self-contained: no Depends line at all. Our python, node and venv ship inside.

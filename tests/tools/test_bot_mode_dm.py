@@ -337,7 +337,7 @@ def test_relay_ack_is_queued_with_the_envelope_id(tmp_path, monkeypatch):
     _capture_spawn(monkeypatch)
     home = _managed_home(tmp_path)
     bot_relay.write_remote_roster(home, [
-        {"profile": "default", "handle": "hermes", "connection_id": "cloud-1", "connection_label": "Alfred Cloud"},
+        {"profile": "default", "handle": "hermes", "connection_id": "cloud-1", "connection_label": "+Human Cloud"},
     ])
     result = json.loads(bot_mode_dm.message_agent_tool(target="hermes", message="ping", agent=_FakeAgent(home)))
 
@@ -377,7 +377,7 @@ def test_friendly_names_and_desktop_slugs_resolve_to_folder_ids(tmp_path, monkey
 
 
 @pytest.mark.parametrize(("target", "local_name", "relayed"), [
-    ("hermes@mini", "Alfred Mini", True),
+    ("hermes@mini", "+Human Mini", True),
     ("@hermes@mini", "HermesMini", True),
     ("Ops@Home", "Ops@Home", False),  # an '@' friendly name no connection answers to stays local (#100671)
 ])
@@ -413,7 +413,7 @@ def test_ambiguous_friendly_name_fails_closed(tmp_path, monkeypatch):
     home = _managed_home(tmp_path, teammates=("aaa", "bbb", "ops"))
     _rename(home, "aaa", display_name="Scribe")
     _rename(home, "bbb", display_name="Scribe")
-    _rename(home, "ops", display_name="Alfred")
+    _rename(home, "ops", display_name="+Human")
 
     ambiguous = json.loads(bot_mode_dm.message_agent_tool(target="Scribe", message="ping", agent=_FakeAgent(home)))
     hijack = json.loads(bot_mode_dm.message_agent_tool(target="hermes", message="ping",
@@ -428,7 +428,7 @@ def test_peer_delivery_command_pins_registry_profile_for_secondary_bots(
     tmp_path, monkeypatch
 ):
     """A secondary-profile bot's peer DM must run in the registry-owning
-    profile (#93935). `alfred peer` resolves bot_peers through
+    profile (#93935). `plushuman peer` resolves bot_peers through
     profile-scoped load_config(); unpinned, the subprocess inherits the
     calling bot's profile and dies with "No peer named" even though the
     tool-side roster (read from the machine-root config) validated the
@@ -451,7 +451,7 @@ def test_peer_delivery_command_pins_registry_profile_for_secondary_bots(
     assert mode == "stdin"
     # The registry the tool validated against is the machine root's — the
     # default profile's home — so the CLI runs there, not in reviewer.
-    assert transport_argv == ["alfred", "-p", "default", "peer", "dm", "spark"]
+    assert transport_argv == ["plushuman", "-p", "default", "peer", "dm", "spark"]
 
 
 def test_peer_delivery_command(tmp_path, monkeypatch):
@@ -468,7 +468,7 @@ def test_peer_delivery_command(tmp_path, monkeypatch):
     assert "spark" in result["to"]
     mode, _dm_file, transport_argv = _runner_parts(calls[0]["command"])
     assert mode == "stdin"
-    assert transport_argv == ["alfred", "-p", "default", "peer", "dm", "spark/researcher"]
+    assert transport_argv == ["plushuman", "-p", "default", "peer", "dm", "spark/researcher"]
     # the peer child reads the author from its env and forwards it in the request body
     assert _runner_author(calls[0]["command"]) == {"id": "bot:eri-mac.local/default", "name": "hermes", "is_bot": True}
 
@@ -479,12 +479,12 @@ def test_peer_delivery_command(tmp_path, monkeypatch):
     assert result2["status"] == "queued"
     mode, _dm_file, transport_argv = _runner_parts(calls[1]["command"])
     assert mode == "stdin"
-    assert transport_argv == ["alfred", "-p", "default", "peer", "dm", "spark"]
+    assert transport_argv == ["plushuman", "-p", "default", "peer", "dm", "spark"]
 
 
 def test_delivery_pins_the_hermes_entrypoint_beside_this_interpreter(tmp_path, monkeypatch):
     """A background delivery must not rely on PATH: the runner's service context
-    lacks the gateway's venv bin dir, so a bare ``alfred`` resolves to a system
+    lacks the gateway's venv bin dir, so a bare ``plushuman`` resolves to a system
     install whose shebang picks the wrong interpreter and dies on import (#108628).
     With no published install launcher, both transports invoke the entrypoint beside
     this interpreter instead; a published launcher outranks that sibling (#124868)."""
@@ -536,7 +536,7 @@ def test_peer_delivery_author_carries_the_sender_hostname_and_local_stays_bare(t
 
 
 def test_renamed_primary_signs_with_its_friendly_name_and_is_reachable_by_it(tmp_path, monkeypatch):
-    """#89720: `alfred profile rename default Maia` writes profile.yaml ``display_name`` (no Bot Mode
+    """#89720: `plushuman profile rename default Maia` writes profile.yaml ``display_name`` (no Bot Mode
     title). The primary must then sign `Maia (@hermes)`, not `hermes (@hermes)`, and a teammate must
     reach it as `maia` / `@maia` — the tag the Desktop roster inserts — while `@hermes` keeps resolving.
     A Bot Mode title outranks the display_name in the signature, as in the Desktop's botFriendlyNames."""
@@ -623,7 +623,7 @@ def test_live_dm_runner_retry_never_reexecutes_failed_claim(tmp_path, monkeypatc
     monkeypatch.setattr(subprocess, "run", lambda *a, **k: pytest.fail("must not launch a model turn"))
     dm_file = tmp_path / "message.txt"
     dm_file.write_text("hello", encoding="utf-8")
-    argv = ["alfred", "-p", "researcher"]
+    argv = ["plushuman", "-p", "researcher"]
     claims = []
 
     def fail_later():
@@ -898,7 +898,7 @@ def test_delivery_runner_surfaces_live_owner_refusal(tmp_path, capsys):
 
 
 def test_local_turn_reemits_empty_stdout_for_a_bare_silence_marker(tmp_path, capsys):
-    """#110782: the one-shot ``alfred chat -c "Bot Chat"`` transport applies the gateway's
+    """#110782: the one-shot ``plushuman chat -c "Bot Chat"`` transport applies the gateway's
     silence rule — a successful bare marker reaches the sender as "", prose stays verbatim."""
     dm_file = tmp_path / "message.txt"
     dm_file.write_text("thanks, bye", encoding="utf-8")
@@ -931,7 +931,7 @@ def test_query_file_delivery_closes_stdin_for_initial_attempt_and_retry(
     monkeypatch.setattr(subprocess, "run", fake_run)
 
     returncode = bot_mode_dm._run_delivery(
-        ["alfred", "-p", "researcher"], str(dm_file), stdin_file=False
+        ["plushuman", "-p", "researcher"], str(dm_file), stdin_file=False
     )
 
     assert returncode == 0
@@ -967,11 +967,11 @@ def test_delivery_main_child_env_carries_only_the_argv_author(tmp_path, monkeypa
     author_args = ["--author", json.dumps(author)] if author else []
 
     returncode = bot_mode_dm._delivery_main(
-        ["--run-delivery", *author_args, mode, str(dm_file), "alfred", "-p", "researcher"])
+        ["--run-delivery", *author_args, mode, str(dm_file), "plushuman", "-p", "researcher"])
 
     assert returncode == 0
     [(argv, kwargs)] = calls
-    assert argv[:3] == ["alfred", "-p", "researcher"]
+    assert argv[:3] == ["plushuman", "-p", "researcher"]
     assert kwargs["env"]["HERMES_DM_TEST_MARKER"] == "kept"
     assert (json.loads(kwargs["env"][TURN_AUTHOR_ENV]) if TURN_AUTHOR_ENV in kwargs["env"] else None) == author
     assert not dm_file.exists()
@@ -1396,7 +1396,7 @@ def test_local_turn_survives_undecodable_transport_output(tmp_path, capsys):
 
 
 def test_local_turn_relays_utf8_reply_under_a_gbk_default_codec(tmp_path, monkeypatch, capsys):
-    """#83851: the transport is a Alfred CLI child, which always writes UTF-8 stdio. Decoding it with
+    """#83851: the transport is a +Human CLI child, which always writes UTF-8 stdio. Decoding it with
     the host's default codec (cp936 on zh-CN Windows) crashed or garbled the reply; it must round-trip."""
     dm_file = tmp_path / "dm.txt"
     dm_file.write_text("hello", encoding="utf-8")

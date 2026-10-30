@@ -3,27 +3,27 @@
 Applies on top of `apps/desktop/AGENTS.md` (the judgment guide) and the root `AGENTS.md`.
 Root TypeScript style rules apply.
 
-## The desktop is its own chat surface on a `alfred serve` backend
+## The desktop is its own chat surface on a `plushuman serve` backend
 
 Electron + React + nanostores (`@assistant-ui/react`) talking to a `tui_gateway` backend over
 JSON-RPC (`requestGateway(method, params)`); transport lives in the framework-agnostic `apps/shared`
 (`@hermes/shared`: `JsonRpcGatewayClient` + WS URL helpers), which the web dashboard also consumes.
 The desktop has **no build/runtime dependency on the dashboard frontend**: it spawns a headless
-`alfred serve` (`headless_backend=True` → `cmd_dashboard` skips `_build_web_ui` and exports
+`plushuman serve` (`headless_backend=True` → `cmd_dashboard` skips `_build_web_ui` and exports
 `HERMES_SERVE_HEADLESS=1` so `mount_spa()` disables the SPA even if a stray `web_dist/` exists).
 `dashboard` and `serve` share `cmd_dashboard`/`start_server` but neither launches the other. It does
-NOT embed `alfred --tui` — own composer, transcript, slash pipeline.
+NOT embed `plushuman --tui` — own composer, transcript, slash pipeline.
 
 **One backward-compat fallback:** `serve` is newer, so the spawn (`electron/backend-command.ts` +
 `createBackendServeSupportResolver()` in `electron/backend-serve-support.ts`) checks whether the runtime registers `serve`
-and ONLY when it does not (older managed install / PATH `alfred` not yet updated) rewrites argv to
+and ONLY when it does not (older managed install / PATH `plushuman` not yet updated) rewrites argv to
 legacy `dashboard --no-open`. Without it a new app against an un-upgraded runtime crashes on an
 unknown subcommand and bricks every mid-upgrade user. Keep it narrow and tested.
 
 Lifecycle: `serve` dies with the app by design; the messaging gateway survives it (spawned detached
 via `/api/gateway/*`). Never re-parent the gateway under the backend — `gateway/AGENTS.md`.
 
-The backend the app spawns is a **pooled `alfred serve --port 0` per (connection, profile)**: its
+The backend the app spawns is a **pooled `plushuman serve --port 0` per (connection, profile)**: its
 launch home is that profile, `HERMES_DESKTOP=1` is set, and its in-process cron ticker stands down
 for homes a running gateway already serves. One process may still host sessions from several homes
 (`tui_gateway/AGENTS.md` § Profile scope); the first non-launch home flips `set_multiplex_active`.
@@ -64,7 +64,7 @@ user-activated extensions. If you tighten `desktop-slash-commands.ts`, keep
 
 ## Bot Mode (`src/plugins/hermes-bots/`) — one bot = ONE canonical forever-chat, identified by NAME
 
-Each bot is a Alfred **profile** with a persistent identity. This invariant regressed repeatedly,
+Each bot is a +Human **profile** with a persistent identity. This invariant regressed repeatedly,
 cost users conversation history each time, and is not open for re-litigation in a routine PR.
 
 The chat's only identity is **(profile, session titled exactly "Bot Chat")**; the state DB's

@@ -1,4 +1,4 @@
-"""Generate canonical install-stamp.json for packaged Alfred builds.
+"""Generate canonical install-stamp.json for packaged +Human builds.
 
 All packagers (Docker, Nix, desktop) call this script to produce the same
 ``install-stamp.json`` file. Runtime surfaces (CLI, TUI, desktop) read the
@@ -47,14 +47,14 @@ _REPO_ROOT = Path(__file__).parent.parent.resolve()
 
 # Who applies the next update to the tree this stamp describes. REQUIRED —
 # stamp readers hard-fail a stamp without it.
-#   self             — `alfred update` owns the tree (installer-created
+#   self             — `plushuman update` owns the tree (installer-created
 #                      source checkouts).
 #   electron-updater — the in-app updater replaces the artifact (NSIS,
 #                      mac .app, AppImage).
 #   app-installer    — the app hands the update to Windows App Installer.
 #   external         — a package manager or app store owns updates.
 
-# Alfred's historical tags use a four-digit calendar year as their major
+# +Human's historical tags use a four-digit calendar year as their major
 # component (for example v2026.7.20). Restrict release majors to three digits
 # so these date tags cannot masquerade as the v0.x.y SemVer boundaries.
 _SEMVER_TAG_RE = re.compile(r"^v(0|[1-9]\d{0,2})\.(\d+)\.(\d+)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$")
@@ -305,7 +305,7 @@ def main() -> int:
         "--update-mechanism",
         required=True,
         choices=UPDATE_MECHANISMS,
-        help="Who applies the next update: 'self' (alfred update), "
+        help="Who applies the next update: 'self' (plushuman update), "
         "'app-installer' (Windows App Installer), 'electron-updater' (in-app updater), "
         "'external' (nix/docker/store)",
     )

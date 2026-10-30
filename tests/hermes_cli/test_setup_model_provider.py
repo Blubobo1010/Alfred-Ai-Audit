@@ -40,7 +40,7 @@ def _write_aux_config(task="compression", provider="gemini", model_name="gemini-
 
 
 def test_setup_model_provider_preserves_auxiliary_choices_written_by_picker(tmp_path, monkeypatch):
-    """Aux choices made inside alfred setup must survive the wizard's final save."""
+    """Aux choices made inside plushuman setup must survive the wizard's final save."""
     monkeypatch.setenv("HERMES_HOME", str(tmp_path))
     _clear_provider_env(monkeypatch)
 

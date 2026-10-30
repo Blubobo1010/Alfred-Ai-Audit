@@ -1,4 +1,4 @@
-"""Persistent session goals — the Ralph loop for Alfred.
+"""Persistent session goals — the Ralph loop for +Human.
 
 A goal is a free-form objective that stays active across turns; after each turn an auxiliary-model
 judge decides whether it is satisfied. The continuation prompt is a normal user message appended via
@@ -553,7 +553,7 @@ def _get_session_db() -> Optional[Any]:
 
     cached = _DB_CACHE.get(home)
     if cached is not None and _registry_tore_down(cached):
-        # ``alfred profile delete`` force-closes every handle under the profile home
+        # ``plushuman profile delete`` force-closes every handle under the profile home
         # (``hermes_state_registry.close_all_under``) before rmtree; a same-name recreate in this
         # process must acquire a fresh handle, not keep writing into the torn-down one.
         with _DB_BOOTSTRAP_LOCK:

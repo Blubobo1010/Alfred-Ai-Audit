@@ -1224,7 +1224,7 @@ export function GroupChatWorkspace({ group, members, onBack, visible = true }: G
 
     // Match this speaker back to its member descriptor so display
     // names and disambiguating handles come from the roster (the
-    // primary "default" profile renders as Alfred, remote dupes
+    // primary "default" profile renders as +Human, remote dupes
     // carry their @name-device handle) instead of raw profile ids.
     const member = isUser
       ? null

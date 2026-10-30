@@ -1,4 +1,4 @@
-"""``alfred browser`` subcommand parser."""
+"""``plushuman browser`` subcommand parser."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ def build_browser_parser(subparsers) -> None:
         "browser", help="Real-profile browsing helpers (close a browser locking its profile)",
         description="Helpers for real-profile browsing (browser.use_real_profile). "
             "close-profile terminates the browser process tree holding your "
-            "default profile so Alfred can copy it — DESTRUCTIVE (unsaved tabs "
+            "default profile so +Human can copy it — DESTRUCTIVE (unsaved tabs "
             "in that browser are lost). The agent runs this only after you "
             "approve closing the browser.")
     browser_subparsers = browser_parser.add_subparsers(dest="browser_action")

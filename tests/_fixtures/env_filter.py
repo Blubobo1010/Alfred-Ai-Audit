@@ -141,7 +141,7 @@ _HERMES_BEHAVIORAL_VARS = frozenset({
     "HERMES_VOICE_TTS",
     "HERMES_YOLO_MODE",
     # Injected into subprocess envs by the terminal tool (_make_run_env), so
-    # any test run launched FROM a Alfred agent session inherits them and
+    # any test run launched FROM a +Human agent session inherits them and
     # hermes_constants home-resolution helpers prefer them over monkeypatched
     # HOME (test_subprocess_home_isolation red locally, green on CI).
     "HERMES_REAL_HOME",
@@ -168,7 +168,7 @@ _HERMES_BEHAVIORAL_VARS = frozenset({
     "HERMES_TUI_PROVIDER",
     "HERMES_MANAGED",
     "HERMES_MANAGED_DIR",
-    # A Nix-wrapped `alfred` on the developer's host exports the store's read-only plugins
+    # A Nix-wrapped `plushuman` on the developer's host exports the store's read-only plugins
     # tree; tests must discover the checkout's plugins/ (get_bundled_plugins_dir), not a
     # different release's.
     "HERMES_BUNDLED_PLUGINS",

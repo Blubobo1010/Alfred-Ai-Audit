@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# hermes-update-rehearsal.sh — for an EXISTING Alfred install.
+# hermes-update-rehearsal.sh — for an EXISTING +Human install.
 #
 # Two steps:
-#   pre   take a `alfred backup` of your data, clone HERMES_HOME and the desktop
+#   pre   take a `plushuman backup` of your data, clone HERMES_HOME and the desktop
 #         app's Electron userData into the backup dir, then point the install's
-#         update source at a fork so `alfred update` pulls that fork's main.
+#         update source at a fork so `plushuman update` pulls that fork's main.
 #         Prints what to do next.
 #   post  swap the clones back in, so both trees are exactly as they were.
 #
@@ -16,7 +16,7 @@
 # when the backup dir is on the same disk. HERMES_HOME/cache is left as it is.
 #
 #   ./hermes-update-rehearsal.sh pre  --source <git-url>
-#   # ... run `alfred update`, use Alfred, test whatever you need ...
+#   # ... run `plushuman update`, use +Human, test whatever you need ...
 #   ./hermes-update-rehearsal.sh post
 #
 # Options:
@@ -25,7 +25,7 @@
 #   --backup-root DIR   where the backup lives (default ~/hermes-update-rehearsal)
 #   --yes          post: skip the confirmation
 #
-# Requires: git. `pre` and `alfred update` need network access to --source.
+# Requires: git. `pre` and `plushuman update` need network access to --source.
 
 set -euo pipefail
 
@@ -47,7 +47,7 @@ step() { printf '\n=== %s ===\n' "$*"; }
 usage() {
   if [ -n "$SELF" ] && [ -r "$SELF" ]; then sed -n '2,28p' "$SELF"; exit 0; fi
   cat <<'EOF'
-hermes-update-rehearsal.sh -- run against an EXISTING Alfred install.
+hermes-update-rehearsal.sh -- run against an EXISTING +Human install.
 
   pre     back up your data, clone both trees, point the update source at a fork
   post    swap the clones back in, exactly as they were
@@ -113,7 +113,7 @@ resolve_paths() {
   if [ -n "${HERMES_DESKTOP_USER_DATA_DIR:-}" ]; then
     USERDATA_DIR="$HERMES_DESKTOP_USER_DATA_DIR"; USERDATA_SOURCE="env"
   else
-    USERDATA_DIR="$HOME/Library/Application Support/Alfred${suffix}"; USERDATA_SOURCE="default"
+    USERDATA_DIR="$HOME/Library/Application Support/+Human${suffix}"; USERDATA_SOURCE="default"
   fi
   BACKUP_ROOT="$(native_path "$BACKUP_ROOT")"
   HERMES_HOME="$(native_path "$HERMES_HOME")"
@@ -253,11 +253,11 @@ cmd_pre() {
     local procs
     procs="$(pgrep -fl hermes 2>/dev/null | grep -v 'hermes-update-rehearsal' || true)"
     if [ -n "$procs" ]; then
-      warn "Alfred looks like it is running — close the desktop app and the gateway"
-      warn "before you run 'alfred update', or the dependency sync may fail:"
+      warn "+Human looks like it is running — close the desktop app and the gateway"
+      warn "before you run 'plushuman update', or the dependency sync may fail:"
       printf '    %s\n' "$procs"
     else
-      ok "no Alfred processes running"
+      ok "no +Human processes running"
     fi
   fi
   local n
@@ -276,7 +276,7 @@ cmd_pre() {
   [ ! -e "$SNAP" ] || die "backup dir already exists: $SNAP"
   mkdir -p "$SNAP"
 
-  step "backing up your data (alfred backup)"
+  step "backing up your data (plushuman backup)"
   # Config, keys, sessions, memories, skills, with SQLite copied consistently:
   # a second, independent copy of what matters most. post never deletes it.
   local started code=0 out
@@ -284,10 +284,10 @@ cmd_pre() {
   out="$(HERMES_HOME="$HERMES_HOME" "$hermes_exe" backup -o "$SNAP/hermes-backup.zip" 2>&1)" || code=$?
   if [ "$code" = 1 ] && [ -f "$SNAP/hermes-backup.zip" ]; then
     printf '    %s\n' "$out"
-    warn "alfred backup finished INCOMPLETE ($((SECONDS - started))s): the files listed above are not in $SNAP/hermes-backup.zip"
+    warn "plushuman backup finished INCOMPLETE ($((SECONDS - started))s): the files listed above are not in $SNAP/hermes-backup.zip"
   elif [ "$code" != 0 ] || [ ! -f "$SNAP/hermes-backup.zip" ]; then
     printf '    %s\n' "$out"
-    die "alfred backup failed (exit $code) — nothing else was done"
+    die "plushuman backup failed (exit $code) — nothing else was done"
   else
     ok "hermes-backup.zip ($(du -h "$SNAP/hermes-backup.zip" | cut -f1), $((SECONDS - started))s)"
   fi
@@ -332,7 +332,7 @@ EOF
 
   step "pointing your install at $SOURCE"
   # insteadOf is a TRANSPORT rewrite. Your checkout's origin keeps the official
-  # URL, which matters: `alfred update` resolves its channel from the archive
+  # URL, which matters: `plushuman update` resolves its channel from the archive
   # and validates it against `git config --get remote.origin.url`. Repointing
   # origin at a fork would make the update fail before any git work.
   # Straight at the fork: the updater follows main, so the fork's main is what
@@ -428,7 +428,7 @@ cmd_post() {
 
   step "stopping this home's gateway"
   local hermes_exe
-  hermes_exe="$(resolve_hermes_exe)" || die "no Alfred launcher for $INSTALL_DIR; stop this home's gateway before restoring"
+  hermes_exe="$(resolve_hermes_exe)" || die "no +Human launcher for $INSTALL_DIR; stop this home's gateway before restoring"
   HERMES_HOME="$HERMES_HOME" "$hermes_exe" gateway stop \
     || die "could not stop this home's gateway; restore has not started"
   ok "stopped this home's gateway (close the desktop app before restoring its data)"
@@ -462,7 +462,7 @@ cmd_post() {
 
   step "done"
   say "Your HERMES_HOME and the desktop app's data are back exactly as they were."
-  say "Open the desktop app once and run 'alfred doctor' to confirm."
+  say "Open the desktop app once and run 'plushuman doctor' to confirm."
   say "Nothing was judged or changed by this script; the backup at $SNAP"
   say "(including hermes-backup.zip) is yours to keep or delete."
 }

@@ -3,9 +3,9 @@
  *
  * Pure Windows venv-holder selection logic (testable without Electron).
  *
- * The pre-update handoff kills Alfred-OWNED venv daemons (the memory plugin's
+ * The pre-update handoff kills +Human-OWNED venv daemons (the memory plugin's
  * hindsight daemon) so the updater never races a mapped shim. External
- * holders (a user terminal running `alfred`, unrelated scripts) must NOT be
+ * holders (a user terminal running `plushuman`, unrelated scripts) must NOT be
  * killed — current design reports them via scanVenvBlockers and ABORTS the
  * handoff instead (main.ts releaseBackendLock / applyUpdates).
  */
@@ -18,10 +18,10 @@ export function hasWindowsPathPrefix(exePath: string, venvScriptsDir: string): b
 }
 
 /**
- * True when a process is a Alfred-owned venv daemon: its exe lives under
+ * True when a process is a +Human-owned venv daemon: its exe lives under
  * `<venv>\Scripts\` (ordinal case-insensitive prefix) AND its cmdline
  * references `hindsight_api.main` (the memory daemon the memory plugin
- * spawns DETACHED — it outlives Alfred and holds venv shims mapped).
+ * spawns DETACHED — it outlives +Human and holds venv shims mapped).
  */
 export function isHermesOwnedVenvDaemon(
   exePath: string | null | undefined,
@@ -36,9 +36,9 @@ export function isHermesOwnedVenvDaemon(
 }
 
 /**
- * True when a process is an external Alfred process holding this install's venv
+ * True when a process is an external +Human process holding this install's venv
  * (#62311): its exe lives under `<venv>\Scripts\` AND it is unambiguously a
- * Alfred program — the `hermes.exe` shim, `python -m hermes_cli...`, or
+ * +Human program — the `hermes.exe` shim, `python -m hermes_cli...`, or
  * `python -m hermes ...`. These are the autostart holders (the gateway Startup
  * item, the dashboard Scheduled Task) that neither the desktop's backend
  * teardown nor the hindsight-daemon sweep reach, and that keep the venv shim
@@ -47,7 +47,7 @@ export function isHermesOwnedVenvDaemon(
  * Deliberately NARROWER than a bare path/cmdline substring against the install
  * root (the approach that sank #62445): an unrelated process that merely
  * mentions the install root or borrows the venv interpreter for its own script
- * must NOT be tree-killed. Non-Alfred venv users still abort the hand-off via
+ * must NOT be tree-killed. Non-+Human venv users still abort the hand-off via
  * the shim-lock probe instead.
  */
 export function isExternalVenvHolder(

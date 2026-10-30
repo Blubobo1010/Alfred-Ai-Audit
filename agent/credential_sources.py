@@ -1,7 +1,7 @@
-"""Unified removal contract for every credential source Alfred reads from.
+"""Unified removal contract for every credential source +Human reads from.
 
 Readers live in ``agent.credential_pool``; what is unified here is **removal**:
-``alfred auth remove <provider> <N>`` must make the entry stay gone across
+``plushuman auth remove <provider> <N>`` must make the entry stay gone across
 ``load_pool()`` calls. Each source registers a ``RemovalStep`` whose
 ``remove_fn`` cleans the external state the source reads from, and the
 dispatcher suppresses ``(provider, source_id)`` in auth.json so the seeding
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 EXTERNAL_LOGINS_NOT_ADOPTED_NOTICE = (
     "External CLI logins (Codex CLI, Claude Code) are not adopted: auth.adopt_external_logins is false. "
-    "Alfred uses only its own logins; run `alfred auth add <provider>` to add one."
+    "+Human uses only its own logins; run `plushuman auth add <provider>` to add one."
 )
 _notice_logged = False
 
@@ -32,9 +32,9 @@ _notice_logged = False
 def adopt_external_logins_enabled() -> bool:
     """``auth.adopt_external_logins`` (default True).
 
-    Codex and Claude OAuth refresh tokens are single-use and rotate, so once Alfred borrows a CLI's
+    Codex and Claude OAuth refresh tokens are single-use and rotate, so once +Human borrows a CLI's
     token pair the two programs hold one token family and whichever refreshes first logs the other
-    out. When the user opts out, Alfred never reads or refreshes those files and says so once per
+    out. When the user opts out, +Human never reads or refreshes those files and says so once per
     process (INFO) the first time it would have."""
     global _notice_logged
     try:
@@ -124,9 +124,9 @@ def _remove_env_source(provider: str, removed) -> RemovalResult:
             f"Note: {env_var} is still set in your shell environment "
             f"(not in ~/.hermes/.env).",
             "  Unset it there (shell profile, systemd EnvironmentFile, "
-            "launchd plist, etc.) or it will keep being visible to Alfred.",
-            f"  The pool entry is now suppressed — Alfred will ignore "
-            f"{env_var} until you run `alfred auth add {provider}`.",
+            "launchd plist, etc.) or it will keep being visible to +Human.",
+            f"  The pool entry is now suppressed — +Human will ignore "
+            f"{env_var} until you run `plushuman auth add {provider}`.",
         ])
     else:
         result.hints.append(
@@ -145,7 +145,7 @@ def _remove_hermes_pkce(provider: str, removed) -> RemovalResult:
     if oauth_file.exists():
         try:
             oauth_file.unlink()
-            result.cleaned.append("Cleared Alfred Anthropic OAuth credentials")
+            result.cleaned.append("Cleared +Human Anthropic OAuth credentials")
         except OSError as exc:
             result.hints.append(f"Could not delete {oauth_file}: {exc}")
     return result
@@ -173,7 +173,7 @@ def _remove_auth_store_oauth(provider: str, removed) -> RemovalResult:
 def _remove_xai_oauth_device_code(provider: str, removed) -> RemovalResult:
     result = _remove_auth_store_oauth(provider, removed)
     result.hints.append(
-        "Run `alfred model` → xAI Grok OAuth (SuperGrok / Premium+) to re-authenticate if needed."
+        "Run `plushuman model` → xAI Grok OAuth (SuperGrok / Premium+) to re-authenticate if needed."
     )
     return result
 
@@ -191,7 +191,7 @@ def _remove_codex_device_code(provider: str, removed) -> RemovalResult:
     result.hints.extend([
         "Suppressed openai-codex device_code source — it will not be re-seeded.",
         "Note: Codex CLI credentials still live in ~/.codex/auth.json",
-        "Run `alfred auth add openai-codex` to re-enable if needed.",
+        "Run `plushuman auth add openai-codex` to re-enable if needed.",
     ])
     return result
 
@@ -208,7 +208,7 @@ def _remove_copilot_gh(provider: str, removed) -> RemovalResult:
     return RemovalResult(hints=[
         "Suppressed all copilot token sources (gh_cli + env vars) — they will not be re-seeded.",
         "Note: Your gh CLI / shell environment is unchanged.",
-        "Run `alfred auth add copilot` to re-enable if needed.",
+        "Run `plushuman auth add copilot` to re-enable if needed.",
     ])
 
 
@@ -242,7 +242,7 @@ _REGISTRY: list[RemovalStep] = [
         remove_fn=_suppress_only(
             "Suppressed claude_code credential — it will not be re-seeded.",
             "Note: Claude Code credentials still live in ~/.claude/.credentials.json",
-            "Run `alfred auth add anthropic` to re-enable if needed.",
+            "Run `plushuman auth add anthropic` to re-enable if needed.",
         ),
         description="~/.claude/.credentials.json",
     ),
@@ -272,7 +272,7 @@ _REGISTRY: list[RemovalStep] = [
         remove_fn=_suppress_only(
             "Suppressed qwen-cli credential — it will not be re-seeded.",
             "Note: Qwen CLI credentials still live in ~/.qwen/oauth_creds.json",
-            "Run `alfred auth add qwen-oauth` to re-enable if needed.",
+            "Run `plushuman auth add qwen-oauth` to re-enable if needed.",
         ),
         description="~/.qwen/oauth_creds.json",
     ),

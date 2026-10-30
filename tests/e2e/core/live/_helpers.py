@@ -154,7 +154,7 @@ class WireRecord:
 
 @dataclass
 class WireLog:
-    """Every HTTP exchange made through httpx (all SDKs Alfred uses sit on it)."""
+    """Every HTTP exchange made through httpx (all SDKs +Human uses sit on it)."""
 
     secret: str
     records: list[WireRecord] = field(default_factory=list)

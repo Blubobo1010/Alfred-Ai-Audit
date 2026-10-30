@@ -139,8 +139,8 @@ async function readManualUpdateCommand(page) {
   }
   const text = await page.locator('code').filter({ hasText: /hermes update/i }).first().textContent()
   const command = (text || '').trim().replace(/^\$\s*/, '')
-  if (!/^alfred update(?:\s|$)/.test(command)) {
-    throw new Error('manual update card did not present a alfred update command')
+  if (!/^plushuman update(?:\s|$)/.test(command)) {
+    throw new Error('manual update card did not present a plushuman update command')
   }
   return command
 }

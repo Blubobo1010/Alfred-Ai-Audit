@@ -25,7 +25,7 @@ def installation(request, tmp_path, monkeypatch):
         home / "sessions" / "saved.json": b'{"saved": true}',
     }
     record = tmp_path / "desktop-installed-apps.json"
-    bundle = tmp_path / "apps" / "Alfred.app"
+    bundle = tmp_path / "apps" / "+Human.app"
     userdata = tmp_path / "desktop-data"
     gui_files = {
         root / "apps" / "desktop" / "dist" / "index.html": b"renderer",
@@ -48,7 +48,7 @@ def installation(request, tmp_path, monkeypatch):
 
 
 def _run(monkeypatch, *args):
-    monkeypatch.setattr(sys, "argv", ["alfred", "uninstall", "--gui", *args])
+    monkeypatch.setattr(sys, "argv", ["plushuman", "uninstall", "--gui", *args])
     return main.main()
 
 
@@ -69,7 +69,7 @@ def test_gui_dry_run_never_confirms_or_removes_installed_state(installation, mon
         assert "Uninstalled!" not in output
 
     # The sibling full-agent preview must also work without an interactive terminal.
-    monkeypatch.setattr(sys, "argv", ["alfred", "uninstall", "--dry-run"])
+    monkeypatch.setattr(sys, "argv", ["plushuman", "uninstall", "--dry-run"])
     main.main()
     for path, data in {**protected, **gui_files}.items():
         assert path.read_bytes() == data

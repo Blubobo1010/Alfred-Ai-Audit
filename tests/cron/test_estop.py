@@ -1,8 +1,8 @@
-"""Global emergency stop (`alfred pause` / `alfred resume`) — agent/estop.py.
+"""Global emergency stop (`plushuman pause` / `plushuman resume`) — agent/estop.py.
 
 The ESTOP sentinel is a resumable pause for NEW work only: cron dispatch,
 kanban dispatch, and new gateway turns are halted while it is engaged; work
-already in flight is never touched. Removing the sentinel (`alfred resume`)
+already in flight is never touched. Removing the sentinel (`plushuman resume`)
 restores normal operation with no restart.
 
 Ported from: gastownhall/gastown estop.go (MIT); related prior art: #26778
@@ -196,7 +196,7 @@ async def test_gateway_internal_events_bypass_estop(hermes_home):
     assert reply is None or "paused" not in (reply or "").lower()
 
 
-# ── CLI: alfred pause / alfred resume ───────────────────────────────────────
+# ── CLI: plushuman pause / plushuman resume ───────────────────────────────────────
 
 
 def test_cli_pause_engages_with_reason(hermes_home, capsys):
@@ -231,7 +231,7 @@ def test_cli_resume_disengages(hermes_home, capsys):
 
 
 
-# ── alfred status surfacing ─────────────────────────────────────────────────
+# ── plushuman status surfacing ─────────────────────────────────────────────────
 
 
 def test_status_line_when_paused(hermes_home):
@@ -342,7 +342,7 @@ def test_profile_gateway_honors_canonical_root_estop(tmp_path, monkeypatch):
     """fleet-analyst-class: HERMES_HOME is a profile dir; pause lives at root.
 
     A process launched with HERMES_HOME=~/.hermes/profiles/fleet-analyst must
-    still treat ~/.hermes/ESTOP as engaged. Otherwise `alfred pause` is not
+    still treat ~/.hermes/ESTOP as engaged. Otherwise `plushuman pause` is not
     a global emergency stop (t_7b65ff88).
     """
     root = tmp_path / "hermes-root"

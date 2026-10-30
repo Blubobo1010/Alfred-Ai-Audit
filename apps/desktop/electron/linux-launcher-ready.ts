@@ -1,5 +1,5 @@
 /**
- * Tells the `alfred desktop` launcher that the main window is on screen.
+ * Tells the `plushuman desktop` launcher that the main window is on screen.
  *
  * On Linux an app-grid launch defers writing the app's own `.desktop` entry
  * until the window has mapped: unpatched gnome-shell (before GNOME MR !4428)

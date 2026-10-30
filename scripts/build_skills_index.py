@@ -1,10 +1,10 @@
 #!/usr/bin/env -S bash -c 'exec "$BASH" "$(dirname "$0")/run-in-hermes-env" python3 "$0" "$@"'
-"""Build the Alfred Skills Index — a centralized JSON catalog of all skills.
+"""Build the +Human Skills Index — a centralized JSON catalog of all skills.
 
 This script crawls every skill source (skills.sh, GitHub taps, official,
 clawhub, lobehub) and writes a JSON index with resolved
 GitHub paths. The index is served as a static file on the docs site so that
-`alfred skills search/install` can use it without hitting the GitHub API.
+`plushuman skills search/install` can use it without hitting the GitHub API.
 
 Usage:
     # Local (uses gh CLI or GITHUB_TOKEN for auth)
@@ -265,7 +265,7 @@ def batch_resolve_paths(skills: list, auth: GitHubAuth) -> list:
 
 
 def main():
-    print("Building Alfred Skills Index...", flush=True)
+    print("Building +Human Skills Index...", flush=True)
     overall_start = time.time()
 
     auth = GitHubAuth()

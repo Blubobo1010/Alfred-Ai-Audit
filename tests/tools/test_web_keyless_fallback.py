@@ -456,7 +456,7 @@ class TestResolutionOrder:
 
 
 # ---------------------------------------------------------------------------
-# alfred tools picker: tier variant rows
+# plushuman tools picker: tier variant rows
 # ---------------------------------------------------------------------------
 
 

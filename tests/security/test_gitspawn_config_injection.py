@@ -3,13 +3,13 @@
 A repository delivered as files (zip, sync folder, USB) can carry a
 ``.git/config`` that names a command in an execution-sink git setting —
 ``core.fsmonitor``, ``core.hooksPath`` hooks, or an attribute-scoped
-``[diff "x"] command=/textconv=`` driver. Alfred gathers workspace context by
+``[diff "x"] command=/textconv=`` driver. +Human gathers workspace context by
 running git against the session directory automatically, before any prompt,
 approval, or trust gate, so an unhardened probe would execute that command on
 the host as the user.
 
 These tests build a real malicious repo and assert that every automatic
-context-gathering git path Alfred runs neutralizes every sink. They use a real
+context-gathering git path +Human runs neutralizes every sink. They use a real
 ``git`` and skip if it is unavailable.
 """
 
@@ -338,7 +338,7 @@ def test_repo_named_filters_never_run_from_kanban_gc_or_hints(tmp_path, attrs, c
     sub = create_subagent_worktree(str(repo), "filters")
     assert sub is not None and (Path(sub["path"]) / "README").read_text() == "hi\n"
     # The subagent's automatic finalization and kanban teardown re-hash a touched file (status);
-    # alfred -w checks out a worktree of its own.
+    # plushuman -w checks out a worktree of its own.
     from hermes_cli import worktree_ops
     from tools.subagent_worktree import finalize_subagent_worktree
     for tree in (Path(sub["path"]), tmp_path / "wt"):

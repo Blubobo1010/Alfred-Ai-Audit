@@ -212,7 +212,7 @@ def test_zip_fallback_keeps_selected_repository_and_commit(releases, monkeypatch
                      releases.commits[2])]
 
 
-@pytest.mark.skip(reason="Alfred publishes no release pointer: its stable release is GitHub's latest")
+@pytest.mark.skip(reason="+Human publishes no release pointer: its stable release is GitHub's latest")
 @pytest.mark.parametrize("git_cmd", [["git"], None], ids=["git", "no-git"])
 def test_selected_draft_never_falls_back_to_other_tags(releases, git_cmd):
     releases.responses[f"/repos/Blubobo1010/Alfred-Ai-Audit/releases/tags/{releases.tags['stable']}"]["draft"] = True
@@ -227,7 +227,7 @@ def test_main_check_still_uses_branch_without_release_requests(releases, capsys)
     assert releases.requests == []
 
 
-@pytest.mark.skip(reason="Alfred publishes no release pointer: its stable release is GitHub's latest")
+@pytest.mark.skip(reason="+Human publishes no release pointer: its stable release is GitHub's latest")
 @pytest.mark.parametrize("channel", ["stable", "canary"])
 def test_origin_tag_cannot_substitute_a_fork_commit(releases, channel):
     git(releases.origin, "tag", "-f", releases.tags[channel], releases.commits[3])

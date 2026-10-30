@@ -1,4 +1,4 @@
-"""Contracts for Alfred' shared YAML reader and writer."""
+"""Contracts for +Human' shared YAML reader and writer."""
 
 import io
 from concurrent.futures import ThreadPoolExecutor

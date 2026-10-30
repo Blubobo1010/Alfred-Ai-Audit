@@ -214,7 +214,7 @@ def test_reaps_a_registered_group_when_the_control_pipe_reaches_eof():
 
 
 def test_leaves_an_unregistered_group_alone_at_eof():
-    # The other failure direction, and the more damaging one: a clean Alfred
+    # The other failure direction, and the more damaging one: a clean +Human
     # shutdown unregisters as it tears each server down, so EOF must not become
     # a kill-everything event for servers that were handed back.
     survivor = subprocess.Popen(_VICTIM, start_new_session=True)
@@ -239,7 +239,7 @@ def test_leaves_an_unregistered_group_alone_at_eof():
         supervisor.wait(timeout=10)
 
 
-# A stand-in for Alfred: registers a real child, then blocks forever holding the
+# A stand-in for +Human: registers a real child, then blocks forever holding the
 # only write end of the control pipe. SIGKILLing it is the scenario the whole
 # module exists for -- no cleanup code of ours gets to run.
 _FAKE_PARENT = """
@@ -285,7 +285,7 @@ def test_reaps_the_server_when_the_registering_parent_is_sigkilled(tmp_path):
         parent.wait(timeout=10)
 
         assert _wait_gone(victim_pid), (
-            "stdio MCP server survived kill -9 of its Alfred parent"
+            "stdio MCP server survived kill -9 of its +Human parent"
         )
     finally:
         for pid in (victim_pid, supervisor_pid):

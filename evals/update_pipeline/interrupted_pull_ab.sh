@@ -13,7 +13,7 @@
 #   E  custom branch whose commit merges cleanly: the kill lands inside the `git merge`, after it wrote
 #      the merged run_agent.py; the user edits a file git never wrote, then runs `hermes-agent`'s import
 # Fixed: A/B untouched, C/D/E restored with the user edit kept and the re-update lands; one VERDICT line.
-# [python] defaults to <repo>/venv/bin/python (needs the Alfred deps).
+# [python] defaults to <repo>/venv/bin/python (needs the +Human deps).
 set -u
 REPO=$1; REF=$2; LABEL=$3
 PY=${4:-$REPO/venv/bin/python}
@@ -21,7 +21,7 @@ U=$(mktemp -d -t "hermes-interrupted-pull-ab-$LABEL.XXXXXX")
 export HOME=$U/fakehome HERMES_HOME=$U/fakehome/.hermes
 unset PYTEST_CURRENT_TEST
 cat > "$U/pull.py" <<'PYEOF'
-# `alfred update` after its fetch: the REAL autostash + _pull_updates, imported from the install's tree.
+# `plushuman update` after its fetch: the REAL autostash + _pull_updates, imported from the install's tree.
 import pathlib
 import sys
 

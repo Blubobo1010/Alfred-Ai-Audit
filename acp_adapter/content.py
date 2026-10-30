@@ -1,4 +1,4 @@
-"""ACP prompt content blocks -> Alfred/OpenAI user-content payloads (text, images, resources)."""
+"""ACP prompt content blocks -> +Human/OpenAI user-content payloads (text, images, resources)."""
 
 from __future__ import annotations
 
@@ -157,7 +157,7 @@ def _resource_link_to_parts(block: ResourceContentBlock) -> list[dict[str, Any]]
 
     if path is None:
         return _text_parts(
-            **ident, body="[Resource link only; Alfred cannot read non-file ACP resource URIs directly.]"
+            **ident, body="[Resource link only; +Human cannot read non-file ACP resource URIs directly.]"
         )
 
     image_mime = mime_type if _is_image_resource(mime_type) else _IMAGE_SUFFIX_MIME.get(path.suffix.lower())
@@ -254,7 +254,7 @@ def _append_parts(parts: list, text_parts: list[str], new_parts: list[dict[str, 
 
 
 def _content_blocks_to_openai_user_content(prompt: list[PromptBlock]) -> str | list[dict[str, Any]]:
-    """Convert ACP prompt blocks into a Alfred/OpenAI-compatible user content payload."""
+    """Convert ACP prompt blocks into a +Human/OpenAI-compatible user content payload."""
     parts: list[dict[str, Any]] = []
     text_parts: list[str] = []
 

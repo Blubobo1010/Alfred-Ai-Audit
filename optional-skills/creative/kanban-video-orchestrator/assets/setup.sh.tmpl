@@ -50,9 +50,9 @@ mkdir -p "$WORKSPACE"/{taste,audio/{voiceover,sfx},assets,scenes,checkpoints,too
 echo "  ✓ $WORKSPACE"
 
 # ─────────────────────────────────────────────────────────────────────
-# 3. Create Alfred profiles
+# 3. Create +Human profiles
 # ─────────────────────────────────────────────────────────────────────
-echo "═══ Creating Alfred profiles ═══"
+echo "═══ Creating +Human profiles ═══"
 
 {{PROFILE_CREATE_COMMANDS}}
 
@@ -66,7 +66,7 @@ configure_profile() {
     local toolsets_json="$2"     # JSON array string, e.g. '["kanban","terminal","file"]'
     local skills_json="$3"       # JSON array string, e.g. '["ascii-video"]'
     python3 - "$profile" "$toolsets_json" "$skills_json" "$WORKSPACE" <<'PY'
-"""Patch a Alfred profile config.yaml using ruamel.yaml so we don't depend on the
+"""Patch a +Human profile config.yaml using ruamel.yaml so we don't depend on the
 exact default-config string format. Validates the patch took effect and exits
 non-zero if anything's off."""
 import json
@@ -103,7 +103,7 @@ cfg["skills"]["always_load"] = skills
 
 # Note: we do NOT touch cfg["approvals"] — that's a security-sensitive
 # setting (manual confirmation of tool calls). Workspace cwd is overridden
-# per-task by `--workspace dir:<path>` on `alfred kanban create`, so we
+# per-task by `--workspace dir:<path>` on `plushuman kanban create`, so we
 # don't need to mutate cfg["terminal"]["cwd"] either.
 
 with open(p, "w") as f:
@@ -159,7 +159,7 @@ TEAM_EOF
 # ─────────────────────────────────────────────────────────────────────
 echo "═══ Firing initial kanban task ═══"
 
-alfred kanban create "Direct production of {{TITLE}}" \
+plushuman kanban create "Direct production of {{TITLE}}" \
     --assignee director \
     --workspace dir:"$WORKSPACE" \
     --tenant "$TENANT" \
@@ -184,8 +184,8 @@ echo ""
 echo "═══ Setup complete ═══"
 echo ""
 echo "Monitor with:"
-echo "  alfred kanban watch --tenant $TENANT"
-echo "  alfred kanban list  --tenant $TENANT"
-echo "  alfred dashboard"
+echo "  plushuman kanban watch --tenant $TENANT"
+echo "  plushuman kanban list  --tenant $TENANT"
+echo "  plushuman dashboard"
 echo ""
 echo "Workspace: $WORKSPACE"

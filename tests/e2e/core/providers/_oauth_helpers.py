@@ -1,6 +1,6 @@
 """Hermetic subprocess harness for the OAuth E2E tests (fake HOME, tagged tree).
 
-Every ``alfred`` child runs with an allowlisted environment (no inherited
+Every ``plushuman`` child runs with an allowlisted environment (no inherited
 credentials or ``HERMES_*``), ``HOME``/``HERMES_HOME`` under ``tmp_path``, and
 a unique ``OAUTH_E2E_TAG`` so cleanup signals only this test's processes.
 """

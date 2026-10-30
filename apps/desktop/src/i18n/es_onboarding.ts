@@ -1,12 +1,12 @@
 import type { TranslationOverrides } from './define-locale'
 
 export const esOnboarding: TranslationOverrides['onboarding'] = {
-  headerTitle: 'Vamos a configurar Alfred',
+  headerTitle: 'Vamos a configurar +Human',
   headerDesc: 'Conecta un proveedor de modelo para empezar a chatear. La mayoría de opciones requieren un clic.',
-  preparingInstall: 'Alfred está terminando la instalación. En el primer inicio suele tardar menos de un minuto.',
-  starting: 'Iniciando Alfred…',
+  preparingInstall: '+Human está terminando la instalación. En el primer inicio suele tardar menos de un minuto.',
+  starting: 'Iniciando +Human…',
   setupSlowTitle: 'La configuración está tardando más de lo habitual.',
-  setupSlowBody: 'Alfred sigue iniciándose en segundo plano.',
+  setupSlowBody: '+Human sigue iniciándose en segundo plano.',
   continueWithoutSetup: 'Continuar sin configurar',
   lookingUpProviders: 'Buscando proveedores...',
   collapse: 'Contraer',
@@ -15,7 +15,7 @@ export const esOnboarding: TranslationOverrides['onboarding'] = {
   chooseLater: 'Elegiré un proveedor más tarde',
   recommended: 'Recomendado',
   connected: 'Conectado',
-  featuredPitch: 'Una suscripción, más de 300 modelos frontier: la forma recomendada de usar Alfred',
+  featuredPitch: 'Una suscripción, más de 300 modelos frontier: la forma recomendada de usar +Human',
   fireworksPitch: 'API directa de modelos: modelos frontier alojados en Fireworks',
   localModelsTitle: 'Ejecutar modelos localmente',
   localModelsPitch: 'Sin cuenta: descarga un modelo y ejecútalo en este equipo',
@@ -45,7 +45,7 @@ export const esOnboarding: TranslationOverrides['onboarding'] = {
     local: {
       short: 'autohospedado',
       description:
-        'Apunta Alfred a un endpoint local o autohospedado compatible con OpenAI (vLLM, llama.cpp, Ollama, etc.).'
+        'Apunta +Human a un endpoint local o autohospedado compatible con OpenAI (vLLM, llama.cpp, Ollama, etc.).'
     }
   },
   backToSignIn: 'Volver al inicio de sesión',
@@ -59,7 +59,7 @@ export const esOnboarding: TranslationOverrides['onboarding'] = {
   update: 'Actualizar',
   flowSubtitles: {
     pkce: 'Abre tu navegador para iniciar sesión y luego continúa aquí',
-    device_code: 'Abre una página de verificación en tu navegador; Alfred se conecta automáticamente',
+    device_code: 'Abre una página de verificación en tu navegador; +Human se conecta automáticamente',
     external: 'Inicia sesión una vez en tu terminal y vuelve para chatear'
   },
   startingSignIn: provider => `Iniciando sesión con ${provider}...`,
@@ -77,7 +77,7 @@ export const esOnboarding: TranslationOverrides['onboarding'] = {
   pickDifferentProvider: 'Elegir otro proveedor',
   signInWith: provider => `Iniciar sesión con ${provider}`,
   openedBrowser: provider => `Abrimos ${provider} en tu navegador.`,
-  authorizeThere: 'Autoriza Alfred allí.',
+  authorizeThere: 'Autoriza +Human allí.',
   copyAuthCode: 'Copia el código de autorización y pégalo abajo.',
   pasteAuthCode: 'Pegar código de autorización',
   reopenAuthPage: 'Volver a abrir página de autorización',

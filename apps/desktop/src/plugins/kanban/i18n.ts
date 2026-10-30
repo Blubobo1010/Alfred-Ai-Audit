@@ -428,7 +428,7 @@ export const en: KanbanMessages = {
   noProject: 'No project (scratch sandboxes)',
   projectHintPre:
     'New tasks run in the project’s repo (a worktree per task); each task can still override its workspace at creation. Manage projects with ',
-  projectHintCmd: 'alfred project',
+  projectHintCmd: 'plushuman project',
   createBoard: 'Create board',
   orchestratorProfile: 'Orchestrator profile',
   defaultAssignee: 'Default assignee',
@@ -444,9 +444,9 @@ export const en: KanbanMessages = {
     blockedTitle: 'Task blocked — needs your input',
     blockLoopTitle: 'Task routed to triage — needs a decision',
     gaveUpTitle: 'Task stopped',
-    gaveUpBody: 'Alfred couldn’t finish this task. Open Kanban to see why and reassign it.',
-    crashedTitle: 'Task hit a problem — Alfred will retry it automatically',
-    timedOutTitle: 'Task took too long — Alfred will retry it automatically',
+    gaveUpBody: '+Human couldn’t finish this task. Open Kanban to see why and reassign it.',
+    crashedTitle: 'Task hit a problem — +Human will retry it automatically',
+    timedOutTitle: 'Task took too long — +Human will retry it automatically',
     openKanban: 'Open Kanban',
     artifacts: (n: number) => `${n} artifacts`
   }
@@ -655,7 +655,7 @@ const ja: KanbanMessages = {
   noProject: 'プロジェクトなし（スクラッチのサンドボックス）',
   projectHintPre:
     '新しいタスクはプロジェクトのリポジトリで実行されます（タスクごとに worktree）。各タスクは作成時にワークスペースを上書きできます。プロジェクトの管理は ',
-  projectHintCmd: 'alfred project',
+  projectHintCmd: 'plushuman project',
   createBoard: 'ボードを作成',
   orchestratorProfile: 'オーケストレータープロフィール',
   defaultAssignee: 'デフォルトの担当',
@@ -671,9 +671,9 @@ const ja: KanbanMessages = {
     blockedTitle: 'タスクがブロック中 — 入力が必要です',
     blockLoopTitle: 'タスクをトリアージへ移動 — 判断が必要です',
     gaveUpTitle: 'タスクが停止しました',
-    gaveUpBody: 'Alfred はこのタスクを完了できませんでした。かんばんを開いて原因を確認し、再割り当てしてください。',
-    crashedTitle: 'タスクで問題が発生 — Alfred が自動で再試行します',
-    timedOutTitle: 'タスクに時間がかかりすぎました — Alfred が自動で再試行します',
+    gaveUpBody: '+Human はこのタスクを完了できませんでした。かんばんを開いて原因を確認し、再割り当てしてください。',
+    crashedTitle: 'タスクで問題が発生 — +Human が自動で再試行します',
+    timedOutTitle: 'タスクに時間がかかりすぎました — +Human が自動で再試行します',
     openKanban: 'かんばんを開く',
     artifacts: (n: number) => `成果物 ${n} 件`
   }
@@ -880,7 +880,7 @@ const zh: KanbanMessages = {
   noProject: '无项目（临时沙箱）',
   projectHintPre:
     '新任务将在项目的仓库中运行（每个任务一个 worktree）；每个任务在创建时仍可覆盖其工作区。管理项目请使用 ',
-  projectHintCmd: 'alfred project',
+  projectHintCmd: 'plushuman project',
   createBoard: '创建面板',
   orchestratorProfile: '编排者配置档',
   defaultAssignee: '默认负责人',
@@ -895,9 +895,9 @@ const zh: KanbanMessages = {
     blockedTitle: '任务受阻 — 需要你的输入',
     blockLoopTitle: '任务已转入分类 — 需要人工决定',
     gaveUpTitle: '任务已停止',
-    gaveUpBody: 'Alfred 无法完成这个任务。打开看板查看原因并重新分配。',
-    crashedTitle: '任务遇到问题 — Alfred 将自动重试',
-    timedOutTitle: '任务耗时过长 — Alfred 将自动重试',
+    gaveUpBody: '+Human 无法完成这个任务。打开看板查看原因并重新分配。',
+    crashedTitle: '任务遇到问题 — +Human 将自动重试',
+    timedOutTitle: '任务耗时过长 — +Human 将自动重试',
     openKanban: '打开看板',
     artifacts: (n: number) => `${n} 个产物`
   }
@@ -1104,7 +1104,7 @@ const zhHant: KanbanMessages = {
   noProject: '無專案（暫存沙箱）',
   projectHintPre:
     '新任務將在專案的儲存庫中執行（每個任務一個 worktree）；每個任務在建立時仍可覆寫其工作區。管理專案請使用 ',
-  projectHintCmd: 'alfred project',
+  projectHintCmd: 'plushuman project',
   createBoard: '建立面板',
   orchestratorProfile: '編排者設定檔',
   defaultAssignee: '預設負責人',
@@ -1119,9 +1119,9 @@ const zhHant: KanbanMessages = {
     blockedTitle: '任務受阻 — 需要你的輸入',
     blockLoopTitle: '任務已轉入分類 — 需要人工決定',
     gaveUpTitle: '任務已停止',
-    gaveUpBody: 'Alfred 無法完成這個任務。開啟看板查看原因並重新指派。',
-    crashedTitle: '任務遇到問題 — Alfred 將自動重試',
-    timedOutTitle: '任務耗時過長 — Alfred 將自動重試',
+    gaveUpBody: '+Human 無法完成這個任務。開啟看板查看原因並重新指派。',
+    crashedTitle: '任務遇到問題 — +Human 將自動重試',
+    timedOutTitle: '任務耗時過長 — +Human 將自動重試',
     openKanban: '開啟看板',
     artifacts: (n: number) => `${n} 個產物`
   }

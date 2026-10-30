@@ -50,12 +50,12 @@ logger = logging.getLogger(__name__)
 _DEFAULT_BASE_URL = "https://api.perplexity.ai"
 _KEY_URL = "https://www.perplexity.ai/account/api"
 
-# Identify Alfred to Perplexity: the same static harness identity Alfred sends Kimi and
+# Identify +Human to Perplexity: the same static harness identity +Human sends Kimi and
 # OpenCode, plus Perplexity's integration header. No per-user identifier and no separate
 # request; the call already carries the user's own API key.
 _HEADERS = {
     "HTTP-Referer": "https://hermes-agent.nousresearch.com",
-    "X-Title": "Alfred",
+    "X-Title": "+Human",
     "User-Agent": f"HermesAgent/{get_version_info().base_version}",
     "X-Pplx-Integration": "hermes-agent",
 }

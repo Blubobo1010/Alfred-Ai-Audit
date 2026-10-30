@@ -8,7 +8,7 @@
 // instead of submitting it.
 //
 // Deliberately conservative: it only fires when the WHOLE utterance is a stop
-// phrase (optionally addressed to Alfred), so a real turn that merely contains
+// phrase (optionally addressed to +Human), so a real turn that merely contains
 // the word "stop" — e.g. "stop the docker container" or "how do I stop a
 // running process" — is never swallowed.
 //
@@ -89,7 +89,7 @@ function phrasesForConfig(config: VoiceStopPhraseConfig): readonly string[] | nu
 
 /**
  * True when the entire spoken utterance is a stop command (optionally addressed
- * to Alfred). Returns false for anything that merely contains "stop" as part of
+ * to +Human). Returns false for anything that merely contains "stop" as part of
  * a longer, substantive request.
  *
  * Pass `config` in tests; production reads `$voiceStopPhraseConfig`.

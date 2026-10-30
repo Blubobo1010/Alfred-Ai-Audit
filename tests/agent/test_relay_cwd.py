@@ -1,4 +1,4 @@
-"""Logical working directories attached to Alfred-owned Relay scopes."""
+"""Logical working directories attached to +Human-owned Relay scopes."""
 
 from pathlib import Path
 

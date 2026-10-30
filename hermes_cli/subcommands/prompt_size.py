@@ -1,4 +1,4 @@
-"""``alfred prompt-size`` subcommand parser."""
+"""``plushuman prompt-size`` subcommand parser."""
 
 from __future__ import annotations
 

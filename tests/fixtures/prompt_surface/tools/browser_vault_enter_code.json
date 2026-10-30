@@ -4,7 +4,7 @@
   "parameters": {
     "properties": {
       "handle": {
-        "description": "The login handle you just filled (lets Alfred generate the code when an authenticator key is saved).",
+        "description": "The login handle you just filled (lets +Human generate the code when an authenticator key is saved).",
         "type": "string"
       }
     },

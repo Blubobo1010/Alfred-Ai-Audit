@@ -422,9 +422,9 @@ test('Windows managed launcher starts a hidden child and leaves exit 75 to the e
     {
       ssh: { exec: async () => '' },
       platform: 'Windows',
-      hermesPath: 'C:\\Alfred\\hermes.exe',
+      hermesPath: 'C:\\+Human\\hermes.exe',
       hermesHome: 'C:\\Users\\alice\\.hermes',
-      pythonPath: 'C:\\Alfred\\python.exe'
+      pythonPath: 'C:\\+Human\\python.exe'
     },
     CORRELATION
   )
@@ -572,7 +572,7 @@ test.runIf(process.platform !== 'win32')(
 
       assert.equal(clean.ok, true)
       assert.equal(clean.owed, undefined)
-      assert.equal(clean.message, 'Remote Alfred updated and every managed SSH profile is ready.')
+      assert.equal(clean.message, 'Remote +Human updated and every managed SSH profile is ready.')
 
       // The debt survives a failed restoration: update and restore verdicts stay independent.
       const unrestored = await run([{ step: 'dependencies', reason: 'sync failed' }], { restoreFails: true })
@@ -601,7 +601,7 @@ test.runIf(process.platform !== 'win32')(
       const detail = managedSshUpdateAllRow({ id: 'home' }, partial).detail || ''
       assert.ok(detail.includes(instruction), detail)
       assert.match(detail, /local_changes/)
-      assert.doesNotMatch(detail, /Re-run `alfred update`/)
+      assert.doesNotMatch(detail, /Re-run `plushuman update`/)
     } finally {
       await rm(home, { force: true, recursive: true })
     }
@@ -724,9 +724,9 @@ test('Windows coordinator handoff is pending until its marker clears and correla
 
   const target = {
     platform: 'Windows' as const,
-    hermesPath: 'C:\\Alfred\\hermes.exe',
+    hermesPath: 'C:\\+Human\\hermes.exe',
     hermesHome: 'C:\\Users\\alice\\.hermes',
-    pythonPath: 'C:\\Alfred\\python.exe',
+    pythonPath: 'C:\\+Human\\python.exe',
     ssh: {
       exec: async () => {
         const reply = replies[Math.min(calls, replies.length - 1)]

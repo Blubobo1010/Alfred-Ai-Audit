@@ -138,7 +138,7 @@ export const coreCommands: SlashCommand[] = [
   },
 
   {
-    help: 'update Alfred to the latest version (exits TUI)',
+    help: 'update +Human to the latest version (exits TUI)',
     name: 'update',
     run: (_arg, ctx) => {
       if (DASHBOARD_TUI_MODE) {
@@ -148,7 +148,7 @@ export const coreCommands: SlashCommand[] = [
       }
 
       ctx.transcript.sys(t('slashCmd.core.update.exiting'))
-      // Exit code 42 signals the Python wrapper to exec `alfred update`.
+      // Exit code 42 signals the Python wrapper to exec `plushuman update`.
       // Use dieWithCode for proper cleanup (gateway kill + Ink unmount).
       setTimeout(() => ctx.session.dieWithCode(42), 100)
     }

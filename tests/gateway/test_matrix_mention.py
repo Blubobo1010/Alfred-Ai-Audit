@@ -94,8 +94,8 @@ class TestIsBotMentioned:
 
 
     def test_matrix_pill_in_formatted_body(self):
-        html = '<a href="https://matrix.to/#/@hermes:example.org">Alfred</a> help'
-        assert self.adapter._is_bot_mentioned("Alfred help", html)
+        html = '<a href="https://matrix.to/#/@hermes:example.org">+Human</a> help'
+        assert self.adapter._is_bot_mentioned("+Human help", html)
 
 
     # m.mentions.user_ids — MSC3952 / Matrix v1.7 authoritative mentions
@@ -113,8 +113,8 @@ class TestStripMention:
 
     def test_localpart_preserved(self):
         """Bare localpart (no @) is preserved — avoids false positives in paths."""
-        result = self.adapter._strip_mention("alfred help me")
-        assert result == "alfred help me"
+        result = self.adapter._strip_mention("plushuman help me")
+        assert result == "plushuman help me"
 
 
 # ---------------------------------------------------------------------------

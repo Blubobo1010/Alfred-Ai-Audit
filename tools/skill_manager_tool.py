@@ -340,12 +340,12 @@ def _skill_not_found_error(name: str, suffix: str = "") -> str:
         other_profile, other_path = others[0]
         base += (
             f" A skill by that name exists in profile '{other_profile}' ({other_path}). To edit "
-            f"it, switch profiles (`alfred -p {other_profile}`) or edit the file directly "
+            f"it, switch profiles (`plushuman -p {other_profile}`) or edit the file directly "
             f"(file tools / terminal).")
     elif others:
         names = ", ".join(f"'{p}'" for p, _ in others)
         base += (
-            f" Skills by that name exist in other profiles: {names}. Switch profiles (`alfred -p "
+            f" Skills by that name exist in other profiles: {names}. Switch profiles (`plushuman -p "
             f"<name>`) to edit there, or edit the files directly (file tools / terminal).")
     else:
         base += " Use skills_list() to see available skills."
@@ -441,7 +441,7 @@ def _attach_lint_findings(result: dict[str, Any], skill_md: Path, before: Option
         {"severity": f.severity, "rule": f.rule, "message": f.message} for f in findings]
     result["lint_hint"] = (
         "The write succeeded. These are advisory authoring-convention findings (not blockers) "
-        "— fix them with skill_manage(action='patch') to match Alfred skill standards.")
+        "— fix them with skill_manage(action='patch') to match +Human skill standards.")
 
 
 def _clip(text: str, n: int, ellipsis: str) -> str:
@@ -574,7 +574,7 @@ def _delete_skill(name: str, absorbed_into: Optional[str] = None) -> dict[str, A
     skills_root = _containing_skills_root(skill_dir)
     if unsafe := _validate_delete_target(skill_dir):  # defense-in-depth before rmtree
         return _err(unsafe)
-    # Curator consolidations must be RECOVERABLE (`alfred curator restore`): archive instead
+    # Curator consolidations must be RECOVERABLE (`plushuman curator restore`): archive instead
     # of rmtree. Foreground deletes keep hard-delete semantics.
     absorbed_note = f" Content absorbed into '{absorbed_target}'." if absorbed_target else ""
     if _is_background_review():
@@ -744,12 +744,12 @@ def _record_success(action, name, result, *, file_path, absorbed_into, task_id,
         clear_skills_system_prompt_cache(clear_snapshot=True)
     # Curator telemetry: only the background review fork marks a skill agent-created
     # (foreground creates belong to the user). A recoverable curator archive keeps its
-    # record as STATE_ARCHIVED (`alfred curator status`/`restore`); only a hard delete forgets.
+    # record as STATE_ARCHIVED (`plushuman curator status`/`restore`); only a hard delete forgets.
     with suppress(Exception):
         from tools.skill_usage import bump_patch, forget, record_created
         # During the curator consolidation pass, a verified consolidation must be RECOVERABLE: archival into
         # ~/.hermes/skills/.archive/ is documented as the maximum destructive action the curator may take,
-        # and `alfred curator restore` promises the skill can be brought back. Route through the recoverable
+        # and `plushuman curator restore` promises the skill can be brought back. Route through the recoverable
         # archive primitive instead of permanent rmtree so a misjudged consolidation can be undone (#29912).
         # Foreground, user-directed deletes keep their existing hard-delete semantics.
         from tools.skill_provenance import is_background_review

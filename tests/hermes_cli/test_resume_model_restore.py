@@ -2,7 +2,7 @@
 
 Covers _restore_session_model, _persist_model_switch_to_session (cli.py) and
 SessionDB.session_gateway_runtime (hermes_state.py) — the round trip that
-makes `alfred --resume` reopen a session on the model/provider it actually
+makes `plushuman --resume` reopen a session on the model/provider it actually
 used instead of the ambient config default (#57588-class, #79536).
 """
 
@@ -109,7 +109,7 @@ def test_restore_llamacpp_session_follows_live_managed_endpoint(monkeypatch):
 
 
 def test_restore_llamacpp_session_keeps_launch_base_url_for_same_provider(monkeypatch):
-    """`alfred --provider llamacpp --base-url X --resume` is user intent for the SAME provider the
+    """`plushuman --provider llamacpp --base-url X --resume` is user intent for the SAME provider the
     session ran on; the live-endpoint re-resolution must not re-point it at the local supervisor."""
     calls = []
     monkeypatch.setattr(

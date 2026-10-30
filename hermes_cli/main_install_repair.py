@@ -145,7 +145,7 @@ def _filter_pending_shim_renames(entries: list[str], shims: list[Path]) -> tuple
 
 
 def _cleanup_pending_shim_renames(scripts_dir: Path) -> int:
-    """Drop reboot renames older Alfred versions queued for our shims: ``MOVEFILE_DELAY_UNTIL_REBOOT``
+    """Drop reboot renames older +Human versions queued for our shims: ``MOVEFILE_DELAY_UNTIL_REBOOT``
     fallbacks outlive the update that queued them and move away whatever sits at the shim path
     at next boot — even a shim a later repair just wrote. Needs elevation; a no-op otherwise."""
     if not _is_windows():
@@ -199,7 +199,7 @@ def _recover_update_debts_on_startup() -> None:
     from hermes_cli.update_pause_record import recover as _recover_paused_gateways
     # Unconditional: recover() itself skips the PARSED `update`/`gateway run` commands; a raw argv
     # value equal to "update" (`--resume update`) is no reason to strand paused gateways.
-    _recover_paused_gateways()  # a killed `alfred update` left gateways paused (Windows)
+    _recover_paused_gateways()  # a killed `plushuman update` left gateways paused (Windows)
 
 
 def _cleanup_quarantined_exes(scripts_dir: Path | None = None) -> None:
@@ -263,7 +263,7 @@ def _configured_features_missing_deps() -> list[tuple[str, str, str]]:
         for platform in load_gateway_config().get_connected_platforms():
             entry = platform_registry.get(platform.value)
             if entry is not None and not entry.check_fn():
-                missing.append((entry.label, entry.install_hint or "Run `alfred setup` to install support.",
+                missing.append((entry.label, entry.install_hint or "Run `plushuman setup` to install support.",
                                 entry.name))
     except Exception as exc:
         logger.debug("configured-platform dependency check skipped: %s", exc)
@@ -336,7 +336,7 @@ def _is_windows_npm_path(npm_path: str) -> bool:
 def _resolve_node_runtime_npm() -> str | None:
     """PM's npm, refused on a POSIX host when it is a Windows shim (EISDIR over WSL UNC paths, #30271).
 
-    Never re-scans the user's PATH for another npm: Alfred runs only its PM-managed toolchain.
+    Never re-scans the user's PATH for another npm: +Human runs only its PM-managed toolchain.
     """
     from hermes_constants import find_node_executable
     npm = find_node_executable("npm")

@@ -1332,7 +1332,7 @@ class SessionSearchMixin:
                         if is_malformed_db_error(exc):
                             logger.error(
                                 "FTS rebuild failed with a corruption-class error for %s: %s; "
-                                "run 'alfred sessions repair' (or 'alfred doctor --fix') to rebuild the index offline",
+                                "run 'plushuman sessions repair' (or 'plushuman doctor --fix') to rebuild the index offline",
                                 tbl, exc)
                         else:
                             logger.warning("FTS rebuild failed for %s: %s", tbl, exc)

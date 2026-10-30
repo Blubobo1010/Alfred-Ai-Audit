@@ -1,21 +1,21 @@
-"""Regression test: ``alfred dump`` reports a real git SHA inside the container.
+"""Regression test: ``plushuman dump`` reports a real git SHA inside the container.
 
 ``.dockerignore`` excludes ``.git``, so ``git rev-parse HEAD`` fails inside
 the published image. CI writes ``install-stamp.json`` before ``docker build``
 (scripts/write_install_stamp.py) and it is COPY'd to the canonical
-``/opt/hermes/install-stamp.json``. ``alfred dump`` reads the
+``/opt/hermes/install-stamp.json``. ``plushuman dump`` reads the
 commit from that stamp through ``hermes_cli.version_info``.
 
 A local ``docker build`` (the ``built_image`` fixture in
 ``tests/docker/conftest.py``) has no CI stamp — only the Dockerfile's
 distribution-only fallback, whose all-zero commit version_info skips. In
-that case ``alfred dump`` falls back to ``(unknown)``.
+that case ``plushuman dump`` falls back to ``(unknown)``.
 
 This test asserts both cases:
 
-* When the stamp exists in the image, ``alfred dump`` must show the first 8
+* When the stamp exists in the image, ``plushuman dump`` must show the first 8
   characters of its commit, not ``(unknown)``.
-* When the stamp is absent, ``alfred dump`` must show ``(unknown)`` — a guard
+* When the stamp is absent, ``plushuman dump`` must show ``(unknown)`` — a guard
   against the helper inventing a SHA from another source.
 """
 from __future__ import annotations
@@ -48,7 +48,7 @@ def _run_dump(image: str) -> str:
         check=False,
     )
     assert r.returncode == 0, (
-        f"alfred dump exited {r.returncode}: "
+        f"plushuman dump exited {r.returncode}: "
         f"stderr={r.stderr[-1000:]!r}\nstdout={r.stdout[-1000:]!r}"
     )
     return r.stdout
@@ -114,7 +114,7 @@ def test_dump_reports_stamp_commit_when_present(built_image: str) -> None:
         )
         return
 
-    # CI path: the stamp exists. ``alfred dump`` shows the first 8 chars.
+    # CI path: the stamp exists. ``plushuman dump`` shows the first 8 chars.
     assert reported != "(unknown)", (
         "install stamp present in image but dump still reported "
         f"'(unknown)' — the stamp fallback is broken. Stamp commit: {stamped!r}"

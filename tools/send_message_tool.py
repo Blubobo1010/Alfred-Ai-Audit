@@ -23,7 +23,7 @@ from tools.registry import tool_error
 
 # NOTE: ``send_message`` is intentionally NOT registered as an agent-callable model tool
 # (the agent must not fire cross-platform messages on its own); cron delivery, the
-# ``alfred send`` CLI, the kanban notifier and the opt-in MCP server import the helpers.
+# ``plushuman send`` CLI, the kanban notifier and the opt-in MCP server import the helpers.
 
 
 def prepare_send_message_platforms() -> None:
@@ -206,9 +206,9 @@ def _handle_send(args):
     if not target or not message:
         return tool_error("Both 'target' and 'message' are required when action='send'")
     # Lone surrogates reach the outbound body via surrogateescape-decoded argv
-    # (`alfred send` MESSAGE) and crash the UTF-8 marshal inside platform SDK
+    # (`plushuman send` MESSAGE) and crash the UTF-8 marshal inside platform SDK
     # request bodies (feishu/lark, #113799). Every send_message caller (model tool
-    # call, `alfred send`, dashboard console) enters here, so scrub once before the
+    # call, `plushuman send`, dashboard console) enters here, so scrub once before the
     # media extraction, the session mirror and the platform sender see the text.
     # Model output delivered by the gateway/cron is already scrubbed upstream
     # (``agent/turn_finalizer.py::finalize_turn``, ``gateway/run.py``).
@@ -405,7 +405,7 @@ def _home_chat_id(config, platform, platform_name):
     home_env = _HOME_CHANNEL_ENV_OVERRIDES.get(platform_name, f"{platform_name.upper()}_HOME_CHANNEL")
     return None, (f"No home channel set for {platform_name} to determine where to send the message. "
                   f"Either specify a channel directly with '{platform_name}:CHANNEL_NAME', "
-                  f"or set a home channel via: alfred config set {home_env} <channel_id>")
+                  f"or set a home channel via: plushuman config set {home_env} <channel_id>")
 
 
 def _slack_dm_chat_id(pconfig, chat_id):

@@ -1,15 +1,15 @@
-"""Boot and lifecycle of the real Alfred processes on native Windows.
+"""Boot and lifecycle of the real +Human processes on native Windows.
 
 * The source launcher ``hermes.exe`` reports checkout version and runs a
   one-shot chat turn: the reply is
   printed, the prompt reached the wire, and both messages persisted to ``state.db`` under
   the session id the CLI announced.
-* ``alfred serve`` (the Desktop backend) — announces its port on stdout, and after the
+* ``plushuman serve`` (the Desktop backend) — announces its port on stdout, and after the
   Desktop's Windows quit path (``taskkill /T /F``) leaves no process behind that it
   spawned (found by ownership of the scratch profile, not by parent links, which a
   detached grandchild does not keep) and a fresh backend boots again over the leftover
   host records.
-* ``alfred gateway run`` + ``alfred gateway stop`` — the Windows graceful-stop IPC (stop
+* ``plushuman gateway run`` + ``plushuman gateway stop`` — the Windows graceful-stop IPC (stop
   marker, not TerminateProcess) drains the gateway: it exits on its own, records
   ``stopped``, removes its pid file, and nothing it spawned survives.
 """
@@ -59,7 +59,7 @@ def test_version_reports_checkout_identity(tmp_path: Path) -> None:
     assert res.returncode == 0, res.tail()
     version = get_version_info().derived_version
     assert version != "unknown", "the checkout must have a readable release or commit identity"
-    assert f"Alfred v{version} (" in res.stdout, (
+    assert f"+Human v{version} (" in res.stdout, (
         f"--version does not report this checkout's {version}:\n{res.tail()}")
 
 

@@ -1,4 +1,4 @@
-"""Markdown/QMD export helpers for Alfred sessions.
+"""Markdown/QMD export helpers for +Human sessions.
 
 Filesystem-only: formats already-exported SessionDB dicts and writes them to user-selected export
 directories. Must not mutate state.db or call delete/prune/archive APIs.
@@ -16,7 +16,7 @@ from typing import Any
 
 from hermes_cli.timefmt import coerce_epoch
 
-EXPORTER_VERSION = "alfred sessions export (md/qmd) v1"
+EXPORTER_VERSION = "plushuman sessions export (md/qmd) v1"
 _SHA_LINE_RE = re.compile(r"- SHA256 of exported body: `([0-9a-f]{64})`")
 _SHA_PLACEHOLDER = "__SHA256_PLACEHOLDER__"
 _VERIFICATION_HEADING = "## Export verification"

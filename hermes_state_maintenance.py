@@ -407,7 +407,7 @@ class SessionMaintenanceMixin:
             self._raise_if_db_replaced()
             if self._conn is None:
                 self._reopen_after_close_locked(context="write")
-            # PASSIVE, not TRUNCATE: a manual `alfred sessions vacuum` runs in a transient CLI
+            # PASSIVE, not TRUNCATE: a manual `plushuman sessions vacuum` runs in a transient CLI
             # process; a TRUNCATE reset here would race a live gateway writer.
             self._try_checkpoint("PASSIVE", "WAL checkpoint (PASSIVE) before VACUUM failed: %s")
             self._conn.execute("VACUUM")
@@ -483,7 +483,7 @@ class SessionMaintenanceMixin:
             vacuum_due = since_vacuum is None or since_vacuum >= min_vacuum_interval_days * 86400
             if vacuum and pruned > 0 and vacuum_due:
                 result["freelist_ratio"] = ratio = self._freelist_ratio()
-                # Same admission `alfred sessions optimize` runs: VACUUM plus the TRUNCATE checkpoint
+                # Same admission `plushuman sessions optimize` runs: VACUUM plus the TRUNCATE checkpoint
                 # retire the WAL generation a sibling writer (gateway, Desktop, dashboard, cron) still
                 # holds, and that is exactly the state every agent then refuses turns in (#110054).
                 # The foreign scan skips our own pid, so it is paired with the in-process arm: under

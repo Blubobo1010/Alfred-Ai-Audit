@@ -2,7 +2,7 @@
 name: codebase-inspection
 description: "Inspect codebases w/ pygount: LOC, languages, ratios."
 version: 1.0.0
-author: Alfred
+author: +Human
 license: MIT
 platforms: [linux, macos, windows]
 metadata:

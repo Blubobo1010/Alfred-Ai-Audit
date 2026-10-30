@@ -297,7 +297,7 @@ def _install_flag_error(args, *, extras: list[str], cross_target, tools_only: bo
 def _install_defaults(names: list[str], *, verify: bool) -> None:
     """Install the optional defaults; a failure warns and never fails the install.
 
-    They are the browser and computer-use tools, not what Alfred needs to run:
+    They are the browser and computer-use tools, not what +Human needs to run:
     a Chromium download that fails behind a proxy must not abort an install
     whose required closure and venv are fine.
     """
@@ -315,7 +315,7 @@ def _install_python_environments(extras: list[str], *, sync: bool, test_environm
 
         try:
             # Default the venv to the [all] feature set — the same thing
-            # `alfred update` force-syncs on every run (update_cmd.py) and
+            # `plushuman update` force-syncs on every run (update_cmd.py) and
             # the installers' old `--extra all` did. sync_venv unions, so
             # any lazy extras already recorded survive this; it only makes
             # a fresh bootstrap match what the first update would do.
@@ -359,7 +359,7 @@ def cmd_install(args) -> int:
         from pm.defaults import record_declined
 
         # Persisted before anything installs: later bare installs and
-        # `alfred update` read the same record, so the opt-out sticks.
+        # `plushuman update` read the same record, so the opt-out sticks.
         record_declined(add=without)
     defaults: list[str] = []
     if not (args.names or extras):
@@ -787,7 +787,7 @@ def cmd_repair(args) -> int:
 
     if not recover_if_needed(repo_root(), explicit=True):
         return 1
-    print("Restart Alfred to use the repaired dependency environment.")
+    print("Restart +Human to use the repaired dependency environment.")
     return 0
 
 
@@ -807,7 +807,7 @@ def main(argv=None) -> int:
             stream.reconfigure(errors="replace", line_buffering=True)
         except (AttributeError, OSError):
             pass
-    parser = argparse.ArgumentParser(prog="alfred pm")
+    parser = argparse.ArgumentParser(prog="plushuman pm")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     lock_parser = p = sub.add_parser(

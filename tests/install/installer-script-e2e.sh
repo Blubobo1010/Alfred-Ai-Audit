@@ -20,9 +20,9 @@
 # Phases (mirroring the windows driver):
 #   stage      bare-clone this checkout to serve.git, park main at OLD
 #   install    run OLD's scripts/install.sh under the redirect; assert the
-#              install landed on OLD with a working `alfred`
+#              install landed on OLD with a working `plushuman`
 #   update     advance served main to HEAD, apply ONE update method, assert
-#              the checkout landed on HEAD with a working `alfred`
+#              the checkout landed on HEAD with a working `plushuman`
 #
 # Usage:
 #   tests/install/installer-script-e2e.sh --update-method hermes-update|installer-script|installer-script+desktop
@@ -32,7 +32,7 @@
 #   --install-method installer-script          the plain one-liner (default)
 #                    installer-script+desktop  the one-liner with its desktop
 #                                              stage opted in (--include-desktop)
-#   --update-method  hermes-update      `alfred update`
+#   --update-method  hermes-update      `plushuman update`
 #                    installer-script   re-run install.sh (HEAD's copy)
 #                    installer-script+desktop  re-run with --include-desktop
 #                    hermes-desktop-app-update  launch the app via `hermes
@@ -207,10 +207,10 @@ assert_desktop_artifact() {
   local found=""
   local cand
   for cand in \
-    "$release_dir/linux-unpacked/Alfred" \
+    "$release_dir/linux-unpacked/+Human" \
     "$release_dir/linux-unpacked/hermes" \
-    "$release_dir/mac-arm64/Alfred.app" \
-    "$release_dir/mac/Alfred.app"; do
+    "$release_dir/mac-arm64/+Human.app" \
+    "$release_dir/mac/+Human.app"; do
     if [ -x "$cand" ] || [ -d "$cand" ]; then
       found="$cand"
       break
@@ -232,8 +232,8 @@ assert_checkout() {
     --root "$INSTALL_DIR" --launcher "$hermes" --desktop "$EXPECT_DESKTOP" \
     || fail "read-only verification failed at $2; no repair was attempted"
   HERMES_DISABLE_LAZY_INSTALLS=1 PYTHONDONTWRITEBYTECODE=1 source_build_env "$hermes" --version 2>&1 | ts_prefix > "$LOG_DIR/version-$2.log" \
-    || fail "alfred --version failed after $2; log in $LOG_DIR/version-$2.log"
-  ok "alfred --version works: $(head -c 120 "$LOG_DIR/version-$2.log" | tr -d '\n')"
+    || fail "plushuman --version failed after $2; log in $LOG_DIR/version-$2.log"
+  ok "plushuman --version works: $(head -c 120 "$LOG_DIR/version-$2.log" | tr -d '\n')"
 }
 
 desktop_checkpoint() { # phase, expected commit, selected method
@@ -275,7 +275,7 @@ close_running_desktop() {
     "$HERMES_DESKTOP_USER_DATA_DIR/SingletonCookie"
 }
 
-# The redirect must stay at TRANSPORT level. `alfred update` resolves its
+# The redirect must stay at TRANSPORT level. `plushuman update` resolves its
 # update channel from the release archive and validates the record against
 # `git config --get remote.origin.url`; if the configured URL ever looked like
 # the rehearsal source, channel resolution would fail outright and the leg
@@ -321,6 +321,17 @@ assert_user_shims() {
   else
     ok "no PATH shim at $user_shim (nothing to check there)"
   fi
+  # alfred:keep-start — every product CLI name is a PATH shim beside hermes once the update ran
+  local name
+  for name in plushuman alfred; do
+    if [ -e "$user_shim" ] || [ -L "$user_shim" ]; then
+      HERMES_DISABLE_LAZY_INSTALLS=1 PYTHONDONTWRITEBYTECODE=1 \
+        "$HOME/.local/bin/$name" --version > "$LOG_DIR/version-path-$name.log" 2>&1 \
+        || fail "the $name PATH shim is missing or broken after the upgrade"
+      ok "PATH shim runs: $name"
+    fi
+  done
+  # alfred:keep-end
 }
 
 # --- install OLD ---------------------------------------------------------------
@@ -357,9 +368,9 @@ desktop_checkpoint old "$OLD_SHA" "$INSTALL_METHOD"
 # Produce the user's own state through the ordinary CLI, then snapshot what
 # must survive. Done as late as possible before the update so the window
 # verify() covers contains only the upgrade.
-ALFRED="$(source_hermes "$INSTALL_DIR")" || fail "no installed command to drive"
-source_build_env pin_source_main_channel "$ALFRED" || fail "could not record the main update channel"
-source_build_env user_state_produce "$ALFRED"
+PLUSHUMAN="$(source_hermes "$INSTALL_DIR")" || fail "no installed command to drive"
+source_build_env pin_source_main_channel "$PLUSHUMAN" || fail "could not record the main update channel"
+source_build_env user_state_produce "$PLUSHUMAN"
 user_state_before_upgrade
 assert_redirect_is_transport_only
 # Configure the provider LAST, immediately before the snapshot. The steps above
@@ -426,13 +437,13 @@ case "$UPDATE_METHOD" in
     # `--yes` reaches the update subcommand only in later releases, and
     # argparse rejects the whole invocation when it does not exist. Ask the
     # installed hermes; older ones read the prompt from stdin, so close it.
-    ALFRED="$(source_hermes "$INSTALL_DIR")" || fail "no installed update command"
-    help="$(source_build_env "$ALFRED" update --help 2>&1)" || fail "installed update --help failed: $help"
-    build_source_update_command "$ALFRED" "$help"
+    PLUSHUMAN="$(source_hermes "$INSTALL_DIR")" || fail "no installed update command"
+    help="$(source_build_env "$PLUSHUMAN" update --help 2>&1)" || fail "installed update --help failed: $help"
+    build_source_update_command "$PLUSHUMAN" "$help"
     rc=0
     (cd "$INSTALL_DIR" && source_build_env "${update_cmd[@]}" < /dev/null 2>&1 | ts_prefix > "$LOG_DIR/update.log") || rc=$?
-    log_group "alfred update transcript" "$LOG_DIR/update.log"
-    [ "$rc" -eq 0 ] || fail "alfred update exited $rc; transcript above, log at $LOG_DIR/update.log"
+    log_group "plushuman update transcript" "$LOG_DIR/update.log"
+    [ "$rc" -eq 0 ] || fail "plushuman update exited $rc; transcript above, log at $LOG_DIR/update.log"
     ;;
   installer-script)
     # A user re-running the one-liner today gets the CURRENT script.
@@ -444,7 +455,7 @@ case "$UPDATE_METHOD" in
     assert_desktop_artifact "$TARGET_LABEL"
     ;;
   hermes-desktop-app-update)
-    # The real user surface: `alfred desktop` launches the app, the user
+    # The real user surface: `plushuman desktop` launches the app, the user
     # clicks Settings -> About -> Update now. Playwright must OWN the spawn
     # (it needs the inspection pipe), so the driver intercepts the product's
     # own launch call - argv/cwd/env captured at the spawn site by
@@ -452,7 +463,7 @@ case "$UPDATE_METHOD" in
     # _electron.launch. Everything before the spawn (build, stamps, sandbox
     # fixup) runs for real in the installed code.
     EXPECT_DESKTOP=present
-    ALFRED="$(source_hermes "$INSTALL_DIR")" || fail "no installed desktop command"
+    PLUSHUMAN="$(source_hermes "$INSTALL_DIR")" || fail "no installed desktop command"
     accept_installer_marker "$INSTALL_DIR" \
       || fail "installed source has changes other than the generated install marker"
     ASSETS="$REPO_ROOT/tests/install/e2e-assets"
@@ -472,26 +483,26 @@ case "$UPDATE_METHOD" in
     source "$ASSETS/mock-provider.sh"
     trap mock_stop EXIT
 
-    step "capturing the alfred desktop launch spec (build runs for real)"
+    step "capturing the plushuman desktop launch spec (build runs for real)"
     rc=0
-    if [ "$ALFRED" = "$INSTALL_DIR/.hermes/bin/hermes" ]; then
+    if [ "$PLUSHUMAN" = "$INSTALL_DIR/.hermes/bin/hermes" ]; then
       # The PM launcher uses -I: PYTHONPATH/sitecustomize cannot reach it.
       # Ask the installed launcher for its own isolated command, then inject
       # the driver hook into that command without changing product code.
       (cd "$INSTALL_DIR" && source_build_env python3 -I "$ASSETS/launch-capture/pm-launch.py" \
-        "$ALFRED" "$SPEC" < /dev/null 2>&1 | ts_prefix > "$LOG_DIR/desktop-launch-capture.log") || rc=$?
+        "$PLUSHUMAN" "$SPEC" < /dev/null 2>&1 | ts_prefix > "$LOG_DIR/desktop-launch-capture.log") || rc=$?
     else
       # Pre-PM console scripts load sitecustomize from PYTHONPATH.
       (cd "$INSTALL_DIR" && \
         PYTHONPATH="$ASSETS/launch-capture${PYTHONPATH:+:$PYTHONPATH}" \
         HERMES_E2E_CAPTURE_LAUNCH="$SPEC" \
-        source_build_env "$ALFRED" desktop < /dev/null 2>&1 | ts_prefix > "$LOG_DIR/desktop-launch-capture.log") || rc=$?
+        source_build_env "$PLUSHUMAN" desktop < /dev/null 2>&1 | ts_prefix > "$LOG_DIR/desktop-launch-capture.log") || rc=$?
     fi
-    log_group "alfred desktop (launch capture) transcript" "$LOG_DIR/desktop-launch-capture.log"
-    [ "$rc" -eq 0 ] || fail "alfred desktop exited $rc during launch capture; transcript above"
+    log_group "plushuman desktop (launch capture) transcript" "$LOG_DIR/desktop-launch-capture.log"
+    [ "$rc" -eq 0 ] || fail "plushuman desktop exited $rc during launch capture; transcript above"
     # Exit 0 without a capture means a version that never reached its
     # launch - that must fail loudly, not pass as a no-op.
-    [ -f "$SPEC.captured" ] || fail "alfred desktop exited 0 but no launch was captured at $SPEC"
+    [ -f "$SPEC.captured" ] || fail "plushuman desktop exited 0 but no launch was captured at $SPEC"
     ok "captured $(cat "$SPEC.captured") launch spec"
 
     close_running_desktop

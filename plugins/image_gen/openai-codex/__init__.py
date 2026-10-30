@@ -42,7 +42,7 @@ _ACCEPTED_INPUT_MIME = frozenset({"image/png", "image/jpeg", "image/gif", "image
 
 _NO_AUTH = (
     "No Codex/ChatGPT OAuth credentials available. Run "
-    "`alfred auth add openai-codex` (or `alfred setup` → Codex) to sign in.")
+    "`plushuman auth add openai-codex` (or `plushuman setup` → Codex) to sign in.")
 
 
 def _summarize_error_body(body: str) -> str:
@@ -254,7 +254,7 @@ class OpenAICodexImageGenProvider(StaticImageGenProvider):
             # Codex OAuth bootstrap hook (hermes_cli/tools_config_post_setup.py) starts the sign-in (#102144).
             "post_setup": "openai_codex",
             "post_setup_hint": (
-                "Sign in with `alfred auth add openai-codex` (or `alfred setup` → Codex) "
+                "Sign in with `plushuman auth add openai-codex` (or `plushuman setup` → Codex) "
                 "if you haven't already. No API key needed."),
         }
 

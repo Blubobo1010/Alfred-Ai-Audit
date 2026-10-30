@@ -1,10 +1,10 @@
-# web/ + hermes_cli/web_routers/ — the dashboard (`alfred dashboard` → `/chat`)
+# web/ + hermes_cli/web_routers/ — the dashboard (`plushuman dashboard` → `/chat`)
 
 Applies on top of the root `AGENTS.md`. Backend routers: `hermes_cli/web_routers/*.py`, one file per
 dashboard surface, mounted by `hermes_cli/web_server.py` (+ `web_server_*.py` siblings). Frontend:
 `web/src/`. Shared JSON-RPC/WS client: `apps/shared` (`@hermes/shared`), also used by the desktop.
 
-## The dashboard embeds the REAL `alfred --tui` — not a rewrite
+## The dashboard embeds the REAL `plushuman --tui` — not a rewrite
 
 `hermes_cli/pty_bridge.py` + the `@app.websocket("/api/pty")` endpoint in `web_server.py`:
 
@@ -12,7 +12,7 @@ dashboard surface, mounted by `hermes_cli/web_server.py` (+ `web_server_*.py` si
   (container-driven resize) and `@xterm/addon-unicode11` (wide-character widths).
 - `/api/pty?token=…` upgrades to a WebSocket; auth uses the same ephemeral `_SESSION_TOKEN` as REST,
   passed as a query param because browsers cannot set `Authorization` on a WS upgrade.
-- The server spawns exactly what `alfred --tui` would spawn, through `ptyprocess` (POSIX PTY — WSL
+- The server spawns exactly what `plushuman --tui` would spawn, through `ptyprocess` (POSIX PTY — WSL
   works, native Windows does not).
 - Frames are raw PTY bytes each way; resize travels as `\x1b[RESIZE:<cols>;<rows>]`, intercepted
   on the server and applied with `TIOCSWINSZ`.

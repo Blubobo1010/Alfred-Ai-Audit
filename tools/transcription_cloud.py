@@ -266,7 +266,7 @@ def _transcribe_xai(
              } if direct_api_key else resolve_xai_http_credentials()
     api_key = str(creds.get("api_key") or "").strip()
     if not api_key:
-        return _error_result("No xAI credentials found. Configure xAI OAuth in `alfred model` or set XAI_API_KEY")
+        return _error_result("No xAI credentials found. Configure xAI OAuth in `plushuman model` or set XAI_API_KEY")
     stt_config = _load_stt_config()
     xai_config = stt_config.get("xai") or {}
 
@@ -283,7 +283,7 @@ def _transcribe_xai(
     def _post() -> Any:
         from tools.xai_http import hermes_xai_user_agent
         # Always name the model: xAI moved the server default from 1.0 to 2.0 mid-September and
-        # will retire 1.0, so an omitted field silently changes what Alfred runs.
+        # will retire 1.0, so an omitted field silently changes what +Human runs.
         resolved_model = normalize_xai_stt_model(model_name)
         data: dict[str, str] = {"model": resolved_model}
         if language:

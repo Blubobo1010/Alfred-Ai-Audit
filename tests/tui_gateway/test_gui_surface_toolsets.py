@@ -1,11 +1,11 @@
 """GUI capability follows the SESSION's client, not the backend's process env.
 
 The desktop app is a client. It can drive a backend that Electron spawned
-locally, one reached over SSH, one behind a plain URL+token, or Alfred Cloud —
+locally, one reached over SSH, one behind a plain URL+token, or +Human Cloud —
 and only the first two run with ``HERMES_DESKTOP=1`` in their environment.
 Gating the pane/browser/reaction tools on that env var therefore stripped every
 one of them from URL and cloud gateways, while the same backend still told the
-model "You are chatting inside the Alfred desktop app".
+model "You are chatting inside the +Human desktop app".
 
 These tests pin the contract that replaced it: eligibility is resolved from the
 session's own ``source`` (``session.create``'s ``source: 'desktop'``), so the
@@ -67,7 +67,7 @@ class TestSurfaceResolution:
     def test_desktop_env_alone_does_not_grant_them(self, no_desktop_env):
         """A desktop-spawned backend serving a TUI session stays clean.
 
-        The embedded terminal pane runs `alfred --tui` against this same
+        The embedded terminal pane runs `plushuman --tui` against this same
         backend; env-keyed gating handed it GUI tools it cannot answer.
         """
         no_desktop_env.setenv("HERMES_DESKTOP", "1")

@@ -14,7 +14,7 @@ def test_top_level_skills_flag_defaults_to_chat(monkeypatch):
     monkeypatch.setattr(
         sys,
         "argv",
-        ["alfred", "-s", "hermes-agent-dev,github-auth"],
+        ["plushuman", "-s", "hermes-agent-dev,github-auth"],
     )
 
     main_mod.main()
@@ -40,7 +40,7 @@ def test_continue_worktree_and_skills_flags_work_together(monkeypatch):
     monkeypatch.setattr(
         sys,
         "argv",
-        ["alfred", "-c", "-w", "-s", "hermes-agent-dev"],
+        ["plushuman", "-c", "-w", "-s", "hermes-agent-dev"],
     )
 
     main_mod.main()

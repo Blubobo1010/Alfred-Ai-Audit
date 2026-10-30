@@ -1,4 +1,4 @@
-"""Regression for #117276: ``alfred doctor``'s exit status must agree with its unresolved findings."""
+"""Regression for #117276: ``plushuman doctor``'s exit status must agree with its unresolved findings."""
 from types import SimpleNamespace
 
 import pytest
@@ -41,7 +41,7 @@ from hermes_cli.doctor_report import Finding
 from hermes_cli.main import main
 issues = ['fixture unresolved problem'] if {unresolved!r} else []
 doctor.DOCTOR_CHECKS = ((None, lambda fix: Finding(issues=issues)),)
-sys.argv = ['alfred', 'doctor']
+sys.argv = ['plushuman', 'doctor']
 main()
 """
     result = subprocess.run(

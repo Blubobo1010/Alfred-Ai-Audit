@@ -1,4 +1,4 @@
-"""Tests for `alfred chat --safe-mode` isolation."""
+"""Tests for `plushuman chat --safe-mode` isolation."""
 
 from __future__ import annotations
 

@@ -13,9 +13,9 @@ from __future__ import annotations
 try:
     import hermes_bootstrap
 except ModuleNotFoundError:
-    pass  # partial `alfred update` — only skips the Windows UTF-8 stdio setup
+    pass  # partial `plushuman update` — only skips the Windows UTF-8 stdio setup
 
-# The `hermes-agent` console script lands here without hermes_cli.main: repair a `alfred update` killed
+# The `hermes-agent` console script lands here without hermes_cli.main: repair a `plushuman update` killed
 # while git wrote the new tree before importing anything else from the checkout.
 from hermes_cli import _early_recovery
 
@@ -31,9 +31,9 @@ def _build_parser() -> argparse.ArgumentParser:
 
     parser = argparse.ArgumentParser(
         prog="hermes-agent",
-        description="Legacy single-query Alfred runner. For the full CLI use `alfred`.",
+        description="Legacy single-query +Human runner. For the full CLI use `plushuman`.",
     )
-    parser.add_argument("--version", action="version", version=f"Alfred v{__version__} ({__release_date__})")
+    parser.add_argument("--version", action="version", version=f"+Human v{__version__} ({__release_date__})")
     parser.add_argument("prompt", nargs="*", help="query to run (same as --query)")
     parser.add_argument("--query", "-q", help="natural-language query to run")
     parser.add_argument("--model", default="", help="model id (provider/model)")
@@ -71,7 +71,7 @@ def main(argv: Optional[list[str]] = None, *, run: Optional[Callable[..., object
     query = args.query or positional or None
     if query is None and not args.list_tools:
         parser.print_help()
-        print("\nNo query given: pass one with --query (or run `alfred` for the interactive CLI).")
+        print("\nNo query given: pass one with --query (or run `plushuman` for the interactive CLI).")
         return 0
 
     if run is None:

@@ -151,7 +151,7 @@ class ConnectionOperationTarget(Payload):
     sha: str | None = None
     subdir: str | None = None
     scan: CatalogScan | None = None
-    # The Alfred version range the plugin needs; its env vars ride in ``required_env``.
+    # The +Human version range the plugin needs; its env vars ride in ``required_env``.
     requires_hermes: str | None = None
     has_desktop_half: bool | None = None
     # The profile the row installs into; absent when the chat's home is no named profile.

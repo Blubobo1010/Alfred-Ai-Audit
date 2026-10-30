@@ -1,4 +1,4 @@
-"""``alfred computer-use screen status`` shows the lease the way every RPC surface does: the holder's viewer
+"""``plushuman computer-use screen status`` shows the lease the way every RPC surface does: the holder's viewer
 id is a capability (whoever presents it co-drives or releases the lease), so only its short hash leaves the
 gateway. Regression for #110006."""
 

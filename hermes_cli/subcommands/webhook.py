@@ -1,4 +1,4 @@
-"""``alfred webhook`` subcommand parser."""
+"""``plushuman webhook`` subcommand parser."""
 
 from __future__ import annotations
 

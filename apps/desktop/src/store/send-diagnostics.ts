@@ -8,7 +8,7 @@
 // Discord).
 //
 // Consent is per-upload and explicit — no "always allow", mirroring the CLI's
-// `alfred debug share --nous` confirmation contract. On a remote connection
+// `plushuman debug share --nous` confirmation contract. On a remote connection
 // the backend bundles ITS OWN logs (the runtime that owns the failure); the
 // local desktop.log is attached as a client-side extra so support sees both
 // halves in one bundle.
@@ -97,7 +97,7 @@ export async function confirmSendDiagnostics(): Promise<void> {
     const gateway = $gateway.get()
 
     if (!gateway) {
-      throw new Error('Alfred gateway unavailable')
+      throw new Error('+Human gateway unavailable')
     }
 
     const extraFiles = await collectLocalExtras()

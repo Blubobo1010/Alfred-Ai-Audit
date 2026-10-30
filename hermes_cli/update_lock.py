@@ -1,4 +1,4 @@
-"""Cross-process mutual exclusion for in-flight Alfred updates.
+"""Cross-process mutual exclusion for in-flight +Human updates.
 
 Two artifacts, one authority each:
 
@@ -12,7 +12,7 @@ Two artifacts, one authority each:
   An owner is live while its pid is alive and its creation time still matches: never by age
   (the 20-minute ceiling only ages out v1 markers, which carry no creation time).
 * The checkout lock ``<git common dir>/hermes-update.lock`` (``<install root>/.hermes-update.lock``
-  for a ZIP install with no ``.git``) — a kernel lock (flock / msvcrt) that ``alfred update``
+  for a ZIP install with no ``.git``) — a kernel lock (flock / msvcrt) that ``plushuman update``
   holds for its whole process tree, so two updates of one checkout started from different
   homes exclude each other and a killed updater whose completion child still runs keeps the
   checkout locked until that child exits. In the git dir it is never a worktree file: no
@@ -60,7 +60,7 @@ CHECKOUT_LOCK_NAME = ".hermes-update.lock"
 GIT_CHECKOUT_LOCK_NAME = "hermes-update.lock"
 
 # Set by an orchestrating updater (Tauri `hermes-setup --update`) to its own pid before
-# spawning `alfred update` as a child stage; the parent holds the marker for its whole run,
+# spawning `plushuman update` as a child stage; the parent holds the marker for its whole run,
 # so without this the child would refuse its own parent's lock. Keep in sync with
 # update_child_env in apps/bootstrap-installer/src-tauri/src/update.rs.
 HANDOFF_PID_ENV = "HERMES_UPDATE_HANDOFF_PID"
@@ -72,7 +72,7 @@ _MAX_ANCESTRY_DEPTH = 128
 
 # Exit code meaning "another updater/instance owns this install right now" — the same
 # contract as the Windows shim / venv-holder guards in _cmd_update_impl, matched by the
-# Tauri updater (UPDATE_EXIT_CONCURRENT in update.rs) to show "Alfred is still running".
+# Tauri updater (UPDATE_EXIT_CONCURRENT in update.rs) to show "+Human is still running".
 UPDATE_EXIT_CONCURRENT = 2
 
 # msvcrt locks a byte range; lock one byte far past the holder record so other processes can
@@ -423,7 +423,7 @@ def _stdlib_parent_pid(pid: int) -> int | None:
 def _is_ancestor_pid(pid: int) -> bool:
     """True when ``pid`` is a live ancestor of this process.
 
-    The orchestrating updater spawns ``alfred update`` as a (grand)child, so a live marker
+    The orchestrating updater spawns ``plushuman update`` as a (grand)child, so a live marker
     owned by one of our ancestors can only be the claim we are already running under — an
     unrelated concurrent updater is never in our parent chain. This heals the fleet of staged
     ``hermes-setup`` binaries that predate the HANDOFF_PID_ENV export and can never send it.
@@ -489,7 +489,7 @@ def _is_ancestor_pid(pid: int) -> bool:
 
 
 def _is_runtime_host(cmdline: list[str]) -> bool:
-    """A long-lived Alfred host (``gateway run`` / ``serve`` / ``dashboard``), by the canonical
+    """A long-lived +Human host (``gateway run`` / ``serve`` / ``dashboard``), by the canonical
     command-line matchers (profile flags, ``hermes_cli/main.py`` paths, inline bootstraps)."""
     from gateway.status import looks_like_gateway_command_line
     from hermes_cli.update_cmd_windows import _hermes_holder_subcommand
@@ -498,10 +498,10 @@ def _is_runtime_host(cmdline: list[str]) -> bool:
 
 
 def _runtime_host_below(holder_pid: int) -> bool:
-    """True when a Alfred gateway/serve/dashboard sits between us and *holder_pid* (or anywhere
+    """True when a +Human gateway/serve/dashboard sits between us and *holder_pid* (or anywhere
     above us when the holder is not reached).
 
-    Such a host is relaunched BY an update and outlives its stages; a ``alfred update`` its agent
+    Such a host is relaunched BY an update and outlives its stages; a ``plushuman update`` its agent
     or ``/update`` starts is an independent update that must not run under the first one's claim
     (cli §7 V9). Unreadable command lines count as not-a-host (the legacy adoption stands).
     """
@@ -954,7 +954,7 @@ def describe_holder(holder: UpdateHolder | None) -> str:
             "  Updating without the lock could let two updates corrupt the install, or run\n"
             "  under a Desktop app, gateway or installer that cannot see it. Make that path\n"
             "  writable (fix its owner or permissions, or remount a read-only filesystem\n"
-            "  read-write), or run `alfred update` as the user that owns the install."
+            "  read-write), or run `plushuman update` as the user that owns the install."
         )
     minutes, seconds = divmod(int(max(0 if holder is None else holder.age_seconds, 0)), 60)
     elapsed = f"{minutes}m {seconds}s" if minutes else f"{seconds}s"
@@ -962,18 +962,18 @@ def describe_holder(holder: UpdateHolder | None) -> str:
     if holder is not None and holder.held:
         who = "; its owner exited but a process it started still holds the checkout"
     return (
-        f"✗ Another Alfred update is already running (started {elapsed} ago{who}).\n"
+        f"✗ Another +Human update is already running (started {elapsed} ago{who}).\n"
         "\n"
         "  Running two at once would corrupt the install. Wait for it to finish\n"
-        "  (watch `alfred logs`), or close the Desktop/dashboard window that\n"
-        "  started it, then run `alfred update` again."
+        "  (watch `plushuman logs`), or close the Desktop/dashboard window that\n"
+        "  started it, then run `plushuman update` again."
     )
 
 
 # --- the checkout lock -------------------------------------------------------------------
 
 # This process's hold on the checkout lock: {"path", "fd", "owned", "depth"}. "owned" means
-# we opened and locked it; otherwise the fd was inherited from the `alfred update` that holds
+# we opened and locked it; otherwise the fd was inherited from the `plushuman update` that holds
 # it (pass_fds) and belongs to the whole tree — it is never unlocked or closed here.
 _HELD: dict | None = None
 _JOBS: list = []
@@ -1072,7 +1072,7 @@ def _lock_holder(fd_or_path) -> UpdateHolder:
 
 def _open_lock_file(path: Path) -> tuple[int | None, object]:
     """``(fd, True)`` read-write; ``(fd, False)`` read-only for an existing lock file we may not
-    write (left root-owned by a ``sudo alfred update``: the kernel lock works on a read-only fd,
+    write (left root-owned by a ``sudo plushuman update``: the kernel lock works on a read-only fd,
     contract A5; POSIX only — a Windows owner needs its record); ``(None, reason)`` when neither opens."""
     # Never follow a link planted at the name: the holder record is written into this file.
     binary = getattr(os, "O_BINARY", 0) | getattr(os, "O_NOFOLLOW", 0)
@@ -1169,7 +1169,7 @@ def _lock_with_contention_wait(fd: int, path: Path) -> bool:
 
 def _held_by_our_windows_ancestor(path: Path) -> bool:
     """Windows: the checkout lock's holder record names a LIVE incarnation of one of our
-    ancestors (the ``alfred update`` whose completion/build children we are)."""
+    ancestors (the ``plushuman update`` whose completion/build children we are)."""
     if sys.platform != "win32":
         return False
     record = _parse_marker(_read_bytes(path) or b"")

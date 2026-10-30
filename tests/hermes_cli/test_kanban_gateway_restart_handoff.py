@@ -83,7 +83,7 @@ def test_managed_gateway_worker_is_spawned_in_restart_safe_scope(
     assert captured_cmd[unit_index + 1] == "hermes-worker-kanban-t_candidate_restart-run-23"
     assert "MemoryMax=536870912" in captured_cmd
     separator = captured_cmd.index("--")
-    assert captured_cmd[separator + 1 : separator + 4] == ["alfred", "-p", "coder"]
+    assert captured_cmd[separator + 1 : separator + 4] == ["plushuman", "-p", "coder"]
     assert captured_cwd == str(workspace)
     assert captured_env["HERMES_KANBAN_TASK"] == task.id
     assert captured_env["HERMES_KANBAN_RUN_ID"] == "23"
@@ -140,7 +140,7 @@ def test_standalone_dispatcher_keeps_direct_worker_spawn(
     )
 
     assert kbd._default_spawn(task, str(workspace)) == 4243
-    assert captured_cmd[:3] == ["alfred", "-p", "coder"]
+    assert captured_cmd[:3] == ["plushuman", "-p", "coder"]
 
 
 @pytest.mark.platforms("linux")
@@ -178,12 +178,12 @@ def test_oneshot_unit_dispatcher_scope_wraps_or_warns_never_dooms_silently(
     monkeypatch.setattr(process_registry, "_scope_degraded_warned", False)
     with caplog.at_level("WARNING", logger=process_registry.logger.name):
         kbd._default_spawn(task, str(workspace))
-    assert spawned[-1][:3] == ["alfred", "-p", "coder"]
+    assert spawned[-1][:3] == ["plushuman", "-p", "coder"]
     warned = [r.getMessage() for r in caplog.records if "KILLED when the unit exits" in r.getMessage()]
     assert len(warned) == 1 and "KillMode=process" in warned[0]
 
     cron = process_registry.restart_safe_gateway_child_argv(
-        ["alfred", "cron"], unit_suffix="cron-job-1", require_restart_safe_scope=True,
+        ["plushuman", "cron"], unit_suffix="cron-job-1", require_restart_safe_scope=True,
     )
     assert cron.mode == "in_process"
 

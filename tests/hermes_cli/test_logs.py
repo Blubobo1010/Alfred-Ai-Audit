@@ -190,7 +190,7 @@ def _update_log_line() -> str:
     """The update.log run banner hermes_cli.main_dashboard writes on every update."""
     import datetime as dt
 
-    return f"\n=== alfred update started {dt.datetime.now().isoformat(timespec='seconds')} ===\n".lstrip()
+    return f"\n=== plushuman update started {dt.datetime.now().isoformat(timespec='seconds')} ===\n".lstrip()
 
 
 def _handoff_log_line() -> str:
@@ -231,15 +231,15 @@ def test_every_log_file_writes_a_stamp_hermes_logs_since_can_read():
 
 
 def test_update_logs_are_read_from_the_root_home_under_a_profile(tmp_path, monkeypatch, capsys):
-    # ``alfred update`` mirrors to <root>/logs/update.log and the hand-off scripts write the root
-    # too; `alfred logs update` under a sticky profile read the profile's (absent) copy.
+    # ``plushuman update`` mirrors to <root>/logs/update.log and the hand-off scripts write the root
+    # too; `plushuman logs update` under a sticky profile read the profile's (absent) copy.
     from hermes_cli.logs import list_logs, log_file_path, tail_log
 
     root = tmp_path / "root"
     profile = root / "profiles" / "coder"
     (root / "logs").mkdir(parents=True)
     (profile / "logs").mkdir(parents=True)
-    (root / "logs" / "update.log").write_text("=== alfred update started 2026-10-03T10:00:00 ===\n✓ Update complete!\n")
+    (root / "logs" / "update.log").write_text("=== plushuman update started 2026-10-03T10:00:00 ===\n✓ Update complete!\n")
     (profile / "logs" / "agent.log").write_text("2026-10-03 10:00:00,000 INFO run_agent: hi\n")
     monkeypatch.setenv("HERMES_HOME", str(profile))
 
