@@ -99,7 +99,7 @@ jobs:
 
       - name: Driver dependencies (tests-js mock provider)
         shell: bash
-        run: npm ci --workspace tests-js --include-workspace-root --omit=dev --ignore-scripts --no-audit --no-fund
+        run: just js-install-tests
 
       # Gives headless linux a display (Xvfb) and records the run on every OS.
       - name: Start screen recording

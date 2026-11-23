@@ -68,7 +68,7 @@ plushuman bundles              Skill bundles (one /<name> alias loads several sk
 plushuman mcp add NAME (--url or --command) | remove | list | test NAME
 plushuman mcp catalog | install NAME     Curated catalog install
 plushuman mcp configure NAME             Toggle tool selection
-plushuman mcp serve                      Run +Human as an MCP server
+plushuman mcp-serve                      Run +Human as an MCP server (mcp-serve plugin)
 ```
 Details (transport, tool discovery, catalog): `references/native-mcp.md`.
 
@@ -121,7 +121,7 @@ plushuman dashboard            Web admin panel + embedded chat (--stop / --statu
 plushuman proxy                OpenAI-compatible local proxy backed by an OAuth provider
 plushuman portal               Quick setup / sign in via Nous Portal
 plushuman kanban <verb>        Multi-agent work-queue board
-plushuman project              Named multi-folder workspaces
+plushuman project              Named multi-folder workspaces (see references/projects-and-folders.md)
 plushuman skin list|use|set    Switch/tweak skins (see references/themes.md)
 plushuman pets <verb>          Pet mascots (see references/petdex.md)
 plushuman memory setup|status|off|reset   Memory provider
@@ -133,10 +133,10 @@ plushuman send                 One-off message through a gateway platform
 plushuman pairing / plugins / insights / journey / computer-use
 plushuman acp                  ACP server (IDE integration)
 plushuman completion bash|zsh|fish
-plushuman update / uninstall / claw migrate
+plushuman update / uninstall
 ```
 
-Plugin- and provider-supplied subcommands (e.g. `hermes photon setup`) only appear once their plugin is installed/active.
+Plugin- and provider-supplied subcommands (e.g. `hermes photon setup`) only appear once their plugin is installed/active. Importing from OpenClaw, Claude Code, Codex CLI or Cursor (`plushuman import-agent <agent>`, plus the older `hermes claw migrate|cleanup`) comes from the `agent-importers` plugin; a fresh `plushuman setup` that finds one of those agents offers to install it.
 
 ### Where to Find Things
 

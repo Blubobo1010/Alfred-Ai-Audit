@@ -24,6 +24,8 @@ Hermes-\d[\w.-]*
 Hermes [1-9](?![.\d])
 NousResearch/Hermes
 HermesDashboard/
+# the plugin catalog is upstream's: its "Official" tier really is Nous Research's own plugins
+Built and maintained by Nous Research
 # Whole-line exemptions (prefix `line:`): Nous Portal billing consent and the Nous LLM warning are about
 # Nous services/models and must keep the real name; comment lines are not user-visible.
 line:^\s*(//|#)

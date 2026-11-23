@@ -25,6 +25,7 @@ ACCEPT = [
     "python -m hermes_cli.main gateway run --replace",
     "python -m hermes_cli/main.py gateway run",
     "python gateway/run.py",
+    "python -m gateway.run",   # module spelling of the dedicated entrypoint
     "hermes-gateway.exe",
     "plushuman gateway",          # bare `plushuman gateway` defaults to run
     "plushuman gateway run",
@@ -36,6 +37,9 @@ ACCEPT = [
     # a profile literally NAMED "gateway"
     "plushuman -p gateway gateway run",
     "python -m hermes_cli.main --profile gateway gateway run",
+    # gateway-level flags before the action (`plushuman gateway --accept-hooks run` parses)
+    "plushuman gateway --accept-hooks run --no-supervise",
+    "plushuman gateway --accept-hooks",
     # quoted Windows paths with spaces (shlex-aware tokenization)
     r'"C:\Program Files\+Human\hermes-gateway.exe"',
     r'"C:\Program Files\+Human\gateway\run.py" run',
@@ -47,6 +51,8 @@ REJECT = [
     "python -m hermes_cli.main gateway status",           # other subcommand
     "python -m hermes_cli.main gateway restart",
     "python -m hermes_cli.main gateway stop",
+    "plushuman gateway --accept-hooks status",
+    "plushuman gateway --help",                               # prints help, runs nothing
     "python -m hermes_cli.main --profile x dashboard",    # non-gateway subcommand
     "some random python -m mygateway thing",
     "",

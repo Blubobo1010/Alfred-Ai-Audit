@@ -30,25 +30,28 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
-
+      # Standard library only: it runs on the runner's own python3 and fails before any toolchain is fetched.
       - name: Brand guard (no Hermes/Nous on user-visible surfaces)
-        run: uv run --frozen --no-dev python scripts/alfred/guard.py
+        run: python3 scripts/alfred/guard.py
 
+      # Upstream's own test lane: Python, uv and pnpm at the versions pm/lock.json pins, and the locked
+      # project with its dev and test groups in an environment under $RUNNER_TEMP (never inside the
+      # checkout: the updater treats a venv in the tree as an "owning install"). It exports HERMES_PYTHON,
+      # which scripts/run_tests.sh uses as is; without it the runner would provision a second environment.
+      - name: Locked toolchain and test environment
+        uses: ./.github/actions/setup-pm
+        with:
+          packages: pnpm
+          extras: '["all", "anthropic", "bedrock", "mistral", "fal", "modal", "daytona", "parallel-web", "keychain"]'
+          test-environment: 'true'
+
+      # The ruff version pyproject.toml pins (dev group), not whatever is newest today.
       - name: Lint
-        run: uvx ruff check .
-
-      - name: Test environment
-        # Outside the checkout: the updater treats a venv inside the tree as an "owning install".
-        env:
-          UV_PROJECT_ENVIRONMENT: ${{ runner.temp }}/alfred-venv
-        run: uv sync --frozen --all-extras --group dev --group test
+        run: python -m scripts.code_health.ruff_runner check .
 
       - name: Brand-sensitive test subset
         if: ${{ !inputs.full-suite }}
         env:
-          HERMES_PYTHON: ${{ runner.temp }}/alfred-venv/bin/python
           HERMES_TEST_WORKERS: 4
           HERMES_TEST_FILE_TIMEOUT: 600
           OPENROUTER_API_KEY: ""
@@ -97,7 +100,6 @@ jobs:
       - name: Full test suite
         if: ${{ inputs.full-suite }}
         env:
-          HERMES_PYTHON: ${{ runner.temp }}/alfred-venv/bin/python
           HERMES_TEST_WORKERS: 4
           HERMES_TEST_FILE_TIMEOUT: 600
           OPENROUTER_API_KEY: ""
@@ -106,17 +108,22 @@ jobs:
         run: scripts/run_tests.sh -q
 
   desktop:
-    name: Desktop + TUI typecheck
+    name: Desktop, TUI and dashboard typecheck
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      # Node and pnpm at the versions pm/lock.json pins (the root package.json refuses anything else).
+      # `all` rather than `node`: it also exports HERMES_PYTHON, and without one the electron tests'
+      # global setup provisions a whole Python environment to find it.
+      - name: Locked Node, pnpm and Python
+        uses: ./.github/actions/setup-pm
         with:
-          node-version: 22
-          cache: npm
+          toolchain: all
       - name: Install workspaces
-        run: npm ci
+        uses: ./.github/actions/retry
+        with:
+          command: just js-install
       - name: Desktop identity sanity
         env:
           HERMES_DESKTOP_VARIANT: bundled
@@ -133,16 +140,19 @@ jobs:
             console.log("ok", id.appId, id.displayName, cfg.mac.publish[0])
           '
       - name: TUI build
-        run: npm run build --workspace ui-tui
+        run: pnpm --dir ui-tui run build
       - name: Desktop typecheck
         working-directory: apps/desktop
-        run: npx tsc --build
+        run: pnpm exec tsc --build
       # tsconfig.json leaves out electron/; the main process has its own project.
       - name: Desktop main-process typecheck
         working-directory: apps/desktop
-        run: npx tsc -p tsconfig.electron.json --noEmit
+        run: pnpm exec tsc -p tsconfig.electron.json --noEmit
+      # The codemods edit dashboard pages too (ChannelsPage.tsx).
+      - name: Dashboard typecheck
+        run: pnpm --dir web run typecheck
       - name: Desktop i18n + updater tests
         working-directory: apps/desktop
         run: >-
-          npx vitest run src/i18n/catalog-completeness.test.ts electron/updater/mac-client.test.ts
+          pnpm exec vitest run src/i18n/catalog-completeness.test.ts electron/updater/mac-client.test.ts
           electron/updater/mac.test.ts electron/updater/mac-bundle-install.test.ts

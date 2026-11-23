@@ -12,5 +12,11 @@ export const ruUpdateChannel = {
   detailsLabel: 'Канал',
   branch: (b: string) => `Ветка: ${b}`,
   change: 'Изменить',
-  latestRelease: (v: string) => `У вас последний стабильный релиз (${v}).`
+  latestRelease: (v: string) => `У вас последний стабильный релиз (${v}).`,
+  rollbackTitle: (v: string) => `Вернуться к стабильному релизу ${v}`,
+  rollbackBody: (v: string) => `Эта сборка новее стабильного релиза ${v}. Установка вернёт +Human к этому релизу.`,
+  heldBody: (v: string) =>
+    `Эта сборка новее стабильного релиза ${v}, и ваши сессии уже используют её среду шлюза, которую ${v} не может открыть. +Human останется на этой сборке до выхода нового стабильного релиза.`,
+  rollbackAction: (v: string) => `Вернуться к ${v}`,
+  allChanges: 'Все изменения'
 }

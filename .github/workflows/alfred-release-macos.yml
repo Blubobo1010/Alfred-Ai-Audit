@@ -131,21 +131,6 @@ jobs:
           if [ -z "$xcode" ]; then echo "::error::no Xcode 26 on this runner"; exit 1; fi
           echo "DEVELOPER_DIR=$xcode/Contents/Developer" >> "$GITHUB_ENV"
 
-      - name: Resolve the builder toolchain versions
-        id: electron-tools
-        shell: bash
-        run: |
-          node -e '
-            const l = require("./package-lock.json")
-            console.log("eb=" + l.packages["node_modules/electron-builder"].version)
-          ' >> "$GITHUB_OUTPUT"
-
-      - name: Restore the electron-builder toolchain cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ github.workspace }}/.cache/electron-builder
-          key: eb3-${{ runner.os }}-${{ runner.arch }}-builder-${{ steps.electron-tools.outputs.eb }}
-
       - name: Restore desktop dependency inputs
         id: build-cache
         uses: ./.github/actions/desktop-build-cache
@@ -187,6 +172,16 @@ jobs:
           cache: ${{ github.workspace }}/.cache/desktop-inputs
           producer: desktop
           key: ${{ steps.build-cache.outputs.cache-key }}
+
+      - name: Disable QUIC (UDP 443) for the rest of the job
+        # Same step as upstream's builder. stapler fetches the notarization ticket over HTTP/3 and GitHub's
+        # macOS runners drop those connections (actions/runner-images#14924): with UDP 443 rejected, stapler,
+        # notarytool and the build's own transfers fall back to TCP.
+        shell: bash
+        run: |
+          echo 'block return out quick proto udp to any port 443' | sudo pfctl -a com.apple/alfred-no-quic -f -
+          sudo pfctl -E
+          sudo pfctl -a com.apple/alfred-no-quic -sr
 
       - name: Build, sign and notarize
         shell: bash
