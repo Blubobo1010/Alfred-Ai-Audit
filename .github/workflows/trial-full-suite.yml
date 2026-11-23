@@ -1,0 +1,94 @@
+# TRIAL ONLY (lives on the throwaway branch, never on main): the full upstream Python suite in slices,
+# once on this tree and once on pristine upstream at the same tag, with upstream's own settings, so the
+# two failure lists can be compared. Uses no secret and publishes nothing.
+name: trial-full-suite
+
+on:
+  push:
+    branches: ['trial/upstream-0.23.3']
+    paths: ['.github/workflows/trial-full-suite.yml']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trial-full-suite
+  cancel-in-progress: true
+
+jobs:
+  suite:
+    name: ${{ matrix.tree }} ${{ matrix.slice }}/8
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        tree: [plushuman, upstream]
+        slice: [1, 2, 3, 4, 5, 6, 7, 8]
+    steps:
+      - name: Checkout this tree
+        if: ${{ matrix.tree == 'plushuman' }}
+        uses: actions/checkout@v4
+
+      - name: Checkout pristine upstream
+        if: ${{ matrix.tree == 'upstream' }}
+        uses: actions/checkout@v4
+        with:
+          repository: NousResearch/hermes-agent
+          ref: v0.23.3
+
+      - name: Install ripgrep (prebuilt binary)
+        shell: bash
+        run: |
+          set -euo pipefail
+          RG_VERSION=15.1.0
+          RG_SHA256=1c9297be4a084eea7ecaedf93eb03d058d6faae29bbc57ecdaf5063921491599
+          RG_TARBALL=ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl.tar.gz
+          curl -sSfL --retry 3 --retry-delay 5 -o "$RUNNER_TEMP/$RG_TARBALL" \
+            "https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/${RG_TARBALL}"
+          cd "$RUNNER_TEMP"
+          echo "${RG_SHA256}  ${RG_TARBALL}" | sha256sum -c -
+          tar -xzf "$RG_TARBALL"
+          sudo mv "ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl/rg" /usr/local/bin/rg
+          rg --version
+
+      - name: Locked toolchain and test environment
+        uses: ./.github/actions/setup-pm
+        with:
+          packages: pnpm
+          extras: '["all", "anthropic", "bedrock", "mistral", "fal", "modal", "daytona", "parallel-web", "keychain"]'
+          test-environment: 'true'
+
+      - name: Full test suite, slice ${{ matrix.slice }}/8
+        shell: bash
+        env:
+          HERMES_TEST_SLICE: ${{ matrix.slice }}/8
+          HERMES_TEST_FORKSERVER: "1"
+          HERMES_TEST_WORKERS: 4
+          HERMES_TEST_FILE_TIMEOUT: 600
+          OPENROUTER_API_KEY: ""
+          OPENAI_API_KEY: ""
+          NOUS_API_KEY: ""
+        run: scripts/run_tests.sh -q 2>&1 | tee "$RUNNER_TEMP/suite.log"
+
+      - name: Collect the failure list
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          out="$RUNNER_TEMP/result"
+          mkdir -p "$out"
+          touch "$RUNNER_TEMP/suite.log"
+          grep -a -o -E 'FAILED tests/[^ ]+' "$RUNNER_TEMP/suite.log" | sort -u > "$out/failed.txt" || true
+          grep -a -E '\] ✗ tests/' "$RUNNER_TEMP/suite.log" | sed -E 's/^.*\] ✗ //' | sort -u > "$out/failed-files.txt" || true
+          grep -a -E '=== Summary' "$RUNNER_TEMP/suite.log" > "$out/summary.txt" || echo "no summary (timed out or crashed)" > "$out/summary.txt"
+          gzip -c "$RUNNER_TEMP/suite.log" > "$out/suite.log.gz"
+          cat "$out/summary.txt"
+          wc -l "$out/failed.txt" "$out/failed-files.txt"
+
+      - name: Upload the result
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-${{ matrix.tree }}-${{ matrix.slice }}
+          path: ${{ runner.temp }}/result
+          retention-days: 7
