@@ -9,9 +9,9 @@ is not the installer's. Then:
   resolve ``plushuman`` to it. It must report the checkout as the install and be able to check for
   updates; it reports the workspace copy instead (gated on #122425 and #122627);
 * ``plushuman doctor`` on that healthy install reports nothing wrong with the command installation
-  (#124050 is the false positive class) and ``hermes pm status`` reports the update as a success;
+  (#124050 is the false positive class) and ``plushuman pm status`` reports the update as a success;
 * real drift is caught and healed: a user uninstalls fastapi (the ``web`` extra the dashboard
-  imports) from the selected environment. ``plushuman doctor`` must say so, and ``hermes pm repair``
+  imports) from the selected environment. ``plushuman doctor`` must say so, and ``plushuman pm repair``
   must bring the dashboard's import back;
 * a dependency update that cannot resolve after the tree moved is an owed follow-up (contract C3,
   A6): ``plushuman update`` exits 0 but says loudly that the dependencies are not installed yet, the
@@ -122,7 +122,7 @@ def test_pm_status_receipt_reports_the_successful_update(updated):
     receipt = json.loads(P.ok(sb.cli("pm", "status")).stdout)
     code = receipt.get("exit_code", receipt.get("pm_exit_code"))
     assert code == 0 and receipt.get("outcome") in ("ok", "success"), (
-        f"`hermes pm status` does not report the last (successful) update as a success: {receipt}")
+        f"`plushuman pm status` does not report the last (successful) update as a success: {receipt}")
 
 
 @pytest.fixture(scope="module")
@@ -150,10 +150,10 @@ def test_doctor_reports_web_extra_drift(drifted):
 
 def test_pm_repair_heals_the_drift(drifted):
     sb, rp = drifted["sb"], drifted["repair"]
-    assert rp.returncode == 0, "hermes pm repair failed on a drifted environment:\n" + P.diagnostics(sb, rp)
+    assert rp.returncode == 0, "plushuman pm repair failed on a drifted environment:\n" + P.diagnostics(sb, rp)
     imports = P.managed_imports(sb, "fastapi", "hermes_cli.web_server")
     assert set(imports.values()) == {"ok"}, (
-        f"`hermes pm repair` exited 0 but the dashboard still cannot import: {imports}\n" + P.diagnostics(sb, rp))
+        f"`plushuman pm repair` exited 0 but the dashboard still cannot import: {imports}\n" + P.diagnostics(sb, rp))
 
 
 def test_failed_dependency_update_is_an_owed_followup(updated):

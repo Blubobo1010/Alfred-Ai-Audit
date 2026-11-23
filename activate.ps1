@@ -1,5 +1,5 @@
 # Source this file to sync and apply the PM environment; deactivate restores it.
-# Trusts the recorded tool digest. `hermes pm install` re-checks the bytes.
+# Trusts the recorded tool digest. `plushuman pm install` re-checks the bytes.
 # -TestExtras a,b selects runtime extras in the test environment (default: [all]).
 param([string]$TestExtras = '')
 $ErrorActionPreference = 'Stop'

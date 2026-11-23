@@ -1,4 +1,4 @@
-"""``hermes webapp`` opens the browser-hosted Desktop that the gateway serves.
+"""``plushuman webapp`` opens the browser-hosted Desktop that the gateway serves.
 
 It builds the Webapp bundle when stale, starts the gateway that serves the current profile (the default
 gateway for a profile it serves, else the profile's own), asks that gateway for a one-use launch link
@@ -148,7 +148,7 @@ def test_a_launch_refused_for_a_stale_bundle_asks_for_a_build_not_a_restart(worl
                                                                "reason": NOT_REBUILT}}
     assert launcher.cmd_webapp(_args(skip_build=True)) == 1
     out = capsys.readouterr().out
-    assert "Run hermes webapp to rebuild it." in out and launcher.RESTART_COMMAND not in out
+    assert "Run plushuman webapp to rebuild it." in out and launcher.RESTART_COMMAND not in out
 
 
 SERVING = {"ok": True, "result": {"state": "serving", "url": "http://127.0.0.1:9120", "reason": None}}
@@ -156,7 +156,7 @@ SERVING = {"ok": True, "result": {"state": "serving", "url": "http://127.0.0.1:9
 
 def test_a_webapp_turned_off_in_config_but_still_served_says_a_restart_stops_it(world, capsys):
     """The gateway reads webapp: only when it starts. After the config turns the Webapp off, the running
-    gateway still serves it (on the LAN for a wildcard host) until it restarts: hermes webapp says so,
+    gateway still serves it (on the LAN for a wildcard host) until it restarts: plushuman webapp says so,
     instead of "The Webapp is off", and opens nothing."""
     (world["root"] / "config.yaml").write_text("webapp:\n  enabled: false\n  host: 0.0.0.0\n", encoding="utf-8")
     world["answers"]["webapp-status"] = SERVING
@@ -250,7 +250,7 @@ def test_status_with_no_gateway_running_and_the_webapp_off_says_how_to_turn_it_o
     assert launcher.cmd_webapp(_args(status=True)) == 1
     out = capsys.readouterr().out
     assert "webapp.enabled: true" in out and str(world["root"] / "config.yaml") in out
-    assert "Run hermes webapp" not in out
+    assert "Run plushuman webapp" not in out
 
 
 def test_sign_out_replaces_the_browser_credential_on_the_running_gateway(world, capsys):
@@ -460,7 +460,7 @@ def _register_lan_sign_in(world, address: str, port: int = 9120) -> None:
 def test_status_of_a_webapp_browsers_open_over_plain_http_on_the_lan_says_what_the_browser_loses(
         world, capsys, browser_address):
     """The gateway reports its loopback dial origin; browsers open webapp.public_url, else the LAN address
-    Web Access registered sign-in for, as hermes webapp does. --status warns about that address."""
+    Web Access registered sign-in for, as plushuman webapp does. --status warns about that address."""
     if browser_address == "public_url":
         _home(world["root"], "webapp:\n  enabled: true\n  host: 0.0.0.0\n  public_url: http://192.168.1.20:9120\n")
     else:
@@ -484,7 +484,7 @@ def test_status_gets_no_plain_http_warning_when_browsers_open_a_secure_address(w
 @pytest.mark.parametrize("host", ["127.0.0.1", "localhost"])
 def test_status_of_a_private_webapp_ignores_a_lan_sign_in_registration_it_kept(world, capsys, host):
     """Web Access keeps its LAN sign-in registration after webapp.host goes back to loopback. With no
-    sign-in gate, hermes webapp opens the loopback launch link, so --status does not warn."""
+    sign-in gate, plushuman webapp opens the loopback launch link, so --status does not warn."""
     _home(world["root"], f"webapp:\n  enabled: true\n  host: {host}\n")
     _register_lan_sign_in(world, "192.168.1.20")
     assert launcher.cmd_webapp(_args(status=True)) == 0

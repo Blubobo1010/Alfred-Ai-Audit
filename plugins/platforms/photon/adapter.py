@@ -254,7 +254,7 @@ def check_requirements() -> bool:
         # the (resolved, possibly mirrored) sidecar dir is writable — report
         # available so the gateway creates the adapter and ``_start_sidecar``
         # cold-installs from the committed lockfile (on hosted images the
-        # user has no CLI to run `hermes photon setup`, so the connect path
+        # user has no CLI to run `plushuman photon setup`, so the connect path
         # must self-heal). Otherwise keep returning False so
         # `plushuman setup` / status surface the missing-deps state.
         if (find_node_executable("npm") or can_prepare) and _dir_writable(_sidecar_dir()):
@@ -267,13 +267,13 @@ def check_requirements() -> bool:
         if npm_error:
             logger.debug(
                 "photon: spectrum-ts not installed at %s "
-                "(last npm error: %s) — run: hermes photon setup",
+                "(last npm error: %s) — run: plushuman photon setup",
                 _sidecar_dir(),
                 npm_error,
             )
         else:
             logger.debug(
-                "photon: spectrum-ts not installed at %s — run: hermes photon setup",
+                "photon: spectrum-ts not installed at %s — run: plushuman photon setup",
                 _sidecar_dir(),
             )
         return False
@@ -289,7 +289,7 @@ def _sidecar_deps_stale() -> bool:
 def _reinstall_sidecar_deps() -> None:
     """Reinstall the sidecar's node_modules from the lockfile (blocking).
 
-    Mirrors ``hermes photon install-sidecar``: ``npm ci`` for an exact,
+    Mirrors ``plushuman photon install-sidecar``: ``npm ci`` for an exact,
     reproducible install, falling back to ``npm install`` if the lockfile is
     missing or drifted. Runs the postinstall patch as part of the install.
     Best-effort — a failure here just leaves the (stale) deps in place and the
@@ -700,7 +700,7 @@ class PhotonAdapter(BasePlatformAdapter):
         if not self._project_id or not self._project_secret:
             self._set_fatal_error(
                 "MISSING_CREDENTIALS",
-                "PHOTON_PROJECT_ID and PHOTON_PROJECT_SECRET are required. Run: hermes photon setup",
+                "PHOTON_PROJECT_ID and PHOTON_PROJECT_SECRET are required. Run: plushuman photon setup",
                 retryable=False)
             return False
         client = httpx.AsyncClient(timeout=30.0, trust_env=False)
@@ -1074,7 +1074,7 @@ class PhotonAdapter(BasePlatformAdapter):
     async def _ensure_sidecar_deps(self) -> None:
         """Cold-install or refresh sidecar node_modules before spawn (off the loop)."""
         if not sidecar_deps_installed():
-            # Hosted images have no CLI for `hermes photon setup`: connect bootstraps deps itself.
+            # Hosted images have no CLI for `plushuman photon setup`: connect bootstraps deps itself.
             logger.info("[photon] sidecar deps not installed; installing into %s", _sidecar_dir())
             await asyncio.to_thread(_reinstall_sidecar_deps)
             if not sidecar_deps_installed():
@@ -1082,7 +1082,7 @@ class PhotonAdapter(BasePlatformAdapter):
                 raise PhotonSidecarStartupError(
                     f"Photon sidecar deps could not be installed into "
                     f"{_sidecar_dir()} (see log for the npm error). "
-                    f"Run: cd {_sidecar_dir()} && npm ci   (or `hermes photon setup`)",
+                    f"Run: cd {_sidecar_dir()} && npm ci   (or `plushuman photon setup`)",
                     code="SIDECAR_DEPS_MISSING", retryable=False)
         # `plushuman update` bumps the lockfile without reinstalling node_modules; the sidecar
         # would spawn against stale deps and die on every reconnect.
@@ -1144,7 +1144,7 @@ class PhotonAdapter(BasePlatformAdapter):
             # Retrying can never fix a missing binary (OOF-153).
             raise PhotonSidecarStartupError(
                 f"node binary not found ({self._node_bin!r}) — install Node.js "
-                f"18+ or run `hermes pm install`: {exc}",
+                f"18+ or run `plushuman pm install`: {exc}",
                 code="SIDECAR_NODE_MISSING",
                 retryable=False,
             ) from exc
@@ -1788,7 +1788,7 @@ def register(ctx) -> None:
         check_fn=check_requirements, validate_config=validate_config, is_connected=is_connected,
         required_env=["PHOTON_PROJECT_ID", "PHOTON_PROJECT_SECRET"],
         install_hint=(
-            "Run: hermes photon setup  (logs in via device flow, creates a "
+            "Run: plushuman photon setup  (logs in via device flow, creates a "
             "Spectrum project, links your phone number, installs the "
             "spectrum-ts sidecar)."),
         setup_fn=_cli.gateway_setup,  # surfaces Photon in the unified `plushuman gateway setup` wizard

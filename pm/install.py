@@ -235,7 +235,7 @@ def _refuse_lazy(name: str, what: str) -> InstallError:
     error = InstallError(
         name,
         f"not installed and lazy installs are disabled: {what}",
-        "enable security.allow_lazy_installs or run `hermes pm install`",
+        "enable security.allow_lazy_installs or run `plushuman pm install`",
     )
     receipt.record_refusal("lazy-install", str(error))
     return error
@@ -276,7 +276,7 @@ def _discard_entry(store: Store, entry_name: str) -> None:
     as broken (#124807). Windows still allows renaming a tree with mapped
     images, so it moves to a `.reclaim-*` name: its slot is free for the next
     publish, no restore ever picks it up, and the next install or
-    `hermes pm gc` deletes it once the hold is gone.
+    `plushuman pm gc` deletes it once the hold is gone.
     """
     import uuid
 
@@ -290,7 +290,7 @@ def _discard_entry(store: Store, entry_name: str) -> None:
     except OSError:
         LOG.warning("could not remove or set aside %s: %s", entry_name, error)
         return
-    LOG.warning("%s is still in use (%s); set aside for the next install or `hermes pm gc`",
+    LOG.warning("%s is still in use (%s); set aside for the next install or `plushuman pm gc`",
                 entry_name, error)
 
 
@@ -484,7 +484,7 @@ def _install(
     version = lockfile.version(package.name)
     if version is None:
         raise InstallError(
-            package.name, "not in the lockfile", "add it with `hermes pm lock --bump`"
+            package.name, "not in the lockfile", "add it with `plushuman pm lock --bump`"
         )
 
     reason = package.missing_reason(target) or package.native_abi_reason(target)
@@ -525,7 +525,7 @@ def _install(
             raise InstallError(
                 package.name,
                 f"no artifact for {target} in the lockfile",
-                "run `hermes pm lock --bump` for this package",
+                "run `plushuman pm lock --bump` for this package",
             )
         with store.scratch() as scratch:
             staged = scratch / "tree"
@@ -614,8 +614,8 @@ def ensure(
     download_progress: ProgressFn | None = None,
     _operation: _InstallOperation | None = None,
 ) -> Runner:
-    """``explicit`` marks a deliberate install command (`hermes pm
-    install`, `hermes pm bundle`) — those ARE the remedy the lazy-install
+    """``explicit`` marks a deliberate install command (`plushuman pm
+    install`, `plushuman pm bundle`) — those ARE the remedy the lazy-install
     policy names, so the policy does not apply to them.
 
     ``verify`` re-hashes an already-recorded entry and repairs it when the
@@ -750,7 +750,7 @@ def _still_declared(package, recorded: list[str]) -> list[str]:
 
 def _carried(package, recorded: list[str]) -> list[str]:
     """The recorded extras a sync carries forward: still declared and not dropped by the user
-    (`hermes pm install --without NAME`). An explicit request still enables a declined extra."""
+    (`plushuman pm install --without NAME`). An explicit request still enables a declined extra."""
     from pm.extras import declined_extras
 
     refused = declined_extras(package.project_root())
@@ -822,7 +822,7 @@ def _venv_install_lock(*, patient: bool):
             error = InstallError(
                 "venv",
                 f"another +Human process is installing dependencies (waited {INSTALL_LOCK_TIMEOUT_SECONDS:.0f}s)",
-                "retry in a moment, or run `hermes pm install` to install explicitly",
+                "retry in a moment, or run `plushuman pm install` to install explicitly",
             )
             receipt.record_refusal("install-busy", str(error))
             raise error
@@ -914,7 +914,7 @@ def _refuse_declined(package, extras: Optional[list[str]], *, explicit: bool) ->
         reasons = declined_reasons(package.project_root())
         why = "; ".join(f"an update left {extra!r} out because {reasons[_extra_key(extra)]}" for extra in dropped
                         if _extra_key(extra) in reasons)
-        raise InstallError("venv", why or f"extras {dropped} were removed with `hermes pm install --without`",
+        raise InstallError("venv", why or f"extras {dropped} were removed with `plushuman pm install --without`",
                            "run `" + "`, `".join(install_hint(extra) for extra in dropped) + "` to enable them again")
 
 
@@ -923,7 +923,7 @@ def _without_new_declines(package, extras: Optional[list[str]], automatic) -> Op
 
     An automatic entry (configured-platform repair, the main-era venv carry, a container's shipped
     baseline) was chosen before this sync took the lock, from a decline record a concurrent
-    `hermes pm install --without NAME` may since have changed; only the lock-held read counts.
+    `plushuman pm install --without NAME` may since have changed; only the lock-held read counts.
     """
     if not extras or not automatic:
         return extras
@@ -935,7 +935,7 @@ def _without_new_declines(package, extras: Optional[list[str]], automatic) -> Op
 
 
 def decline_extras(names: list[str]) -> None:
-    """Record ``hermes pm install --without NAME`` for extras, under the dependency lock: an
+    """Record ``plushuman pm install --without NAME`` for extras, under the dependency lock: an
     in-flight `--extra NAME` sync clears its decline before releasing it, so an unlocked write
     landing mid-sync would be erased."""
     if not names:
@@ -983,7 +983,7 @@ def sync_venv(extras: Optional[list[str]] = None, *, explicit: bool = False,
     the installed state (one ledger); no-op when the stamp already matches.
     ``repair`` restores the recorded dependency graph into a fresh generation,
     bypassing both that shortcut and config discovery. It cannot add features.
-    ``explicit`` marks a deliberate install command (`hermes pm install`,
+    ``explicit`` marks a deliberate install command (`plushuman pm install`,
     `plushuman update`) — those are the remedy the lazy-install policy points
     at, so the policy does not apply to them. ``plugins`` names the one
     source of plugin members (see pm.plugin_inputs); None discovers them from config.

@@ -748,7 +748,7 @@ _WEBHOOK_URL_RE = re.compile(
 # JWTs always start with "eyJ" (base64 "{"); 1-, 2- and 3-part forms.
 _JWT_RE = re.compile(r"eyJ[A-Za-z0-9_-]{10,}(?:\.[A-Za-z0-9_=-]{4,}){0,2}")
 
-# Links ``hermes webapp`` prints that sign a browser in as the user: the gateway's browser credential
+# Links ``plushuman webapp`` prints that sign a browser in as the user: the gateway's browser credential
 # after ``hermes-session=`` and the one-use ticket of a ``/webapp/launch`` link. Both values are
 # URL-safe base64 (43 characters); the 20-character floor leaves placeholders and code (``${token}``).
 _WEBAPP_LINK_CREDENTIAL_RE = re.compile(

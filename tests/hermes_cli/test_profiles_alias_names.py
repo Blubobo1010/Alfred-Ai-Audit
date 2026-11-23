@@ -1,7 +1,7 @@
 """``plushuman profile`` alias names: profiles named like +Human' server subcommands keep their alias.
 
 A profile's wrapper alias is its own command on PATH (``~/.local/bin/<name>``); it does not shadow
-``plushuman dashboard``, ``plushuman serve`` or ``hermes webapp``, so ``check_alias_collision`` admits those
+``plushuman dashboard``, ``plushuman serve`` or ``plushuman webapp``, so ``check_alias_collision`` admits those
 names as main does: ``plushuman profile create dashboard`` gets its ``dashboard`` alias, and ``profile
 alias``, rename and import accept them.
 """

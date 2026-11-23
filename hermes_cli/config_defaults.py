@@ -425,7 +425,7 @@ DEFAULT_CONFIG = {
         # (faster navigation, no screenshots); "chrome" is read as "auto". Ignored while a cloud
         # provider, cdp_url or use_real_profile is active.
         "engine": "auto",
-        # Chromium binary for local sessions. "" = pm's chromium (`hermes pm install chromium`), the
+        # Chromium binary for local sessions. "" = pm's chromium (`plushuman pm install chromium`), the
         # Docker image's build, else a system chromium where pm builds none (Termux).
         "executable_path": "",
         # Persistent Chromium profile directory shared by local sessions; "" = a fresh throwaway

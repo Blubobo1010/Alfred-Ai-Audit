@@ -288,7 +288,7 @@ def test_native_desktop_uses_web_access_on_the_webapps_own_listener(client, monk
 
 def test_start_builds_the_webapp_bundle_before_turning_it_on(client, restarts, nous, builds):
     """Start builds the bundle the gateway serves (``apps/desktop/dist-webapp``) with the function
-    ``hermes webapp`` uses, reusing it when current, so it never reports a Webapp with nothing to
+    ``plushuman webapp`` uses, reusing it when current, so it never reports a Webapp with nothing to
     serve as running."""
     from hermes_cli.config import get_project_root
 
@@ -310,7 +310,7 @@ def test_a_failed_build_turns_nothing_on_and_says_how_to_build(client, restarts,
     response = client.post("/api/webapp-access/start", json={"mode": "lan"})
     assert response.status_code == 400
     assert "npm exited 1" in response.json()["detail"]
-    assert "hermes webapp --build-only" in response.json()["detail"]
+    assert "plushuman webapp --build-only" in response.json()["detail"]
     assert nous == []
     assert restarts == []
     assert not _config()["webapp"]["enabled"]

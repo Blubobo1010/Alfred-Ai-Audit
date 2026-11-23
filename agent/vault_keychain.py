@@ -44,7 +44,7 @@ def os_keyring():
         import keyring
     except ImportError as exc:
         raise KeychainUnavailable(
-            "the keychain feature is not installed (`hermes pm install --extra keychain`)") from exc
+            "the keychain feature is not installed (`plushuman pm install --extra keychain`)") from exc
     try:
         backend = keyring.get_keyring()
     except Exception as exc:  # health: allow BLE001 -- backend discovery runs third-party entry points

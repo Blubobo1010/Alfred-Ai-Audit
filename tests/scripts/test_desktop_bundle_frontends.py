@@ -1,5 +1,5 @@
 """Every desktop bundle that carries an agent payload plants the prebuilt Webapp beside the TUI and
-the dashboard: the payload has no sources to build one from, so `hermes webapp` in the app serves it."""
+the dashboard: the payload has no sources to build one from, so `plushuman webapp` in the app serves it."""
 from __future__ import annotations
 
 import contextlib

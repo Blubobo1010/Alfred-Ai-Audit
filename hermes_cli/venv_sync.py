@@ -61,7 +61,7 @@ def check_runtime(project_root: Path) -> str | None:
         return None
     steward = sealed_steward(Path(project_root))
     remedy = (f"this {steward}-managed install must rebuild the artifact to fix"
-              if steward else "run `hermes pm install`")
+              if steward else "run `plushuman pm install`")
     return f"install out of sync ({'; '.join(problems)}) — {remedy}"
 
 
@@ -133,7 +133,7 @@ def sync(project_root: Path | None = None, *, check: bool = False) -> dict:
 def collect_superseded_generations(project_root: Path) -> None:
     """Collect what a publish just superseded, as the Docker boot already does.
 
-    Without this only a manual `hermes pm gc` reclaimed old environments. Safe
+    Without this only a manual `plushuman pm gc` reclaimed old environments. Safe
     right after a sync: the collectors skip leased, selected and day-young
     generations and yield to any in-flight install instead of waiting.
     """
@@ -518,7 +518,7 @@ def prepare_launch(project_root: Path, argv: list[str]) -> Path | None:
             lock.release()
     python = resolve_store_python(root)
     if python is None:
-        raise RuntimeError("source update has no managed Python; run `hermes pm install`")
+        raise RuntimeError("source update has no managed Python; run `plushuman pm install`")
     # Lexical identity, never resolve(): PM spells the store path through
     # HERMES_HOME (which may carry '..') while sys.executable arrives
     # normalized, so a raw compare re-execs every child forever (#122513). A
@@ -566,7 +566,7 @@ def _prepare_borrowed_launch(root: Path, owner: Path, *, current: bool) -> Path 
             raise RuntimeError("dependency sync left this install out of date")
     python = resolve_store_python(root)
     if python is None:
-        raise RuntimeError("source update has no managed Python; run `hermes pm install`")
+        raise RuntimeError("source update has no managed Python; run `plushuman pm install`")
     same = os.path.normcase(os.path.abspath(python)) == os.path.normcase(os.path.abspath(sys.executable))
     return python if not current or not same else None
 

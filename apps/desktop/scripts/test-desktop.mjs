@@ -440,7 +440,7 @@ function validateBundle() {
   }
 
   // The payload may be the real pm bundle (staged by scripts/bundles/desktop.py /
-  // `hermes pm bundle --out build/agent-payload`) or the external stub
+  // `plushuman pm bundle --out build/agent-payload`) or the external stub
   // (plain `pnpm run pack` in the PR/JS lane — the app fetches the runtime at
   // first launch via the stage protocol). Validate the payload only when a
   // real one is present; the stub is the thin-installer contract.

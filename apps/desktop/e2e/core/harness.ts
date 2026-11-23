@@ -196,8 +196,8 @@ export function webappLaunchLink(sandbox: CoreSandbox, profile?: string): string
   const profileArgs = profile ? ['-p', profile] : []
   const { code, output } = hermesCli(sandbox, [...profileArgs, 'webapp', '--no-open', '--skip-build'])
   const link = /^\s+(http:\/\/127\.0\.0\.1:\d+\/webapp\/launch#\S+)$/m.exec(output)?.[1]
-  expect(code, `hermes webapp --no-open\n${output.replace(/ticket=\S+/g, 'ticket=<redacted>')}`).toBe(0)
-  expect(link, 'hermes webapp printed a one-use launch link').toBeTruthy()
+  expect(code, `plushuman webapp --no-open\n${output.replace(/ticket=\S+/g, 'ticket=<redacted>')}`).toBe(0)
+  expect(link, 'plushuman webapp printed a one-use launch link').toBeTruthy()
 
   return link!
 }

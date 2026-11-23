@@ -50,7 +50,7 @@ export const enBoot = {
       remoteDescription:
         'Your remote gateway session has expired. Sign in again to reconnect. Nothing here deletes your chats or settings.',
       webappTitle: 'Sign in to +Human',
-      webappDescription: 'Run hermes webapp on this computer to sign this browser in.',
+      webappDescription: 'Run plushuman webapp on this computer to sign this browser in.',
       retry: 'Retry',
       repairInstall: 'Repair install',
       useLocalGateway: 'Use local gateway',

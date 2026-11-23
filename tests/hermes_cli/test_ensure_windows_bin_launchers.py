@@ -13,7 +13,7 @@ launchers that boot the pm STORE python with ``PYTHONPATH=repo;site-packages``
 — never ``venv\\Scripts\\python.exe`` (``pyvenv.cfg`` is inert dead config).
 When the store interpreter has not materialized yet, a runtime-resolving
 ``.cmd`` delegator is staged that finds the store python at boot and fails
-with a clear message until ``hermes pm install`` lands it; legacy copied
+with a clear message until ``plushuman pm install`` lands it; legacy copied
 venv trampolines (detected by their embedded interpreter path) are replaced.
 ``migrate_windows_bin_path`` moves an existing install's PATH to the
 canonical layout from the ``plushuman update`` tail. Platform verdict, PATH
@@ -181,7 +181,7 @@ def test_healthy_canonical_layout_with_placeholder_cmds_gets_upgraded(
     tmp_path, monkeypatch
 ):
     """Placeholder .cmd delegators from the fresh install are upgraded to
-    store-python launchers once `hermes pm install` materialized the store."""
+    store-python launchers once `plushuman pm install` materialized the store."""
     home, root = _make_managed(tmp_path, monkeypatch)
     bin_dir = home / "bin"
     bin_dir.mkdir()

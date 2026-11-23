@@ -933,7 +933,7 @@ class WhatsAppAdapter(WhatsAppBehaviorMixin, BasePlatformAdapter):
         if (missing := ensure_aiohttp()) is not None:  # may install it: connect runs this off the event loop
             why, retryable = missing
             message = (f"aiohttp is unavailable ({why}); the WhatsApp bridge client needs it. "
-                       "Run `hermes pm install --extra sms` (it ships aiohttp; `hermes pm repair` for a damaged install), "
+                       "Run `plushuman pm install --extra sms` (it ships aiohttp; `plushuman pm repair` for a damaged install), "
                        "then restart `plushuman gateway`.")
             logger.warning("[%s] %s", self.name, message)
             self._set_fatal_error("whatsapp_aiohttp_missing", message, retryable=retryable)
@@ -1033,7 +1033,7 @@ class WhatsAppAdapter(WhatsAppBehaviorMixin, BasePlatformAdapter):
             self._bridge_log_fh = bridge_log_fh = _open_bridge_log(self._bridge_log, private=store_umask >= 0)
             node = find_node_executable("node")
             if node is None:
-                raise RuntimeError("Node.js is no longer available; run `hermes pm install`")
+                raise RuntimeError("Node.js is no longer available; run `plushuman pm install`")
             bridge_env = self._bridge_env()
             self._bridge_process = _spawn_bridge_process(
                 [node, str(bridge_path), "--port", str(self._bridge_port), "--session", str(self._session_path),

@@ -749,7 +749,7 @@ def run_gui_uninstall(args):
     print()
     _print_box("│            ✓ Chat GUI Uninstalled!                      │", Colors.GREEN)
     print()
-    print("The +Human agent is still installed. Run 'hermes' to use the CLI,")
+    print("The +Human agent is still installed. Run 'plushuman' to use the CLI,")
     print("or 'plushuman uninstall' to remove the agent too.")
     print()
 

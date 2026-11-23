@@ -386,7 +386,7 @@ def _check_manifest_v2(report: DoctorReport, manifest: Any) -> None:
         report.warning(
             "declared python_dependencies not installed: " + ", ".join(missing)
             + " — install and enable the plugin with plushuman plugins. "
-            "For an enabled plugin, run hermes pm repair, then restart +Human.")
+            "For an enabled plugin, run plushuman pm repair, then restart +Human.")
 
     schema = getattr(manifest, "config_schema", {}) or {}
     if schema:

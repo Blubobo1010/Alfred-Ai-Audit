@@ -82,7 +82,7 @@ class TestCronRunJobGuard:
         policy = SimpleNamespace(request_json=json.dumps({
             "cron_job": self._job(), "extra_prompt": None, "request_id": "guard-fire"}))
         previous = current_execution()
-        with pytest.raises(RuntimeError, match="+Human stopped because your settings file"):
+        with pytest.raises(RuntimeError, match="\\+Human stopped because your settings file"):
             await execute(owner, ref, admission, policy)
         success, _output_doc, final_response, error = owner.pending_results["guard-fire"]["result"]["cron_result"]
         assert current_execution() is previous

@@ -378,7 +378,7 @@ def _check_node_and_browser(should_fix: bool, f: Finding) -> None:
     elif _is_termux():
         check_info("Node.js not found (optional; install on Termux with: pkg install nodejs)")
     else:
-        check_warn("Node.js not found", "(optional; run: hermes pm install node)")
+        check_warn("Node.js not found", "(optional; run: plushuman pm install node)")
     _check_chromium(should_fix)
     _check_lightpanda()
 

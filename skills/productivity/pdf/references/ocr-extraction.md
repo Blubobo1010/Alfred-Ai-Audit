@@ -59,7 +59,7 @@ below with `"$PY"` instead of `python`:
 
 ```bash
 if command -v hermes >/dev/null 2>&1; then
-  PY="$(hermes pm environment pdf-pymupdf --requirement 'pymupdf>=1.26,<3' --requirement 'pymupdf4llm>=0.2,<3')"
+  PY="$(plushuman pm environment pdf-pymupdf --requirement 'pymupdf>=1.26,<3' --requirement 'pymupdf4llm>=0.2,<3')"
 else
   PY="$HOME/.cache/hermes-pdf-pymupdf-venv/bin/python"
   "$PY" -c "import pymupdf, pymupdf4llm" 2>/dev/null || (
@@ -110,7 +110,7 @@ python scripts/extract_marker.py --check
 
 # its own side environment (PyTorch + models); run the helper with "$PY"
 if command -v hermes >/dev/null 2>&1; then
-  PY="$(hermes pm environment pdf-marker --requirement 'marker-pdf>=1.8,<3')"
+  PY="$(plushuman pm environment pdf-marker --requirement 'marker-pdf>=1.8,<3')"
 else
   PY="$HOME/.cache/hermes-pdf-marker-venv/bin/python"
   "$PY" -c "import marker" 2>/dev/null || (

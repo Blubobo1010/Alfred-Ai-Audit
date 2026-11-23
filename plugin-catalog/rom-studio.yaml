@@ -22,7 +22,7 @@ capabilities:
   provides_middleware: []
   requires_env: []
 known_issues:
-  - "Seen running in the web dashboard tab and in the desktop workspace served by hermes webapp, on Linux with +Human 0.23. Not yet seen in the packaged desktop app."
+  - "Seen running in the web dashboard tab and in the desktop workspace served by plushuman webapp, on Linux with +Human 0.23. Not yet seen in the packaged desktop app."
   - "Linux only. macOS and Windows are not supported (the build scripts use Linux tools and the script compiler download is a Linux program); Windows through WSL has not been tried."
   - "Needs bun, git and a toolchain for the game that you install yourself: make, python3 with Pillow, C and C++ compilers, flock, libpng with pkg-config, arm-none-eabi-gcc 14.2, cmake and a libmgba 0.10.5 you build once; ffmpeg for sound. kit status lists what is missing and how to get it."
   - "You bring the decomp and, to make a patch, your own copy of the original game file. ROM Studio includes and fetches neither. The first build takes about 7 minutes and a game folder about 1 GB."

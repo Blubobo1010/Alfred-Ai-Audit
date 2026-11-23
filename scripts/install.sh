@@ -3,7 +3,7 @@
 # the same completion an update runs -- command publication, product builds and
 # post-build maintenance -- so a fresh install and a finished update land in one
 # state. Heavy dependencies (tool binaries, browsers, node) are pm's job:
-# `hermes pm install`.
+# `plushuman pm install`.
 #
 # Stage protocol kept for Hermes-Setup:
 #   --manifest            print the stage list as JSON
@@ -80,10 +80,10 @@ while [ $# -gt 0 ]; do
             echo "                  an explicit choice is saved like 'plushuman update --set-channel'."
             echo "  --skip-browser  Do not install the browser (Chromium). Alias: --no-playwright."
             echo "                  Remembered by later installs and 'plushuman update';"
-            echo "                  undo with 'hermes pm install chromium'."
+            echo "                  undo with 'plushuman pm install chromium'."
             echo "  --skip-computer-use"
             echo "                  Do not install the computer-use driver (cua-driver). Remembered"
-            echo "                  the same way; undo with 'hermes pm install cua-driver'."
+            echo "                  the same way; undo with 'plushuman pm install cua-driver'."
             exit 0 ;;
         *) echo "unknown option: $1" >&2; exit 1 ;;
     esac
@@ -659,7 +659,7 @@ chosen_channel() {
 # hermes_cli.update_channel.default_channel decides.
 is_official_repo() {
     printf '%s' "$1" | tr '[:upper:]' '[:lower:]' \
-        | grep -Eq '^(https://github\.com/|git@github\.com:|ssh://git@github\.com/)nousresearch/hermes-agent(\.git)?/?$'
+        | grep -Eq '^(https://github\.com/|git@github\.com:|ssh://git@github\.com/)blubobo1010/alfred-ai-audit(\.git)?/?$'
 }
 
 # The latest published stable release (vX.Y.Z), the release `plushuman update` resolves for the
@@ -1040,7 +1040,7 @@ bootstrap_pm() {
     local boot_py
     local pm_args=(install)
     # PM records the opt-outs, so later installs and `plushuman update` keep the
-    # tools off until `hermes pm install <name>` opts back in.
+    # tools off until `plushuman pm install <name>` opts back in.
     # Legacy spelling on purpose: the stable PM this script installs by default
     # rejects `chromium`, and newer PMs read `agent-browser` as `chromium`.
     [ "$SKIP_BROWSER" = true ] && pm_args+=(--without agent-browser)

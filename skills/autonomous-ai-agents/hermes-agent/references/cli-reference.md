@@ -78,7 +78,7 @@ Details (transport, tool discovery, catalog): `references/native-mcp.md`.
 plushuman gateway run|install|start|stop|restart|status|setup
 ```
 
-20+ platforms: Telegram, Discord, Slack, WhatsApp (Baileys + Business Cloud API), iMessage (Photon — `hermes photon setup`), Signal, Email, SMS, Matrix, Mattermost, Teams, LINE, SimpleX, ntfy, Google Chat, Home Assistant, DingTalk, Feishu, WeCom, Weixin, API Server, Webhooks. Open WebUI connects via the API Server adapter. Most adapters ship under `plugins/platforms/`.
+20+ platforms: Telegram, Discord, Slack, WhatsApp (Baileys + Business Cloud API), iMessage (Photon — `plushuman photon setup`), Signal, Email, SMS, Matrix, Mattermost, Teams, LINE, SimpleX, ntfy, Google Chat, Home Assistant, DingTalk, Feishu, WeCom, Weixin, API Server, Webhooks. Open WebUI connects via the API Server adapter. Most adapters ship under `plugins/platforms/`.
 Docs: https://hermes-agent.nousresearch.com/docs/user-guide/messaging/
 
 ### Sessions
@@ -136,7 +136,7 @@ plushuman completion bash|zsh|fish
 plushuman update / uninstall
 ```
 
-Plugin- and provider-supplied subcommands (e.g. `hermes photon setup`) only appear once their plugin is installed/active. Importing from OpenClaw, Claude Code, Codex CLI or Cursor (`plushuman import-agent <agent>`, plus the older `hermes claw migrate|cleanup`) comes from the `agent-importers` plugin; a fresh `plushuman setup` that finds one of those agents offers to install it.
+Plugin- and provider-supplied subcommands (e.g. `plushuman photon setup`) only appear once their plugin is installed/active. Importing from OpenClaw, Claude Code, Codex CLI or Cursor (`plushuman import-agent <agent>`, plus the older `hermes claw migrate|cleanup`) comes from the `agent-importers` plugin; a fresh `plushuman setup` that finds one of those agents offers to install it.
 
 ### Where to Find Things
 

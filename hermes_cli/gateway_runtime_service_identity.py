@@ -78,7 +78,7 @@ def _own_store_launcher(executable: str) -> bool:
     from hermes_cli import gateway
     from hermes_cli._launchers import sealed_service_launcher
     root = Path(gateway.PROJECT_ROOT).resolve()
-    ours = (root / ".hermes" / "bin" / "hermes", sealed_service_launcher(root))
+    ours = (*(root / ".hermes" / "bin" / name for name in ("hermes", "plushuman", "alfred")), sealed_service_launcher(root))
     actual = os.path.normcase(str(Path(executable).resolve()))
     return any(actual == os.path.normcase(str(launcher)) for launcher in ours if launcher is not None)
 
@@ -129,7 +129,7 @@ def verify_gateway_argv(argv: list[str], home: Path, *, wrapped: bool = False) -
         if entry is None or entry[0] != "hermes_cli.main":
             _unverified("the Python command is not this install's -m hermes_cli.main")
         args = entry[1]
-    elif executable in {"hermes", "hermes.exe"} and (not own_launcher_only or _own_store_launcher(argv[0])):
+    elif executable in {"hermes", "hermes.exe", "plushuman", "plushuman.exe", "alfred", "alfred.exe"} and (not own_launcher_only or _own_store_launcher(argv[0])):
         args = argv[1:]
     else:
         _unverified(f"{Path(argv[0]).name} is not this install's Python or hermes launcher")

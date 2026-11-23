@@ -51,7 +51,7 @@ os.makedirs(hermes_home, exist_ok=True)
 os.makedirs(workspace, exist_ok=True)
 isolate_host(tmp_root, hermes_home)
 # A model that cannot see manage_connections reaches for the host's `plushuman` CLI (`plushuman mcp install`,
-# `hermes pm repair`); keep that out of the operator's install.
+# `plushuman pm repair`); keep that out of the operator's install.
 with open(os.path.join(tmp_root, "bin", "hermes"), "w", encoding="utf-8") as f:
     f.write("#!/bin/sh\necho 'hermes: the CLI is not available inside this eval sandbox' >&2\nexit 127\n")
 os.chmod(os.path.join(tmp_root, "bin", "hermes"), 0o755)

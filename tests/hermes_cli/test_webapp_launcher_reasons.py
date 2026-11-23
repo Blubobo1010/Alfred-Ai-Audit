@@ -1,4 +1,4 @@
-"""``hermes webapp`` says why the Webapp is off.
+"""``plushuman webapp`` says why the Webapp is off.
 
 When the ``webapp:`` block asks for the Webapp but is malformed, the command prints the block's own
 problem (an invalid host, port, public URL or a non-boolean ``enabled``), never "Set webapp.enabled:

@@ -5,7 +5,7 @@ Cloud memory API with hybrid search (Vector + BM25 + Reranking) and 7 memory typ
 ## Requirements
 
 - RetainDB account ($20/month) from [retaindb.com](https://www.retaindb.com)
-- `requests` is part of +Human's core dependencies; no separate SDK install is needed. For damaged dependencies, use `hermes pm repair` and restart +Human.
+- `requests` is part of +Human's core dependencies; no separate SDK install is needed. For damaged dependencies, use `plushuman pm repair` and restart +Human.
 
 ## Setup
 

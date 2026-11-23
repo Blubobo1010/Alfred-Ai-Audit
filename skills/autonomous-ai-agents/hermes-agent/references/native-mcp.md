@@ -217,7 +217,7 @@ next connect attempt, so it recovers without a restart. If the error persists, t
 dependencies are damaged; rebuild the recorded environment through PM:
 
 ```bash
-hermes pm repair
+plushuman pm repair
 ```
 
 ### Tools not appearing

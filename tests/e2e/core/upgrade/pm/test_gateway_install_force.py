@@ -1,19 +1,19 @@
 """The PM runtime lock is where PM commands look for it (PM lifecycle, class 6; #124075).
 
 The field report: after ``plushuman gateway install --force`` the gateway crash-looped with "no
-dependency environment is committed" and ``hermes pm repair`` / ``pm doctor`` / ``pm status`` all
+dependency environment is committed" and ``plushuman pm repair`` / ``pm doctor`` / ``pm status`` all
 died on ``FileNotFoundError: <install>/environments/<env>/workspace/pm/uv.lock``.
 
 ``--force`` was incidental: every generation's ``workspace/`` copy was materialised without
-``pm/uv.lock`` (the copy dropped every file named ``uv.lock``), so ANY ``hermes pm`` command run
+``pm/uv.lock`` (the copy dropped every file named ``uv.lock``), so ANY ``plushuman pm`` command run
 by the selected generation's own ``plushuman`` (the one on PATH for every child a +Human process
 spawns, and the one a unit pointing at the managed environment runs) died before it started.
 After a dependency-changing ``plushuman update``:
 
 * ``plushuman gateway install --force`` (service manager is a failing shim: the unit write is what
-  is exercised) leaves the install bootable: ``hermes pm status`` / ``pm doctor`` run and
+  is exercised) leaves the install bootable: ``plushuman pm status`` / ``pm doctor`` run and
   ``plushuman gateway run`` reaches running;
-* ``hermes pm status`` / ``pm doctor`` also run from the managed environment's ``plushuman``.
+* ``plushuman pm status`` / ``pm doctor`` also run from the managed environment's ``plushuman``.
 """
 
 from __future__ import annotations
@@ -69,7 +69,7 @@ def test_gateway_install_force_leaves_the_install_bootable(updated):
     cp = P.run_env(sb, [sb.hermes, "gateway", "install", "--force"], P.lazy_env(sb), timeout=600)
     assert I.TRACEBACK not in cp.stdout + cp.stderr, I.describe(cp)
     bad = _pm_failures(sb, sb.hermes)
-    assert not bad, "hermes pm commands fail after `gateway install --force`:\n" + "\n".join(bad)
+    assert not bad, "plushuman pm commands fail after `gateway install --force`:\n" + "\n".join(bad)
     gw = P.Gateway(sb, P.lazy_env(sb), sb.root / "after-install-force.log")
     try:
         gw.wait_running()
@@ -81,4 +81,4 @@ def test_pm_commands_run_from_the_managed_environment(updated):
     sb = updated
     exe = str(P.selected_generation(sb) / "venv" / "bin" / "hermes")
     bad = _pm_failures(sb, exe)
-    assert not bad, "hermes pm commands die from the managed environment's hermes:\n" + "\n".join(bad)
+    assert not bad, "plushuman pm commands die from the managed environment's hermes:\n" + "\n".join(bad)

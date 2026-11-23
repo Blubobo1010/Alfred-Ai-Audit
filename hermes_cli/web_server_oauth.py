@@ -107,7 +107,7 @@ def _external_process_cli_command(provider_id: str, default: str) -> str:
         pconfig = PROVIDER_REGISTRY.get(provider_id)
         if not pconfig or pconfig.auth_type != "external_process":
             return default
-        if default.split(" ", 1)[0] == "hermes":
+        if default.split(" ", 1)[0] in ("hermes", "plushuman", "alfred"):
             # `plushuman auth add <slug>` only works when the plugin owns an auth_handler; without
             # one the CLI exits with "ships no auth_handler" and no executable swap fixes that.
             from hermes_cli.auth_plugin_providers import plugin_auth_handler

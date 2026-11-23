@@ -214,7 +214,7 @@ def test_enqueue_say_requires_text():
 
 
 def test_cli_register_includes_node_subcommand():
-    """`hermes meet` argparse tree includes the node subtree."""
+    """`plushuman meet` argparse tree includes the node subtree."""
     import argparse
     from plugins.google_meet.cli import register_cli
 
@@ -240,7 +240,7 @@ def test_looks_like_human_speaker():
     from plugins.google_meet.meet_bot import _looks_like_human_speaker
 
     # Blank, "unknown", "you", and the bot's own name → not human (no barge-in)
-    for s in ("", "   ", "Unknown", "unknown", "You", "you", "+Human", "plushuman"):
+    for s in ("", "   ", "Unknown", "unknown", "You", "you", "+Human", "+human"):
         assert not _looks_like_human_speaker(s, "+Human"), f"{s!r} should NOT be human"
     # Real names → human (barge-in)
     for s in ("Alice", "Bob Lee", "@teknium"):
@@ -389,7 +389,7 @@ def test_realtime_session_cancel_response_when_disconnected():
 
 
 # ---------------------------------------------------------------------------
-# hermes meet install CLI
+# plushuman meet install CLI
 # ---------------------------------------------------------------------------
 
 
@@ -410,7 +410,7 @@ def test_cmd_install_uses_declared_dependencies_and_pm_chromium(monkeypatch, cap
     from pm.features import declared_extras
 
     assert set(calls[0][1]) <= set(declared_extras(Path(__file__).resolve().parents[2]))
-    assert "hermes meet setup" in capsys.readouterr().out
+    assert "plushuman meet setup" in capsys.readouterr().out
 
 
 @pytest.mark.platforms("linux", "macos")

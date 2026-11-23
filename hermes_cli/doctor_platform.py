@@ -29,7 +29,7 @@ def _python_repair_hint() -> str:
     if method in ("docker", "apt"):
         command = recommended_update_command_for_method(method)
         return f"Run `{command}`" + (", then recreate the +Human container" if method == "docker" else "")
-    return "Run `hermes pm repair`, then restart +Human"
+    return "Run `plushuman pm repair`, then restart +Human"
 
 
 def _system_package_install_cmd(pkg: str) -> str:
@@ -570,7 +570,7 @@ def _check_web_dashboard_import(should_fix: bool, f: Finding) -> None:
         _fail_and_issue(
             "Dashboard web surface",
             "(import probe timed out)",
-            "Repair the dashboard dependencies: `hermes pm repair`, then restart +Human",
+            "Repair the dashboard dependencies: `plushuman pm repair`, then restart +Human",
             f.issues,
         )
         return
@@ -587,7 +587,7 @@ def _check_web_dashboard_import(should_fix: bool, f: Finding) -> None:
     _fail_and_issue(
         "Dashboard web surface",
         detail,
-        "Repair the dashboard dependencies: `hermes pm repair`, then restart +Human",
+        "Repair the dashboard dependencies: `plushuman pm repair`, then restart +Human",
         f.issues,
     )
 

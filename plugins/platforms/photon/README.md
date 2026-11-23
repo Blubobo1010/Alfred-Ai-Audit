@@ -45,13 +45,13 @@ talks to it over loopback.
 
 ```bash
 # One-shot setup: device login (opens browser) + project + user + sidecar deps
-hermes photon setup --phone +15551234567
+plushuman photon setup --phone +15551234567
 
 # Start the gateway
 plushuman gateway start
 ```
 
-`hermes photon setup` does, in order:
+`plushuman photon setup` does, in order:
 
 1. **Device login** (RFC 8628, `client_id=photon-cli`) — opens
    `https://app.photon.codes/` for approval and stores the bearer token.
@@ -71,7 +71,7 @@ plushuman gateway start
 There is no separate `login` command; like every other +Human channel,
 onboarding goes through one setup surface. Re-running `setup` reuses an
 existing token/project, so it's safe to run again to finish a partial setup.
-Run `hermes photon status` to see what's configured.
+Run `plushuman photon status` to see what's configured.
 
 ## Credentials
 
@@ -123,7 +123,7 @@ All env vars are documented in `plugin.yaml`. The most important:
 | `PHOTON_ALLOWED_USERS`    | your number (set by setup) | Comma-separated E.164 allowlist      |
 | `PHOTON_REQUIRE_MENTION`  | false                      | Gate group chats on a wake word      |
 | `PHOTON_MAX_INLINE_ATTACHMENT_BYTES` | 20 MB           | Max inbound attachment size the sidecar reads & inlines |
-| `PHOTON_TELEMETRY`        | false                      | Spectrum SDK telemetry — toggle with `hermes photon telemetry on\|off` (restart the gateway to apply) |
+| `PHOTON_TELEMETRY`        | false                      | Spectrum SDK telemetry — toggle with `plushuman photon telemetry on\|off` (restart the gateway to apply) |
 | `PHOTON_MARKDOWN`         | true                       | Send agent replies as markdown (iMessage renders natively). `false` strips formatting to plain text |
 | `PHOTON_REACTIONS`        | false                      | Tapback 👀/👍/👎 as processing status; tapbacks on bot messages reach the agent as `reaction:added:<emoji>` |
 
@@ -209,7 +209,7 @@ deliberate:
    fails loudly if the anchors no longer match — update them to the new output
    (`test_spectrum_patch.py` covers the patch).
 5. Run `pytest tests/plugins/platforms/photon/`.
-6. Verify end-to-end: `hermes photon status`, a DM and a group roundtrip,
+6. Verify end-to-end: `plushuman photon status`, a DM and a group roundtrip,
    and an agent reply into a group right after a gateway restart (exercises
    `space.get` rehydration).
 

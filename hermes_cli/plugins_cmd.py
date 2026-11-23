@@ -525,7 +525,7 @@ def _admit_and_save_plugin_sets(
             plugin=plugin, settled=settled,
         )
     except DependencyConflict as exc:
-        # `hermes pm install` cannot fix a conflict, so the retry hint below would mislead here.
+        # `plushuman pm install` cannot fix a conflict, so the retry hint below would mislead here.
         if console is not None:
             console.print(f"[red]✗[/red] {escape(str(exc))}")
             console.print("[dim]config.yaml and the active environment are unchanged.[/dim]")
@@ -535,7 +535,7 @@ def _admit_and_save_plugin_sets(
             console.print(f"[red]✗[/red] {action} refused: {exc}")
             console.print(
                 "[dim]config.yaml and the active environment are unchanged. "
-                "Run `hermes pm install` to resolve dependencies, then retry.[/dim]"
+                "Run `plushuman pm install` to resolve dependencies, then retry.[/dim]"
             )
         raise
 

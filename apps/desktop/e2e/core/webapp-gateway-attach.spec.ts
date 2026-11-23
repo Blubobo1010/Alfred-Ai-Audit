@@ -2,7 +2,7 @@
  * The browser-hosted Desktop is served by the profile gateway's own listener, exactly like local
  * Electron Desktop talks to that gateway: one process runs every turn and owns the profile's store.
  *
- * `webapp.enabled` in the home's config.yaml turns it on; `hermes webapp` starts the gateway and prints
+ * `webapp.enabled` in the home's config.yaml turns it on; `plushuman webapp` starts the gateway and prints
  * a one-use launch link it got over the gateway's control socket. Proof, end to end with a real browser:
  *  - exactly one gateway serves the sandbox, and the browser's socket is that gateway's own;
  *  - a turn's terminal tool runs under the gateway process (its ancestry);
@@ -10,11 +10,11 @@
  *  - reload resumes the chat;
  *  - after the gateway is killed and started again, the same tab is still signed in (the browser
  *    credential is kept in the home) and the next turn works;
- *  - `hermes webapp --sign-out` cuts that tab off.
+ *  - `plushuman webapp --sign-out` cuts that tab off.
  *
  * A second test puts the Webapp and Electron Desktop on one chat: Electron answers the approval a
  * Webapp turn raised, and the Webapp stops a turn Electron started. A third puts the Webapp behind
- * the sign-in gate: `hermes webapp --sign-out` signs out a browser that signed in with a password.
+ * the sign-in gate: `plushuman webapp --sign-out` signs out a browser that signed in with a password.
  *
  * Linux (the /proc ancestry walk); needs the Webapp renderer (`pnpm run build:webapp`) and a
  * Chromium Playwright can launch (`pnpm exec playwright install chromium`, or HERMES_E2E_CHROMIUM).
@@ -72,7 +72,7 @@ function alive(pid: number): boolean {
   }
 }
 
-/** `hermes webapp <args>` in the sandbox. */
+/** `plushuman webapp <args>` in the sandbox. */
 function hermesWebapp(sandbox: CoreSandbox, ...args: string[]): { code: number | null; output: string } {
   return hermesCli(sandbox, ['webapp', ...args])
 }
@@ -168,7 +168,7 @@ test('the gateway serves the Webapp and runs every turn its browser sends', asyn
     await expect(page.getByText(A(1)).first()).toBeVisible({ timeout: 60_000 })
     expect(backendProcesses(sandbox).map(proc => proc.pid)).toEqual([gateway.pid])
 
-    // A gateway killed and started again (here by `hermes webapp`, whose new link this tab never
+    // A gateway killed and started again (here by `plushuman webapp`, whose new link this tab never
     // uses): the same tab is still signed in and the next turn runs on the new gateway.
     process.kill(gateway.pid, 'SIGKILL')
     await expect.poll(() => alive(gateway.pid), { timeout: 30_000 }).toBe(false)
@@ -441,7 +441,7 @@ function python(sandbox: CoreSandbox, code: string, ...args: string[]): string {
 
 /**
  * Behind the sign-in gate the browser signs in with the dashboard's password, not the browser
- * credential `hermes webapp` hands out; `hermes webapp --sign-out` must still sign it out: the open
+ * credential `plushuman webapp` hands out; `plushuman webapp --sign-out` must still sign it out: the open
  * tab is cut off, a reload lands on the sign-in page, and signing in again works.
  */
 test('signing out of a Webapp behind sign-in signs the browser out', async () => {

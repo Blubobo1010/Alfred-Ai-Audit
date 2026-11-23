@@ -23,7 +23,7 @@ release and breaks something that runs AFTER the checkout moved, for real:
     completion child in its own session or reparented to the namespace init).
 (d) a sticky profile (``plushuman profile use e2epost``) must not move update.log / update receipts off
     the root hermes home, and ``plushuman logs update`` under that profile reads the root's update.log;
-    pm's own sync receipts stay where pm writes them and ``hermes pm status`` there still shows them.
+    pm's own sync receipts stay where pm writes them and ``plushuman pm status`` there still shows them.
 (e) the dependency sync fails after the tree moved (contract amendment A6): the release's
     ``pm.client.ensure_tools_for_sync`` raises while ``$HOME/.e2e-break-deps-sync`` exists; it runs in
     the completion bootstrap from the NEW tree, after the checkout moved. Exit 0, a ``dependencies``
@@ -550,7 +550,7 @@ def test_sticky_profile_update_logs_and_receipts_land_in_the_root_home(w):
             f"pm's sync receipt for this update is missing from the profile home {prof_receipts}:\n{diag}"
         pm_cp = w.sb.cli("pm", "status", timeout=300)
         assert pm_cp.returncode == 0 and json.loads(pm_cp.stdout).get("update_id") == rec.get("update_id"), \
-            f"`hermes pm status` under the profile does not show this run's newest receipt:\n{H.describe(pm_cp)}\n{diag}"
+            f"`plushuman pm status` under the profile does not show this run's newest receipt:\n{H.describe(pm_cp)}\n{diag}"
         assert log1 > log0, f"the root update.log did not grow:\n{diag}"
         assert rec.get("update_id") != prev.get("update_id") and rec.get("outcome") == "success", \
             f"root latest.json is not this run's success:\n{diag}"

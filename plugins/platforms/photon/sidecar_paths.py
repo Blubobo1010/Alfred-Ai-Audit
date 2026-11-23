@@ -33,7 +33,7 @@ _MIRROR_FILES = (
 )
 # Tests monkeypatch these module globals directly; the accessors honor a non-None value.
 _SIDECAR_DIR: Optional[Path] = None
-# Written by `hermes photon install-sidecar` on npm failure so check_requirements() can
+# Written by `plushuman photon install-sidecar` on npm failure so check_requirements() can
 # surface the root cause later; cleared on success.
 _NPM_ERROR_LOG: Optional[Path] = None
 _NPM_ERROR_LOG_MAX_CHARS = 300

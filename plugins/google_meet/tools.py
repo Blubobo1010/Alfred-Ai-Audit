@@ -69,7 +69,7 @@ MEET_JOIN_SCHEMA = _schema(
      "node": _str("Name of a registered remote node to run the bot on (useful when the gateway "
                   "runs on a headless Linux box but the user's Chrome with a signed-in Google "
                   "profile lives on their Mac). Pass 'auto' to use the single registered node. "
-                  "Default: run locally. Nodes are approved via `hermes meet node approve`.")},
+                  "Default: run locally. Nodes are approved via `plushuman meet node approve`.")},
     required=["url"])
 
 MEET_STATUS_SCHEMA = _schema(
@@ -121,7 +121,7 @@ def _dispatch(node: Optional[str], op: str, remote, local) -> str:
     client, node_name = resolve_node(node)
     if client is None:
         return _err(f"no registered meet node matches {node!r} — "
-                    "run `hermes meet node approve <name> <url> <token>` first")
+                    "run `plushuman meet node approve <name> <url> <token>` first")
     try:
         res = remote(client)
     except Exception as e:
@@ -145,7 +145,7 @@ def handle_meet_join(args: dict[str, Any], **_kw) -> str:
         if not check_meet_requirements():
             return {"ok": False, "error": (
                 "google_meet plugin prerequisites missing — install with "
-                "`hermes meet install`. Plugin is supported on Linux and macOS only.")}
+                "`plushuman meet install`. Plugin is supported on Linux and macOS only.")}
         return pm.start(**common)
 
     return _dispatch(args.get("node"), "start_bot", lambda c: c.start_bot(**common), _local)

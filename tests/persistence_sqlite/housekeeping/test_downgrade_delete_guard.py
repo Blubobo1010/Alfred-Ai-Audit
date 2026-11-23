@@ -80,5 +80,5 @@ def test_an_upgraded_store_gains_the_guard_on_its_next_open(tmp_path):
         conn.execute('DROP TRIGGER sessions_runtime_ledger_delete_guard')
         conn.commit()
     StoreHolder(path).close()
-    with pytest.raises(sqlite3.IntegrityError, match='newer +Human'):
+    with pytest.raises(sqlite3.IntegrityError, match='newer \\+Human'):
         _older_release_delete(path, 's')

@@ -212,7 +212,7 @@ def _print_first_run_primer(config: dict) -> None:
         print(f"    {color(cmd.ljust(width), Colors.YELLOW)}{what}")
     _print_macos_fda_tip()
     print()
-    print(f"  Start chatting:  {color('hermes', Colors.GREEN, Colors.BOLD)}")
+    print(f"  Start chatting:  {color('plushuman', Colors.GREEN, Colors.BOLD)}")
     print()
 
 

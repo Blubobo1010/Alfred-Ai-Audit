@@ -692,7 +692,7 @@ def _check_profiles(should_fix: bool, f: Finding) -> None:
             if not wrapper.is_file():
                 continue
             with warn_on_error(""):
-                _m = _re.search(r"plushuman -p (\S+)", wrapper.read_text(encoding="utf-8-sig"))
+                _m = _re.search(r"(?:hermes|plushuman|alfred) -p (\S+)", wrapper.read_text(encoding="utf-8-sig"))  # alfred:keep
                 if _m and not profile_exists(_m.group(1)):
                     alias = wrapper.stem if _wrapper_path(wrapper.stem) == wrapper else wrapper.name
                     fix = f"plushuman profile alias {alias} --remove" if PROFILE_ID_RE.match(alias) else f"delete {wrapper}"

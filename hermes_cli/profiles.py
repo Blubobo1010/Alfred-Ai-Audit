@@ -324,7 +324,8 @@ def _is_our_wrapper(path: Path) -> bool:
     """True when *path* reads as a +Human-generated wrapper (``plushuman -p`` in its head)."""
     try:
         with open(path, encoding="utf-8-sig") as f:
-            return "plushuman -p" in f.read(_WRAPPER_READ_LIMIT)
+            head = f.read(_WRAPPER_READ_LIMIT)
+            return any(needle in head for needle in ("hermes -p ", "plushuman -p ", "alfred -p "))  # alfred:keep
     except Exception:
         return False
 
@@ -618,7 +619,7 @@ def build_alias_map() -> dict[str, str]:
     if not wrapper_dir.is_dir():
         return result
     is_windows = sys.platform == "win32"
-    prefix = "hermes -p "  # alfred:keep (wrappers exec the hermes binary path)
+    prefixes = ("hermes -p ", "plushuman -p ", "alfred -p ")  # alfred:keep
     for entry in sorted(wrapper_dir.iterdir()):
         if not entry.is_file():
             continue
@@ -630,9 +631,10 @@ def build_alias_map() -> dict[str, str]:
                 content = f.read(_WRAPPER_READ_LIMIT)
         except (OSError, UnicodeDecodeError):
             continue  # UnicodeDecodeError = a binary on PATH, not a wrapper
-        idx = content.find(prefix)
-        if idx == -1:
+        found = [(content.find(p), p) for p in prefixes if p in content]
+        if not found:
             continue
+        idx, prefix = min(found)
         rest = content[idx + len(prefix):]
         # Profile id is the first whitespace-delimited token after the flag.
         canon = rest.split(None, 1)[0].strip() if rest.strip() else ""

@@ -273,7 +273,7 @@ def _configured_features_missing_deps() -> list[tuple[str, str, str]]:
         from hermes_cli.config import load_config_readonly
 
         if (load_config_readonly().get("mcp_servers") or {}) and importlib.util.find_spec("mcp") is None:
-            missing.append(("MCP servers", "Run `hermes pm install` to install MCP support.", "mcp"))
+            missing.append(("MCP servers", "Run `plushuman pm install` to install MCP support.", "mcp"))
     except Exception as exc:
         logger.debug("configured-MCP dependency check skipped: %s", exc)
     return missing
@@ -292,7 +292,7 @@ def _install_configured_features_missing_deps(project_root: Path) -> None:
     missing = _configured_features_missing_deps()
     if not missing:
         return
-    # `hermes pm install --without NAME` outranks a platform still left in config.
+    # `plushuman pm install --without NAME` outranks a platform still left in config.
     declared = set(declared_extras(project_root)) - declined_extras(project_root)
     extras = sorted({extra for *_, name in missing
                      if (extra := name.replace("_", "-")) in declared and extra_supported(extra)})

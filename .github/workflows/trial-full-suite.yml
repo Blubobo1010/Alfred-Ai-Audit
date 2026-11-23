@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        tree: [plushuman, upstream]
+        tree: [plushuman]
         slice: [1, 2, 3, 4, 5, 6, 7, 8]
     steps:
       - name: Checkout this tree
@@ -90,5 +90,82 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: result-${{ matrix.tree }}-${{ matrix.slice }}
+          path: ${{ runner.temp }}/result
+          retention-days: 7
+
+  js:
+    name: js ${{ matrix.tree }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        tree: [plushuman, upstream]
+    steps:
+      - name: Checkout this tree
+        if: ${{ matrix.tree == 'plushuman' }}
+        uses: actions/checkout@v4
+
+      - name: Checkout pristine upstream
+        if: ${{ matrix.tree == 'upstream' }}
+        uses: actions/checkout@v4
+        with:
+          repository: NousResearch/hermes-agent
+          ref: v0.23.3
+
+      - name: Locked Node, pnpm and Python
+        uses: ./.github/actions/setup-pm
+        with:
+          toolchain: all
+          extras: '[]'
+          test-environment: 'true'
+
+      - name: Install zsh and a virtual display for Electron
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y zsh xvfb \
+            libgtk-3-0 libnotify4 libnss3 libxss1 libxtst6 \
+            xdg-utils libatspi2.0-0 libdrm2 libgbm1 libasound2t64
+
+      - name: Install workspaces
+        uses: ./.github/actions/retry
+        with:
+          command: just js-install
+
+      - name: Locked Electron runtime
+        run: just electron-runtime
+
+      - name: Install WhatsApp bridge dependencies
+        uses: ./.github/actions/retry
+        with:
+          command: just js-install-whatsapp-bridge
+
+      - name: WhatsApp bridge node tests
+        shell: bash
+        run: just test-whatsapp-bridge 2>&1 | tee "$RUNNER_TEMP/js-whatsapp.log"
+
+      - name: Every workspace's tests
+        if: ${{ !cancelled() }}
+        shell: bash
+        run: |
+          pnpm --dir ui-tui run build:ink
+          xvfb-run -a pnpm -r --no-bail test 2>&1 | tee "$RUNNER_TEMP/js-tests.log"
+
+      - name: Collect the logs
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          out="$RUNNER_TEMP/result"
+          mkdir -p "$out"
+          for f in js-whatsapp js-tests; do
+            [ -f "$RUNNER_TEMP/$f.log" ] && gzip -c "$RUNNER_TEMP/$f.log" > "$out/$f.log.gz"
+          done
+          grep -a -E 'Test Files|Tests |^# (pass|fail)|FAIL ' "$RUNNER_TEMP"/js-*.log | cut -c1-300 | tail -n 80 || true
+
+      - name: Upload the result
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: result-js-${{ matrix.tree }}
           path: ${{ runner.temp }}/result
           retention-days: 7

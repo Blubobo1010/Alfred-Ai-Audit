@@ -608,7 +608,7 @@ def _find_bash() -> str:
         return bash
     raise RuntimeError(
         "No shell found. +Human needs bash (Git for Windows on Windows). "
-        "Run `hermes pm install` or reinstall the bundle."
+        "Run `plushuman pm install` or reinstall the bundle."
     )
 
 

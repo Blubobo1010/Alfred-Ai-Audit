@@ -222,7 +222,7 @@ chown_hermes_tree() {
 
 tree_has_non_hermes_owner() {
     target="$1"
-    find "$target" \( ! -user plushuman -o ! -group hermes \) -print -quit 2>/dev/null | grep -q .
+    find "$target" \( ! -user hermes -o ! -group hermes \) -print -quit 2>/dev/null | grep -q .
 }
 
 needs_chown=false

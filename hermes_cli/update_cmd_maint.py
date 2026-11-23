@@ -905,12 +905,12 @@ def _install_default_tools_after_update() -> None:
             with suppress(pm.InstallError, OSError):
                 pm.ensure(name, explicit=True, verify=False)
             continue
-        print(f"\n→ Installing {name} (default tool; opt out with `hermes pm install --without {name}`)...")
+        print(f"\n→ Installing {name} (default tool; opt out with `plushuman pm install --without {name}`)...")
         try:
             pm.ensure(name, explicit=True)
         except (pm.InstallError, OSError) as exc:
             print(f"  ⚠ {name} was not installed: {exc}")
-            print(f"    Retry with: hermes pm install {name}")
+            print(f"    Retry with: plushuman pm install {name}")
 
 
 def _print_checkpoint_footprint_notice() -> None:

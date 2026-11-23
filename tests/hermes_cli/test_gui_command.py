@@ -343,7 +343,7 @@ def test_gui_close_preview_flag_forwards_to_packaged_exe(tmp_path, monkeypatch):
 def test_launch_installed_macos_desktop_app_gates_on_bundle_and_platform(tmp_path, monkeypatch, exists, platform):
     monkeypatch.setattr(main_desktop.sys, "platform", platform)
     exe = Path("/Applications/+Human.app/Contents/MacOS/+Human")
-    monkeypatch.setattr(main_desktop.Path, "is_file", lambda self: exists if self == exe else Path.is_file(self))
+    monkeypatch.setattr(main_desktop.Path, "is_file", lambda self, _real=Path.is_file: exists if self == exe else _real(self))
     calls = []
     if exists and platform == "darwin":
         from hermes_cli import bundled_app

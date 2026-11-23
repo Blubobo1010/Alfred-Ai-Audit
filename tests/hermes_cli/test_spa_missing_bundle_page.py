@@ -31,7 +31,7 @@ def _stale_bundle(dist: Path) -> Path:
     return dist
 
 
-@pytest.mark.parametrize(("surface", "command"), [("webapp", "hermes webapp"),
+@pytest.mark.parametrize(("surface", "command"), [("webapp", "plushuman webapp"),
                                                   (None, "pnpm --dir web run build")],
                          ids=["webapp", "dashboard"])
 @pytest.mark.parametrize("path", ["/", "/sessions/abc"])
@@ -50,7 +50,7 @@ def test_a_browser_is_shown_a_page_for_a_bundle_update_could_not_rebuild(monkeyp
     assert response.status_code == 503
     assert response.headers["content-type"].startswith("text/html")
     assert "old build" not in response.text
-    assert "hermes webapp" in response.text
+    assert "plushuman webapp" in response.text
     # The Webapp surface keeps its page policy on this page too.
     assert "default-src 'none'" in response.headers["content-security-policy"]
 
@@ -61,6 +61,6 @@ def test_an_api_client_still_reads_the_reason_as_json(monkeypatch, tmp_path):
     stale = _spa(monkeypatch, _stale_bundle(tmp_path), surface="webapp").get("/")
 
     assert missing.status_code == 404
-    assert missing.json() == {"error": "The Webapp is not built. Run: hermes webapp"}
+    assert missing.json() == {"error": "The Webapp is not built. Run: plushuman webapp"}
     assert stale.status_code == 503
-    assert "hermes webapp" in stale.json()["error"]
+    assert "plushuman webapp" in stale.json()["error"]

@@ -871,7 +871,7 @@ def test_doctor_fix_does_not_claim_success_without_published_binary(monkeypatch,
     out = buf.getvalue()
 
     assert "Chromium not installed" in out
-    assert "hermes pm install chromium" in out
+    assert "plushuman pm install chromium" in out
 
 
 def test_doctor_fix_reports_pm_install_failure(monkeypatch, tmp_path):
@@ -915,7 +915,7 @@ def test_missing_chromium_is_info_when_config_needs_none(monkeypatch, tmp_path, 
     out = buf.getvalue()
 
     assert "not needed" in out and reason in out
-    assert "hermes pm install chromium" not in out
+    assert "plushuman pm install chromium" not in out
 
 
 def test_run_doctor_kimi_cn_env_is_detected_and_probe_is_null_safe(monkeypatch, tmp_path):

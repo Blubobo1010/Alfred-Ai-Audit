@@ -1421,7 +1421,7 @@ def recover_if_needed(project_root: Path | None = None, argv: list[str] | None =
         if any(_marker_owner_is_live(marker) for marker in markers):
             return False
         if not explicit and any(_read_marker_attempts(marker) >= _EARLY_CORE_INSTALL_MAX_ATTEMPTS for marker in markers):
-            print("hermes: automatic dependency repair retry limit reached; run `hermes pm repair`", file=sys.stderr)
+            print("hermes: automatic dependency repair retry limit reached; run `plushuman pm repair`", file=sys.stderr)
             return False
         from pm.recovery import repair_dependencies
 
@@ -1439,7 +1439,7 @@ def recover_if_needed(project_root: Path | None = None, argv: list[str] | None =
             raise  # The bootstrap or PM CLI reports the access error once.
         for marker in markers:
             _count_failed_attempt(marker)
-        print(f"hermes: dependency repair failed: {exc}; run `hermes pm repair`", file=sys.stderr)
+        print(f"hermes: dependency repair failed: {exc}; run `plushuman pm repair`", file=sys.stderr)
         return False
     finally:
         os.close(lock)

@@ -530,7 +530,7 @@ class PluginLoaderMixin:
         else:
             logger.warning(
                 "Plugin %s declares Python dependencies that are not "
-                "installed: %s. For an enabled plugin, run hermes pm repair, "
+                "installed: %s. For an enabled plugin, run plushuman pm repair, "
                 "then restart +Human. Discovery does not install dependencies.",
                 key, ", ".join(missing),
             )

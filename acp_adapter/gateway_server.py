@@ -877,7 +877,7 @@ class GatewayACPAgent(GatewayReplyMixin, acp.Agent):
         lost = [row["admission_id"] for row in self._snapshots.get(session_id, {}).get("pending", [])
                 if row.get("status") == "unknown"] or [admission_id]
         profile = profile_name_for_home(self._home)
-        command = "hermes" + (f" -p {profile}" if profile not in (None, "default") else "")
+        command = "plushuman" + (f" -p {profile}" if profile not in (None, "default") else "")
         state = ("your input is accepted and kept" if submitted else "nothing was submitted")
         return (f"unknown_execution: do not resend accepted input; a turn in this session was lost when the "
                 f"gateway restarted and its outcome is unknown ({state}). Send "

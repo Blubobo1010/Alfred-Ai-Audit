@@ -376,7 +376,7 @@ def test_profile_mode_blocks_root_credentials(tmp_path, monkeypatch):
     "rel", ["webapp/session-token", "webapp/native-sign-in-tokens.json", "webapp/sign-in-registration.json"])
 def test_the_webapps_sign_in_files_are_neither_read_nor_written(tmp_path, monkeypatch, rel):
     """``webapp/`` holds the Webapp's browser credential (a bare token no redaction pattern masks; it opens
-    host shells and files on the loopback Webapp until ``hermes webapp --sign-out``), the record of the
+    host shells and files on the loopback Webapp until ``plushuman webapp --sign-out``), the record of the
     provider tokens its listener gave native apps and the Portal callback its Web Access registered. The
     agent's file tools neither read nor write anything there, in the profile's home or at the root: a
     write could plant a credential or a grant that the gateway then honours."""

@@ -334,7 +334,7 @@ uses `python -m pm.build_env --prune-cache --cache PATH`; add `--ci` only when t
 cache will not be packaged for offline installation.
 
 Native bundle staging keeps its HOME and PM state temporary, but not its uv
-cache. `scripts.bundles.stage --cache PATH` (or `hermes pm bundle --cache PATH`)
+cache. `scripts.bundles.stage --cache PATH` (or `plushuman pm bundle --cache PATH`)
 selects the persistent cache explicitly. Direct staging also accepts the
 provider's `UV_CACHE_DIR`; otherwise it uses the output parent's `.uv-cache`.
 The PM runtime and application dependency builds receive this same cache.

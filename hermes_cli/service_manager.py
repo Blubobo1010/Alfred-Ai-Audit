@@ -539,7 +539,7 @@ class S6ServiceManager:
             gateway_cmd = f"plushuman -p {shlex.quote(profile)} gateway run --replace"
         # Skip the drop when already non-root (setgroups() lacks CAP_SETGID → s6 boot-loop).
         lines.append(f'[ "$(id -u)" = 0 ] || exec {gateway_cmd}')
-        lines.append(f"exec s6-setuidgid plushuman {gateway_cmd}")
+        lines.append(f"exec s6-setuidgid hermes {gateway_cmd}")
         return "\n".join(lines) + "\n"
 
     @staticmethod

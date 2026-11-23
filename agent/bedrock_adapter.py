@@ -124,7 +124,7 @@ def _require_boto3():
     if version < _MIN_BOTO3_VERSION:
         raise RuntimeError(
             f"boto3 {boto3.__version__} does not support converse_stream "
-            f"(minimum 1.34.59 required). Run: hermes pm repair"
+            f"(minimum 1.34.59 required). Run: plushuman pm repair"
         )
     return boto3
 

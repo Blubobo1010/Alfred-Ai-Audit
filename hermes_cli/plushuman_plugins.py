@@ -109,7 +109,9 @@ def _run_bounded(cmd: list[str], *, timeout: int, env: dict[str, str]) -> subpro
     """Run `cmd` without stdin in a process group of its own; past `timeout` the whole group is killed (a child it
     left in the background included) and TimeoutExpired is raised."""
     with subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
-                          env=env, start_new_session=True) as proc:
+                          encoding="utf-8", errors="replace", env=env,
+                          # detached-spawn: ok — awaited with a timeout that kills its group, grandchildren included
+                          start_new_session=True) as proc:
         try:
             out, err = proc.communicate(timeout=timeout)
         except subprocess.TimeoutExpired:
@@ -124,7 +126,7 @@ def installed_revision(plugin_dir: Path) -> str | None:
     if not (plugin_dir / ".git").exists():
         return None
     r = subprocess.run(["git", "-C", str(plugin_dir), "rev-parse", "HEAD"], capture_output=True, text=True,
-                       check=False, stdin=subprocess.DEVNULL)
+                       encoding="utf-8", errors="replace", check=False, stdin=subprocess.DEVNULL)
     return r.stdout.strip() if r.returncode == 0 else None
 
 
@@ -208,7 +210,9 @@ def _run_worker(home: Path, timeout: int, say: Callable[[str], None]) -> bool:
     cmd = [sys.executable, "-m", "hermes_cli.plushuman_plugins", "--home", str(home)]
     try:
         proc = subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                                text=True, env=_child_env(home, own_group=True), start_new_session=True)
+                                text=True, encoding="utf-8", errors="replace", env=_child_env(home, own_group=True),
+                                # detached-spawn: ok — awaited with a timeout that kills its group
+                                start_new_session=True)
     except OSError as exc:
         say(f"  ⚠ +Human plugins in {home}: worker not started ({exc}); retried later")
         _mark_retry(home)
@@ -271,6 +275,7 @@ def retry_due() -> None:
             _write_state(home, state)
         subprocess.Popen(  # this interpreter, this module; the worker takes the lock itself
             [sys.executable, "-m", "hermes_cli.plushuman_plugins", "--home", str(home)],
+            # detached-spawn: ok — the retry must outlive the command that noticed it was due
             stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True,
             env=_child_env(home, own_group=True))
     except Exception as exc:  # a retry problem must never reach the command being launched

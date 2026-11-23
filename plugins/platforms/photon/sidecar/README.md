@@ -20,7 +20,7 @@ cd plugins/platforms/photon/sidecar
 npm install
 ```
 
-The +Human plugin's `hermes photon setup` command runs `npm install`
+The +Human plugin's `plushuman photon setup` command runs `npm install`
 here automatically.
 
 ## Run standalone

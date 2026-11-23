@@ -1747,7 +1747,7 @@ class TestRedactForEgress:
 
 
 class TestWebappLaunchLinks:
-    """``hermes webapp`` prints a link that signs a browser in as the user: one with the gateway's
+    """``plushuman webapp`` prints a link that signs a browser in as the user: one with the gateway's
     browser credential after ``#hermes-session=`` (what older gateways printed on macOS), or a one-use
     launch ticket after ``/webapp/launch#ticket=``. Either opens the user's +Human until it is spent or
     replaced, so when +Human runs the command through its terminal tool neither reaches the transcript.
@@ -1759,7 +1759,7 @@ class TestWebappLaunchLinks:
         from agent.redact import redact_terminal_output
 
         link = "http://127.0.0.1:9120/?profile=work#hermes-session=" + self.CREDENTIAL
-        out = redact_terminal_output(f"Open this link in your browser:\n  {link}\n", "hermes webapp")
+        out = redact_terminal_output(f"Open this link in your browser:\n  {link}\n", "plushuman webapp")
         assert self.CREDENTIAL not in out
         assert "http://127.0.0.1:9120/?profile=work#hermes-session=" in out
 
@@ -1767,7 +1767,7 @@ class TestWebappLaunchLinks:
         from agent.redact import redact_terminal_output
 
         link = "http://127.0.0.1:9120/webapp/launch#ticket=" + self.CREDENTIAL + "&query=%3Fprofile%3Dwork"
-        out = redact_terminal_output(f"Open this one-use link:\n  {link}\n", "hermes webapp --no-open")
+        out = redact_terminal_output(f"Open this one-use link:\n  {link}\n", "plushuman webapp --no-open")
         assert self.CREDENTIAL not in out
         assert "http://127.0.0.1:9120/webapp/launch#ticket=" in out and "&query=%3Fprofile%3Dwork" in out
         assert self.CREDENTIAL not in redact_sensitive_text(link)

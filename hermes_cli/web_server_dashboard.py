@@ -195,14 +195,14 @@ def mount_spa(application: FastAPI):
             html = (web_dist() / "index.html").read_text(encoding="utf-8-sig")
         except OSError:
             # Partial build / wiped dist / permissions: same JSON 404 as a fully-missing dist. The
-            # Webapp's bundle is built by `hermes webapp`, not by the dashboard's web project.
+            # Webapp's bundle is built by `plushuman webapp`, not by the dashboard's web project.
             webapp = getattr(application.state, "ui_surface", "dashboard") == "webapp"
-            missing = ("The Webapp is not built. Run: hermes webapp" if webapp
+            missing = ("The Webapp is not built. Run: plushuman webapp" if webapp
                        else "Frontend not built. Run: pnpm --dir web run build")
             return _bundle_unavailable(request, missing, 404)
         if getattr(application.state, "ui_surface", "dashboard") == "webapp":
             # A bundle `plushuman update` could not rebuild was built for the code before the update:
-            # refuse it until `hermes webapp` rebuilds it.
+            # refuse it until `plushuman webapp` rebuilds it.
             from gateway.webapp_listener import bundle_stale_reason
             stale = bundle_stale_reason(web_dist())
             if stale:

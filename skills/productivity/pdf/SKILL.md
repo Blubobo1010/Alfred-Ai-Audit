@@ -43,7 +43,7 @@ Create PDFs from structured specs, build and fill AcroForm forms (with layout li
 
   ```bash
   python -c "import pypdf, reportlab, pdfplumber" 2>/dev/null && PY=python || if command -v hermes >/dev/null 2>&1; then
-    PY="$(hermes pm environment documents --extra documents --extra documents-pdf)"
+    PY="$(plushuman pm environment documents --extra documents --extra documents-pdf)"
   else
     PY="$HOME/.cache/hermes-docs-venv/bin/python"
     "$PY" -c "import docx, openpyxl, pptx, reportlab, pypdf, pdfplumber, pypdfium2" 2>/dev/null || (
@@ -69,9 +69,9 @@ Create PDFs from structured specs, build and fill AcroForm forms (with layout li
 
   Run every helper below with `"$PY"`. In PowerShell (+Human runs on that
   host, so it is on PATH):
-  `$env:PY = hermes pm environment documents --extra documents --extra documents-pdf`.
+  `$env:PY = plushuman pm environment documents --extra documents --extra documents-pdf`.
   Never `pip install` into the interpreter that runs +Human or into the
-  `hermes pm environment` one; +Human owns both.
+  `plushuman pm environment` one; +Human owns both.
 - Page rasterization (`pdf_page_image.py`, overlay rendering) uses `pypdfium2`, which the documents environment already has (if your `python` lacks it, switch `PY` to that environment with the command above), or poppler's `pdftoppm` on PATH. Scripts fall back pypdfium2 → pdftoppm and report `{"rendered": false, "missing": [...]}` (exit 0) when neither exists.
 - Each helper script checks imports lazily and prints an install hint if a dependency is missing.
 

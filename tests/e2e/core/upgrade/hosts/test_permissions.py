@@ -96,7 +96,7 @@ def test_read_only_install_tree_still_runs_a_turn(world, provider):
     err = cp.stdout + cp.stderr
     assert I.TRACEBACK not in err, "a turn crashed on a read-only install tree:\n" + I.describe(cp)
     # Either it works, or it says the install is not writable by this user without sending them
-    # to a remedy that needs the same write access (`hermes pm repair`, "finish the update").
+    # to a remedy that needs the same write access (`plushuman pm repair`, "finish the update").
     if cp.returncode != 0:
         misleading = re.findall(r"run `hermes (?:pm repair|update)`[^\n]*", err)
         assert ACTIONABLE.search(err) and not misleading, (

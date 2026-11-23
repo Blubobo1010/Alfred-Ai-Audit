@@ -632,7 +632,7 @@ browser:
   inactivity_timeout: 120
 
   # Local Chromium for browser_exec. Empty executable_path = pm's chromium
-  # (`hermes pm install chromium`), the Docker image's build, or a system
+  # (`plushuman pm install chromium`), the Docker image's build, or a system
   # chromium where pm builds none (Termux). user_data_dir keeps one persistent
   # profile for every local session (empty = a throwaway profile per session).
   # executable_path: ""

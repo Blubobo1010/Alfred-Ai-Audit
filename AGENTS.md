@@ -131,7 +131,7 @@ per variant and a name → variant table (`tools/environments/`, its table still
   § Profile scope (HX002/HX004/HX005/HX012, PS-P05/P06).
 - **Machine facts and executable lookup go through `hermes_platform`.**
 - **Dependencies carry upper bounds** (`>=floor,<next_major`; git URLs and Actions pinned to a SHA);
-  after editing `pyproject.toml` run `hermes pm lock` and commit `uv.lock`; never mutate a +Human
+  after editing `pyproject.toml` run `plushuman pm lock` and commit `uv.lock`; never mutate a +Human
   environment with raw pip/uv.
 - **TypeScript (desktop, TUI):** feature-owned nanostores over threaded state, thin route roots,
   narrow hooks and colocated action modules, `interface` for props and shared shapes, table-driven

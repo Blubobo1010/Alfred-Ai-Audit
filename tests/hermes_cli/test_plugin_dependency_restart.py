@@ -4,7 +4,7 @@
 reload its plugins. Activation is a boot decision, so that gateway (and a running dashboard) keeps
 the generation it booted with and cannot import the new dependencies. Enable used to report
 "Gateway reloaded plugins; nothing of this plugin needs a session or restart", and discovery
-logged "run hermes pm repair" — on a hosted container the terminal backend then failed with
+logged "run plushuman pm repair" — on a hosted container the terminal backend then failed with
 ``No module named '<dep>'`` until something restarted the gateway. The honest answer is: restart.
 """
 

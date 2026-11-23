@@ -22,7 +22,7 @@ _HERMES_CONFIG_SET_APPROVAL_POLICY = (
     # `python -m hermes_cli.main` that the updater and the cron lifecycle guard invoke.
     # Optional leading `VAR=value` assignments (`HERMES_HOME=... plushuman config set ...`).
     r'(?>(?:\w++=' + _SHELL_WORD + r'[ \t]+)*)'
-    r'(?:(?:(?:[a-z]:)?[^\s:]*?/)?(?:ai\.)?hermes(?:\.exe)?\b'
+    r'(?:(?:(?:[a-z]:)?[^\s:]*?/)?(?:ai\.)?(?:hermes|plushuman|alfred)(?:\.exe)?\b'
     r'|(?:(?:[a-z]:)?[^\s:]*?/)?python[0-9.]*(?:\.exe)?\b[ \t]+(?:-[^\s]+[ \t]+)*?-m[ \t]*hermes_cli\.main\b)'
     r'(?>(?:[ \t]+(?:' + _HERMES_TOP_LEVEL_VALUE_FLAGS + r'[ \t]+[^\s]++'
     r'|--?[\w-]++(?:=[^\s]++)?))*)'  # global options before the subcommand

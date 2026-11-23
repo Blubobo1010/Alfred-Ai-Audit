@@ -1,4 +1,4 @@
-"""hermes pm: lock / install / repair / env / doctor / gc / bundle."""
+"""plushuman pm: lock / install / repair / env / doctor / gc / bundle."""
 
 from __future__ import annotations
 
@@ -305,7 +305,7 @@ def _install_defaults(names: list[str], *, verify: bool) -> None:
     for name in names:
         if _install_names([name], verify=verify):
             print(f"⚠ optional {name} was not installed; its tools stay unavailable until "
-                  f"`hermes pm install {name}` succeeds", flush=True)
+                  f"`plushuman pm install {name}` succeeds", flush=True)
 
 
 def _install_python_environments(extras: list[str], *, sync: bool, test_environment) -> int:
@@ -345,7 +345,7 @@ def _install_python_environments(extras: list[str], *, sync: bool, test_environm
 def cmd_install(args) -> int:
     from pm.defaults import canonical_default_name
 
-    # Old install logs print `hermes pm install agent-browser` as the browser opt-back-in.
+    # Old install logs print `plushuman pm install agent-browser` as the browser opt-back-in.
     args.names = [canonical_default_name(name) for name in args.names or ()]
     cross_target = getattr(args, "target", None)
     # Source-install launchers require the store interpreter, even though
@@ -478,7 +478,7 @@ def cmd_doctor(args) -> int:
         ):
             # Legacy fact: pre-dates digest-bound identity; installed()
             # treats it as not installed and forces one reinstall.
-            print(f"{'?' if soft else '✗'} {name}: legacy fact: no recorded identity, run `hermes pm install`")
+            print(f"{'?' if soft else '✗'} {name}: legacy fact: no recorded identity, run `plushuman pm install`")
             bad += 0 if soft else 1
             continue
         if not facts.installed(name, lockfile.version(name), store.root, identity):
@@ -521,7 +521,7 @@ def _doctor_uv_cache(*, repair: bool) -> int:
         return 0
     if not repair:
         print(f"✗ uv cache: corrupt entries for {', '.join(corrupt)} in {cache}; "
-              "run `hermes pm doctor --repair` (installs also remove them when they hit one)")
+              "run `plushuman pm doctor --repair` (installs also remove them when they hit one)")
         return 1
     try:
         managed_environment(cache, cache=cache).purge_cached_packages(corrupt)
@@ -736,7 +736,7 @@ def _apply_pins(changed: list, lockfile) -> int:
     if not failed:
         return rc
     print(f"pm update: pinned {len(pinned)}, failed {len(failed)}: {', '.join(failed)}")
-    # The venv sync above leaves an `ok` sync receipt as latest; `hermes pm
+    # The venv sync above leaves an `ok` sync receipt as latest; `plushuman pm
     # status` and the desktop read latest, so the partial run must land last.
     from pm import receipt
 
@@ -764,7 +764,7 @@ def _refresh_pnpm_lock() -> int:
 
     pnpm = installed_package("pnpm")
     if pnpm is None or pnpm.binary is None:
-        print("✗ pnpm: not installed; run `hermes pm install`")
+        print("✗ pnpm: not installed; run `plushuman pm install`")
         return 1
     # Every workspace and the root, within the declared ranges: --no-save keeps the manifests'
     # specifiers as written, and the release-age policy applies to every new pick.
@@ -790,7 +790,7 @@ def _refresh_pnpm_lock() -> int:
 
 
 def cmd_update(args) -> int:
-    """`hermes pm update [names...] [--check] [--target T] [--skip-target T] [--uv] [--pnpm] [--termux]`.
+    """`plushuman pm update [names...] [--check] [--target T] [--skip-target T] [--uv] [--pnpm] [--termux]`.
 
     Resolve each package's latest via its own latest_versions() hook,
     intersect across targets, and (real mode) re-pin the lockfile + install
@@ -967,9 +967,9 @@ def cmd_environment(args) -> int:
     import pm
 
     if bool(args.extra) == bool(args.requirement):
-        print("hermes pm environment: pass --extra or --requirement (not both)", file=sys.stderr)
+        print("plushuman pm environment: pass --extra or --requirement (not both)", file=sys.stderr)
         return 2
-    # stdout carries only the interpreter path, for PY=$(hermes pm environment ...);
+    # stdout carries only the interpreter path, for PY=$(plushuman pm environment ...);
     # progress from PM and its uv children goes to stderr at both levels.
     sys.stdout.flush()
     saved = os.dup(1)
@@ -979,7 +979,7 @@ def cmd_environment(args) -> int:
             requirements = _extra_requirements(repo_root(), args.extra) if args.extra else args.requirement
             python = pm.ensure_environment(args.name, requirements, explicit=True)
     except (InstallError, ValueError) as exc:
-        print(f"hermes pm environment: {exc}", file=sys.stderr)
+        print(f"plushuman pm environment: {exc}", file=sys.stderr)
         return 1
     finally:
         sys.stdout.flush()
@@ -1025,7 +1025,7 @@ def main(argv=None) -> int:
     p.add_argument("--without", action="append", default=[], metavar="NAME",
                    help="leave an optional default package (chromium, cua-driver) or a recorded extra outside "
                         "[all] (matrix, ...) out of this and every later default install and update; "
-                        "`hermes pm install NAME` / `--extra NAME` opts back in (repeatable)")
+                        "`plushuman pm install NAME` / `--extra NAME` opts back in (repeatable)")
     p.add_argument("--tools-only", action="store_true",
                    help="install the tool closure, put it on PATH, and stop before the venv sync")
     p.add_argument("--trust-recorded", action="store_true",

@@ -499,7 +499,7 @@ class Store:
         lock = self.root / ".install.lock"
         fd = os.open(lock, os.O_CREAT | os.O_RDWR, 0o600)
         try:
-            # A second `hermes pm install` behind an sdist build otherwise sits
+            # A second `plushuman pm install` behind an sdist build otherwise sits
             # silent for minutes; say what it is waiting on.
             if not lock_fd(fd, wait=True, timeout=2):
                 print(f"waiting for {lock} (another PM operation holds it)", file=sys.stderr, flush=True)

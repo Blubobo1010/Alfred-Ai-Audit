@@ -25,7 +25,7 @@ in it, and do the followup work afterwards.
                                    ▼
 ┌─ node host (user's Mac, signed-in Chrome lives here) ───────────────┐
 │                                                                      │
-│   NodeServer (from `hermes meet node run`)                           │
+│   NodeServer (from `plushuman meet node run`)                           │
 │     │                                                                │
 │     ├─ start_bot → process_manager.start() → spawns meet_bot         │
 │     │                                                                │
@@ -49,7 +49,7 @@ Without v2: the "realtime" path is skipped; transcribe runs alone.
 | Path | Purpose |
 |---|---|
 | `plugin.yaml` | manifest |
-| `__init__.py` | `register(ctx)` — registers 5 tools + `on_session_end` hook + `hermes meet` CLI |
+| `__init__.py` | `register(ctx)` — registers 5 tools + `on_session_end` hook + `plushuman meet` CLI |
 | `meet_bot.py` | Playwright bot subprocess (standalone, `python -m plugins.google_meet.meet_bot`) |
 | `process_manager.py` | local bot lifecycle + `enqueue_say` |
 | `tools.py` | agent-facing tools + node-routing helper |
@@ -60,36 +60,36 @@ Without v2: the "realtime" path is skipped; transcribe runs alone.
 | `node/registry.py` | v3: `$HERMES_HOME/workspace/meetings/nodes.json` |
 | `node/server.py` | v3: `NodeServer` (runs on host machine) |
 | `node/client.py` | v3: `NodeClient` (used by tool handlers + CLI on gateway) |
-| `node/cli.py` | v3: `hermes meet node {run,list,approve,remove,status,ping}` |
+| `node/cli.py` | v3: `plushuman meet node {run,list,approve,remove,status,ping}` |
 | `SKILL.md` | agent usage guide |
 
 ## Local quick start
 
 ```bash
 plushuman plugins enable google_meet
-hermes meet install                                      # pip + Chromium
-hermes meet setup                                        # preflight
-hermes meet auth                                         # optional
-hermes meet join https://meet.google.com/abc-defg-hij    # transcribe
+plushuman meet install                                      # pip + Chromium
+plushuman meet setup                                        # preflight
+plushuman meet auth                                         # optional
+plushuman meet join https://meet.google.com/abc-defg-hij    # transcribe
 ```
 
 ## Realtime mode
 
 Linux (preferred, most automated):
 ```bash
-hermes meet install --realtime                     # installs pulseaudio-utils
+plushuman meet install --realtime                     # installs pulseaudio-utils
 echo 'OPENAI_API_KEY=sk-...' >> ~/.hermes/.env
-hermes meet join https://meet.google.com/abc-defg-hij --mode realtime
+plushuman meet join https://meet.google.com/abc-defg-hij --mode realtime
 # then from the agent or CLI:
-hermes meet say "Good morning everyone, I'm the note-taker bot."
+plushuman meet say "Good morning everyone, I'm the note-taker bot."
 ```
 
 macOS:
 ```bash
-hermes meet install --realtime     # runs: brew install blackhole-2ch ffmpeg
+plushuman meet install --realtime     # runs: brew install blackhole-2ch ffmpeg
 # then — manually! — open System Settings → Sound → Input → BlackHole 2ch
 echo 'OPENAI_API_KEY=sk-...' >> ~/.hermes/.env
-hermes meet join https://meet.google.com/abc-defg-hij --mode realtime
+plushuman meet join https://meet.google.com/abc-defg-hij --mode realtime
 ```
 
 On macOS, hermes will **not** switch your system audio input automatically — the
@@ -100,7 +100,7 @@ Realtime mode is **speak-only**: `speaker.pcm` is streamed into the virtual mic 
 stdin-fed `paplay` / `ffmpeg` pump that follows the file as Realtime appends audio.
 Incoming speech is still the caption scrape (v1) — meeting audio is never sent to the
 Realtime session, so there is no barge-in on raw audio and no STT billing. After
-admission the bot unmutes itself if Meet seated it muted; `status.json` / `hermes meet
+admission the bot unmutes itself if Meet seated it muted; `status.json` / `plushuman meet
 status` report the result as `micState` (`unmuted`, `unmuted_clicked`, `unknown`).
 
 ## Remote node host
@@ -108,15 +108,15 @@ status` report the result as `micState` (`unmuted`, `unmuted_clicked`, `unknown`
 On the node machine (e.g. user's Mac with a signed-in Chrome):
 ```bash
 plushuman plugins enable google_meet
-hermes meet install
-hermes meet node run --display-name my-mac --host 0.0.0.0 --port 18789
+plushuman meet install
+plushuman meet node run --display-name my-mac --host 0.0.0.0 --port 18789
 # prints the bearer token on first run; copy it
 ```
 
 On the gateway:
 ```bash
-hermes meet node approve my-mac ws://<mac-ip>:18789 <token>
-hermes meet node ping my-mac
+plushuman meet node approve my-mac ws://<mac-ip>:18789 <token>
+plushuman meet node ping my-mac
 # now any meet_* tool call accepts node='my-mac' (or 'auto')
 ```
 

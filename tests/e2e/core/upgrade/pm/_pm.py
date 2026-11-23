@@ -2,7 +2,7 @@
 
 Built on ``_helpers`` (bwrap sandbox, allowlisted env) and ``_install_helpers`` (local bare origin,
 HEAD's own ``scripts/install.sh``). Every cell starts from a real install and then drives the real
-user entry points (``plushuman update``, ``hermes pm ...``, ``plushuman doctor``, ``plushuman gateway ...``).
+user entry points (``plushuman update``, ``plushuman pm ...``, ``plushuman doctor``, ``plushuman gateway ...``).
 
 What a PM install looks like on disk, and what the cells read back:
 

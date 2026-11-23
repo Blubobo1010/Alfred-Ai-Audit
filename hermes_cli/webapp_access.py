@@ -102,7 +102,7 @@ def sign_in_client(home) -> Optional[tuple[str, str]]:
 def registered_lan_origin(home: Path, port: int) -> Optional[str]:
     """``http://<LAN address>:<port>`` when Web Access last registered Nous sign-in for *home*'s
     Webapp on the LAN at that address and *port*, and the address is still this machine's; else None.
-    Sign-in returns only to the callback the Portal has, so ``hermes webapp`` opens this address."""
+    Sign-in returns only to the callback the Portal has, so ``plushuman webapp`` opens this address."""
     try:
         parts = urlsplit(_registration(home)["callback"])
         recorded_port = parts.port
@@ -292,7 +292,7 @@ def _port_free(host: str, port: int) -> bool:
 
 
 def build_bundle() -> None:
-    """Build the Webapp bundle the gateway serves, with the function ``hermes webapp`` uses (it
+    """Build the Webapp bundle the gateway serves, with the function ``plushuman webapp`` uses (it
     reuses a current bundle), so Start never turns on a Webapp with nothing to serve."""
     from hermes_cli.config import get_project_root
     from hermes_cli.webapp import WebappBuildError, prepare_webapp_renderer
@@ -301,7 +301,7 @@ def build_bundle() -> None:
         prepare_webapp_renderer(get_project_root())
     except WebappBuildError as exc:
         raise WebappAccessError(
-            f"{str(exc).rstrip('.')}. Run hermes webapp --build-only to see the full output, then start again.") from exc
+            f"{str(exc).rstrip('.')}. Run plushuman webapp --build-only to see the full output, then start again.") from exc
 
 
 def register(callback_url: str) -> None:
@@ -359,7 +359,7 @@ def _gateway_state(home: Path) -> dict:
 
 def _mode(settings) -> Optional[str]:
     """Who the configured Webapp serves: ``public`` (its own URL pins the callback and Host),
-    ``lan`` (a wildcard bind), ``local`` (a loopback bind, as ``hermes webapp`` sets it up), or None
+    ``lan`` (a wildcard bind), ``local`` (a loopback bind, as ``plushuman webapp`` sets it up), or None
     when it is off."""
     from gateway.webapp_listener import _is_wildcard
 

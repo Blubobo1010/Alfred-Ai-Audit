@@ -63,7 +63,7 @@ class WebappMount:
 def _config_document(home: Path) -> dict:
     """*home*'s config: the merged one (managed overlay, ``${ENV}`` expansion) for this process's own
     home, which is always the case in the gateway; otherwise that home's file as written, which only
-    ``hermes webapp`` reads, about the gateway it targets, before asking that gateway itself."""
+    ``plushuman webapp`` reads, about the gateway it targets, before asking that gateway itself."""
     from hermes_cli.config import load_config_readonly, read_user_config_raw
     from hermes_constants import get_hermes_home
     try:
@@ -293,11 +293,11 @@ def _one_use_links_work(platform: str = sys.platform) -> bool:
     return platform == "win32" or (platform == "linux" and not is_wsl())
 
 
-#: How every missing-bundle reason starts; ``hermes webapp --status`` asks for no restart after it.
+#: How every missing-bundle reason starts; ``plushuman webapp --status`` asks for no restart after it.
 NOT_BUILT = "The Webapp is not built"
 #: Why a bundle ``plushuman update`` could not rebuild is not served (``hermes_cli.webapp.mark_webapp_stale``).
 NOT_REBUILT = (f"{NOT_BUILT} for this version of +Human: plushuman update could not rebuild it. "
-               "Run hermes webapp to rebuild it.")
+               "Run plushuman webapp to rebuild it.")
 
 
 def bundle_stale_reason(dist) -> str | None:
@@ -312,7 +312,7 @@ def bundle_missing_reason(dist) -> str | None:
     rebuilt, so building it needs no gateway restart."""
     if (Path(dist) / "index.html").is_file():
         return bundle_stale_reason(dist)
-    return f"{NOT_BUILT} ({Path(dist) / 'index.html'} is missing). Run hermes webapp to build it."
+    return f"{NOT_BUILT} ({Path(dist) / 'index.html'} is missing). Run plushuman webapp to build it."
 
 
 def _bundle_missing(web) -> str | None:
@@ -328,7 +328,7 @@ _STILL_STARTING = "The Webapp is still starting; try again in a moment."
 
 
 def register_control_verbs(runner, home, server=None, *, links_checked: bool | None = None) -> None:
-    """The private control-socket verbs ``hermes webapp`` uses on *server* (the runner's control
+    """The private control-socket verbs ``plushuman webapp`` uses on *server* (the runner's control
     server by default); only an authenticated same-user peer reaches them. The gateway registers them
     before its control socket answers, so they answer from its first moment: :data:`STARTING` until
     the listener sets ``runner.webapp_status``. ``webapp-launch`` returns a one-use launch link, so

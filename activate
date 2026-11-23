@@ -18,7 +18,7 @@
 #
 # Sync through setup before selecting the environment. PM owns freshness;
 # activation does not maintain a second dependency stamp. It trusts the
-# recorded tool digest instead of re-hashing every entry. `hermes pm
+# recorded tool digest instead of re-hashing every entry. `plushuman pm
 # install` and `plushuman update` keep that check.
 # ============================================================================
 _HERMES_REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

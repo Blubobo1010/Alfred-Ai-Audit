@@ -288,7 +288,7 @@ class _Scope:
 
 
 def _check_unlock(verb: str, args: list[str], scope: _Scope) -> str | None:
-    if verb == "hermes" or (verb.startswith("python") and "hermes_cli.main" in args):
+    if verb in ("hermes", "plushuman", "alfred") or (verb.startswith("python") and "hermes_cli.main" in args):
         if "curator" in args and "unlock" in args[args.index("curator"):]:
             return UNLOCK_REFUSAL
     return None

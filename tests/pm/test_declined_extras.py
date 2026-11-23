@@ -1,4 +1,4 @@
-"""`hermes pm install --without EXTRA` drops a recorded extra, and nothing that carries a
+"""`plushuman pm install --without EXTRA` drops a recorded extra, and nothing that carries a
 selection forward (recorded extras, the main-era venv scan, a lazy first use) re-adds it
 until the user asks for it again with `--extra EXTRA`."""
 

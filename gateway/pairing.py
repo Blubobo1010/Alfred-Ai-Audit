@@ -265,7 +265,7 @@ def _load_json_file(path: Path) -> dict:
         logger.warning(
             "Pairing file %s exists but is not readable as uid=%s (%s; %s). "
             "If you ran `docker exec <container> plushuman pairing approve ...` as root, "
-            "re-run with `docker exec -u plushuman <container> ...` and "
+            "re-run with `docker exec -u hermes <container> ...` and "
             "chown the existing file to the hermes user, or restart the "
             "container so the entrypoint can fix ownership.",
             path, euid, owner_info, e,

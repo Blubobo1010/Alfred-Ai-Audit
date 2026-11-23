@@ -1,12 +1,12 @@
 """Configured features survive every dependency rebuild (PM lifecycle, failure class 1).
 
 A PM install's dependency environment is rebuilt as a NEW generation whenever its inputs change:
-a release that moves ``uv.lock`` (``plushuman update``), ``hermes pm repair``, and the first
+a release that moves ``uv.lock`` (``plushuman update``), ``plushuman pm repair``, and the first
 ``plushuman update`` of a main-era install (the legacy ``venv/`` is replaced by a PM generation). The
 user-visible contract is that whatever feature the user had working before the rebuild still
 imports in the generation selected after it:
 
-* an extra the user installed with the documented command (``hermes pm install --extra telegram``);
+* an extra the user installed with the documented command (``plushuman pm install --extra telegram``);
 * the MCP client (an HTTP MCP server in config.yaml must still connect: ``plushuman mcp test``
   against a real local streamable-HTTP server);
 * a gateway platform enabled in config.yaml (Discord): the update installs the platform's extra
@@ -82,7 +82,7 @@ def rebuilt(tmp_path_factory, provider):
         before = {"generation": P.selected_generation(sb), "imports": P.managed_imports(sb, *MANAGED),
                   "mcp": _mcp_test(sb, server)}
         assert before["imports"]["telegram"] == "ok" and before["mcp"] == "", (
-            f"harness: `hermes pm install --extra telegram` exited 0 but left no SDK / MCP broken: {before}")
+            f"harness: `plushuman pm install --extra telegram` exited 0 but left no SDK / MCP broken: {before}")
         P.publish_dependency_release(origin, root, 1)
         up = P.update(sb)
         after_update = {"generation": P.selected_generation(sb), "imports": P.managed_imports(sb, *MANAGED),
@@ -102,7 +102,7 @@ def test_update_rebuild_keeps_installed_extra_and_mcp(rebuilt):
     assert after["generation"] != rebuilt["before"]["generation"], (
         "harness: the dependency release did not make the update build a new generation\n" + P.diagnostics(sb, up))
     assert after["imports"]["telegram"] == "ok", (
-        f"the extra installed with `hermes pm install --extra telegram` is gone after `plushuman update`: "
+        f"the extra installed with `plushuman pm install --extra telegram` is gone after `plushuman update`: "
         f"{after['imports']}\n" + P.diagnostics(sb, up))
     assert after["imports"]["mcp.client.streamable_http"] == "ok", after["imports"]
     assert after["mcp"] == "", "HTTP MCP server no longer connects after `plushuman update`:\n" + after["mcp"]
@@ -110,13 +110,13 @@ def test_update_rebuild_keeps_installed_extra_and_mcp(rebuilt):
 
 def test_repair_keeps_installed_extra_and_mcp(rebuilt):
     sb, rp, after = rebuilt["sb"], rebuilt["repair"], rebuilt["after_repair"]
-    assert rp.returncode == 0, "hermes pm repair failed on a healthy install:\n" + P.diagnostics(sb, rp)
+    assert rp.returncode == 0, "plushuman pm repair failed on a healthy install:\n" + P.diagnostics(sb, rp)
     assert after["generation"] != rebuilt["after_update"]["generation"], (
-        "`hermes pm repair` reported success but did not rebuild the environment\n" + P.diagnostics(sb, rp))
+        "`plushuman pm repair` reported success but did not rebuild the environment\n" + P.diagnostics(sb, rp))
     assert after["imports"]["telegram"] == "ok", (
-        f"the extra installed with `hermes pm install --extra telegram` is gone after `hermes pm repair`: "
+        f"the extra installed with `plushuman pm install --extra telegram` is gone after `plushuman pm repair`: "
         f"{after['imports']}\n" + P.diagnostics(sb, rp))
-    assert after["mcp"] == "", "HTTP MCP server no longer connects after `hermes pm repair`:\n" + after["mcp"]
+    assert after["mcp"] == "", "HTTP MCP server no longer connects after `plushuman pm repair`:\n" + after["mcp"]
 
 
 def test_configured_gateway_platform_has_its_sdk_after_update(rebuilt):

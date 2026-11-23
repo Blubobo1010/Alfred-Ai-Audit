@@ -1,6 +1,6 @@
 # +Human bootstrap: git checkout + venv + hermes command on PATH.
 # Heavy dependencies (tool binaries, browsers, node) are pm's job after
-# this: `hermes pm install`. Stage protocol kept for Hermes-Setup:
+# this: `plushuman pm install`. Stage protocol kept for Hermes-Setup:
 #   -Manifest             print the stage list as JSON
 #   -Stage NAME [-Json]   run one stage
 #   -NonInteractive       skip stages that need input
@@ -9,10 +9,10 @@
 #   -ProtocolVersion      print the stage protocol version
 #   -SkipBrowser          do not install the browser (Chromium); remembered by
 #                         later installs and `plushuman update`, undone by
-#                         `hermes pm install chromium`
+#                         `plushuman pm install chromium`
 #   -SkipComputerUse      do not install the computer-use driver (cua-driver);
 #                         remembered the same way, undone by
-#                         `hermes pm install cua-driver`
+#                         `plushuman pm install cua-driver`
 #   -Verbose              stream every child command's output (the default
 #                         with redirected output and in CI)
 #   -Channel stable|main  stable (default): the latest published release, then
@@ -38,7 +38,7 @@ param(
     [switch]$IncludeDesktop,
     # Same opt-out as install.sh --skip-browser: PM records it, so later
     # installs and `plushuman update` keep the browser off until
-    # `hermes pm install chromium` opts back in.
+    # `plushuman pm install chromium` opts back in.
     [switch]$SkipBrowser,
     [switch]$SkipComputerUse,
     # Print the paths this install would use, as JSON on stdout, and exit

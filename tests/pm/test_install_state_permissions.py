@@ -48,7 +48,7 @@ import hermes_bootstrap
     assert str(target) in result.stderr
     assert "source-update completion failed" not in result.stderr
     assert "run `plushuman update`" not in result.stderr
-    assert "hermes pm repair" not in result.stderr
+    assert "plushuman pm repair" not in result.stderr
     assert "Traceback" not in result.stderr
 
 
@@ -99,4 +99,4 @@ raise SystemExit(main(["repair"]))
     monkeypatch.setitem(sys.modules, "pm.recovery", recovery)
     with pytest.raises(PermissionError):
         _early_recovery.recover_if_needed(project, argv=["pm", "repair"], explicit=True)
-    assert "run `hermes pm repair`" not in capsys.readouterr().err
+    assert "run `plushuman pm repair`" not in capsys.readouterr().err

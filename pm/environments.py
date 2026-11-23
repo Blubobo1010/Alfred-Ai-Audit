@@ -444,7 +444,7 @@ def running_from_selected_environment(project_root: Path) -> bool:
 
 
 class NoCommittedEnvironment(RuntimeError):
-    """PM's store Python with no committed generation: no retry fixes it, only `hermes pm repair`."""
+    """PM's store Python with no committed generation: no retry fixes it, only `plushuman pm repair`."""
 
 
 def _require_own_dependencies(project_root: Path) -> None:

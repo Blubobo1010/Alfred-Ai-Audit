@@ -279,7 +279,7 @@ class PrePMEditableFinder(MetaPathFinder):
             return importlib.util.spec_from_file_location(name, os.path.join(root, 'hermes_bootstrap.py'))
         return None
 sys.meta_path.append(PrePMEditableFinder())
-sys.argv = ['hermes', 'pm', 'repair']
+sys.argv = ['plushuman', 'pm', 'repair']
 import hermes_cli
 import hermes_bootstrap
 assert hermes_bootstrap._pm_repair is True
