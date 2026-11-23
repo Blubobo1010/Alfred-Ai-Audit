@@ -421,7 +421,7 @@ describe('the mention middleware', () => {
     expect(result.text).toMatch(/@default-vera/)
     // No CLI handoff is composed and the renderer performs NO delivery — the
     // agent owns messaging via its message_agent tool.
-    expect(result.text).not.toMatch(/hermes -p '?default/)
+    expect(result.text).not.toMatch(/plushuman -p '?default/)
     expect(hostMock.requestProfile).not.toHaveBeenCalled()
   })
 

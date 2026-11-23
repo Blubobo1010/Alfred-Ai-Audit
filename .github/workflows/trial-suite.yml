@@ -1,18 +1,18 @@
-# TRIAL ONLY (lives on the throwaway branch, never on main): the full upstream Python suite in slices,
-# once on this tree and once on pristine upstream at the same tag, with upstream's own settings, so the
-# two failure lists can be compared. Uses no secret and publishes nothing.
-name: trial-full-suite
+# TRIAL ONLY. `python -m rebrand trial` copies this file to a throwaway branch trial/upstream-<X.Y.Z> of the
+# product repo; it never reaches main. It runs upstream's full Python suite (eight slices) and every JS
+# workspace's tests twice, on this tree and on pristine upstream at the same tag, with upstream's own settings,
+# then lists what fails on this tree only. Uses no secret and publishes nothing.
+name: trial-suite
 
 on:
   push:
-    branches: ['trial/upstream-0.23.3']
-    paths: ['.github/workflows/trial-full-suite.yml']
+    branches: ['trial/upstream-*']
 
 permissions:
   contents: read
 
 concurrency:
-  group: trial-full-suite
+  group: trial-suite-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -23,9 +23,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        tree: [plushuman]
+        tree: [plushuman, upstream]
         slice: [1, 2, 3, 4, 5, 6, 7, 8]
     steps:
+      - name: Upstream tag from the branch name
+        id: up
+        shell: bash
+        run: echo "tag=v${GITHUB_REF_NAME#trial/upstream-}" >> "$GITHUB_OUTPUT"
+
       - name: Checkout this tree
         if: ${{ matrix.tree == 'plushuman' }}
         uses: actions/checkout@v4
@@ -35,7 +40,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: NousResearch/hermes-agent
-          ref: v0.23.3
+          ref: ${{ steps.up.outputs.tag }}
 
       - name: Install ripgrep (prebuilt binary)
         shell: bash
@@ -44,9 +49,9 @@ jobs:
           RG_VERSION=15.1.0
           RG_SHA256=1c9297be4a084eea7ecaedf93eb03d058d6faae29bbc57ecdaf5063921491599
           RG_TARBALL=ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl.tar.gz
-          curl -sSfL --retry 3 --retry-delay 5 -o "$RUNNER_TEMP/$RG_TARBALL" \
-            "https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/${RG_TARBALL}"
           cd "$RUNNER_TEMP"
+          curl -sSfL --retry 3 --retry-delay 5 -o "$RG_TARBALL" \
+            "https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/${RG_TARBALL}"
           echo "${RG_SHA256}  ${RG_TARBALL}" | sha256sum -c -
           tar -xzf "$RG_TARBALL"
           sudo mv "ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl/rg" /usr/local/bin/rg
@@ -69,7 +74,7 @@ jobs:
           OPENROUTER_API_KEY: ""
           OPENAI_API_KEY: ""
           NOUS_API_KEY: ""
-        run: scripts/run_tests.sh -q 2>&1 | tee "$RUNNER_TEMP/suite.log"
+        run: scripts/run_tests.sh -q 2>&1 | tee "$RUNNER_TEMP/suite.log" || true
 
       - name: Collect the failure list
         if: ${{ always() }}
@@ -79,17 +84,16 @@ jobs:
           mkdir -p "$out"
           touch "$RUNNER_TEMP/suite.log"
           grep -a -o -E 'FAILED tests/[^ ]+' "$RUNNER_TEMP/suite.log" | sort -u > "$out/failed.txt" || true
-          grep -a -E '\] ✗ tests/' "$RUNNER_TEMP/suite.log" | sed -E 's/^.*\] ✗ //' | sort -u > "$out/failed-files.txt" || true
+          grep -a -E '\] ✗ tests/' "$RUNNER_TEMP/suite.log" | sed -E 's/^.*\] ✗ //; s/ \(.*$//' | sort -u > "$out/failed-files.txt" || true
           grep -a -E '=== Summary' "$RUNNER_TEMP/suite.log" > "$out/summary.txt" || echo "no summary (timed out or crashed)" > "$out/summary.txt"
           gzip -c "$RUNNER_TEMP/suite.log" > "$out/suite.log.gz"
           cat "$out/summary.txt"
-          wc -l "$out/failed.txt" "$out/failed-files.txt"
 
       - name: Upload the result
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: result-${{ matrix.tree }}-${{ matrix.slice }}
+          name: python-${{ matrix.tree }}-${{ matrix.slice }}
           path: ${{ runner.temp }}/result
           retention-days: 7
 
@@ -102,6 +106,11 @@ jobs:
       matrix:
         tree: [plushuman, upstream]
     steps:
+      - name: Upstream tag from the branch name
+        id: up
+        shell: bash
+        run: echo "tag=v${GITHUB_REF_NAME#trial/upstream-}" >> "$GITHUB_OUTPUT"
+
       - name: Checkout this tree
         if: ${{ matrix.tree == 'plushuman' }}
         uses: actions/checkout@v4
@@ -111,7 +120,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: NousResearch/hermes-agent
-          ref: v0.23.3
+          ref: ${{ steps.up.outputs.tag }}
 
       - name: Locked Node, pnpm and Python
         uses: ./.github/actions/setup-pm
@@ -142,14 +151,14 @@ jobs:
 
       - name: WhatsApp bridge node tests
         shell: bash
-        run: just test-whatsapp-bridge 2>&1 | tee "$RUNNER_TEMP/js-whatsapp.log"
+        run: just test-whatsapp-bridge 2>&1 | tee "$RUNNER_TEMP/js-whatsapp.log" || true
 
       - name: Every workspace's tests
         if: ${{ !cancelled() }}
         shell: bash
         run: |
           pnpm --dir ui-tui run build:ink
-          xvfb-run -a pnpm -r --no-bail test 2>&1 | tee "$RUNNER_TEMP/js-tests.log"
+          xvfb-run -a pnpm -r --no-bail test 2>&1 | tee "$RUNNER_TEMP/js-tests.log" || true
 
       - name: Collect the logs
         if: ${{ always() }}
@@ -157,15 +166,57 @@ jobs:
         run: |
           out="$RUNNER_TEMP/result"
           mkdir -p "$out"
-          for f in js-whatsapp js-tests; do
-            [ -f "$RUNNER_TEMP/$f.log" ] && gzip -c "$RUNNER_TEMP/$f.log" > "$out/$f.log.gz"
-          done
-          grep -a -E 'Test Files|Tests |^# (pass|fail)|FAIL ' "$RUNNER_TEMP"/js-*.log | cut -c1-300 | tail -n 80 || true
+          cat "$RUNNER_TEMP"/js-*.log > "$RUNNER_TEMP/js-all.log" 2>/dev/null || true
+          sed -E 's/\x1b\[[0-9;]*m//g' "$RUNNER_TEMP/js-all.log" > "$out/js.log"
+          # vitest: " FAIL  <project> <file> > <test>"; node --test: "✖ <test> (1.2ms)"
+          { sed -n -E 's/^.* FAIL +//p' "$out/js.log"; sed -n -E 's/^✖ +//p' "$out/js.log" | sed -E 's/ +\([0-9.]+ms\)$//'; } \
+            | sed -E 's/ +/ /g' | sort -u > "$out/failed.txt"
+          grep -a -E 'Test Files| Tests +[0-9]|^ℹ (pass|fail) ' "$out/js.log" > "$out/summary.txt" || true
+          gzip "$out/js.log"
+          cat "$out/summary.txt"
 
       - name: Upload the result
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: result-js-${{ matrix.tree }}
+          name: js-${{ matrix.tree }}
           path: ${{ runner.temp }}/result
           retention-days: 7
+
+  compare:
+    name: What fails on this tree only
+    needs: [suite, js]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: results
+      - name: Compare the two trees
+        shell: bash
+        run: |
+          set -u
+          for kind in python js; do
+            for tree in plushuman upstream; do
+              cat results/$kind-$tree*/failed.txt 2>/dev/null | sort -u > "$kind-$tree.txt"
+            done
+            {
+              echo "## $kind"
+              echo
+              for tree in plushuman upstream; do
+                echo "$tree:"
+                echo '```'
+                cat results/$kind-$tree*/summary.txt 2>/dev/null || echo "no result"
+                echo '```'
+              done
+              echo "Fails on this tree only ($(comm -23 "$kind-plushuman.txt" "$kind-upstream.txt" | wc -l | tr -d ' ')):"
+              echo '```'
+              comm -23 "$kind-plushuman.txt" "$kind-upstream.txt"
+              echo '```'
+              echo "Fails on both ($(comm -12 "$kind-plushuman.txt" "$kind-upstream.txt" | wc -l | tr -d ' ')):"
+              echo '```'
+              comm -12 "$kind-plushuman.txt" "$kind-upstream.txt"
+              echo '```'
+            } | tee -a "$GITHUB_STEP_SUMMARY"
+          done

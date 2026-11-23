@@ -582,7 +582,7 @@ class CLIAgentSetupMixin:
         from cli import ChatConsole, _DIM, _RST, _accent_hex, _cprint
         session_meta = self._session_db.get_session(self.session_id)
         # Quiet mode (tool_progress_mode == "off") routes resume status lines to
-        # stderr so stdout stays machine-readable for `$(plushuman chat -Q --resume ...)`.
+        # stderr so stdout stays machine-readable for `$(hermes chat -Q --resume ...)`.
         # Without this, the resume banner pollutes captured stdout. See #11793.
         _quiet_mode = getattr(self, "tool_progress_mode", "full") == "off"
 

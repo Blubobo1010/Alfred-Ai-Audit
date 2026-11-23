@@ -69,7 +69,7 @@ def generate_bash(parser: argparse.ArgumentParser) -> str:
     cases_str = "\n".join(cases)
     return f"""# +Human bash completion
 # Add to ~/.bashrc:
-#   eval "$(plushuman completion bash)"
+#   eval "$(hermes completion bash)"
 
 _hermes_profiles() {{
     local profiles_dir="$HOME/.hermes/profiles"
@@ -155,7 +155,7 @@ def generate_zsh(parser: argparse.ArgumentParser) -> str:
     return f"""#compdef hermes
 # +Human zsh completion
 # Add to ~/.zshrc:
-#   eval "$(plushuman completion zsh)"
+#   eval "$(hermes completion zsh)"
 
 _hermes_profiles() {{
     local -a profiles

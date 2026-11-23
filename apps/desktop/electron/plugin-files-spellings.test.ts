@@ -82,7 +82,7 @@ describe('case on a case-sensitive macOS volume', () => {
   })
 
   it.runIf(posix)('a differently-cased spelling of the +Human home still cannot be granted', async () => {
-    const lookalike = path.join(scratch, 'home', '.PLUSHUMAN')
+    const lookalike = path.join(scratch, 'home', '.HERMES')
     fs.mkdirSync(lookalike)
 
     expect(await make('darwin').addGrant('plexus', lookalike)).toMatchObject({ ok: false, error: 'protected' })
@@ -166,7 +166,7 @@ describe('Windows second paths to this machine', () => {
     ['\\\\wsl.localhost\\Ubuntu\\home\\me', true],
     ['\\\\wsl.localhost\\Ubuntu\\root', true],
     ['\\\\wsl.localhost\\Ubuntu\\home\\me\\.hermes\\profiles', true],
-    ['\\\\WSL.LOCALHOST\\Debian\\HOME\\me\\.+Human', true],
+    ['\\\\WSL.LOCALHOST\\Debian\\HOME\\me\\.Hermes', true],
     // The distro's own process environments and its view of the Windows drives.
     ['\\\\wsl.localhost\\Ubuntu\\proc', true],
     ['\\\\wsl$\\Ubuntu\\proc\\1\\environ', true],

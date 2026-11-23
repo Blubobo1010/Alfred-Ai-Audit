@@ -969,7 +969,7 @@ def cmd_environment(args) -> int:
     if bool(args.extra) == bool(args.requirement):
         print("plushuman pm environment: pass --extra or --requirement (not both)", file=sys.stderr)
         return 2
-    # stdout carries only the interpreter path, for PY=$(plushuman pm environment ...);
+    # stdout carries only the interpreter path, for PY=$(hermes pm environment ...);
     # progress from PM and its uv children goes to stderr at both levels.
     sys.stdout.flush()
     saved = os.dup(1)

@@ -10,7 +10,7 @@ import fs from 'node:fs'
  * policy in `isSharedRuntime` (package-process-reap.ts) and the Python canonical
  * matchers named in AGENTS.md HX003.
  */
-const HERMES_RUNTIME_BASENAME = /^hermes(?:-agent|-acp)?(?:\.exe|\.cmd)?$/i
+const HERMES_RUNTIME_BASENAME = /^(?:hermes(?:-agent|-acp)?|plushuman|alfred)(?:\.exe|\.cmd)?$/i
 
 /** Tokenize a raw command line: `/proc/<pid>/cmdline` is NUL-separated, `ps -o args=`
  *  is whitespace-separated. Either way, split on both so one matcher serves both. */

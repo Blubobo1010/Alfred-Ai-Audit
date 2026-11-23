@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       full-suite:
-        description: Run the complete pytest suite instead of the brand-sensitive subset
+        description: Run the complete pytest suite (eight slices) instead of the brand-sensitive subset
         type: boolean
         default: false
 
@@ -97,15 +97,59 @@ jobs:
           )
           scripts/run_tests.sh "${files[@]}" -q
 
-      - name: Full test suite
-        if: ${{ inputs.full-suite }}
+  # The complete upstream suite (about 92k tests in v0.23) takes one runner some four hours, so it runs as
+  # eight slices side by side, with upstream's own settings. Some test files pin the upstream names and
+  # cannot pass on this tree: a slice fails only on a file KNOWN_TEST_FAILURES.alfred.md does not list.
+  full-suite:
+    name: Full suite ${{ matrix.slice }}/8
+    if: ${{ inputs.full-suite }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        slice: [1, 2, 3, 4, 5, 6, 7, 8]
+    steps:
+      - uses: actions/checkout@v4
+
+      # Same pinned binary as upstream's test job: the search tools' tests run the real rg.
+      - name: Install ripgrep (prebuilt binary)
+        shell: bash
+        run: |
+          set -euo pipefail
+          RG_VERSION=15.1.0
+          RG_SHA256=1c9297be4a084eea7ecaedf93eb03d058d6faae29bbc57ecdaf5063921491599
+          RG_TARBALL=ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl.tar.gz
+          cd "$RUNNER_TEMP"
+          curl -sSfL --retry 3 --retry-delay 5 -o "$RG_TARBALL" \
+            "https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/${RG_TARBALL}"
+          echo "${RG_SHA256}  ${RG_TARBALL}" | sha256sum -c -
+          tar -xzf "$RG_TARBALL"
+          sudo mv "ripgrep-${RG_VERSION}-x86_64-unknown-linux-musl/rg" /usr/local/bin/rg
+          rg --version
+
+      - name: Locked toolchain and test environment
+        uses: ./.github/actions/setup-pm
+        with:
+          packages: pnpm
+          extras: '["all", "anthropic", "bedrock", "mistral", "fal", "modal", "daytona", "parallel-web", "keychain"]'
+          test-environment: 'true'
+
+      # The runner's own exit status is not the verdict (known failures are expected): the next step is.
+      - name: Slice ${{ matrix.slice }}/8
+        shell: bash
         env:
+          HERMES_TEST_SLICE: ${{ matrix.slice }}/8
+          HERMES_TEST_FORKSERVER: "1"
           HERMES_TEST_WORKERS: 4
           HERMES_TEST_FILE_TIMEOUT: 600
           OPENROUTER_API_KEY: ""
           OPENAI_API_KEY: ""
           NOUS_API_KEY: ""
-        run: scripts/run_tests.sh -q
+        run: scripts/run_tests.sh -q 2>&1 | tee "$RUNNER_TEMP/suite.log" || true
+
+      - name: No failure outside the known list
+        run: python3 scripts/alfred/known_failures.py "$RUNNER_TEMP/suite.log"
 
   desktop:
     name: Desktop, TUI and dashboard typecheck

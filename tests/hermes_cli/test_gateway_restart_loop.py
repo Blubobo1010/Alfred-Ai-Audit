@@ -242,7 +242,7 @@ class TestGatewayLifecyclePattern:
         # forms either.
         "true;plushuman gateway restart",
         "true && plushuman gateway stop",
-        "echo $(plushuman gateway restart)",
+        "echo $(hermes gateway restart)",
         "echo `plushuman gateway restart`",
     ])
     def test_boundary_fix_still_blocks_real_commands(self, text):
@@ -1534,7 +1534,7 @@ class TestRelativePathDoesNotDisableDataExemption:
         "grep -r 'plushuman gateway restart' . | sudo sh",
         "grep -r 'x' . ; plushuman gateway restart",
         "grep -r 'x' . && systemctl restart hermes-gateway",
-        'grep -r "$(plushuman gateway restart)" .',
+        'grep -r "$(hermes gateway restart)" .',
         "rg 'x' ./logs | xargs systemctl restart hermes-gateway",
     ])
     def test_relative_path_does_not_open_an_execution_route(self, command):

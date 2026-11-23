@@ -1,0 +1,126 @@
+# TRIAL ONLY. `python -m rebrand trial --desktop-build` copies this file to a throwaway branch
+# trial/upstream-<X.Y.Z> of the product repo and marks the commit [desktop-build]; it never reaches main.
+# The build job of alfred-release-macos.yml without the signing environment: proves the desktop bundle
+# still builds on the new upstream before a real tag is pushed. Uses no secret, signs nothing (ad-hoc
+# signature, no notarization), uploads nothing, publishes nothing.
+name: trial-desktop-build
+
+on:
+  push:
+    branches: ['trial/upstream-*']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: trial-desktop-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-macos-arm64:
+    if: ${{ contains(github.event.head_commit.message, '[desktop-build]') }}
+    runs-on: macos-15
+    timeout-minutes: 240
+    env:
+      HERMES_DESKTOP_VARIANT: bundled
+      PYTHONUTF8: '1'
+    steps:
+      - name: Disable Spotlight indexing for DMG staging
+        run: sudo mdutil -a -i off || true
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Select Xcode 26 for the macOS 26 layered icon
+        shell: bash
+        run: |
+          xcode="$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)"
+          if [ -z "$xcode" ]; then echo "::error::no Xcode 26 on this runner"; exit 1; fi
+          echo "DEVELOPER_DIR=$xcode/Contents/Developer" >> "$GITHUB_ENV"
+
+      - name: Restore desktop dependency inputs
+        id: build-cache
+        uses: ./.github/actions/desktop-build-cache
+        with:
+          phase: restore
+          source: ${{ github.workspace }}
+          work: ${{ runner.temp }}/desktop-job
+          cache: ${{ github.workspace }}/.cache/desktop-inputs
+          producer: desktop
+
+      # The tag this tree would be released as (vX.Y.<Z*100>) and its claim tag, both local to the runner.
+      - name: Create the release tag and its claim tag (local only)
+        shell: bash
+        run: |
+          set -euo pipefail
+          IFS=. read -r major minor patch <<< "${GITHUB_REF_NAME#trial/upstream-}"
+          tag="v${major}.${minor}.$((patch * 100))"
+          echo "HERMES_PAYLOAD_TAG=$tag" >> "$GITHUB_ENV"
+          git config user.name "alfred-trial"
+          git config user.email "alfred-trial@users.noreply.github.com"
+          git tag -a "$tag" -m "trial $tag" HEAD
+          claim="rc.${GITHUB_RUN_NUMBER}-${tag}"
+          git tag -a "$claim" -m "trial attempt ${GITHUB_RUN_NUMBER} for ${tag}" "${tag}^{commit}"
+          echo "RELEASE_CLAIM_TAG=$claim" >> "$GITHUB_ENV"
+          echo "RELEASE_CLAIM_OBJECT=$(git rev-parse "refs/tags/$claim")" >> "$GITHUB_ENV"
+
+      - name: Prepare the complete desktop build
+        id: prepare
+        shell: bash
+        run: |
+          python3 scripts/bundles/desktop.py --tag "$HERMES_PAYLOAD_TAG" --variant bundled --prepare-only \
+            --work "$RUNNER_TEMP/desktop-job" --cache "$GITHUB_WORKSPACE/.cache/desktop-inputs"
+          python3 -m scripts.ci.desktop_commands "$RUNNER_TEMP/desktop-job/prepared.json"
+
+      - name: Save dependency inputs
+        if: ${{ !cancelled() && steps.prepare.outcome == 'success' }}
+        uses: ./.github/actions/desktop-build-cache
+        with:
+          phase: save
+          source: ${{ github.workspace }}
+          work: ${{ runner.temp }}/desktop-job
+          cache: ${{ github.workspace }}/.cache/desktop-inputs
+          producer: desktop
+          key: ${{ steps.build-cache.outputs.cache-key }}
+
+      - name: Disable QUIC (UDP 443) for the rest of the job
+        shell: bash
+        run: |
+          echo 'block return out quick proto udp to any port 443' | sudo pfctl -a com.apple/alfred-no-quic -f -
+          sudo pfctl -E
+          sudo pfctl -a com.apple/alfred-no-quic -sr
+
+      - name: Build (unsigned)
+        shell: bash
+        timeout-minutes: 200
+        run: |
+          ulimit -n 16384 2>/dev/null || true
+          python scripts/bundles/desktop.py --prepared "$RUNNER_TEMP/desktop-job/prepared.json" --variant bundled
+
+      - name: Inspect what was built
+        if: always()
+        shell: bash
+        run: |
+          shopt -s nullglob
+          ls -la apps/desktop/release/ || true
+          for app in apps/desktop/release/mac*/*.app; do
+            echo "== $app"
+            du -sh "$app"
+            /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' -c 'Print :CFBundleName' \
+              -c 'Print :CFBundleDisplayName' -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist" || true
+            codesign -dv "$app" 2>&1 | head -5 || true
+            du -sh "$app"/Contents/Resources/* | sort -h | tail -12
+          done
+          for f in apps/desktop/release/*.yml; do echo "== $f"; cat "$f"; done
+
+      - name: Require the release artifacts
+        shell: bash
+        run: |
+          shopt -s nullglob
+          apps=(apps/desktop/release/mac*/*.app)
+          [ ${#apps[@]} -gt 0 ] || { echo "::error::no packed .app under apps/desktop/release"; exit 1; }
+          test -s apps/desktop/release/latest-mac.yml
+          grep -q 'mac-arm64.zip' apps/desktop/release/latest-mac.yml
+          ls -la apps/desktop/release/*.dmg apps/desktop/release/*.zip apps/desktop/release/*.blockmap
