@@ -10,7 +10,8 @@ import fs from 'node:fs'
  * policy in `isSharedRuntime` (package-process-reap.ts) and the Python canonical
  * matchers named in AGENTS.md HX003.
  */
-const HERMES_RUNTIME_BASENAME = /^(?:hermes(?:-agent|-acp)?|plushuman|alfred)(?:\.exe|\.cmd)?$/i
+const HERMES_RUNTIME_BASENAME = /^(?:hermes(?:-agent|-acp)?|plushuman)(?:\.exe|\.cmd)?$/i
+const LEGACY_RUNTIME_BASENAMES = new Set<string>(['alfred'])
 
 /** Tokenize a raw command line: `/proc/<pid>/cmdline` is NUL-separated, `ps -o args=`
  *  is whitespace-separated. Either way, split on both so one matcher serves both. */
@@ -59,7 +60,13 @@ function tokensNameGatewaySubcommand(tokens: string[]): boolean {
 export function commandLineIsHermesRuntime(raw: string): boolean {
   const tokens = commandLineTokens(raw)
 
-  if (tokens.some(token => HERMES_RUNTIME_BASENAME.test(tokenBasename(token)))) {
+  if (
+    tokens.some(token => {
+      const basename = tokenBasename(token)
+
+      return HERMES_RUNTIME_BASENAME.test(basename) || LEGACY_RUNTIME_BASENAMES.has(basename)
+    })
+  ) {
     return true
   }
 

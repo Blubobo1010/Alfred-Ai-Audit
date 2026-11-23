@@ -210,7 +210,8 @@ def cli_command_name(project_root: Path) -> str:
     (``hermes-canary``) so it never shadows another install's ``plushuman``.
     """
     command = _payload_hermes_command(Path(project_root).resolve())
-    return command.name.removesuffix(".exe") if command else "hermes"
+    name = command.name.removesuffix(".exe") if command else "hermes"
+    return "plushuman" if name == "hermes" else name  # alfred:keep
 
 
 def base_venv(project_root: Path) -> Path:

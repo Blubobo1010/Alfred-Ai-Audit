@@ -14,8 +14,8 @@ install -m 644 /keys/host_ed25519.pub /etc/ssh/ssh_host_ed25519_key.pub
 
 useradd -m -s /bin/bash hermes
 usermod -p '*' hermes  # no password, but not locked: key auth still works
-install -d -m 700 -o plushuman -g hermes /home/hermes/.ssh
-install -m 600 -o plushuman -g hermes /keys/authorized_keys /home/hermes/.ssh/authorized_keys
+install -d -m 700 -o hermes -g hermes /home/hermes/.ssh
+install -m 600 -o hermes -g hermes /keys/authorized_keys /home/hermes/.ssh/authorized_keys
 
 # AcceptEnv lets the SendEnv passthrough test reach the remote shell.
 cat > /etc/ssh/sshd_config.d/hermes-test.conf <<'EOF'

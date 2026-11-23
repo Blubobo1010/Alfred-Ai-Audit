@@ -71,7 +71,7 @@ export interface ReapOutcome {
 function isSharedRuntime(imagePath: string): boolean {
   const image = imagePath.replace(/^.*[\\/]/, '').toLowerCase()
 
-  return /^(?:pythonw?(?:[0-9.]+)?|node|hermes(?:-agent|-acp)?|plushuman|alfred)(?:\.exe|\.cmd)?$/.test(image)
+  return /^(?:pythonw?(?:[0-9.]+)?|node|hermes(?:-agent|-acp)?|plushuman|alfred|\+human)(?:\.exe|\.cmd)?$/.test(image)
 }
 
 /**

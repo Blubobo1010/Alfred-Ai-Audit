@@ -60,7 +60,7 @@ jobs:
           echo "HERMES_PAYLOAD_TAG=$tag" >> "$GITHUB_ENV"
           git config user.name "alfred-trial"
           git config user.email "alfred-trial@users.noreply.github.com"
-          git tag -a "$tag" -m "trial $tag" HEAD
+          git tag -f -a "$tag" -m "trial $tag" HEAD  # -f: the checkout fetched the real tag once it is released
           claim="rc.${GITHUB_RUN_NUMBER}-${tag}"
           git tag -a "$claim" -m "trial attempt ${GITHUB_RUN_NUMBER} for ${tag}" "${tag}^{commit}"
           echo "RELEASE_CLAIM_TAG=$claim" >> "$GITHUB_ENV"
@@ -112,6 +112,9 @@ jobs:
               -c 'Print :CFBundleDisplayName' -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist" || true
             codesign -dv "$app" 2>&1 | head -5 || true
             du -sh "$app"/Contents/Resources/* | sort -h | tail -12
+            echo "-- CLI launchers in the bundle"
+            find "$app/Contents/Resources" -maxdepth 7 \( -name plushuman -o -name alfred -o -name hermes -o -name hermes-acp \) \
+              -not -path '*/node_modules/*' -not -path '*/site-packages/*' | head -20
           done
           for f in apps/desktop/release/*.yml; do echo "== $f"; cat "$f"; done
 

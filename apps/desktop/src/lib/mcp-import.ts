@@ -493,7 +493,7 @@ function parseLine(line: string): McpImportEntry[] | null {
     return entry ? [entry] : null
   }
 
-  if (tokens[0] === 'hermes' && tokens[1] === 'mcp' && tokens[2] === 'add') {
+  if (['hermes', 'plushuman', 'alfred'].includes(tokens[0]) && tokens[1] === 'mcp' && tokens[2] === 'add') {
     const entry = fromHermesAdd(tokens)
 
     return entry ? [entry] : null

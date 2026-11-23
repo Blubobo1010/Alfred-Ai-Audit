@@ -83,8 +83,12 @@ jobs:
           out="$RUNNER_TEMP/result"
           mkdir -p "$out"
           touch "$RUNNER_TEMP/suite.log"
-          grep -a -o -E 'FAILED tests/[^ ]+' "$RUNNER_TEMP/suite.log" | sort -u > "$out/failed.txt" || true
-          grep -a -E '\] ✗ tests/' "$RUNNER_TEMP/suite.log" | sed -E 's/^.*\] ✗ //; s/ \(.*$//' | sort -u > "$out/failed-files.txt" || true
+          # failed and errored tests, plus one FILE line per failing file: a file that times out, crashes or
+          # no longer imports has no test line of its own
+          {
+            grep -a -o -E '(FAILED|ERROR) tests/[^ ]+' "$RUNNER_TEMP/suite.log" || true
+            sed -n -E 's/^.*\] ✗ (tests\/[^ ]+\.py).*$/FILE \1/p' "$RUNNER_TEMP/suite.log"
+          } | sort -u > "$out/failed.txt"
           grep -a -E '=== Summary' "$RUNNER_TEMP/suite.log" > "$out/summary.txt" || echo "no summary (timed out or crashed)" > "$out/summary.txt"
           gzip -c "$RUNNER_TEMP/suite.log" > "$out/suite.log.gz"
           cat "$out/summary.txt"
@@ -199,7 +203,7 @@ jobs:
           set -u
           for kind in python js; do
             for tree in plushuman upstream; do
-              cat results/$kind-$tree*/failed.txt 2>/dev/null | sort -u > "$kind-$tree.txt"
+              { cat results/$kind-$tree*/failed.txt 2>/dev/null || true; } | sort -u > "$kind-$tree.txt"
             done
             {
               echo "## $kind"

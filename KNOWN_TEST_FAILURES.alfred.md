@@ -29,8 +29,10 @@ file without a row, or with more failing tests than its row says. Keep one row p
 | `tests/scripts/test_release_artifacts.py` | 3 | reads upstream's release workflows, which +Human replaces with its own |
 | `tests/scripts/test_termux_build_driver.py` | 2 | Termux (Android) release driver: reads the same workflows; Termux builds are not shipped |
 | `tests/scripts/test_release_tags.py` | 1 | fixture remaps `https://github.com/NousResearch/` with `pushInsteadOf`; the rebrand rewrites the full repo URL but not the owner-only prefix |
-| `tests/hermes_cli/test_session_recovery_lost_and_found.py` | 1 | fails on pristine upstream too on GitHub's runners (their `sqlite3` CLI) |
-| `tests/tools/test_approval_windows.py` | 2 | fails on pristine upstream too on GitHub's 4-core runners (a linear-time bound) |
+| `tests/hermes_cli/test_session_recovery_lost_and_found.py` | 1 | not the rebrand: fails on pristine upstream too on GitHub's runners (their `sqlite3` CLI) |
+| `tests/tools/test_approval_windows.py` | 2 | not the rebrand: a wall-clock bound, missed at times on GitHub's 4-core runners (on pristine upstream too) |
+| `tests/tools/test_approval_windows_hardline_scripts.py` | 1 | not the rebrand: same kind of wall-clock bound |
+| `tests/gateway/test_telegram_rich_messages.py` | 1 | not the rebrand: same kind of wall-clock bound (1.2 s against 1.0 s) |
 
 Adjusted by a codemod instead of failing:
 - `tests/hermes_cli/test_source_release_channels.py`: `test_selected_draft_never_falls_back_to_other_tags` and
@@ -46,4 +48,30 @@ replaced): `tests/ci/`, `tests/website/`, `tests/scripts/test_dispatch_log.py`,
 `tests/scripts/test_termux_commit_identity.py`, `tests/scripts/test_commit_bundle_entrypoints.py`,
 `tests/scripts/test_desktop_build_cache.py`, `tests-js/setup-pm-cache.test.mjs`.
 
-On macOS a few more files fail on any tree, pristine included (no `/proc`, launchd fixtures): judge on Linux.
+On macOS a few more files fail for reasons that are not the rebrand (no `/proc`, a launchd fixture, a real
+`~/.hermes` on the machine): judge on Linux.
+
+## JS suites
+
+Not checked by CI (alfred-ci runs the typechecks and the updater tests); compared by hand at each upstream bump.
+`apps/shared`, `web`, `ui-tui` and the WhatsApp bridge pass like upstream. These fail on the +Human tree only:
+
+| Test file | Failing | Why it fails |
+|---|---|---|
+| `apps/desktop/electron/appimage-payload.test.ts` | 2 | Linux packaging paths derive from the product name; +Human ships macOS only |
+| `apps/desktop/electron/desktop-uninstall.test.ts` | 2 | same, Linux AppImage and Windows cleanup script |
+| `apps/desktop/electron/packaged-working-directory.test.ts` | 1 | same, Windows install folder |
+| `apps/desktop/electron/venv-holder-select.test.ts` | 2 | same, Windows paths |
+| `apps/desktop/electron/windows-hermes-path.test.ts` | 1 | same, Windows paths |
+| `apps/desktop/scripts/batch-sign-binaries.test.mjs` | 1 | same: `+Human.exe` sorts differently from `Hermes.exe` |
+| `apps/desktop/e2e/update/harness.unit.test.ts` | 2 | the update harness looks for the packaged Linux executable by upstream's name |
+| `apps/desktop/electron/product-identity.test.ts` | 5 | identities of the variants +Human does not build (canary, light, store) |
+| `apps/desktop/scripts/commit-stamp-identity.test.mjs` | 1 | same: commit-build launcher names |
+| `apps/desktop/scripts/local-pack-publish.test.mjs` | 1 | pins upstream's repository as the publish target |
+| `tests-js/notarize.test.mjs` | 1 | on purpose: an Accepted submission ships unstapled when Apple stays unreachable (codemod C0095); upstream fails the build |
+| `apps/desktop/src/app/messaging/index.test.tsx` | 1 | on purpose: the managed Telegram bot is a Nous service and its quick setup is off (C0050) |
+| `apps/desktop/electron/spellcheck-dictionary-ipc.test.ts` | 2 | the fixture adds the product name to the dictionary; `+Human` is not a word |
+| `apps/desktop/src/lib/find-in-page-scope.test.ts` | 2 | the fixture searches the product name in another case |
+| `apps/desktop/src/plugins/hermes-bots/data.identity.test.ts` | 1 | the reserved mention is the default agent's handle `hermes` (kept), not the product name |
+| `apps/desktop/src/plugins/hermes-bots/cron-prompt.test.ts` | 1 | the test's own parser looks for the `hermes` launcher in the generated prompt |
+| `tests-js/install-known-failures.test.ts` | 1 | matches upstream's own past installer failures by name |
