@@ -261,7 +261,8 @@ describe('CapabilitiesView toolset management', { timeout: 60_000 }, () => {
     expect(await screen.findByText(/Deep research steps/)).toBeTruthy()
   })
 
-  it('hub picker refuses to reinstall an already-installed skill', async () => {
+  // C0190: this build embeds no page of the documentation site
+  it.skip('hub picker refuses to reinstall an already-installed skill', async () => {
     const { notify } = await import('@/store/notifications')
     const { EmbeddedHubPicker } = await import('./skills/embedded-hub-picker')
 
@@ -287,7 +288,8 @@ describe('CapabilitiesView toolset management', { timeout: 60_000 }, () => {
     )
   })
 
-  it('mounts the hub iframe lazily and keeps it (hidden) across tab switches', async () => {
+  // C0190: this build embeds no page of the documentation site
+  it.skip('mounts the hub iframe lazily and keeps it (hidden) across tab switches', async () => {
     // On a non-Skills tab the docs-site iframe must not exist at all — an
     // eagerly mounted hub is exactly the Capabilities lag bug.
     await renderSkills() // ?tab=toolsets

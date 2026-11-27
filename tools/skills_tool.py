@@ -27,6 +27,7 @@ from tools.skills_tool_plugin import (
 from tools.skills_tool_dedup import (
     _check_skill_view_dedup, _record_skill_view, reset_skill_view_dedup)
 from tools.skill_provenance import is_background_review
+from tools.skills_tool_short_names import SkillNotOnDisk, plugin_skill_by_short_name
 
 logger = logging.getLogger(__name__)
 
@@ -518,8 +519,8 @@ def _locate_skill(name: str, local_category_name: Optional[str], roots):
                 "`plushuman skills untrust`."), None, None
     if not skill_md or not skill_md.exists():
         available = [s["name"] for s in _sort_skills(_find_all_skills())[:20]]
-        return _fail(f"Skill '{name}' not found.", available_skills=available,
-                     hint="Use skills_list to see all available skills"), None, None
+        return SkillNotOnDisk(_fail(f"Skill '{name}' not found.", available_skills=available,
+                                    hint="Use skills_list to see all available skills")), None, None
     return None, skill_dir, skill_md
 
 
@@ -570,6 +571,9 @@ def skill_view(
         roots, active_skills_dir = _skill_search_dirs()
         all_dirs = [d for _t, d in roots]
         error, skill_dir, skill_md = _locate_skill(name, local_category_name, roots)
+        if isinstance(error, SkillNotOnDisk):
+            # nothing on disk has this name: a plugin's skill asked for without its namespace?
+            return plugin_skill_by_short_name(name, error, file_path, task_id, preprocess)
         if error is not None:
             return error
         try:  # read once — reused for platform check and main content

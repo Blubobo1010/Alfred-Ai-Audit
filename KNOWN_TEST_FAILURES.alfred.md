@@ -17,3 +17,17 @@ pointer on hermes-assets; +Human publishes none and resolves its stable release 
 
 Removed from the tree (they test the upstream GitHub workflows or the docs site, both replaced):
 `tests/ci/`, `tests/website/`, `tests/scripts/test_dispatch_log.py`.
+
+## No page of upstream's site inside the app (since 0.21.712)
+
+The Plugins tab, the Skills tab and Bot Mode embedded pages of upstream's documentation site as one-click
+catalogues. +Human lists what is installed; the embedded pages and their tests are gone:
+- removed: `apps/desktop/src/plugins/hermes-bots/skills-hub-picker.test.tsx`;
+- skipped by a codemod: four tests of the catalogue pane in
+  `apps/desktop/src/app/capabilities/plugins/plugins-tab.test.tsx` and the two hub picker tests in
+  `apps/desktop/src/app/capabilities/index.test.tsx`;
+- adjusted: `apps/desktop/src/plugins/hermes-bots/profile-config-capabilities.test.tsx` expects no hub section.
+
+The plugin catalog is the one in the tree: upstream's published document is not fetched unless
+`HERMES_LIVE_PLUGIN_CATALOG=1`. `tests/conftest.py` sets it, so upstream's tests of that path still run;
+`tests/hermes_cli/test_plugin_catalog_plushuman.py` covers the shipped default.

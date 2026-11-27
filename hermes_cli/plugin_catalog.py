@@ -186,13 +186,27 @@ def _read_yaml(path: Path) -> Any:
         return None
 
 
+def _live_catalog_enabled() -> bool:
+    """This build ships its plugin catalog with the release: the published document is neither fetched
+    nor read back from an earlier cache. HERMES_LIVE_PLUGIN_CATALOG=1 opts in (the tests of the live
+    path do)."""
+    import os
+    return os.environ.get("HERMES_LIVE_PLUGIN_CATALOG") == "1"
+
+
+def _spare_release_plugins(entries: list[RemovedEntry]) -> list[RemovedEntry]:
+    """The removal list never reaches the plugins this release pins (hermes_cli/plushuman_plugins.py)."""
+    from hermes_cli.plushuman_plugins import spare_release_plugins
+    return spare_release_plugins(entries)
+
+
 def _removed_from_list(raw_list: Any) -> list[RemovedEntry]:
     if not isinstance(raw_list, list):
         return []
-    return [
+    return _spare_release_plugins([
         RemovedEntry(name=str(r["name"]), repo=str(r.get("repo") or ""), reason=str(r.get("reason") or ""),
                      date=str(r.get("date") or ""))
-        for r in raw_list if isinstance(r, dict) and r.get("name")]
+        for r in raw_list if isinstance(r, dict) and r.get("name")])
 
 
 # ── In-tree catalog ──────────────────────────────────────────────────────────
@@ -286,7 +300,7 @@ def resolved_removed_entries() -> list[RemovedEntry]:
 def cached_removed_entries() -> list[RemovedEntry]:
     """In-tree list UNION the last fetched live copy, with NO network round-trip — for the load-time and
     ``enable`` checks that run in every process and must never block on a dead catalog host."""
-    cached = _stale_live_cache(_live_cache_path()) or {}
+    cached = (_stale_live_cache(_live_cache_path()) if _live_catalog_enabled() else None) or {}
     return load_removed_list() + _removed_from_list(cached.get("removed"))
 
 
@@ -358,6 +372,8 @@ def fetch_live_catalog(*, force: bool = False) -> Optional[dict[str, Any]]:
     :data:`LIVE_CATALOG_FAILURE_TTL_SECONDS` so a dead host costs one timeout per TTL window, not one
     per call (``force`` bypasses both caches)."""
     global _live_fetch_failed_until
+    if not _live_catalog_enabled():
+        return None
     cache = _live_cache_path()
     try:
         if not force and cache.is_file() and time.time() - cache.stat().st_mtime < LIVE_CATALOG_TTL_SECONDS:

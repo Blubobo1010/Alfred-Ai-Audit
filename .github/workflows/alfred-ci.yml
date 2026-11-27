@@ -90,6 +90,10 @@ jobs:
             tests/hermes_cli/test_assistant_name.py
             tests/hermes_cli/test_soul_upgrade_plushuman.py
             tests/hermes_cli/test_plushuman_plugins.py
+            tests/hermes_cli/test_plugin_catalog_plushuman.py
+            tests/hermes_cli/test_plugin_catalog.py
+            tests/tools/test_skill_short_names_plushuman.py
+            tests/tools/test_plugin_skills.py
             tests/hermes_cli/test_uninstall_leftovers.py
           )
           scripts/run_tests.sh "${files[@]}" -q

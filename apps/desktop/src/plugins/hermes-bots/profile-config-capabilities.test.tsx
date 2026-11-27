@@ -213,9 +213,9 @@ describe('a build whose CapabilitiesView cannot route connections', () => {
       toolsets: [{ enabled: true, name: 'local-tools' }]
     })
 
-    // The staged checklist and the hub search section both survive here.
+    // The staged checklist survives here; C0190: this build has no hub section.
     expect(screen.getByText('staged-skill')).toBeTruthy()
-    expect(screen.getByText(translateBots('tools.skillsHub'))).toBeTruthy()
+    expect(screen.queryByText(translateBots('tools.skillsHub'))).toBeNull()
     expect(sdk.seen.ToolsetConfigPanel[0]).toEqual({
       profile: { connectionId: 'local', profile: 'default' },
       toolset: 'local-tools'

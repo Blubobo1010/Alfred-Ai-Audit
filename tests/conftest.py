@@ -276,6 +276,8 @@ def _hermetic_environment(tmp_path, tmp_path_factory, monkeypatch):
     # defaultHost and silently select the wrong nested config block. Tests of
     # custom host resolution override/delete this explicitly.
     monkeypatch.setenv("HERMES_HONCHO_HOST", "hermes")
+    # the live plugin catalog is off in this build (hermes_cli/plugin_catalog.py); the tests of it opt in
+    monkeypatch.setenv("HERMES_LIVE_PLUGIN_CATALOG", "1")
 
     # 3. Isolate both inputs to profile/root resolution. HERMES_HOME alone
     #    is insufficient: get_default_hermes_root() resolves the native root

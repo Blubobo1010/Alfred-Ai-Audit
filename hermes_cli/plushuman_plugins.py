@@ -143,6 +143,41 @@ def pending(home: Path, manifest: list[dict] | None = None) -> list[dict]:
     return todo
 
 
+def _repo_key(repo: str) -> str:
+    """`owner/name` of a repository however it is spelled (shorthand, https, scp-like, with or without `.git`)."""
+    from hermes_cli.plugin_catalog import _normalize_repo
+
+    return "/".join(_normalize_repo(repo).split("/")[-2:])
+
+
+def spare_release_plugins(removed: list, manifest: list[dict] | None = None) -> list:
+    """Upstream's plugin removal list, without what would hit a plugin this release pins.
+
+    The list is matched by name and by repository against every installed plugin, at load, enable and update: an
+    upstream entry for an unrelated third-party `brain` would switch +Human's `brain` off. An entry for a pinned
+    repository is dropped. An entry that only shares a name with a pinned plugin keeps its repository and no longer
+    matches by name (the name gains the repository, for messages and listings), so it still stops that other plugin
+    by where it was installed from; without a repository nothing is left of it.
+    """
+    import dataclasses
+
+    entries = manifest if manifest is not None else load_manifest()
+    if not entries:
+        return removed
+    repos = {_repo_key(e["repo"]) for e in entries}
+    names = {e["dir"] for e in entries} | {key.rsplit("/", 1)[-1] for key in repos}
+    kept = []
+    for entry in removed:
+        if entry.repo and _repo_key(entry.repo) in repos:
+            continue
+        if entry.name in names:
+            if not entry.repo:
+                continue
+            entry = dataclasses.replace(entry, name=f"{entry.name} ({entry.repo})")
+        kept.append(entry)
+    return kept
+
+
 def _installed_from_elsewhere(name: str, repo: str) -> str | None:
     """The recorded source of installed plugin `name` when it is not `repo`, else None. Only a plugin installed from
     the pinned repo is re-pinned: the installer carries user files over only for a reinstall of the same source."""
