@@ -108,6 +108,17 @@ class Settings:
     settle_seconds: int = 120
     max_body_chars: int = 1500
     announce_existing: bool = False
+    certificate_dir: str = ""
+
+
+# alfred-m365 (the Outlook plugin) owns the Entra app and its certificate: same app, same files, no second login.
+M365_PLUGIN = "alfred-m365"
+CERT_KEY_FILE, CERT_FILE = "alfred-m365-key.pem", "alfred-m365.cer"
+
+
+def _m365_settings(config: dict[str, Any]) -> dict[str, Any]:
+    entry = ((config.get("plugins") or {}).get("entries") or {}).get(M365_PLUGIN) or {}
+    return entry.get("settings") or {}
 
 
 def load_settings(config: dict[str, Any] | None = None) -> Settings:
@@ -115,17 +126,18 @@ def load_settings(config: dict[str, Any] | None = None) -> Settings:
     if config is None:
         from hermes_cli.config import load_config_readonly
         config = load_config_readonly()
-    section = config.get("outlook_drafts") or {}
-    mailbox = str(section.get("mailbox") or "").strip()
+    section, m365 = config.get("outlook_drafts") or {}, _m365_settings(config)
+    mailbox = str(section.get("mailbox") or m365.get("mailbox") or "").strip()
     chat_id = str(section.get("telegram_chat_id") or "").strip()
     if not mailbox or not chat_id:
-        raise ConfigError("Set outlook_drafts.mailbox and outlook_drafts.telegram_chat_id in config.yaml")
+        raise ConfigError("Set outlook_drafts.telegram_chat_id (and the mailbox, here or in alfred-m365) in config.yaml")
     thread_id = str(section.get("telegram_thread_id") or "").strip() or None
     return Settings(
         mailbox=mailbox, chat_id=chat_id, thread_id=thread_id,
         settle_seconds=max(0, int(section.get("settle_seconds", 120))),
         max_body_chars=min(3000, max(200, int(section.get("max_body_chars", 1500)))),
-        announce_existing=bool(section.get("announce_existing", False)))
+        announce_existing=bool(section.get("announce_existing", False)),
+        certificate_dir=str(section.get("certificate_dir") or m365.get("certificate_dir") or "").strip())
 
 
 def read_secret(name: str) -> str:
@@ -136,6 +148,78 @@ def read_secret(name: str) -> str:
 def hermes_home() -> Path:
     from hermes_constants import get_hermes_home
     return Path(get_hermes_home())
+
+
+@dataclass(frozen=True)
+class Credentials:
+    """App-only Entra credential: the certificate made by ``alfred outlook keygen`` (preferred: IT holds only
+    the public .cer) or, as a fallback, ``MSGRAPH_CLIENT_SECRET``."""
+
+    tenant_id: str
+    client_id: str
+    client_secret: str = ""
+    certificate_dir: Path | None = None
+    authority_url: str = "https://login.microsoftonline.com"
+    scope: str = "https://graph.microsoft.com/.default"
+
+    @property
+    def token_url(self) -> str:
+        return f"{self.authority_url.rstrip('/')}/{quote(self.tenant_id, safe='')}/oauth2/v2.0/token"
+
+    def token_fields(self) -> dict[str, str]:
+        fields = {"grant_type": "client_credentials", "client_id": self.client_id, "scope": self.scope}
+        if self.client_secret:
+            fields["client_secret"] = self.client_secret
+        else:
+            fields["client_assertion_type"] = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
+            fields["client_assertion"] = client_assertion(self.certificate_dir, self.client_id, self.token_url)
+        return fields
+
+
+def certificate_dir(settings: Settings) -> Path:
+    return Path(settings.certificate_dir).expanduser() if settings.certificate_dir else hermes_home() / M365_PLUGIN
+
+
+def load_credentials(settings: Settings) -> Credentials:
+    tenant, client = read_secret("MSGRAPH_TENANT_ID"), read_secret("MSGRAPH_CLIENT_ID")
+    if not tenant or not client:
+        raise ConfigError("MSGRAPH_TENANT_ID and MSGRAPH_CLIENT_ID are not set")
+    secret, certs = read_secret("MSGRAPH_CLIENT_SECRET"), certificate_dir(settings)
+    if not secret and not ((certs / CERT_KEY_FILE).is_file() and (certs / CERT_FILE).is_file()):
+        raise ConfigError(f"no MSGRAPH_CLIENT_SECRET and no certificate in {certs} (run `plushuman outlook keygen`)")
+    return Credentials(tenant_id=tenant, client_id=client, client_secret=secret, certificate_dir=certs,
+                       authority_url=read_secret("MSGRAPH_AUTHORITY_URL") or Credentials.authority_url,
+                       scope=read_secret("MSGRAPH_SCOPE") or Credentials.scope)
+
+
+def _b64url(data: bytes) -> str:
+    return base64.urlsafe_b64encode(data).rstrip(b"=").decode("ascii")
+
+
+def client_assertion(directory: Path | None, client_id: str, token_url: str) -> str:
+    """RS256 JWT (RFC 7523) signed with the alfred-m365 key: aud = token URL, iss = sub = client id, 10 minutes.
+    Same construction as alfred-m365's ``certauth.client_assertion`` (Entra matches ``x5t`` to the uploaded .cer)."""
+    import uuid
+
+    from cryptography import x509
+    from cryptography.hazmat.primitives import hashes, serialization
+    from cryptography.hazmat.primitives.asymmetric import padding
+
+    if directory is None:
+        raise ConfigError("no certificate directory")
+    try:
+        key = serialization.load_pem_private_key((directory / CERT_KEY_FILE).read_bytes(), password=None)
+        der = x509.load_pem_x509_certificate((directory / CERT_FILE).read_bytes()).public_bytes(serialization.Encoding.DER)
+    except (OSError, ValueError) as exc:
+        raise ConfigError(f"cannot read the certificate in {directory}: {type(exc).__name__}") from None
+    header = {"alg": "RS256", "typ": "JWT", "x5t": _b64url(hashlib.sha1(der).digest()),  # SHA-1: Entra's x5t
+              "x5t#S256": _b64url(hashlib.sha256(der).digest())}
+    now = int(time.time())
+    claims = {"aud": token_url, "iss": client_id, "sub": client_id, "jti": str(uuid.uuid4()),
+              "nbf": now - 60, "iat": now, "exp": now + 600}
+    signing_input = ".".join(_b64url(json.dumps(part, separators=(",", ":")).encode()) for part in (header, claims))
+    signature = key.sign(signing_input.encode("ascii"), padding.PKCS1v15(), hashes.SHA256())
+    return f"{signing_input}.{_b64url(signature)}"
 
 
 # ---------------------------------------------------------------------------------------------- state
@@ -210,7 +294,7 @@ def normalize_ref(ref: str) -> str:
 class Graph:
     """Minimal synchronous Microsoft Graph client for one mailbox (app-only credentials)."""
 
-    def __init__(self, mailbox: str, *, credentials=None, transport: httpx.BaseTransport | None = None,
+    def __init__(self, mailbox: str, *, credentials: Credentials, transport: httpx.BaseTransport | None = None,
                  timeout: float = 30.0, sleep: Callable[[float], None] = time.sleep) -> None:
         self.mailbox = mailbox
         self._credentials = credentials
@@ -218,30 +302,17 @@ class Graph:
         self._sleep = sleep
         self._token: tuple[str, float] | None = None
 
-    def _creds(self):
-        if self._credentials is None:
-            from tools.microsoft_graph_auth import GraphCredentials
-            names = ("MSGRAPH_TENANT_ID", "MSGRAPH_CLIENT_ID", "MSGRAPH_CLIENT_SECRET",
-                     "MSGRAPH_SCOPE", "MSGRAPH_AUTHORITY_URL")
-            env = {name: read_secret(name) for name in names}
-            try:
-                self._credentials = GraphCredentials.from_env(env)
-            except Exception as exc:
-                raise ConfigError(str(exc)) from exc
-        return self._credentials
-
     def _access_token(self, *, refresh: bool = False) -> str:
         if self._token and not refresh and self._token[1] - 120 > time.time():
             return self._token[0]
-        creds = self._creds()
+        creds = self._credentials
         try:
-            response = self._client.post(creds.token_url, data={
-                "grant_type": "client_credentials", "client_id": creds.client_id,
-                "client_secret": creds.client_secret, "scope": creds.scope})
+            response = self._client.post(creds.token_url, data=creds.token_fields())
         except httpx.HTTPError as exc:
             raise GraphError(None, f"token request failed: {exc}") from exc
         if response.status_code >= 400:
-            raise GraphError(response.status_code, f"token request failed: HTTP {response.status_code}")
+            raise GraphError(response.status_code, f"token request failed: HTTP {response.status_code} "
+                                                   f"{_token_error_code(response)}".rstrip())
         payload = response.json()
         self._token = (payload["access_token"], time.time() + int(payload.get("expires_in", 3600)))
         return self._token[0]
@@ -316,6 +387,15 @@ class Graph:
         except GraphError as exc:
             if exc.status != 404:
                 raise
+
+
+def _token_error_code(response: httpx.Response) -> str:
+    """Entra's AADSTS code (e.g. AADSTS700027 = certificate not uploaded): never the description, which echoes input."""
+    try:
+        codes = response.json().get("error_codes") or []
+    except ValueError:
+        return ""
+    return f"AADSTS{codes[0]}" if codes else ""
 
 
 def _retry_after(response: httpx.Response, attempt: int) -> float:
@@ -447,7 +527,7 @@ class Drafts:
     @classmethod
     def from_runtime(cls) -> Drafts:
         settings = load_settings()
-        return cls(store=Store(hermes_home()), graph=Graph(settings.mailbox),
+        return cls(store=Store(hermes_home()), graph=Graph(settings.mailbox, credentials=load_credentials(settings)),
                    telegram=Telegram(read_secret("TELEGRAM_BOT_TOKEN"), settings.chat_id, settings.thread_id),
                    settings=settings)
 

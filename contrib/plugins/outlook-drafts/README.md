@@ -30,25 +30,20 @@ Le mail che Alfred invia in autonomia, come i follow-up dei cron, **non passano 
 - Il tool `outlook_draft` (azioni `list`/`read`/`update`) permette ad Alfred di modificare una bozza in attesa,
   ma **non può inviarla**: la invia solo il pulsante.
 
-## Installazione (profilo di Alfred di Chimera)
+## Installazione (profilo di Alfred di Kimera)
 
-1. **Microsoft Entra ID**: sull'app registrata, aggiungere i permessi *Application* `Mail.ReadWrite` e
-   `Mail.Send`, con il consenso dell'amministratore.
-2. **Limitare l'app alla sola casella di Luca** (obbligatorio). Senza questo l'app può leggere e inviare per
-   qualsiasi casella del tenant. Con Exchange Online PowerShell:
-   ```powershell
-   New-DistributionGroup -Name "Alfred-Mailbox-Scope" -Type Security -Members luca@chimera.example
-   New-ApplicationAccessPolicy -AppId <CLIENT_ID> -PolicyScopeGroupId Alfred-Mailbox-Scope `
-     -AccessRight RestrictAccess -Description "Alfred: solo casella di Luca"
-   Test-ApplicationAccessPolicy -Identity luca@chimera.example -AppId <CLIENT_ID>
-   ```
-   In alternativa si può usare RBAC for Applications.
-3. **Segreti** in `.env`: `MSGRAPH_TENANT_ID`, `MSGRAPH_CLIENT_ID`, `MSGRAPH_CLIENT_SECRET`,
-   `TELEGRAM_BOT_TOKEN`. Se la pipeline Teams è già configurata, probabilmente ci sono già.
+1. **Stessa app Entra di `alfred-m365`**, con lo stesso certificato (`plushuman outlook keygen`, file in
+   `<HERMES_HOME>/alfred-m365/`). Non servono un'app nuova né un secret: `MSGRAPH_CLIENT_SECRET` è solo un'alternativa.
+2. **Permessi solo con Exchange RBAC for Applications**, limitati alla casella di Luca. Oltre ai ruoli che usa
+   `alfred-m365` (`Application Mail.ReadWrite`, `Application Calendars.ReadWrite`) serve **`Application Mail.Send`**,
+   con lo stesso management scope. **Nessun** permesso Graph di tipo application in Entra e nessun consenso
+   amministratore: varrebbero per tutto il tenant e scavalcherebbero lo scope. La procedura completa per l'IT è nella
+   guida di installazione dedicata.
+3. **Segreti** in `.env`: `MSGRAPH_TENANT_ID` e `MSGRAPH_CLIENT_ID` (già presenti con `alfred-m365`) e `TELEGRAM_BOT_TOKEN`.
 4. **Configurazione** in `config.yaml`:
    ```yaml
    outlook_drafts:
-     mailbox: luca@chimera.example     # casella da controllare
+     # mailbox: luca@kimera.example   # facoltativo: di default quella di alfred-m365
      telegram_chat_id: "123456789"     # chat privata di Luca col bot (= suo user id)
      # telegram_thread_id: "42"        # opzionale: topic di un gruppo forum
      settle_seconds: 120

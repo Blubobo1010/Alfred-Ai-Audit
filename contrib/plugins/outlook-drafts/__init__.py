@@ -69,10 +69,10 @@ def _tool_handler(args: dict[str, Any], **_: Any) -> str:
 
 def _tool_available() -> bool:
     try:
-        drafts.load_settings()
+        drafts.load_credentials(drafts.load_settings())
     except drafts.DraftsError:
         return False
-    return all(drafts.read_secret(n) for n in ("MSGRAPH_TENANT_ID", "MSGRAPH_CLIENT_ID", "MSGRAPH_CLIENT_SECRET"))
+    return True
 
 
 # ------------------------------------------------------------------------------------------- install

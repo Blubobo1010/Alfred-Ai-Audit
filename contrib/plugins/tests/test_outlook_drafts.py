@@ -244,8 +244,7 @@ def test_graph_send_is_not_replayed_on_server_error():
         calls.append((request.method, request.url.raw_path.decode()))
         return httpx.Response(502, json={"error": {"code": "BadGateway"}})
 
-    creds = type("C", (), {"token_url": "https://login.example/x/oauth2/v2.0/token", "client_id": "c",
-                           "client_secret": "s", "scope": "x"})()
+    creds = drafts.Credentials(tenant_id="t", client_id="c", client_secret="s", authority_url="https://login.example")
     graph = drafts.Graph("luca@example.com", credentials=creds, transport=httpx.MockTransport(handler), sleep=lambda s: None)
     with pytest.raises(drafts.GraphError) as err:
         graph.send_draft("AAMk/1=")
@@ -256,6 +255,62 @@ def test_graph_send_is_not_replayed_on_server_error():
     with pytest.raises(drafts.GraphError):
         graph.update_draft("AAMk", {"subject": "x"})
     assert len(calls) == 4  # idempotent calls retry
+
+
+def _make_certificate(directory: Path) -> bytes:
+    """A throwaway self-signed pair in alfred-m365's file layout; returns the certificate's DER."""
+    from datetime import UTC, datetime, timedelta
+
+    from cryptography import x509
+    from cryptography.hazmat.primitives import hashes, serialization
+    from cryptography.hazmat.primitives.asymmetric import rsa
+    from cryptography.x509.oid import NameOID
+
+    key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+    name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "test")])
+    now = datetime.now(UTC)
+    cert = (x509.CertificateBuilder().subject_name(name).issuer_name(name).public_key(key.public_key())
+            .serial_number(x509.random_serial_number()).not_valid_before(now).not_valid_after(now + timedelta(days=1))
+            .sign(key, hashes.SHA256()))
+    directory.mkdir(parents=True, exist_ok=True)
+    (directory / drafts.CERT_KEY_FILE).write_bytes(key.private_bytes(
+        serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8, serialization.NoEncryption()))
+    (directory / drafts.CERT_FILE).write_bytes(cert.public_bytes(serialization.Encoding.PEM))
+    return cert.public_bytes(serialization.Encoding.DER)
+
+
+def test_certificate_login_reuses_the_alfred_m365_certificate(tmp_path, monkeypatch):
+    """Kimera's app has no client secret: the token request must carry an assertion signed with the
+    certificate alfred-m365 created, which Entra matches by thumbprint (x5t)."""
+    import base64
+    import hashlib
+
+    monkeypatch.setenv("HERMES_HOME", str(tmp_path))
+    der = _make_certificate(tmp_path / "alfred-m365")
+    (tmp_path / ".env").write_text("MSGRAPH_TENANT_ID=tenant\nMSGRAPH_CLIENT_ID=client\n")
+    config = {"outlook_drafts": {"telegram_chat_id": "42"},
+              "plugins": {"entries": {"alfred-m365": {"settings": {"mailbox": "luca@example.com"}}}}}
+    settings = drafts.load_settings(config)
+    assert settings.mailbox == "luca@example.com"
+    creds = drafts.load_credentials(settings)
+    seen = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path.endswith("/oauth2/v2.0/token"):
+            seen.update(dict(httpx.QueryParams(request.content.decode())))
+            return httpx.Response(200, json={"access_token": "t", "expires_in": 3600})
+        return httpx.Response(200, json={"value": []})
+
+    graph = drafts.Graph(settings.mailbox, credentials=creds, transport=httpx.MockTransport(handler))
+    assert graph.list_drafts() == []
+    assert "client_secret" not in seen
+    assert seen["client_assertion_type"].endswith("jwt-bearer")
+    header = json.loads(base64.urlsafe_b64decode(seen["client_assertion"].split(".")[0] + "=="))
+    assert header["x5t"] == base64.urlsafe_b64encode(hashlib.sha1(der).digest()).rstrip(b"=").decode()
+
+    (tmp_path / "alfred-m365" / drafts.CERT_KEY_FILE).unlink()
+    with pytest.raises(drafts.ConfigError, match="no certificate"):
+        drafts.load_credentials(settings)
 
 
 def test_install_writes_executable_scripts_and_keeps_foreign_ones(tmp_path):

@@ -1,8 +1,10 @@
 name: outlook-drafts
 version: 0.1.0
 description: "Every new Outlook draft waits for ✅ Invia / ✏️ Modifica / 🗑 Scarta on Telegram before it is sent (Microsoft Graph)."
-author: Chimera deployment
+author: Kimera deployment
 kind: standalone
+optional_env:
+  - MSGRAPH_CLIENT_SECRET   # only without the alfred-m365 certificate
 platforms:
   - linux
   - macos
@@ -11,5 +13,4 @@ provides_tools:
 requires_env:
   - MSGRAPH_TENANT_ID
   - MSGRAPH_CLIENT_ID
-  - MSGRAPH_CLIENT_SECRET
   - TELEGRAM_BOT_TOKEN
